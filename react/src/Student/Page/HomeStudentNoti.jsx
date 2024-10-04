@@ -99,6 +99,7 @@
 
 // export default HomeStudentNoti;
 
+// eslint-disable-next-line no-unused-vars
 import React, { useEffect, useState, useRef } from "react";
 import { Badge, notification } from "antd";
 import { BellOutlined } from "@ant-design/icons";
@@ -147,9 +148,9 @@ const HomeStudentNoti = () => {
 
     // Tạo kết nối SignalR
     connection.current = new signalR.HubConnectionBuilder()
-      .withUrl("https://localhost:7116/notificationHub", {
+      .withUrl(`https://localhost:7116/notificationHub?userId=${JSON.parse(localStorage.getItem("userLogin")).id}`, {
         skipNegotiation: true,
-        transport: signalR.HttpTransportType.WebSockets,
+        transport: signalR.HttpTransportType.WebSockets      
       })
       .withAutomaticReconnect()
       .build();
@@ -163,17 +164,17 @@ const HomeStudentNoti = () => {
         //------------------------------------------------------------
         connection.current.on("ReceivedNotification", async (message) => {
           console.log("Received notification:", message);
-          if (message.isSuccess) {
+          if (message) {
             // Gọi API để cập nhật số lượng thông báo chưa đọc sau khi nhận thông báo
             await fetchUnreadNotifications(); // Cập nhật số lượng thông báo từ API
             notification.success({
               message: "Thông báo mới",
-              description: message.data, // Hiển thị nội dung thông báo
+              description: message, // Hiển thị nội dung thông báo
             });
           } else {
             notification.error({
               message: "Lỗi nhận thông báo",
-              description: message.message,
+              description: message,
             });
           }
         });
