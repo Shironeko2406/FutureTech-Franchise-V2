@@ -99,7 +99,6 @@
 
 // export default HomeStudentNoti;
 
-// eslint-disable-next-line no-unused-vars
 import React, { useEffect, useState, useRef } from "react";
 import { Badge, notification } from "antd";
 import { BellOutlined } from "@ant-design/icons";
@@ -160,8 +159,10 @@ const HomeStudentNoti = () => {
         await connection.current.start();
         console.log("SignalR connected successfully.");
         setConnectionStatus("Connected");
-        // console.log("SignalR connected successfully 222.");
-        //------------------------------------------------------------
+
+        // Xoá đăng ký cũ trước khi đăng ký mới
+        connection.current.off("ReceivedNotification");
+
         connection.current.on("ReceivedNotification", async (message) => {
           console.log("Received notification:", message);
           if (message) {
@@ -215,3 +216,4 @@ const HomeStudentNoti = () => {
 };
 
 export default HomeStudentNoti;
+

@@ -130,6 +130,9 @@ const Login = () => {
             case "Administrator":
               navigate("/admin");
               break;
+            case "AgencyManager":
+              navigate("/agency-manager");
+              break;
             case "Student":
               navigate("/student");
               break;
