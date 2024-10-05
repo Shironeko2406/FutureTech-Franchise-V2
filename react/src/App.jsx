@@ -19,6 +19,8 @@ import TempUIStudent from "./Student/TempUI/TempUIStudent";
 import HomeStudent from "./Student/Page/HomeStudent/HomeStudent";
 import CourseDetail from "./Student/Page/CourseDetail/CourseDetail";
 import HomeStudentNoti from "./Student/Page/HomeStudentNoti";
+import TempUIAgencyManager from "./AgencyManager/TempUIAgencyManager/TempUIAgencyManager";
+import HomeAgencyManager from "./AgencyManager/Page/HomeAgencyManager/HomeAgencyManager";
 
 function App() {
   return (
@@ -38,6 +40,12 @@ function App() {
             <Route path="admin" element={<TempUI />}>
               <Route path="" element={<Home />} />
               <Route path="franchise" element={<FranchiseManagement />} />
+            </Route>
+          </Route>
+
+          <Route element={<ProtectedRoute requiredRole="AgencyManager" />}>
+            <Route path="agency-manager" element={<TempUIAgencyManager/>} >
+              <Route path="" element={<HomeAgencyManager/>} />
             </Route>
           </Route>
 
