@@ -16,10 +16,12 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { imageDB } from "../../../Firebasse/Config";
 import { useDispatch } from "react-redux";
 import { CreateUserActionAsync } from "../../../Redux/ReducerAPI/UserReducer";
+import FileCreateUser from "../../Modal/FileCreateUser";
 
 const HomeAgencyManager = () => {
   const [imageUrl, setImageUrl] = useState("");
   const [fileList, setFileList] = useState([]); // Thêm state cho fileList
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
   const dispatch = useDispatch();
 
@@ -56,22 +58,48 @@ const HomeAgencyManager = () => {
     setFileList(fileList); // Cập nhật danh sách file khi thay đổi
   };
 
+  // Function to show the modal
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  // Function to handle closing the modal
+  const handleModalCancel = () => {
+    setIsModalVisible(false);
+  };
+
   // Hàm xử lý khi form được submit
-  const onFinish = (values) => {
+  const onFinish = async (values) => {
     const user = {
       ...values,
       dateOfBirth: values["dateOfBirth"].format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
       urlImage: imageUrl,
-      role: "student"
+      role: "student",
     };
-    dispatch(CreateUserActionAsync(user));
+    const result = await dispatch(CreateUserActionAsync(user));
+    if (result === true) {
+      form.resetFields(); // Reset form sau khi tạo thành công
+      setFileList([]); // Reset danh sách file upload
+      setImageUrl(""); // Reset URL ảnh
+    } else {
+      message.error("Failed to create user.");
+    }
   };
 
   return (
     <div>
       <div className="card">
         <div className="card-body">
-          <h5 className="card-title mb-4">Tạo người dùng</h5>
+          <div className="d-flex justify-content-between align-items-center mb-4">
+            <h5 className="card-title">Tạo người dùng</h5>
+            <button
+              type="button"
+              className="btn btn-success"
+              onClick={showModal}
+            >
+              Thêm file
+            </button>
+          </div>
 
           <div>
             <Form
@@ -147,27 +175,6 @@ const HomeAgencyManager = () => {
                   </Form.Item>
                 </Col>
               </Row>
-
-              {/* <Row gutter={24}>
-                <Col xs={24} sm={12} md={8}>
-                  <Form.Item label="Tỉnh" name="city">
-                    <Select placeholder="Chọn tỉnh thành" size="large"></Select>
-                  </Form.Item>
-                </Col>
-
-                <Col xs={24} sm={12} md={8}>
-                  <Form.Item label="Quận/Huyện" name="district">
-                    <Select placeholder="Chọn quận huyện" size="large"></Select>
-                  </Form.Item>
-                </Col>
-
-                <Col xs={24} sm={12} md={8}>
-                  <Form.Item label="Phường/Xã" name="ward">
-                    <Select placeholder="Chọn phường/xã" size="large"></Select>
-                  </Form.Item>
-                </Col>
-              </Row> */}
-
               <Row gutter={24}>
                 {/* Position Image URL */}
                 <Col xs={24}>
@@ -251,6 +258,10 @@ const HomeAgencyManager = () => {
           </div>
         </div>
       </div>
+      <FileCreateUser
+        open={isModalVisible}
+        onCancel={handleModalCancel}
+      ></FileCreateUser>
     </div>
   );
 };
