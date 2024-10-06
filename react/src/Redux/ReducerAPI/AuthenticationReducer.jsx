@@ -60,10 +60,10 @@ export const OtpEmailActionAsync = (username) => {
   };
 };
 
-export const ResetPasswordActionAsync = (username, dataResetPassword) => {
+export const ResetPasswordActionAsync = (dataResetPassword) => {
   return async () => {
     try {
-      const res = await httpClient.put(`/api/v1/auth/reset-password/${username}`, dataResetPassword);
+      const res = await httpClient.post(`/api/v1/auth/reset-password`, dataResetPassword);
       if (res.isSuccess && res.data) {
         message.success(`${res.message}`);
         return true;
