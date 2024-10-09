@@ -74,7 +74,7 @@ const HomeAgencyManager = () => {
       ...values,
       dateOfBirth: values["dateOfBirth"].format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
       urlImage: imageUrl,
-      role: "student",
+      role: "Student",
     };
     const result = await dispatch(CreateUserActionAsync(user));
     if (result === true) {
