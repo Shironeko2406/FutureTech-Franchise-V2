@@ -24,6 +24,7 @@ import HomeAgencyManager from "./AgencyManager/Page/HomeAgencyManager/HomeAgency
 import CourseManager from "./Manager/Page/Course/CourseManager";
 import CourseAdmin from "./Admin/Page/Course/CourseAdmin";
 import SlotManager from "./Manager/Page/Slot/SlotManager";
+import ChangePassword from "./Student/Page/ChangePassword/ChangePassword";
 
 function App() {
   return (
@@ -43,25 +44,26 @@ function App() {
             <Route path="admin" element={<TempUI />}>
               <Route path="" element={<Home />} />
               <Route path="franchise" element={<FranchiseManagement />} />
-              <Route path="course" element={<CourseAdmin/>} />
+              <Route path="course" element={<CourseAdmin />} />
             </Route>
           </Route>
 
           <Route element={<ProtectedRoute requiredRole="AgencyManager" />}>
-            <Route path="agency-manager" element={<TempUIAgencyManager/>} >
-              <Route path="" element={<HomeAgencyManager/>} />
+            <Route path="agency-manager" element={<TempUIAgencyManager />} >
+              <Route path="" element={<HomeAgencyManager />} />
             </Route>
           </Route>
 
           <Route element={<ProtectedRoute requiredRole="Student" />}>
-            <Route path="student" element={<TempUIStudent/>} >
-              <Route path="" element={<HomeStudentNoti/>} />
+            <Route path="student" element={<TempUIStudent />} >
+              <Route path="" element={<HomeStudentNoti />} />
+              <Route path="change-password" element={<ChangePassword />} />
             </Route>
           </Route>
-          
-          <Route path="student-page" element={<TempUIStudent/>} >
-            <Route path="" element={<HomeStudent/>} />
-            <Route path="course-detail" element={<CourseDetail/>} />
+
+          <Route path="student-page" element={<TempUIStudent />} >
+            <Route path="" element={<HomeStudent />} />
+            <Route path="course-detail" element={<CourseDetail />} />
 
           </Route>
 
@@ -72,9 +74,9 @@ function App() {
           <Route element={<ProtectedRoute requiredRole="Manager" />}>
             <Route path="manager" element={<TempUIManager />}>
               <Route path="" element={<HomeManager />} />
-              <Route path="consult" element={<ConsultationManagement/>} />
-              <Route path="course" element={<CourseManager/>} />
-              <Route path="slot" element={<SlotManager/>} />
+              <Route path="consult" element={<ConsultationManagement />} />
+              <Route path="course" element={<CourseManager />} />
+              <Route path="slot" element={<SlotManager />} />
 
             </Route>
           </Route>
