@@ -24,6 +24,7 @@ import HomeAgencyManager from "./AgencyManager/Page/HomeAgencyManager/HomeAgency
 import CourseManager from "./Manager/Page/Course/CourseManager";
 import CourseAdmin from "./Admin/Page/Course/CourseAdmin";
 import SlotManager from "./Manager/Page/Slot/SlotManager";
+import Profile from "./Admin/Page/Profile/Profile";
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
               <Route path="" element={<Home />} />
               <Route path="franchise" element={<FranchiseManagement />} />
               <Route path="course" element={<CourseAdmin/>} />
+              <Route path="profile" element={<Profile/>} />
             </Route>
           </Route>
 
