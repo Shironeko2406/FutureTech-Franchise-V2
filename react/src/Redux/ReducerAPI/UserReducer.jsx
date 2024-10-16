@@ -4,6 +4,7 @@ import { message } from "antd";
 
 const initialState = {
   userData: [],
+  userProfile:{}
 };
 
 const UserReducer = createSlice({
@@ -13,10 +14,13 @@ const UserReducer = createSlice({
     setUserData: (state, action) => {
       state.userData = action.payload;
     },
+    setUserProfile: (state, action)=>{
+      state.userProfile = action.payload
+    }
   },
 });
 
-export const { setUserData } = UserReducer.actions;
+export const { setUserData, setUserProfile } = UserReducer.actions;
 
 export default UserReducer.reducer;
 //------------API-CALL-------
@@ -79,6 +83,21 @@ export const ChangePasswordActionAsync = (passwordData) => {
       console.error(error);
       message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
       return false;
+    }
+  };
+};
+
+export const GetUserLoginActionAsync = () => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.get(`/api/v1/users/mine`);
+      if (res.isSuccess && res.data) {
+        dispatch(setUserProfile(res.data))
+      } else {
+        message.error(`${res.message}`);
+      }
+    } catch (error) {
+      console.error(error);
     }
   };
 };

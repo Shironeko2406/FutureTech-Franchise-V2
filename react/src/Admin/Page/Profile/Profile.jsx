@@ -1,6 +1,40 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useFormik } from "formik";
+import { useDispatch, useSelector } from "react-redux";
+import { GetUserLoginActionAsync } from "../../../Redux/ReducerAPI/UserReducer";
+
+const user = {
+  id: "bd8cdbbf-a88d-4a60-b273-883444cc93c4",
+  role: "Administrator",
+  userName: "Administrator",
+  email: "nthieu24062002@gmail.com",
+  fullName: "Nguyễn Trung Hiếu",
+  about: "This is my bio.",
+};
 
 const Profile = () => {
+  const dispatch = useDispatch();
+  const { userProfile } = useSelector((state) => state.UserReducer);
+  const [isEditing, setIsEditing] = useState(false);
+
+  useEffect(() => {
+    dispatch(GetUserLoginActionAsync());
+  }, []);
+
+  const userUpdate = useFormik({
+    initialValues: {
+      userName: userProfile.userName || "",
+      email: userProfile.email || "",
+      fullName: userProfile.fullName || "",
+      about: "",
+    },
+    enableReinitialize: true,
+    onSubmit: (values) => {
+      console.log(values);
+      setIsEditing(false);
+    },
+  });
+
   return (
     <div className="card">
       <div className="card-body">
@@ -13,7 +47,7 @@ const Profile = () => {
                   style={{ height: 140, backgroundColor: "rgb(233, 236, 239)" }}
                 >
                   <img
-                    src="https://scontent.fsgn2-7.fna.fbcdn.net/v/t39.30808-1/352800632_1718158735281941_3317771396889960595_n.jpg?stp=dst-jpg_s200x200&_nc_cat=108&ccb=1-7&_nc_sid=0ecb9b&_nc_ohc=gFMQupBqsFIQ7kNvgFS6y7a&_nc_ht=scontent.fsgn2-7.fna&_nc_gid=Arb-HDX_s40_OKzOgoCXfgX&oh=00_AYBArqpyfBcvigvOpXXOGsxz2llcPvazMfOLIhRs3hBGMA&oe=6711AD91"
+                    src={userProfile?.urlImage}
                     alt="Description of image"
                     style={{
                       width: "140px",
@@ -25,8 +59,10 @@ const Profile = () => {
             </div>
             <div className="col d-flex flex-column flex-sm-row justify-content-between mb-3">
               <div className="text-center text-sm-start mb-2 mb-sm-0">
-                <h4 className="pt-sm-2 pb-1 mb-0 text-nowrap">John Smith</h4>
-                <p className="mb-0">@johnny.s</p>
+                <h4 className="pt-sm-2 pb-1 mb-0 text-nowrap">
+                  {userProfile?.fullName}
+                </h4>
+                <p className="mb-0">{userProfile?.userName}</p>
                 <div className="text-muted">
                   <small>Last seen 2 hours ago</small>
                 </div>
@@ -38,7 +74,7 @@ const Profile = () => {
                 </div>
               </div>
               <div className="text-center text-sm-end">
-                <span className="badge bg-secondary">administrator</span>
+                <span className="badge bg-secondary">{userProfile?.role}</span>
                 <div className="text-muted">
                   <small>Joined 09 Dec 2017</small>
                 </div>
@@ -47,7 +83,7 @@ const Profile = () => {
           </div>
 
           <div className="tab-content pt-3">
-            <form className="form">
+            <form className="form" onSubmit={userUpdate.handleSubmit}>
               <div className="row">
                 <div className="col-12 col-md-6">
                   <div className="form-group">
@@ -55,9 +91,10 @@ const Profile = () => {
                     <input
                       className="form-control"
                       type="text"
-                      name="name"
-                      placeholder="John Smith"
-                      defaultValue="John Smith"
+                      name="fullName"
+                      readOnly={!isEditing}
+                      value={userUpdate.values.fullName}
+                      onChange={userUpdate.handleChange}
                     />
                   </div>
                 </div>
@@ -67,9 +104,10 @@ const Profile = () => {
                     <input
                       className="form-control"
                       type="text"
-                      name="username"
-                      placeholder="johnny.s"
-                      defaultValue="johnny.s"
+                      name="userName"
+                      readOnly={!isEditing}
+                      value={userUpdate.values.userName}
+                      onChange={userUpdate.handleChange}
                     />
                   </div>
                 </div>
@@ -81,7 +119,10 @@ const Profile = () => {
                     <input
                       className="form-control"
                       type="text"
-                      placeholder="user@example.com"
+                      name="email"
+                      readOnly={!isEditing}
+                      value={userUpdate.values.email}
+                      onChange={userUpdate.handleChange}
                     />
                   </div>
                 </div>
@@ -92,9 +133,11 @@ const Profile = () => {
                     <label>About</label>
                     <textarea
                       className="form-control"
+                      name="about"
                       rows={5}
-                      placeholder="My Bio"
-                      defaultValue={""}
+                      readOnly={!isEditing}
+                      value={userUpdate.values.about}
+                      onChange={userUpdate.handleChange}
                     />
                   </div>
                 </div>
@@ -102,9 +145,31 @@ const Profile = () => {
 
               <div className="row">
                 <div className="col d-flex justify-content-end">
-                  <button className="btn btn-primary" type="submit">
-                    Save Changes
-                  </button>
+                  {isEditing ? (
+                    <>
+                      <button
+                        className="btn btn-danger me-2"
+                        type="button"
+                        onClick={() => {
+                          setIsEditing(false);
+                          userUpdate.resetForm();
+                        }}
+                      >
+                        Cancel
+                      </button>
+                      <button className="btn btn-primary" type="submit">
+                        Save
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      className="btn btn-primary"
+                      type="button"
+                      onClick={() => setIsEditing(true)}
+                    >
+                      Update
+                    </button>
+                  )}
                 </div>
               </div>
             </form>
