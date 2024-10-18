@@ -1,0 +1,33 @@
+
+/* Custom schedule table */
+
+.rbc-header {
+    color: white;
+    font-size: 14px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 36px !important;
+    background: #17405d;
+  }
+
+  .rbc-allday-cell{
+    display: none;
+  }
+
+  .rbc-time-header-cell .rbc-today {
+    background-color: #04aa6d !important;
+  }
+  
+  .rbc-time-slot {
+    color: #74a4c3;
+  }
+
+  .rbc-time-slot:not(.rbc-today .rbc-time-slot) {
+    background-color: #eff4f7;
+  }
+
+  /* Events styles */
+  .rbc-events-container{
+    width: 100%;
+  }

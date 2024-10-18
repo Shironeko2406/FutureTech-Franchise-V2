@@ -92,7 +92,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
             <li className="sidebar-item">
               <NavLink
                 className="sidebar-link"
-                to="#"
+                to="/student/schedule"
                 aria-expanded="false"
               >
                 <span>
@@ -101,7 +101,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
                     className="fs-6"
                   />
                 </span>
-                <span className="hide-menu">Forms</span>
+                <span className="hide-menu">Schedule</span>
               </NavLink>
             </li>
             <li className="sidebar-item">
@@ -125,7 +125,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
             <li className="sidebar-item">
               <NavLink
                 className="sidebar-link"
-                to="/manager/consult"
+                to="#"
               >
                 <span>
                   <iconify-icon
@@ -140,7 +140,6 @@ const LeftSidebar = ({ onSidebarToggle }) => {
               <NavLink
                 className="sidebar-link"
                 to="#"
-                aria-expanded="false"
               >
                 <span>
                   <iconify-icon
@@ -162,7 +161,6 @@ const LeftSidebar = ({ onSidebarToggle }) => {
               <NavLink
                 className="sidebar-link"
                 to="#"
-                aria-expanded="false"
               >
                 <span>
                   <iconify-icon

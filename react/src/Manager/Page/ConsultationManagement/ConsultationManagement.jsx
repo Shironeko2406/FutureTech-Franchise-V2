@@ -13,7 +13,7 @@ const ConsultationManagement = () => {
   const dispatch = useDispatch();
   const [status, setStatus] = useState("Consulted");
   const [pageIndex, setPageIndex] = useState(1);
-  const [pageSize] = useState(6);
+  const [pageSize] = useState(8);
 
   useEffect(() => {
     dispatch(GetFranchiseRegistrationConsultActionAsync(status, pageIndex, pageSize));

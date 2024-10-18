@@ -2,9 +2,10 @@ import React, { useState } from 'react'
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import { OverlayTrigger, Popover } from 'react-bootstrap';
+
 
 const localizer = momentLocalizer(moment);
-
 
 const ScheduleStudent = () => {
   const [events, setEvents] = useState([
@@ -75,9 +76,7 @@ const getRandomColor = () => {
       display: "block",
     };
   
-    return {
-      style,
-    };
+    return {style};
   };
 
   return (
@@ -85,23 +84,13 @@ const getRandomColor = () => {
       <Calendar
         localizer={localizer}
         events={events}
-        startAccessor="start"
-        endAccessor="end"
+        defaultDate={new Date()}
         defaultView="week"
         style={{ height: "100%" }}
-        selectable
         step={120} // Mỗi slot là 2 giờ
         timeslots={1} // Hiển thị 1 slot cho mỗi khoảng thời gian
         formats={customFormats} // Sử dụng custom format
         eventPropGetter={eventStyleGetter} // Sử dụng hàm tùy chỉnh cho sự kiện
-        onSelectEvent={(event) => alert(`You clicked on event: ${event.title}`)}
-        onSelectSlot={(slotInfo) =>
-          alert(
-            `You selected slot from ${moment(slotInfo.start).format(
-              "MMMM Do YYYY, h:mm a"
-            )} to ${moment(slotInfo.end).format("MMMM Do YYYY, h:mm a")}`
-          )
-        }
         min={new Date(2024, 9, 16, 8, 0)} // Thời gian bắt đầu 8:00 AM
         max={new Date(2024, 9, 16, 17, 0)} // Thời gian kết thúc 5:00 PM
       />
