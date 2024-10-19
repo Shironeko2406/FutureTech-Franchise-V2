@@ -41,6 +41,14 @@ const ProtectedRoute = ({ requiredRole }) => {
         return <Navigate to="/instructor" />;
       case "Manager":
         return <Navigate to="/manager" />;
+      case "SystemInstructor":
+        return <Navigate to="/system-instructor" />;
+      case "Consultant":
+        return <Navigate to="/consultant" />;
+      case "Technician":
+        return <Navigate to="/technician" />;
+      case "AgencyStaff":
+        return <Navigate to="/agency-staff" />;
 
       default:
         return <Navigate to="/" />; // Redirect to login if role is invalid or undefined

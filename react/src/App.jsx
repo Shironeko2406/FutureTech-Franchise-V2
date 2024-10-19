@@ -37,11 +37,9 @@ function App() {
             <Route path="" element={<Login></Login>} />
             <Route path="register" element={<Register></Register>} />
             <Route path="forgot-password" element={<ForgotPassword />} />
-            <Route
-              path="forgot-password/reset-password"
-              element={<ResetPassword />}
-            />
+            <Route path="forgot-password/reset-password" element={<ResetPassword />} />
           </Route>
+
           <Route element={<ProtectedRoute requiredRole="Administrator" />}>
             <Route path="admin" element={<TempUI />}>
               <Route path="" element={<Home />} />
@@ -65,12 +63,6 @@ function App() {
             </Route>
           </Route>
 
-          <Route path="student-page" element={<TempUIStudent />} >
-            <Route path="" element={<HomeStudent />} />
-            <Route path="course-detail" element={<CourseDetail />} />
-
-          </Route>
-
           <Route element={<ProtectedRoute requiredRole="Instructor" />}>
             <Route path="instructor" element={<HomeInstructor />} />
           </Route>
@@ -81,8 +73,14 @@ function App() {
               <Route path="consult" element={<ConsultationManagement />} />
               <Route path="course" element={<CourseManager />} />
               <Route path="slot" element={<SlotManager />} />
-
             </Route>
+          </Route>
+
+
+          {/*Test page */}
+          <Route path="student-page" element={<TempUIStudent />} >
+            <Route path="" element={<HomeStudent />} />
+            <Route path="course-detail" element={<CourseDetail />} />
           </Route>
         </Routes>
       </Provider>

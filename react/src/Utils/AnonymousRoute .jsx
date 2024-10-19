@@ -24,7 +24,7 @@ const AnonymousRoute = () => {
     switch (role) {
       case "Administrator":
         return <Navigate to="/admin" replace />;
-        case "AgencyManager":
+      case "AgencyManager":
         return <Navigate to="/agency-manager" replace />;
       case "Student":
         return <Navigate to="/student" replace />;
@@ -32,6 +32,14 @@ const AnonymousRoute = () => {
         return <Navigate to="/instructor" replace />;
       case "Manager":
         return <Navigate to="/manager" replace />;
+      case "SystemInstructor":
+        return <Navigate to="/system-instructor" replace />;
+      case "Consultant":
+        return <Navigate to="/consultant" replace />;
+      case "Technician":
+        return <Navigate to="/technician" replace />;
+      case "AgencyStaff":
+        return <Navigate to="/agency-staff" replace />;
       default:
         return <Navigate to="/" replace />;
     }
