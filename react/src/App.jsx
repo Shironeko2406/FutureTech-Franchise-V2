@@ -21,12 +21,13 @@ import CourseDetail from "./Student/Page/CourseDetail/CourseDetail";
 import HomeStudentNoti from "./Student/Page/HomeStudentNoti";
 import TempUIAgencyManager from "./AgencyManager/TempUIAgencyManager/TempUIAgencyManager";
 import HomeAgencyManager from "./AgencyManager/Page/HomeAgencyManager/HomeAgencyManager";
-import CourseManager from "./Manager/Page/Course/CourseManager";
 import CourseAdmin from "./Admin/Page/Course/CourseAdmin";
 import SlotManager from "./Manager/Page/Slot/SlotManager";
 import Profile from "./Admin/Page/Profile/Profile";
 import ChangePassword from "./Student/Page/ChangePassword/ChangePassword";
 import ScheduleStudent from "./Student/Page/Schedule/ScheduleStudent";
+import CourseCategoryManager from "./Manager/Page/CourseCategory/CourseCategoryManager";
+import CourseManage from "./Manager/Page/CorseManager/CourseManage";
 
 function App() {
   return (
@@ -44,7 +45,7 @@ function App() {
             <Route path="admin" element={<TempUI />}>
               <Route path="" element={<Home />} />
               <Route path="franchise" element={<FranchiseManagement />} />
-              <Route path="course" element={<CourseAdmin/>} />
+              <Route path="course" element={<CourseAdmin/>} />  {/*sửa lại sau*/ }
               <Route path="profile" element={<Profile/>} />
             </Route>
           </Route>
@@ -71,7 +72,8 @@ function App() {
             <Route path="manager" element={<TempUIManager />}>
               <Route path="" element={<HomeManager />} />
               <Route path="consult" element={<ConsultationManagement />} />
-              <Route path="course" element={<CourseManager />} />
+              <Route path="course-category" element={<CourseCategoryManager/>} />
+              <Route path="course" element={<CourseManage/>} />
               <Route path="slot" element={<SlotManager />} />
             </Route>
           </Route>
