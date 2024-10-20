@@ -11,7 +11,7 @@ import {
   GetCourseCategoryActionAsync,
 } from "../../../Redux/ReducerAPI/CourseCategoryReducer";
 
-const CourseManager = () => {
+const CourseCategoryManager = () => {
   const { courseCategory } = useSelector(
     (state) => state.CourseCategoryReducer
   );
@@ -163,7 +163,7 @@ const CourseManager = () => {
   return (
     <div className="card">
       <div className="card-body">
-        <h5 className="card-title pb-3">Course List</h5>
+        <h5 className="card-title pb-3">Course Category List</h5>
         <div className="table-responsive">
           <Table
             bordered
@@ -177,4 +177,4 @@ const CourseManager = () => {
   );
 };
 
-export default CourseManager;
+export default CourseCategoryManager;
