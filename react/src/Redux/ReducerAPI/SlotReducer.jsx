@@ -16,7 +16,7 @@ const SlotReducer = createSlice({
   },
 });
 
-export const {setSlotData} = SlotReducer.actions;
+export const { setSlotData } = SlotReducer.actions;
 
 export default SlotReducer.reducer;
 //----------API CALL--------------
@@ -46,3 +46,49 @@ export const DeleteSlotActionAsync = (id) => {
     }
   };
 };
+
+export const AddSlotActionAsync = (slotData) => {
+  return async (dispatch) => {
+    // try {
+    //   // Gọi API đổi mật khẩu
+    //   const res = await httpClient.post(`/api/v1/users/change-password`, slotData);
+
+    //   if (res.isSuccess && res.data) {
+    //     message.success(`${res.message}`);
+    //     return true;
+    //   } else if (res.isSuccess && !res.data) {
+    //     message.error(`${res.message}`);
+    //     return false;
+    //   } else {
+    //     throw new Error(`${res.message}`);
+    //   }
+    // } catch (error) {
+    //   console.error(error);
+    //   message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
+    //   return false;
+    // }
+  };
+};
+
+export const UpdateSlotActionAsync = (slotId, slotNewData) => {
+  return async (dispatch) => {
+    // try {
+    //   // Gọi API đổi mật khẩu
+    //   const res = await httpClient.post(`/api/v1/users/change-password`, slotData);
+
+    //   if (res.isSuccess && res.data) {
+    //     message.success(`${res.message}`);
+    //     return true;
+    //   } else if (res.isSuccess && !res.data) {
+    //     message.error(`${res.message}`);
+    //     return false;
+    //   } else {
+    //     throw new Error(`${res.message}`);
+    //   }
+    // } catch (error) {
+    //   console.error(error);
+    //   message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
+    //   return false;
+    // }
+  };
+};  

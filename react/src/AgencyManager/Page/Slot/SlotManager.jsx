@@ -1,24 +1,23 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Button, Input, Popconfirm, Space, Table } from "antd";
-import {
-  DeleteOutlined,
-  EditOutlined,
-  SearchOutlined,
-} from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, SearchOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { useDispatch, useSelector } from "react-redux";
-import { DeleteSlotActionAsync, GetSlotActionAsync } from "../../../Redux/ReducerAPI/SlotReducer";
+import { DeleteSlotActionAsync, GetSlotActionAsync, AddSlotActionAsync, UpdateSlotActionAsync } from "../../../Redux/ReducerAPI/SlotReducer";
+import SlotModal from "../../Modal/SlotModal";
 
 const SlotManager = () => {
-  const {slotData} = useSelector((state)=> state.SlotReducer)
+  const { slotData } = useSelector((state) => state.SlotReducer);
   const dispatch = useDispatch();
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [editingSlot, setEditingSlot] = useState(null); // Lưu thông tin slot đang được chỉnh sửa
   const searchInput = useRef(null);
 
-  useEffect(()=>{
-    dispatch(GetSlotActionAsync())
-  },[])
+  useEffect(() => {
+    dispatch(GetSlotActionAsync());
+  }, []);
 
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
@@ -31,12 +30,30 @@ const SlotManager = () => {
     setSearchText("");
   };
 
-  const handleUpdate = (id) => {
-    console.log("Cập nhật slot:", id);
+  const handleUpdate = (slot) => {
+    setEditingSlot(slot); // Lưu thông tin slot cần chỉnh sửa
+    setIsModalVisible(true); // Hiển thị modal với dữ liệu của slot đang chỉnh sửa
   };
 
   const handleDelete = (id) => {
-    dispatch(DeleteSlotActionAsync(id))
+    dispatch(DeleteSlotActionAsync(id));
+  };
+
+  // Chỉ thêm mới slot, không xử lý cập nhật
+  const handleAddSlot = (newSlot) => {
+    dispatch(AddSlotActionAsync(newSlot)).then(() => {
+      dispatch(GetSlotActionAsync());
+      setIsModalVisible(false); // Đóng modal sau khi thêm mới
+    });
+  };
+
+  // Chỉ cập nhật slot hiện tại
+  const handleUpdateSlot = (updatedSlot) => {
+    dispatch(UpdateSlotActionAsync({ id: editingSlot.id, ...updatedSlot })).then(() => {
+      dispatch(GetSlotActionAsync());
+      setEditingSlot(null); // Xóa thông tin slot đang chỉnh sửa
+      setIsModalVisible(false); // Đóng modal sau khi cập nhật
+    });
   };
 
   const getColumnSearchProps = (dataIndex) => ({
@@ -75,20 +92,6 @@ const SlotManager = () => {
           >
             Reset
           </Button>
-          <Button
-            type="link"
-            size="small"
-            onClick={() => {
-              confirm({ closeDropdown: false });
-              setSearchText(selectedKeys[0]);
-              setSearchedColumn(dataIndex);
-            }}
-          >
-            Filter
-          </Button>
-          <Button type="link" size="small" onClick={() => close()}>
-            Close
-          </Button>
         </Space>
       </div>
     ),
@@ -117,7 +120,7 @@ const SlotManager = () => {
       dataIndex: "name",
       key: "name",
       width: "20%",
-      ...getColumnSearchProps("name"), // Chỉ tìm kiếm theo tên
+      ...getColumnSearchProps("name"),
     },
     {
       title: "Giờ bắt đầu",
@@ -142,7 +145,7 @@ const SlotManager = () => {
           <Button
             type="link"
             icon={<EditOutlined />}
-            onClick={() => handleUpdate(record.id)}
+            onClick={() => handleUpdate(record)} // Sửa thông tin slot
           />
           <Popconfirm
             title="Xác nhận xóa slot này?"
@@ -160,7 +163,16 @@ const SlotManager = () => {
   return (
     <div className="card">
       <div className="card-body">
-        <h5 className="card-title pb-3">Danh Sách Slot Học</h5>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+          <h5 className="card-title">Danh Sách Slot Học</h5>
+          <Button
+            type="primary"
+            onClick={() => { setIsModalVisible(true); setEditingSlot(null); }} // Hiển thị modal cho thêm mới
+          >
+            Thêm Slot
+          </Button>
+        </div>
+
         <div className="table-responsive">
           <Table
             bordered
@@ -169,6 +181,13 @@ const SlotManager = () => {
             rowKey="id"
           />
         </div>
+
+        <SlotModal
+          visible={isModalVisible}
+          onCancel={() => { setIsModalVisible(false); setEditingSlot(null); }}
+          onCreate={editingSlot ? handleUpdateSlot : handleAddSlot}
+          initialValues={editingSlot}
+        />
       </div>
     </div>
   );

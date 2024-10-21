@@ -23,9 +23,9 @@ import TempUIAgencyManager from "./AgencyManager/TempUIAgencyManager/TempUIAgenc
 import HomeAgencyManager from "./AgencyManager/Page/HomeAgencyManager/HomeAgencyManager";
 import CourseManager from "./Manager/Page/Course/CourseManager";
 import CourseAdmin from "./Admin/Page/Course/CourseAdmin";
-import SlotManager from "./Manager/Page/Slot/SlotManager";
 import Profile from "./Admin/Page/Profile/Profile";
 import ChangePassword from "./Student/Page/ChangePassword/ChangePassword";
+import SlotManager from "./AgencyManager/Page/Slot/SlotManager";
 
 function App() {
   return (
@@ -45,14 +45,15 @@ function App() {
             <Route path="admin" element={<TempUI />}>
               <Route path="" element={<Home />} />
               <Route path="franchise" element={<FranchiseManagement />} />
-              <Route path="course" element={<CourseAdmin/>} />
-              <Route path="profile" element={<Profile/>} />
+              <Route path="course" element={<CourseAdmin />} />
+              <Route path="profile" element={<Profile />} />
             </Route>
           </Route>
 
           <Route element={<ProtectedRoute requiredRole="AgencyManager" />}>
             <Route path="agency-manager" element={<TempUIAgencyManager />} >
               <Route path="" element={<HomeAgencyManager />} />
+              <Route path="slot" element={<SlotManager />} />
             </Route>
           </Route>
 
@@ -78,7 +79,6 @@ function App() {
               <Route path="" element={<HomeManager />} />
               <Route path="consult" element={<ConsultationManagement />} />
               <Route path="course" element={<CourseManager />} />
-              <Route path="slot" element={<SlotManager />} />
 
             </Route>
           </Route>
