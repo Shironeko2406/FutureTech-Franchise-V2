@@ -29,7 +29,7 @@ const Login = () => {
             case "Student":
               navigate("/student");
               break;
-            case "Instuctor":
+            case "Instructor":
               navigate("/instructor");
               break;
             case "Manager":

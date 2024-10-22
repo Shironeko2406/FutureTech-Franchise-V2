@@ -2,13 +2,12 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 
 const LeftSidebar = ({ onSidebarToggle }) => {
-  
   return (
     <aside className="left-sidebar">
       {/* Sidebar scroll*/}
       <div>
         <div className="brand-logo d-flex align-items-center justify-content-between">
-          <NavLink to="/admin" className="text-nowrap logo-img">
+          <NavLink to="/instructor" className="text-nowrap logo-img">
             <img src="/assets/images/logos/logo-light.svg" alt="" />
           </NavLink>
           <div
@@ -29,7 +28,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
             <li className="sidebar-item">
               <NavLink
                 className="sidebar-link"
-                to="/admin"
+                to="/manager"
                 aria-expanded="false"
               >
                 <span>
@@ -46,11 +45,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
               <span className="hide-menu">Management</span>
             </li>
             <li className="sidebar-item">
-              <NavLink
-                className="sidebar-link"
-                to="#"
-                aria-expanded="false"
-              >
+              <NavLink className="sidebar-link" to="#" aria-expanded="false">
                 <span>
                   <iconify-icon
                     icon="solar:layers-minimalistic-bold-duotone"
@@ -61,11 +56,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
               </NavLink>
             </li>
             <li className="sidebar-item">
-              <NavLink
-                className="sidebar-link"
-                to="#"
-                aria-expanded="false"
-              >
+              <NavLink className="sidebar-link" to="#" aria-expanded="false">
                 <span>
                   <iconify-icon
                     icon="solar:danger-circle-bold-duotone"
@@ -76,24 +67,20 @@ const LeftSidebar = ({ onSidebarToggle }) => {
               </NavLink>
             </li>
             <li className="sidebar-item">
-              <NavLink
-                className="sidebar-link"
-                to="/admin/course-category"
-                aria-expanded="false"
-              >
+              <NavLink className="sidebar-link" to="#" aria-expanded="false">
                 <span>
                   <iconify-icon
                     icon="solar:bookmark-square-minimalistic-bold-duotone"
                     className="fs-6"
                   />
                 </span>
-                <span className="hide-menu">Course category</span>
+                <span className="hide-menu">Card</span>
               </NavLink>
             </li>
             <li className="sidebar-item">
               <NavLink
                 className="sidebar-link"
-                to="#"
+                to="/instructor/schedule"
                 aria-expanded="false"
               >
                 <span>
@@ -102,15 +89,11 @@ const LeftSidebar = ({ onSidebarToggle }) => {
                     className="fs-6"
                   />
                 </span>
-                <span className="hide-menu">Forms</span>
+                <span className="hide-menu">Schedule</span>
               </NavLink>
             </li>
             <li className="sidebar-item">
-              <NavLink
-                className="sidebar-link"
-                to="#"
-                aria-expanded="false"
-              >
+              <NavLink className="sidebar-link" to="#" aria-expanded="false">
                 <span>
                   <iconify-icon
                     icon="solar:text-field-focus-bold-duotone"
@@ -124,10 +107,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
               <span className="hide-menu">Consult</span>
             </li>
             <li className="sidebar-item">
-              <NavLink
-                className="sidebar-link"
-                to="#"
-              >
+              <NavLink className="sidebar-link" to="#">
                 <span>
                   <iconify-icon
                     icon="solar:login-3-bold-duotone"
@@ -138,11 +118,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
               </NavLink>
             </li>
             <li className="sidebar-item">
-              <NavLink
-                className="sidebar-link"
-                to="#"
-                aria-expanded="false"
-              >
+              <NavLink className="sidebar-link" to="#">
                 <span>
                   <iconify-icon
                     icon="solar:user-plus-rounded-bold-duotone"
@@ -160,11 +136,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
               <span className="hide-menu">EXTRA</span>
             </li>
             <li className="sidebar-item">
-              <NavLink
-                className="sidebar-link"
-                to="#"
-                aria-expanded="false"
-              >
+              <NavLink className="sidebar-link" to="#">
                 <span>
                   <iconify-icon
                     icon="solar:sticker-smile-circle-2-bold-duotone"
@@ -175,11 +147,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
               </NavLink>
             </li>
             <li className="sidebar-item">
-              <NavLink
-                className="sidebar-link"
-                to="#"
-                aria-expanded="false"
-              >
+              <NavLink className="sidebar-link" to="#" aria-expanded="false">
                 <span>
                   <iconify-icon
                     icon="solar:planet-3-bold-duotone"
