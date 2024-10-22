@@ -1,12 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
-
 const localizer = momentLocalizer(moment);
 
-const ScheduleStudent = () => {
+const ScheduleTeaching = () => {
   const [events, setEvents] = useState([
     {
       id: 0,
@@ -38,34 +37,34 @@ const ScheduleStudent = () => {
   };
 
   // Hàm tạo màu hex ngẫu nhiên
-const getRandomColor = () => {
-    const letters = '0123456789ABCDEF';
-    let color = '#';
+  const getRandomColor = () => {
+    const letters = "0123456789ABCDEF";
+    let color = "#";
     for (let i = 0; i < 6; i++) {
       color += letters[Math.floor(Math.random() * 16)];
     }
     return color;
   };
-  
+
   // Hàm để tính độ sáng của màu hex
   const getLuminance = (hex) => {
     // Chuyển đổi hex thành RGB
     const r = parseInt(hex.slice(1, 3), 16);
     const g = parseInt(hex.slice(3, 5), 16);
     const b = parseInt(hex.slice(5, 7), 16);
-    
+
     // Tính độ sáng
     return (0.299 * r + 0.587 * g + 0.114 * b) / 255;
   };
-  
+
   // Hàm để tùy chỉnh các thuộc tính CSS cho sự kiện
   const eventStyleGetter = (event) => {
     const backgroundColor = getRandomColor(); // Sử dụng màu ngẫu nhiên
     const luminance = getLuminance(backgroundColor); // Tính độ sáng
-  
+
     // Nếu độ sáng nhỏ hơn 0.5, sử dụng màu chữ trắng; nếu không thì sử dụng đen
-    const textColor = luminance < 0.5 ? 'white' : 'black';
-  
+    const textColor = luminance < 0.5 ? "white" : "black";
+
     const style = {
       backgroundColor: backgroundColor,
       borderRadius: "5px",
@@ -74,10 +73,9 @@ const getRandomColor = () => {
       border: "0px",
       display: "block",
     };
-  
-    return {style};
-  };
 
+    return { style };
+  };
   return (
     <div style={{ height: "600px" }}>
       <Calendar
@@ -94,7 +92,7 @@ const getRandomColor = () => {
         max={new Date(2024, 9, 16, 17, 0)} // Thời gian kết thúc 5:00 PM
       />
     </div>
-  )
-}
+  );
+};
 
-export default ScheduleStudent
+export default ScheduleTeaching;

@@ -11,7 +11,7 @@ import {
   GetCourseCategoryActionAsync,
 } from "../../../Redux/ReducerAPI/CourseCategoryReducer";
 
-const CourseAdmin = () => {
+const CourseCategoryAdmin = () => {
   const { courseCategory } = useSelector(
     (state) => state.CourseCategoryReducer
   );
@@ -178,4 +178,4 @@ const CourseAdmin = () => {
   );
 };
 
-export default CourseAdmin;
+export default CourseCategoryAdmin;
