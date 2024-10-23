@@ -340,6 +340,7 @@ import { GetCourseActionAsync, UpdateStatusCourseActionAsync } from "../../../Re
 import { CheckCircleOutlined, CheckOutlined, ClockCircleOutlined, CloseCircleOutlined, CloseOutlined, EditOutlined, PauseOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import CreateCourseModal from "../../Modal/CreateCourseModal";
 import { GetCourseCategoryActionAsync } from "../../../Redux/ReducerAPI/CourseCategoryReducer";
+import { NavLink } from "react-router-dom";
 
 const statusItems = [
   { label: "Chờ duyệt", key: "PendingApproval", icon: <ClockCircleOutlined /> }, // Chờ phê duyệt
@@ -452,6 +453,7 @@ const CourseManage = () => {
       title: "Tên môn học",
       dataIndex: "name",
       key: "name",
+      render: (text, record)=>(<NavLink to={`/manager/course-detail/${record.id}`}>{text}</NavLink>),
       ...getColumnSearchProps(), // Apply search props to the column
     },
     {
@@ -531,6 +533,7 @@ const CourseManage = () => {
               showSizeChanger: true,
               pageSizeOptions: ["10", "20", "50"],
             }}
+            scroll={{ x: 768 }}
           />
         </div>
       </div>
