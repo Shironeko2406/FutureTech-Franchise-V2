@@ -4,6 +4,7 @@ import { message } from "antd";
 
 const initialState = {
   course: [],
+  courseById: {},
   totalPagesCount: 0
 };
 
@@ -14,11 +15,14 @@ const CourseReducer = createSlice({
     setCourse: (state, action)=>{
       state.course = action.payload.items;
       state.totalPagesCount = action.payload.totalPagesCount
+    },
+    setCourseById: (state, action)=>{
+      state.courseById = action.payload
     }
   },
 });
 
-export const {setCourse} = CourseReducer.actions;
+export const {setCourse, setCourseById} = CourseReducer.actions;
 
 export default CourseReducer.reducer;
 //---------API CALL-------------
@@ -30,6 +34,18 @@ export const GetCourseActionAsync = (search, status, pageIndex, pageSize) => {
       });
       console.log(res.data);
       dispatch(setCourse(res.data));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+};
+
+export const GetCourseByIdActionAsync = (id) => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.get(`/api/v1/courses/${id}`);
+      dispatch(setCourseById(res.data));
+      console.log(res.data)
     } catch (error) {
       console.error(error);
     }

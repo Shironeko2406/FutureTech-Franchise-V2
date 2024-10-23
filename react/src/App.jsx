@@ -31,6 +31,7 @@ import CourseManageAdmin from "./Admin/Page/CourseManageAdmin/CourseManageAdmin"
 import TempUIInstructor from "./Instructor/TempUIInstructor/TempUIInstructor";
 import ScheduleTeaching from "./Instructor/Page/ScheduleTeaching/ScheduleTeaching";
 import HomeInstructor from "./Instructor/Page/HomeInstructor/HomeInstructor";
+import CourseDetailManager from "./Manager/Page/CourseDetailManager/CourseDetailManager";
 
 function App() {
   return (
@@ -82,11 +83,9 @@ function App() {
             <Route path="manager" element={<TempUIManager />}>
               <Route path="" element={<HomeManager />} />
               <Route path="consult" element={<ConsultationManagement />} />
-              <Route
-                path="course-category"
-                element={<CourseCategoryManager />}
-              />
+              <Route path="course-category" element={<CourseCategoryManager />} />
               <Route path="course" element={<CourseManage />} />
+              <Route path="course-detail/:id" element={<CourseDetailManager/>} />
               <Route path="slot" element={<SlotManager />} />
             </Route>
           </Route>
