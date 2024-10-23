@@ -7,18 +7,19 @@ import CourseCategoryReducer from "./ReducerAPI/CourseCategoryReducer";
 import NotificationReducer from "./ReducerAPI/NotificationReducer";
 import SlotReducer from "./ReducerAPI/SlotReducer";
 import CourseReducer from "./ReducerAPI/CourseReducer";
+import ClassReducer from "./ReducerAPI/ClassReducer";
 
 export const store = configureStore({
-    reducer: {
-      number: (state = 1) => state,
-      AuthenticationReducer,
-      ConsultationReducer,
-      UserReducer,
-      ClassScheduleReducer,
-      CourseCategoryReducer,
-      NotificationReducer,
-      SlotReducer,
-      CourseReducer,
-    },
-  });
-  
+  reducer: {
+    number: (state = 1) => state,
+    AuthenticationReducer,
+    ConsultationReducer,
+    UserReducer,
+    ClassScheduleReducer,
+    CourseCategoryReducer,
+    NotificationReducer,
+    SlotReducer,
+    CourseReducer,
+    ClassReducer,
+  },
+});

@@ -28,6 +28,10 @@ import ChangePassword from "./Student/Page/ChangePassword/ChangePassword";
 import ScheduleStudent from "./Student/Page/Schedule/ScheduleStudent";
 import CourseCategoryManager from "./Manager/Page/CourseCategory/CourseCategoryManager";
 import CourseManage from "./Manager/Page/CorseManager/CourseManage";
+import TempUIInstructor from "./Instructor/TempUIInstructor/TempUIInstructor";
+import ScheduleInstructor from "./Instructor/Page/Schedule/ScheduleInstructor";
+import StudentConsultationRegistration from "./AgencyManager/Page/StudentConsultationRegistration/StudentConsultationRegistration";
+import StudentPaymentManagement from "./AgencyManager/Page/StudentPaymentManagement/StudentPaymentManagement";
 
 function App() {
   return (
@@ -45,38 +49,43 @@ function App() {
             <Route path="admin" element={<TempUI />}>
               <Route path="" element={<Home />} />
               <Route path="franchise" element={<FranchiseManagement />} />
-              <Route path="course" element={<CourseAdmin/>} />  {/*sửa lại sau*/ }
-              <Route path="profile" element={<Profile/>} />
+              <Route path="course" element={<CourseAdmin />} />  {/*sửa lại sau*/}
+              <Route path="profile" element={<Profile />} />
             </Route>
           </Route>
+          s
+          {/* <Route element={<ProtectedRoute requiredRole="AgencyManager" />}> */}
+          <Route path="agency-manager" element={<TempUIAgencyManager />} >
+            <Route path="" element={<HomeAgencyManager />} />
+            <Route path="student-consultation-registration" element={<StudentConsultationRegistration />} />
+            <Route path="student-payment-management" element={<StudentPaymentManagement />} />
+          </Route>
+          {/* </Route> */}
 
-          <Route element={<ProtectedRoute requiredRole="AgencyManager" />}>
-            <Route path="agency-manager" element={<TempUIAgencyManager />} >
-              <Route path="" element={<HomeAgencyManager />} />
-            </Route>
+          {/* <Route element={<ProtectedRoute requiredRole="Student" />}> */}
+          <Route path="student" element={<TempUIStudent />} >
+            <Route path="" element={<HomeStudentNoti />} />
+            <Route path="schedule" element={<ScheduleStudent />} />
+            <Route path="change-password" element={<ChangePassword />} />
+          </Route>
+          {/* </Route> */}
+
+          {/* <Route element={<ProtectedRoute requiredRole="Instructor" />}> */}
+          <Route path="instructor" element={<TempUIInstructor />}>
+            <Route path="" element={<HomeInstructor />} />
+            <Route path="schedule" element={<ScheduleInstructor />} />
           </Route>
 
-          <Route element={<ProtectedRoute requiredRole="Student" />}>
-            <Route path="student" element={<TempUIStudent />} >
-              <Route path="" element={<HomeStudentNoti />} />
-              <Route path="schedule" element={<ScheduleStudent/>} />
-              <Route path="change-password" element={<ChangePassword />} />
-            </Route>
-          </Route>
+          {/* </Route> */}
 
-          <Route element={<ProtectedRoute requiredRole="Instructor" />}>
-            <Route path="instructor" element={<HomeInstructor />} />
+          {/* <Route element={<ProtectedRoute requiredRole="Manager" />}> */}
+          <Route path="manager" element={<TempUIManager />}>
+            <Route path="" element={<HomeManager />} />
+            <Route path="consult" element={<ConsultationManagement />} />
+            <Route path="course-category" element={<CourseCategoryManager />} />
+            <Route path="course" element={<CourseManage />} />
           </Route>
-
-          <Route element={<ProtectedRoute requiredRole="Manager" />}>
-            <Route path="manager" element={<TempUIManager />}>
-              <Route path="" element={<HomeManager />} />
-              <Route path="consult" element={<ConsultationManagement />} />
-              <Route path="course-category" element={<CourseCategoryManager/>} />
-              <Route path="course" element={<CourseManage/>} />
-              <Route path="slot" element={<SlotManager />} />
-            </Route>
-          </Route>
+          {/* </Route> */}
 
 
           {/*Test page */}

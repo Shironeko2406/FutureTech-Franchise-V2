@@ -1,13 +1,14 @@
-import React from 'react'
-import { NavLink } from 'react-router-dom'
+import React from "react";
+import { NavLink } from "react-router-dom";
 
 const LeftSidebar = ({ onSidebarToggle }) => {
+  
   return (
     <aside className="left-sidebar">
       {/* Sidebar scroll*/}
       <div>
         <div className="brand-logo d-flex align-items-center justify-content-between">
-          <NavLink to="/manager" className="text-nowrap logo-img">
+          <NavLink to="/admin" className="text-nowrap logo-img">
             <img src="/assets/images/logos/logo-light.svg" alt="" />
           </NavLink>
           <div
@@ -28,7 +29,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
             <li className="sidebar-item">
               <NavLink
                 className="sidebar-link"
-                to="/manager"
+                to="/admin"
                 aria-expanded="false"
               >
                 <span>
@@ -77,7 +78,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
             <li className="sidebar-item">
               <NavLink
                 className="sidebar-link"
-                to="/manager/course"
+                to="#"
                 aria-expanded="false"
               >
                 <span>
@@ -86,7 +87,22 @@ const LeftSidebar = ({ onSidebarToggle }) => {
                     className="fs-6"
                   />
                 </span>
-                <span className="hide-menu">Course</span>
+                <span className="hide-menu">Card</span>
+              </NavLink>
+            </li>
+            <li className="sidebar-item">
+              <NavLink
+                className="sidebar-link"
+                to="#"
+                aria-expanded="false"
+              >
+                <span>
+                  <iconify-icon
+                    icon="solar:file-text-bold-duotone"
+                    className="fs-6"
+                  />
+                </span>
+                <span className="hide-menu">Forms</span>
               </NavLink>
             </li>
             <li className="sidebar-item">
@@ -110,7 +126,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
             <li className="sidebar-item">
               <NavLink
                 className="sidebar-link"
-                to="/manager/consult"
+                to="#"
               >
                 <span>
                   <iconify-icon
@@ -201,7 +217,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
       </div>
       {/* End Sidebar scroll*/}
     </aside>
-  )
-}
+  );
+};
 
-export default LeftSidebar
+export default LeftSidebar;
