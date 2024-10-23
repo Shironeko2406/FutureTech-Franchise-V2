@@ -333,24 +333,31 @@
 
 // export default CourseManage;
 
-import { Button, Select, Table, Input } from "antd";
 import React, { useEffect, useState } from "react";
+import { Button, Select, Table, Input, Dropdown, Menu } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import { GetCourseActionAsync } from "../../../Redux/ReducerAPI/CourseReducer";
-import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
+import { GetCourseActionAsync, UpdateStatusCourseActionAsync } from "../../../Redux/ReducerAPI/CourseReducer";
+import { CheckCircleOutlined, CheckOutlined, ClockCircleOutlined, CloseCircleOutlined, CloseOutlined, EditOutlined, PauseOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import CreateCourseModal from "../../Modal/CreateCourseModal";
 import { GetCourseCategoryActionAsync } from "../../../Redux/ReducerAPI/CourseCategoryReducer";
+
+const statusItems = [
+  { label: "Chờ duyệt", key: "PendingApproval", icon: <ClockCircleOutlined /> }, // Chờ phê duyệt
+  { label: "Công khai", key: "AvailableForFranchise", icon: <CheckCircleOutlined /> }, // public
+  { label: "Tạm đóng", key: "TemporarilySuspended", icon: <PauseOutlined /> }, // Tạm ngưng
+  { label: "Đóng", key: "Closed", icon: <CloseCircleOutlined />, style: { color: "red" } }, // Đã đóng
+];
+
 
 const CourseManage = () => {
   const { course, totalPagesCount } = useSelector(
     (state) => state.CourseReducer
   );
   const dispatch = useDispatch();
-  const [status, setStatus] = useState("Draft");
+  const [status, setStatus] = useState("");
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(7); // Default page size is 10
   const [searchTerm, setSearchTerm] = useState(""); // State for search term
-  const [searchedText, setSearchedText] = useState(""); // Text to search in the column
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
 
   useEffect(() => {
@@ -360,7 +367,7 @@ const CourseManage = () => {
 
   const handleStatusChange = (value) => {
     setStatus(value);
-    setPageIndex(1); // Reset page to 1 when status changes
+    setPageIndex(1);
   };
 
   const handlePageChange = (page, pageSize) => {
@@ -378,6 +385,10 @@ const CourseManage = () => {
   const handleReset = (clearFilters) => {
     clearFilters();
     setSearchTerm(""); // Reset search term
+  };
+
+  const handleMenuClick = (courseId, { key }) => {
+    dispatch(UpdateStatusCourseActionAsync(courseId, key, searchTerm, status, pageIndex, pageSize))
   };
 
   const getColumnSearchProps = () => ({
@@ -438,25 +449,25 @@ const CourseManage = () => {
       render: (text, record, index) => index + 1 + (pageIndex - 1) * pageSize,
     },
     {
-      title: "Course Name",
+      title: "Tên môn học",
       dataIndex: "name",
       key: "name",
       ...getColumnSearchProps(), // Apply search props to the column
     },
     {
-      title: "Code",
+      title: "Mã môn",
       dataIndex: "code",
       key: "code",
       align: "center",
     },
     {
-      title: "Number of Lessons",
+      title: "Số bài học",
       dataIndex: "numberOfLession",
       key: "numberOfLession",
       align: "center",
     },
     {
-      title: "Price",
+      title: "Giá ",
       dataIndex: "price",
       key: "price",
       align: "center",
@@ -468,16 +479,16 @@ const CourseManage = () => {
       align: "center",
       render: (text, record) => (
         <>
-          <Button
-            type="primary"
-            className="me-2"
-            onClick={() => handleApproveCourse(record.id)}
+          <Dropdown
+            menu={{
+              items: statusItems,
+              onClick: (key) => handleMenuClick(record.id, key),
+            }}
           >
-            Approve
-          </Button>
-          <Button type="danger" onClick={() => handleRejectCourse(record.id)}>
-            Reject
-          </Button>
+            <Button type="primary" className="me-2">
+              Approval
+            </Button>
+          </Dropdown>
         </>
       ),
     },
@@ -494,11 +505,16 @@ const CourseManage = () => {
               style={{ width: 150 }}
               onChange={handleStatusChange}
             >
-              <Select.Option value="Draft">Draft</Select.Option>
-              <Select.Option value="PendingApproval">
-                PendingApproval
+              <Select.Option value="">Tất cả</Select.Option>
+              <Select.Option value="Draft">Beta</Select.Option>
+              <Select.Option value="PendingApproval">Chờ duyệt</Select.Option>
+              <Select.Option value="AvailableForFranchise">
+                Công khai
               </Select.Option>
-              {/* Add more options as needed */}
+              <Select.Option value="TemporarilySuspended">
+                Tạm đóng
+              </Select.Option>
+              <Select.Option value="Closed">Đóng</Select.Option>
             </Select>
           </div>
 

@@ -54,3 +54,24 @@ export const CreateCourseActionAsync = (data, status, pageIndex, pageSize, searc
     }
   };
 };
+
+export const UpdateStatusCourseActionAsync = (courseId, statusUpdate, search, status, pageIndex, pageSize) => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.put(`/api/v1/courses/${courseId}/status`, null, {
+        params: {courseStatusEnum: statusUpdate }
+      });
+      if (res.isSuccess && res.data) {
+        message.success(`${res.message}`);
+        dispatch(GetCourseActionAsync(search, status, pageIndex, pageSize))
+        return true;
+      } else {
+        message.error(`${res.message}`);
+        return false;
+      }
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  };
+};
