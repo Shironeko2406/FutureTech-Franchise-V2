@@ -178,6 +178,7 @@ const SlotManager = () => {
             columns={columns}
             dataSource={slotData}
             rowKey="id"
+            pagination={false}
           />
         </div>
 
