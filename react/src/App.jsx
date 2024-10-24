@@ -22,9 +22,9 @@ import HomeStudentNoti from "./Student/Page/HomeStudentNoti";
 import TempUIAgencyManager from "./AgencyManager/TempUIAgencyManager/TempUIAgencyManager";
 import HomeAgencyManager from "./AgencyManager/Page/HomeAgencyManager/HomeAgencyManager";
 import CourseAdmin from "./Admin/Page/Course/CourseAdmin";
-import SlotManager from "./Manager/Page/Slot/SlotManager";
 import Profile from "./Admin/Page/Profile/Profile";
 import ChangePassword from "./Student/Page/ChangePassword/ChangePassword";
+import SlotManager from "./AgencyManager/Page/Slot/SlotManager";
 import ScheduleStudent from "./Student/Page/Schedule/ScheduleStudent";
 import CourseCategoryManager from "./Manager/Page/CourseCategory/CourseCategoryManager";
 import CourseManage from "./Manager/Page/CorseManager/CourseManage";
@@ -49,16 +49,17 @@ function App() {
             <Route path="admin" element={<TempUI />}>
               <Route path="" element={<Home />} />
               <Route path="franchise" element={<FranchiseManagement />} />
-              <Route path="course" element={<CourseAdmin />} />  {/*sửa lại sau*/}
+              <Route path="course" element={<CourseAdmin />} />
               <Route path="profile" element={<Profile />} />
             </Route>
           </Route>
-          s
+
           {/* <Route element={<ProtectedRoute requiredRole="AgencyManager" />}> */}
           <Route path="agency-manager" element={<TempUIAgencyManager />} >
             <Route path="" element={<HomeAgencyManager />} />
             <Route path="student-consultation-registration" element={<StudentConsultationRegistration />} />
             <Route path="student-payment-management" element={<StudentPaymentManagement />} />
+            <Route path="slot" element={<SlotManager />} />
           </Route>
           {/* </Route> */}
 
