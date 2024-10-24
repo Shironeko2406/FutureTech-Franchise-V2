@@ -9,26 +9,26 @@ import SlotModal from "../../Modal/SlotModal";
 const SlotManager = () => {
   const { slotData } = useSelector((state) => state.SlotReducer);
   const dispatch = useDispatch();
-  const [searchText, setSearchText] = useState("");
-  const [searchedColumn, setSearchedColumn] = useState("");
+  // const [searchText, setSearchText] = useState("");
+  // const [searchedColumn, setSearchedColumn] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [editingSlot, setEditingSlot] = useState(null); // Lưu thông tin slot đang được chỉnh sửa
-  const searchInput = useRef(null);
+  const [editingSlot, setEditingSlot] = useState(null);
+  // const searchInput = useRef(null);
 
   useEffect(() => {
     dispatch(GetSlotActionAsync());
   }, []);
 
-  const handleSearch = (selectedKeys, confirm, dataIndex) => {
-    confirm();
-    setSearchText(selectedKeys[0]);
-    setSearchedColumn(dataIndex);
-  };
+  // const handleSearch = (selectedKeys, confirm, dataIndex) => {
+  //   confirm();
+  //   setSearchText(selectedKeys[0]);
+  //   setSearchedColumn(dataIndex);
+  // };
 
-  const handleReset = (clearFilters) => {
-    clearFilters();
-    setSearchText("");
-  };
+  // const handleReset = (clearFilters) => {
+  //   clearFilters();
+  //   setSearchText("");
+  // };
 
   const handleUpdate = (slot) => {
     setEditingSlot(slot); // Lưu thông tin slot cần chỉnh sửa
@@ -42,70 +42,70 @@ const SlotManager = () => {
   // Chỉ thêm mới slot, không xử lý cập nhật
   const handleAddSlot = (newSlot) => {
     dispatch(AddSlotActionAsync(newSlot)).then(() => {
-      dispatch(GetSlotActionAsync());
-      setIsModalVisible(false); // Đóng modal sau khi thêm mới
+      setIsModalVisible(false);
     });
   };
 
   // Chỉ cập nhật slot hiện tại
   const handleUpdateSlot = (updatedSlot) => {
-    dispatch(UpdateSlotActionAsync({ id: editingSlot.id, ...updatedSlot })).then(() => {
+    console.log("Updated slot:", updatedSlot);
+    dispatch(UpdateSlotActionAsync(editingSlot.id, updatedSlot)).then(() => {
       dispatch(GetSlotActionAsync());
-      setEditingSlot(null); // Xóa thông tin slot đang chỉnh sửa
-      setIsModalVisible(false); // Đóng modal sau khi cập nhật
+      setEditingSlot(null);
+      setIsModalVisible(false);
     });
   };
 
-  const getColumnSearchProps = (dataIndex) => ({
-    filterDropdown: ({
-      setSelectedKeys,
-      selectedKeys,
-      confirm,
-      clearFilters,
-      close,
-    }) => (
-      <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
-        <Input
-          ref={searchInput}
-          placeholder={`Search ${dataIndex}`}
-          value={selectedKeys[0]}
-          onChange={(e) =>
-            setSelectedKeys(e.target.value ? [e.target.value] : [])
-          }
-          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
-          style={{ marginBottom: 8, display: "block" }}
-        />
-        <Space>
-          <Button
-            type="primary"
-            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
-            icon={<SearchOutlined />}
-            size="small"
-            style={{ width: 90 }}
-          >
-            Search
-          </Button>
-          <Button
-            onClick={() => clearFilters && handleReset(clearFilters)}
-            size="small"
-            style={{ width: 90 }}
-          >
-            Reset
-          </Button>
-        </Space>
-      </div>
-    ),
-    filterIcon: (filtered) => (
-      <SearchOutlined style={{ color: filtered ? "#1677ff" : undefined }} />
-    ),
-    onFilter: (value, record) =>
-      record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
-    onFilterDropdownOpenChange: (visible) => {
-      if (visible) {
-        setTimeout(() => searchInput.current?.select(), 100);
-      }
-    },
-  });
+  // const getColumnSearchProps = (dataIndex) => ({
+  //   filterDropdown: ({
+  //     setSelectedKeys,
+  //     selectedKeys,
+  //     confirm,
+  //     clearFilters,
+  //     close,
+  //   }) => (
+  //     <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
+  //       <Input
+  //         ref={searchInput}
+  //         placeholder={`Search ${dataIndex}`}
+  //         value={selectedKeys[0]}
+  //         onChange={(e) =>
+  //           setSelectedKeys(e.target.value ? [e.target.value] : [])
+  //         }
+  //         onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+  //         style={{ marginBottom: 8, display: "block" }}
+  //       />
+  //       <Space>
+  //         <Button
+  //           type="primary"
+  //           onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+  //           icon={<SearchOutlined />}
+  //           size="small"
+  //           style={{ width: 90 }}
+  //         >
+  //           Search
+  //         </Button>
+  //         <Button
+  //           onClick={() => clearFilters && handleReset(clearFilters)}
+  //           size="small"
+  //           style={{ width: 90 }}
+  //         >
+  //           Reset
+  //         </Button>
+  //       </Space>
+  //     </div>
+  //   ),
+  //   filterIcon: (filtered) => (
+  //     <SearchOutlined style={{ color: filtered ? "#1677ff" : undefined }} />
+  //   ),
+  //   onFilter: (value, record) =>
+  //     record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+  //   onFilterDropdownOpenChange: (visible) => {
+  //     if (visible) {
+  //       setTimeout(() => searchInput.current?.select(), 100);
+  //     }
+  //   },
+  // });
 
   const columns = [
     {
@@ -120,7 +120,6 @@ const SlotManager = () => {
       dataIndex: "name",
       key: "name",
       width: "20%",
-      ...getColumnSearchProps("name"),
     },
     {
       title: "Giờ bắt đầu",

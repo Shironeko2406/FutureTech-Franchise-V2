@@ -2,7 +2,7 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 
 const LeftSidebar = ({ onSidebarToggle }) => {
-  
+
   return (
     <aside className="left-sidebar">
       {/* Sidebar scroll*/}
@@ -108,16 +108,16 @@ const LeftSidebar = ({ onSidebarToggle }) => {
             <li className="sidebar-item">
               <NavLink
                 className="sidebar-link"
-                to="#"
+                to="/agency-manager/slot"
                 aria-expanded="false"
               >
                 <span>
                   <iconify-icon
-                    icon="solar:text-field-focus-bold-duotone"
+                    icon="mdi:clock"
                     className="fs-6"
                   />
                 </span>
-                <span className="hide-menu">Typography</span>
+                <span className="hide-menu">Slot</span>
               </NavLink>
             </li>
             <li className="nav-small-cap">

@@ -50,12 +50,12 @@ function App() {
             </Route>
           </Route>
 
-          <Route element={<ProtectedRoute requiredRole="AgencyManager" />}>
-            <Route path="agency-manager" element={<TempUIAgencyManager />} >
-              <Route path="" element={<HomeAgencyManager />} />
-              <Route path="slot" element={<SlotManager />} />
-            </Route>
+          {/* <Route element={<ProtectedRoute requiredRole="AgencyManager" />}> */}
+          <Route path="agency-manager" element={<TempUIAgencyManager />} >
+            <Route path="" element={<HomeAgencyManager />} />
+            <Route path="slot" element={<SlotManager />} />
           </Route>
+          {/* </Route> */}
 
           <Route element={<ProtectedRoute requiredRole="Student" />}>
             <Route path="student" element={<TempUIStudent />} >

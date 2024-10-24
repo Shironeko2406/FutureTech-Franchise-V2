@@ -20,8 +20,8 @@ const SlotModal = ({ visible, onCancel, onCreate, initialValues }) => {
     const handleCreate = (values) => {
         const { name, startTime, endTime } = values;
         const startTimeSpan = convertToTimeSpan(startTime);
-        const endTimeSpan = convertToTimeSpan(endTime);
-
+        const endTimeSpan = convertToTimeSpan(dayjs(endTime, 'HH:mm'));
+        console.log('Received values of form: ', values);
         onCreate({ name, startTime: startTimeSpan, endTime: endTimeSpan });
         form.resetFields();
     };
@@ -33,6 +33,10 @@ const SlotModal = ({ visible, onCancel, onCreate, initialValues }) => {
         return `${hours}:${minutes}:${seconds}`;
     };
 
+    const onStartTimeChange = (startTime) => {
+        const endTime = startTime.add(3, 'hour'); // Tự động cộng thêm 3 giờ
+        form.setFieldsValue({ endTime });
+    };
     return (
         <Modal
             open={visible}
@@ -65,15 +69,14 @@ const SlotModal = ({ visible, onCancel, onCreate, initialValues }) => {
                     label="Giờ bắt đầu"
                     rules={[{ required: true, message: 'Vui lòng chọn giờ bắt đầu!' }]}
                 >
-                    <TimePicker format="HH:mm" />
+                    <TimePicker format="HH:mm" onChange={onStartTimeChange} />
                 </Form.Item>
 
                 <Form.Item
                     name="endTime"
                     label="Giờ kết thúc"
-                    rules={[{ required: true, message: 'Vui lòng chọn giờ kết thúc!' }]}
                 >
-                    <TimePicker format="HH:mm" />
+                    <TimePicker format="HH:mm" disabled />
                 </Form.Item>
             </Form>
         </Modal>
