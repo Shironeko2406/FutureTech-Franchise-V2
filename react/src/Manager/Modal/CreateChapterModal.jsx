@@ -16,6 +16,11 @@ import { useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { CreateChapterActionAsync } from "../../Redux/ReducerAPI/CourseReducer";
 
+
+const chapter = [
+  
+];
+
 const CreateChapterModal = ({ isDrawerVisible, closeDrawer }) => {
   const [form] = Form.useForm();
   const { id } = useParams();
@@ -99,7 +104,6 @@ const CreateChapterModal = ({ isDrawerVisible, closeDrawer }) => {
       ],
     });
 
-    // Nếu cần, bạn có thể thêm logic để thông báo rằng ảnh đã bị xóa
     message.success("Image removed successfully!");
   };
 
@@ -111,17 +115,19 @@ const CreateChapterModal = ({ isDrawerVisible, closeDrawer }) => {
   };
 
   const onSubmit = (value) => {
-    dispatch(CreateChapterActionAsync(value.chapters, id))
-      .then((response) => {
-        if (response) {
-          closeDrawer();
-          form.resetFields();
-          setFileLists({});
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    // dispatch(CreateChapterActionAsync(value.chapters, id))
+    //   .then((response) => {
+    //     if (response) {
+    //       closeDrawer();
+    //       form.resetFields();
+    //       setFileLists({});
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
+
+    console.log(value.chapter)
   };
 
   return (
@@ -149,7 +155,7 @@ const CreateChapterModal = ({ isDrawerVisible, closeDrawer }) => {
         style={{ maxWidth: 600 }}
         autoComplete="off"
         initialValues={{
-          chapters: [{}],
+          chapters: chapter,
         }}
       >
         <Form.List name="chapters">
