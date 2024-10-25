@@ -18,7 +18,48 @@ import { CreateChapterActionAsync } from "../../Redux/ReducerAPI/CourseReducer";
 
 
 const chapter = [
-  
+  {
+    id: "8fef0d34-8b03-42ad-88d1-08dcf446e080",
+    number: 1,
+    topic: "Cú pháp C++",
+    description: "Làm quen cú pháp C++",
+    courseId: "1b182028-e25d-43b0-ba63-08dcf207c014",
+    chapterMaterials: [
+      {
+        id: "ac240d5d-97c0-4f65-84a5-08dcf446e082",
+        url: "https://firebasestorage.googleapis.com/v0/b/imageupdatedb.appspot.com/o/images%2FJava-Beginer.png?alt=media&token=b733bcb9-456f-42cf-bf7e-6ac88d72054a",
+        description: "des 1",
+        chapterId: "8fef0d34-8b03-42ad-88d1-08dcf446e080",
+      },
+      {
+        id: "ef2c6d11-3f71-4359-84a6-08dcf446e082",
+        url: "https://firebasestorage.googleapis.com/v0/b/imageupdatedb.appspot.com/o/images%2FJava-Beginer.png?alt=media&token=b733bcb9-456f-42cf-bf7e-6ac88d72054a",
+        description: "des 2",
+        chapterId: "8fef0d34-8b03-42ad-88d1-08dcf446e080",
+      },
+    ],
+  },
+  {
+    id: "8bfd73c5-2165-453a-88d2-08dcf446e080",
+    number: 2,
+    topic: "Vòng lặp loop C++",
+    description: "Vòng for, if elf",
+    courseId: "1b182028-e25d-43b0-ba63-08dcf207c014",
+    chapterMaterials: [
+      {
+        id: "5c1b90a4-2733-4f44-84a7-08dcf446e082",
+        url: "https://firebasestorage.googleapis.com/v0/b/imageupdatedb.appspot.com/o/images%2FJava-Beginer.png?alt=media&token=b733bcb9-456f-42cf-bf7e-6ac88d72054a",
+        description: "des 1",
+        chapterId: "8bfd73c5-2165-453a-88d2-08dcf446e080",
+      },
+      {
+        id: "70e50459-ec5b-4da1-84a8-08dcf446e082",
+        url: "https://firebasestorage.googleapis.com/v0/b/imageupdatedb.appspot.com/o/images%2FJava-Beginer.png?alt=media&token=b733bcb9-456f-42cf-bf7e-6ac88d72054a",
+        description: "des 2",
+        chapterId: "8bfd73c5-2165-453a-88d2-08dcf446e080",
+      },
+    ],
+  },
 ];
 
 const CreateChapterModal = ({ isDrawerVisible, closeDrawer }) => {
