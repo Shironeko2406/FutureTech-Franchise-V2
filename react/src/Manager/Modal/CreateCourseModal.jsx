@@ -79,7 +79,6 @@ const CreateCourseModal = ({ isDrawerVisible, closeDrawer, status, pageIndex, pa
       title="Tạo Khóa Học Mới"
       width={720}
       onClose={closeDrawer}
-      a
       open={isDrawerVisible}
       styles={{ body: { paddingBottom: 80 } }}
       footer={
