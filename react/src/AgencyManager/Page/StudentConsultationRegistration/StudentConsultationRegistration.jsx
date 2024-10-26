@@ -13,7 +13,7 @@ const StudentConsultationRegistration = () => {
     const { course } = useSelector((state) => state.CourseReducer);
     const dispatch = useDispatch();
     const [pageIndex, setPageIndex] = useState(1);
-    const [pageSize, setPageSize] = useState(2); // Default page size is 10
+    const [pageSize, setPageSize] = useState(3); // Default page size is 10
     // const [searchTerm, setSearchTerm] = useState(""); // State for search term
     const [selectedCourse, setSelectedCourse] = useState(null);
     const [selectedStudentStatus, setSelectedStudentStatus] = useState(null);
@@ -23,7 +23,6 @@ const StudentConsultationRegistration = () => {
 
     useEffect(() => {
         dispatch(GetStudentConsultationActionAsync(pageIndex, pageSize, selectedStudentStatus, selectedCourse));
-        console.log('selectedCourse', selectedCourse);
     }, [dispatch, pageIndex, pageSize, selectedStudentStatus, selectedCourse]);
 
     useEffect(() => {
@@ -40,6 +39,7 @@ const StudentConsultationRegistration = () => {
     // Row selection logic
     const onSelectChange = (newSelectedRowKeys) => {
         setSelectedRowKeys(newSelectedRowKeys);
+        console.log("Selected rows:", selectedRowKeys);
     };
     const rowSelection = {
         selectedRowKeys,
@@ -48,54 +48,12 @@ const StudentConsultationRegistration = () => {
     };
 
     const hasSelected = selectedRowKeys.length > 0;
-    // const handleColumnSearch = (selectedKeys, confirm) => {
-    //     confirm();
-    //     setSearchTerm(selectedKeys[0]); // Trigger API search with entered keyword
-    // };
 
-    // const handleReset = (clearFilters) => {
-    //     clearFilters();
-    //     setSearchTerm(""); // Reset search term
-    // };
-
-    // const getColumnSearchProps = () => ({
-    //     filterDropdown: ({
-    //         setSelectedKeys,
-    //         selectedKeys,
-    //         confirm,
-    //         clearFilters,
-    //     }) => (
-    //         <div style={{ padding: 8 }}>
-    //             <Input
-    //                 placeholder={`Search Student Name`}
-    //                 value={selectedKeys[0]}
-    //                 onChange={(e) =>
-    //                     setSelectedKeys(e.target.value ? [e.target.value] : [])
-    //                 }
-    //                 onPressEnter={() => handleColumnSearch(selectedKeys, confirm)}
-    //                 style={{ marginBottom: 8, display: "block" }}
-    //             />
-    //             <Button
-    //                 type="primary"
-    //                 onClick={() => handleColumnSearch(selectedKeys, confirm)}
-    //                 icon={<SearchOutlined />}
-    //                 size="small"
-    //                 style={{ width: 90, marginRight: 8 }}
-    //             >
-    //                 Search
-    //             </Button>
-    //             <Button onClick={() => handleReset(clearFilters)} size="small" style={{ width: 90 }}>
-    //                 Reset
-    //             </Button>
-    //         </div>
-    //     ),
-    //     filterIcon: (filtered) => (
-    //         <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
-    //     ),
-    //     onFilter: (value, record) =>
-    //         record.studentName.toString().toLowerCase().includes(value.toLowerCase()),
-    // });
-
+    // Function to handle reload and reset selected rows
+    const handleReload = () => {
+        setSelectedRowKeys([]); // Reset selected rows
+        dispatch(GetStudentConsultationActionAsync(pageIndex, pageSize, selectedStudentStatus, selectedCourse)); // Reload data
+    };
     const columns = [
         // {
         //     title: "No",
@@ -189,16 +147,15 @@ const StudentConsultationRegistration = () => {
                 <div className="card-body">
                     <h5 className="card-title mb-3">Danh Sách Học Sinh Đăng Ký Khóa Học</h5>
                     <Button
+                        className="mb-3"
                         type="primary"
-                        onClick={() => {
-                            // Handle reload action
-                            dispatch(GetStudentConsultationActionAsync(pageIndex, pageSize, selectedCourse));
-                        }}
+                        disabled={!hasSelected}
+                        onClick={handleReload}
                     >
                         Reload
                     </Button>
                     {hasSelected && (
-                        <span style={{ marginLeft: 8 }}>
+                        <span style={{ marginLeft: 8, color: 'black' }}>
                             {`Selected ${selectedRowKeys.length} items`}
                         </span>
                     )}
