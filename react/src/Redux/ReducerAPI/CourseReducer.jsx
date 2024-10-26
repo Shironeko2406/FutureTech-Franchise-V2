@@ -54,3 +54,19 @@ export const CreateCourseActionAsync = (data, status, pageIndex, pageSize, searc
     }
   };
 };
+
+export const GetAllCoursesAvailableActionAsync = () => {
+  return async (dispatch) => {
+    try {
+      const response = await httpClient.get(`api/v1/courses/available`);
+      if (response.isSuccess) {
+        dispatch(setCourse({ items: response.data }))
+      } else {
+        throw new Error(response.message)
+      }
+    } catch (error) {
+      console.error("Error fetching agencies:", error);
+      message.error("Đã xảy ra lỗi khi lấy danh sách khóa học!");
+    }
+  }
+};

@@ -2,7 +2,7 @@ import { Button, Select, Table, Input } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { SearchOutlined } from "@ant-design/icons";
-import { GetStudentConsultationActionAsync } from "../../../Redux/ReducerAPI/ClassReducer";
+import { GetStudentConsultationActionAsync } from "../../../Redux/ReducerAPI/RegisterCourseReducer";
 
 const StudentPaymentManagement = () => {
     const { studentConsultations, totalPagesCount } = useSelector(
@@ -81,7 +81,7 @@ const StudentPaymentManagement = () => {
             render: (text, record, index) => index + 1 + (pageIndex - 1) * pageSize,
         },
         {
-            title: "Student Name",
+            title: "Tên học viên",
             dataIndex: "studentName",
             key: "studentName",
         },
@@ -91,15 +91,15 @@ const StudentPaymentManagement = () => {
             key: "email",
         },
         {
-            title: "Phone Number",
+            title: "Số điện thoại",
             dataIndex: "phoneNumber",
             key: "phoneNumber",
             align: "center",
         },
         {
-            title: "Desired Course",
-            dataIndex: "desiredCourse",
-            key: "desiredCourse",
+            title: "Khóa học",
+            dataIndex: "CourseName",
+            key: "CourseName",
             align: "center",
         },
         {
@@ -108,12 +108,12 @@ const StudentPaymentManagement = () => {
             key: "preferredSchedule",
             align: "center",
         },
-        {
-            title: "Consultation Date",
-            dataIndex: "consultationDate",
-            key: "consultationDate",
-            align: "center",
-        },
+        // {
+        //     title: "Consultation Date",
+        //     dataIndex: "consultationDate",
+        //     key: "consultationDate",
+        //     align: "center",
+        // },
         {
             title: "Status",
             dataIndex: "status",
@@ -126,7 +126,7 @@ const StudentPaymentManagement = () => {
         <div>
             <div className="card">
                 <div className="card-body">
-                    <h5 className="card-title">Student Payment Management</h5>
+                    <h5 className="card-title mb-3">Thông Tin Thanh Toán Học Sinh</h5>
                     <Table
                         bordered
                         columns={columns}

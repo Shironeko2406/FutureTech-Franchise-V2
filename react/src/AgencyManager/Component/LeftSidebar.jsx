@@ -78,22 +78,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
             <li className="sidebar-item">
               <NavLink
                 className="sidebar-link"
-                to="#"
-                aria-expanded="false"
-              >
-                <span>
-                  <iconify-icon
-                    icon="solar:bookmark-square-minimalistic-bold-duotone"
-                    className="fs-6"
-                  />
-                </span>
-                <span className="hide-menu">Card</span>
-              </NavLink>
-            </li>
-            <li className="sidebar-item">
-              <NavLink
-                className="sidebar-link"
-                to="#"
+                to="student-consultation-registration"
                 aria-expanded="false"
               >
                 <span>
@@ -102,13 +87,28 @@ const LeftSidebar = ({ onSidebarToggle }) => {
                     className="fs-6"
                   />
                 </span>
-                <span className="hide-menu">Forms</span>
+                <span className="hide-menu">Enrollments</span>
               </NavLink>
             </li>
             <li className="sidebar-item">
               <NavLink
                 className="sidebar-link"
-                to="/agency-manager/slot"
+                to="student-payment-management"
+                aria-expanded="false"
+              >
+                <span>
+                  <iconify-icon
+                    icon="fluent:payment-20-filled"
+                    className="fs-6"
+                  />
+                </span>
+                <span className="hide-menu">Payments</span>
+              </NavLink>
+            </li>
+            <li className="sidebar-item">
+              <NavLink
+                className="sidebar-link"
+                to="slot"
                 aria-expanded="false"
               >
                 <span>
@@ -117,7 +117,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
                     className="fs-6"
                   />
                 </span>
-                <span className="hide-menu">Slot</span>
+                <span className="hide-menu">Slots</span>
               </NavLink>
             </li>
             <li className="nav-small-cap">

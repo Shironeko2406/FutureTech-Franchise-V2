@@ -7,7 +7,7 @@ import CourseCategoryReducer from "./ReducerAPI/CourseCategoryReducer";
 import NotificationReducer from "./ReducerAPI/NotificationReducer";
 import SlotReducer from "./ReducerAPI/SlotReducer";
 import CourseReducer from "./ReducerAPI/CourseReducer";
-import ClassReducer from "./ReducerAPI/ClassReducer";
+import RegisterCourseReducer from "./ReducerAPI/RegisterCourseReducer";
 
 export const store = configureStore({
   reducer: {
@@ -20,6 +20,6 @@ export const store = configureStore({
     NotificationReducer,
     SlotReducer,
     CourseReducer,
-    ClassReducer,
+    RegisterCourseReducer,
   },
 });

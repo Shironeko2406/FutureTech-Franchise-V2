@@ -35,8 +35,8 @@ const initialState = {
     totalPagesCount: 1,
 };
 
-const ClassReducer = createSlice({
-    name: "ClassReducer",
+const RegisterCourseReducer = createSlice({
+    name: "RegisterCourseReducer",
     initialState,
     reducers: {
         setClass: (state, action) => {
@@ -46,23 +46,25 @@ const ClassReducer = createSlice({
     },
 });
 
-export const { setClass } = ClassReducer.actions;
+export const { setClass } = RegisterCourseReducer.actions;
 
-export default ClassReducer.reducer;
+export default RegisterCourseReducer.reducer;
 
 //---------API CALL-------------
-export const GetStudentConsultationActionAsync = (search, status, pageIndex, pageSize) => {
+export const GetStudentConsultationActionAsync = (pageIndex, pageSize, studentStatus, courseId) => {
     return async (dispatch) => {
         try {
-            const res = await httpClient.get(`/api/v1/student-consultations`, {
+            console.log("pageSize", pageSize);
+            console.log("pageIndex", pageIndex);
+            const res = await httpClient.get(`/api/v1/register-course/filter`, {
                 params: {
-                    Search: search,
-                    Status: status,
+                    Status: studentStatus,
                     PageIndex: pageIndex,
                     PageSize: pageSize,
+                    CourseId: courseId,
                 },
             });
-            console.log(res.data);
+            console.log("GetStudentConsultationActionAsync: ", res.data);
             dispatch(setClass(res.data));
         } catch (error) {
             console.error(error);
