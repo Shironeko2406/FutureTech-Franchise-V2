@@ -2,76 +2,28 @@ import { Button, Select, Table, Input } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { SearchOutlined } from "@ant-design/icons";
-import { GetStudentConsultationActionAsync } from "../../../Redux/ReducerAPI/RegisterCourseReducer";
+import { GetStudentPaymentInfoActionAsync } from "../../../Redux/ReducerAPI/PaymentReducer";
 
 const StudentPaymentManagement = () => {
-    const { studentConsultations, totalPagesCount } = useSelector(
-        (state) => state.ClassReducer
-    );
+    const { paymentInfo, totalPagesCount } = useSelector((state) => state.PaymentReducer);
     const dispatch = useDispatch();
     const [pageIndex, setPageIndex] = useState(1);
-    const [pageSize, setPageSize] = useState(10); // Default page size is 7
-    // const [searchTerm, setSearchTerm] = useState(""); // State for search term
+    const [pageSize, setPageSize] = useState(10); // Kích thước trang mặc định là 10
+    const [searchName, setSearchName] = useState("");
 
     useEffect(() => {
-        // Fetch data with search term, page index, and page size
-        // dispatch(GetStudentConsultationActionAsync(searchTerm, pageIndex, pageSize));
-        dispatch(GetStudentConsultationActionAsync(pageIndex, pageSize));
-        // }, [pageIndex, pageSize, searchTerm]);
-    }, [pageIndex, pageSize]);
+        // Fetch data
+        dispatch(GetStudentPaymentInfoActionAsync(pageIndex, pageSize, searchName));
+    }, [pageIndex, pageSize, searchName, dispatch]);
 
     const handlePageChange = (page, pageSize) => {
         setPageIndex(page);
         setPageSize(pageSize);
     };
 
-    // const handleColumnSearch = (selectedKeys, confirm) => {
-    //     confirm();
-    //     setSearchTerm(selectedKeys[0]); // Trigger API search with entered keyword
-    // };
-
-    // const handleReset = (clearFilters) => {
-    //     clearFilters();
-    //     setSearchTerm(""); // Reset search term
-    // };
-
-    // const getColumnSearchProps = () => ({
-    //     filterDropdown: ({
-    //         setSelectedKeys,
-    //         selectedKeys,
-    //         confirm,
-    //         clearFilters,
-    //     }) => (
-    //         <div style={{ padding: 8 }}>
-    //             <Input
-    //                 placeholder={`Search Student Name`}
-    //                 value={selectedKeys[0]}
-    //                 onChange={(e) =>
-    //                     setSelectedKeys(e.target.value ? [e.target.value] : [])
-    //                 }
-    //                 onPressEnter={() => handleColumnSearch(selectedKeys, confirm)}
-    //                 style={{ marginBottom: 8, display: "block" }}
-    //             />
-    //             <Button
-    //                 type="primary"
-    //                 onClick={() => handleColumnSearch(selectedKeys, confirm)}
-    //                 icon={<SearchOutlined />}
-    //                 size="small"
-    //                 style={{ width: 90, marginRight: 8 }}
-    //             >
-    //                 Search
-    //             </Button>
-    //             <Button onClick={() => handleReset(clearFilters)} size="small" style={{ width: 90 }}>
-    //                 Reset
-    //             </Button>
-    //         </div>
-    //     ),
-    //     filterIcon: (filtered) => (
-    //         <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
-    //     ),
-    //     onFilter: (value, record) =>
-    //         record.studentName.toString().toLowerCase().includes(value.toLowerCase()),
-    // });
+    const handleSearchChange = (e) => {
+        setSearchName(e.target.value);
+    };
 
     const columns = [
         {
@@ -81,44 +33,31 @@ const StudentPaymentManagement = () => {
             render: (text, record, index) => index + 1 + (pageIndex - 1) * pageSize,
         },
         {
+            title: "Tiêu đề",
+            dataIndex: "title",
+            key: "title",
+        },
+        {
             title: "Tên học viên",
             dataIndex: "studentName",
             key: "studentName",
         },
         {
-            title: "Email",
-            dataIndex: "email",
-            key: "email",
+            title: "Mô tả",
+            dataIndex: "description",
+            key: "description",
         },
         {
-            title: "Số điện thoại",
-            dataIndex: "phoneNumber",
-            key: "phoneNumber",
-            align: "center",
+            title: "Số tiền (VNĐ)",
+            dataIndex: "amount",
+            key: "amount",
+            render: (amount) => amount.toLocaleString("vi-VN"), // Định dạng số tiền
         },
         {
-            title: "Khóa học",
-            dataIndex: "CourseName",
-            key: "CourseName",
-            align: "center",
-        },
-        {
-            title: "Preferred Class Schedule",
-            dataIndex: "preferredSchedule",
-            key: "preferredSchedule",
-            align: "center",
-        },
-        // {
-        //     title: "Consultation Date",
-        //     dataIndex: "consultationDate",
-        //     key: "consultationDate",
-        //     align: "center",
-        // },
-        {
-            title: "Status",
-            dataIndex: "status",
-            key: "status",
-            align: "center",
+            title: "Thời gian thanh toán",
+            dataIndex: "dateTime",
+            key: "dateTime",
+            render: (dateTime) => new Date(dateTime).toLocaleString("vi-VN"), // Định dạng ngày giờ
         },
     ];
 
@@ -126,11 +65,20 @@ const StudentPaymentManagement = () => {
         <div>
             <div className="card">
                 <div className="card-body">
-                    <h5 className="card-title mb-3">Thông Tin Thanh Toán Học Sinh</h5>
+                    <h5 className="card-title mb-3">Thông Tin Thanh Toán</h5>
+                    <div style={{ marginBottom: 16 }}>
+                        <span style={{ marginRight: 8 }}>Search:</span> {/* Thêm chữ "Search" */}
+                        <Input
+                            placeholder="Tìm kiếm tên học viên"
+                            onChange={handleSearchChange}
+                            style={{ width: 300 }}
+                            suffix={<SearchOutlined />}
+                        />
+                    </div>
                     <Table
                         bordered
                         columns={columns}
-                        dataSource={studentConsultations}
+                        dataSource={paymentInfo}
                         rowKey={(record) => record.id}
                         pagination={{
                             current: pageIndex,
@@ -140,6 +88,7 @@ const StudentPaymentManagement = () => {
                             showSizeChanger: true,
                             pageSizeOptions: ["10", "20", "50"],
                         }}
+                        scroll={{ x: 'max-content' }}
                     />
                 </div>
             </div>

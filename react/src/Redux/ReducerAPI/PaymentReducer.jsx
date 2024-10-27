@@ -33,11 +33,12 @@ export default PaymentReducer.reducer;
 
 //------------API CALL------------
 
-export const GetStudentPaymentInfoActionAsync = (pageIndex, pageSize) => {
+export const GetStudentPaymentInfoActionAsync = (pageIndex, pageSize, search) => {
     return async (dispatch) => {
         try {
-            const res = await httpClient.get(`/api/v1/payments`, {
-                params: { PageIndex: pageIndex, PageSize: pageSize },
+            console.log(`search ${search}`);
+            const res = await httpClient.get(`api/v1/payments/filter`, {
+                params: { PageIndex: pageIndex, PageSize: pageSize, StudentName: search },
             });
             console.log(res.data);
             dispatch(setPaymentInfo(res.data));
