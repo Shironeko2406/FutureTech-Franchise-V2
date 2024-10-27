@@ -1,13 +1,35 @@
-import { Button } from "antd";
+import { Button, Popconfirm, Space } from "antd";
 import React, { useState } from "react";
 import { Table } from "antd";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import CreateChapterModal from "../Modal/CreateChapterModal";
 import { Link } from "react-router-dom";
+import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import {useParams} from "react-router-dom"
+import { DeleteChapterActionAsync } from "../../Redux/ReducerAPI/ChapterReducer";
+import EditChapterModal from "../Modal/EditChapterModal";
 
 const ViewChapter = () => {
   const { chapters } = useSelector((state) => state.CourseReducer);
+  const dispatch = useDispatch()
+  const {id} = useParams();
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
+  const [selectedChapter, setSelectedChapter] = useState(null)
+  const [isModalEditChapterVisible, setIsModalEditChapterVisible] = useState(false)
+
+  const handleDelete = (chapterId) => {
+    dispatch(DeleteChapterActionAsync(chapterId, id))
+  }
+
+  const showModalEditChapter = (chapter) => {
+    setSelectedChapter(chapter);
+    setIsModalEditChapterVisible(true);
+  };
+
+  const closeModalEditChapter = () => {
+    setIsModalEditChapterVisible(false);
+    setSelectedChapter(null);
+  };
 
   const showDrawer = () => {
     setIsDrawerVisible(true);
@@ -17,10 +39,9 @@ const ViewChapter = () => {
     setIsDrawerVisible(false);
   };
 
-  // Cột cho bảng chính
   const columns = [
     {
-      title: "Số Chapter",
+      title: "Số chương",
       dataIndex: "number",
       key: "number",
     },
@@ -30,21 +51,41 @@ const ViewChapter = () => {
       key: "topic",
     },
     {
-      title: "Mô tả", // Thêm cột Mô tả
+      title: "Mô tả",
       dataIndex: "description",
       key: "description",
     },
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) => (
+        <Space size="middle">
+          <EditOutlined
+            className="me-3"
+            style={{ color: "#1890ff", cursor: "pointer" }}
+            onClick={() => showModalEditChapter(record)}
+          />
+          <Popconfirm
+            title="Bạn muốn xóa chương này?"
+            onConfirm={() => handleDelete(record.id)}
+            okText="Đồng ý"
+            cancelText="Hủy"
+          >
+            <DeleteOutlined style={{ color: "red", cursor: "pointer" }} />
+          </Popconfirm>
+        </Space>
+      ),
+    }
   ];
 
-  // Cột cho bảng expandedRowRender
   const expandColumns = [
     {
       title: "No",
       key: "index",
-      render: (_, __, index) => index + 1, // Hiển thị số thứ tự (index + 1)
+      render: (_, __, index) => index + 1, 
     },
     {
-      title: "URL",
+      title: "Tài liệu",
       dataIndex: "url",
       key: "url",
       render: (_,record, index) => (
@@ -68,7 +109,7 @@ const ViewChapter = () => {
       dataSource={record.chapterMaterials}
       pagination={false}
       rowKey="id"
-      title={() => <h5>Chapter Material</h5>} // Tiêu đề cho bảng mở rộng
+      title={() => <h5>Tài nguyên</h5>} // Tiêu đề cho bảng mở rộng
     />
   );
 
@@ -76,8 +117,8 @@ const ViewChapter = () => {
     <div className="card">
       <div className="card-body">
         <div className="d-flex justify-content-between align-items-center mb-3">
-          <h5 className="card-title">Chi tiết các chapter</h5>
-          <Button type="primary" onClick={showDrawer}>Thêm chapter</Button>
+          <h5 className="card-title">Chi tiết các chương</h5>
+          <Button type="primary" onClick={showDrawer}>Thêm chương</Button>
         </div>
         {/* Bảng hiển thị chapter */}
         <Table
@@ -94,6 +135,11 @@ const ViewChapter = () => {
       <CreateChapterModal
         isDrawerVisible={isDrawerVisible}
         closeDrawer={closeDrawer}
+      />
+      <EditChapterModal
+        visible={isModalEditChapterVisible}
+        onClose={closeModalEditChapter}
+        chapter={selectedChapter}
       />
     </div>
   );

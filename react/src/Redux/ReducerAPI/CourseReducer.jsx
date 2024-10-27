@@ -122,16 +122,32 @@ export const UpdateStatusCourseActionAsync = (
   };
 };
 
-export const CreateChapterActionAsync = (chapter, id) => {
+export const CreateAssessmentActionAsync = (assessment, courseId) => {
   return async (dispatch) => {
     try {
-      const res = await httpClient.post(
-        `/api/v1/courses/${id}/chapters`,
-        chapter
-      );
+      const res = await httpClient.post(`/api/v1/courses/${courseId}/assessments`, assessment);
       if (res.isSuccess && res.data) {
         message.success(`${res.message}`);
-        dispatch(GetCourseByIdActionAsync(id));
+        dispatch(GetCourseByIdActionAsync(courseId));
+        return true;
+      } else {
+        message.error(`${res.message}`);
+        return false;
+      }
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  };
+};
+
+export const CreateSessionActionAsync = (session, courseId) => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.post(`/api/v1/courses/${courseId}/sessions`, session);
+      if (res.isSuccess && res.data) {
+        message.success(`${res.message}`);
+        dispatch(GetCourseByIdActionAsync(courseId));
         return true;
       } else {
         message.error(`${res.message}`);

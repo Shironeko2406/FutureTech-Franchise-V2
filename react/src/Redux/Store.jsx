@@ -8,6 +8,7 @@ import NotificationReducer from "./ReducerAPI/NotificationReducer";
 import SlotReducer from "./ReducerAPI/SlotReducer";
 import CourseReducer from "./ReducerAPI/CourseReducer";
 import SyllabusReducer from "./ReducerAPI/SyllabusReducer";
+import ChapterReducer from "./ReducerAPI/ChapterReducer";
 
 export const store = configureStore({
     reducer: {
@@ -21,6 +22,7 @@ export const store = configureStore({
       SlotReducer,
       CourseReducer,
       SyllabusReducer,
+      ChapterReducer
     },
   });
   
