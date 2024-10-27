@@ -1,9 +1,11 @@
-import { Button, Select, Table, Input } from "antd";
+import { Button, Select, Table, Input, Popconfirm, Space } from "antd";
 import React, { useEffect, useState } from "react";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
-import { SearchOutlined } from "@ant-design/icons";
-import { GetStudentConsultationActionAsync } from "../../../Redux/ReducerAPI/RegisterCourseReducer";
+import { GetStudentConsultationActionAsync, UpdateStudentStatusAsync } from "../../../Redux/ReducerAPI/RegisterCourseReducer";
 import { GetAllCoursesAvailableActionAsync } from "../../../Redux/ReducerAPI/CourseReducer";
+import CreatePaymentCourseModal from "../../Modal/CreatePaymentCourseModal"
+import { CreateStudentPaymentActionAsync } from "../../../Redux/ReducerAPI/PaymentReducer";
 
 
 const StudentConsultationRegistration = () => {
@@ -18,7 +20,10 @@ const StudentConsultationRegistration = () => {
     const [selectedCourse, setSelectedCourse] = useState(null);
     const [selectedStudentStatus, setSelectedStudentStatus] = useState(null);
     const [selectedRowKeys, setSelectedRowKeys] = useState([]); // Track selected rows
-
+    const [isPaymentModalVisible, setPaymentModalVisible] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [selectedUserId, setSelectedUserId] = useState(null);
+    const [selectedCourseDetails, setselectedCourseDetails] = useState(null);
 
 
     useEffect(() => {
@@ -34,12 +39,21 @@ const StudentConsultationRegistration = () => {
         setPageSize(pagination.pageSize);
         setSelectedCourse(filters.courseName ? filters.courseName[0] : null);
         setSelectedStudentStatus(filters.studentStatus ? filters.studentStatus[0] : null);
+        console.log(filters.studentStatus)
+    };
+
+    //handle edit
+    const handleUpdate = () => {
+        // Hiển thị modal với dữ liệu của slot đang chỉnh sửa
+    };
+
+    const handleDelete = (id) => {
     };
 
     // Row selection logic
     const onSelectChange = (newSelectedRowKeys) => {
-        setSelectedRowKeys(newSelectedRowKeys);
         console.log("Selected rows:", selectedRowKeys);
+        setSelectedRowKeys(newSelectedRowKeys);
     };
     const rowSelection = {
         selectedRowKeys,
@@ -53,6 +67,127 @@ const StudentConsultationRegistration = () => {
     const handleReload = () => {
         setSelectedRowKeys([]); // Reset selected rows
         dispatch(GetStudentConsultationActionAsync(pageIndex, pageSize, selectedStudentStatus, selectedCourse)); // Reload data
+    };
+
+    //render color 
+    const renderStatusBadge = (status) => {
+        let color;
+        switch (status) {
+            case 'NotConsult':
+                color = 'gray';
+                break;
+            case 'Pending':
+                color = 'orange';
+                break;
+            case 'Waitlisted':
+                color = '#3498db';
+                break;
+            case 'Cancel':
+                color = 'red';
+                break;
+            default:
+                color = 'White';
+        }
+
+        return (
+            <span
+                style={{
+                    display: 'inline-block',
+                    padding: '4px 8px',
+                    borderRadius: '4px',
+                    backgroundColor: color,
+                    color: 'white',
+                }}
+            >
+                {status}
+            </span>
+        );
+    };
+
+    // Function to display and handle payment course modal (waitlisted status)
+    const handleWaitlistedClick = (userId, courseName, coursePrice) => {
+        setSelectedUserId(userId);
+        setPaymentModalVisible(true);
+        setselectedCourseDetails({ courseName, coursePrice });
+    };
+
+    const handlePaymentSubmit = (paymentData) => {
+        setLoading(true);
+        console.log("Payment data:", paymentData);
+        dispatch(CreateStudentPaymentActionAsync(paymentData)).then(() => {
+            dispatch(GetStudentConsultationActionAsync(pageIndex, pageSize, selectedStudentStatus, selectedCourse));
+            setLoading(false);
+            setPaymentModalVisible(false);
+        }).catch(() => {
+            setLoading(false);
+        });
+    };
+
+    // Function to handle status registration
+    const renderActionButtons = (status, record) => {
+        const handleUpdateStatus = (newStatus) => {
+            dispatch(UpdateStudentStatusAsync(record.id, newStatus))
+                .then(() => {
+                    dispatch(GetStudentConsultationActionAsync(pageIndex, pageSize, selectedStudentStatus, selectedCourse));
+                })
+                .catch((error) => {
+                    console.error("Error updating student status:", error);
+                    // Optionally, show an error message to the user
+                });
+        };
+
+        const handleJoinClass = () => {
+            // Logic to handle joining the class (you'll need to dispatch an action)
+            console.log(`Joining class for ${record.fullName}`);
+            // Dispatch your action here
+        };
+
+        switch (status) {
+            case 'NotConsult':
+                return (
+                    <>
+                        <Button onClick={() => handleUpdateStatus('Pending')} type="primary">Pending</Button>
+                        <Button onClick={() => handleUpdateStatus('Cancel')} type="default" style={{ marginLeft: 8 }}>Cancel</Button>
+                    </>
+                );
+
+            case 'Pending':
+                return (
+                    <>
+                        <Button onClick={() => handleWaitlistedClick(record.id, record.courseName, record.coursePrice)} type="primary">Waitlisted</Button>
+                        <Button onClick={() => handleUpdateStatus('Cancel')} type="default" style={{ marginLeft: 8 }}>Cancel</Button>
+                    </>
+                );
+
+            case 'Waitlisted':
+                return (
+                    <Button onClick={handleJoinClass} type="primary">Join Class</Button>
+                );
+
+            default:
+                return null; // No action buttons for other statuses
+        }
+    };
+
+    // Function to render action2 buttons
+    const renderAction2Buttons = (record, handleUpdate, handleDelete) => {
+        return (
+            <Space size="middle">
+                <Button
+                    type="link"
+                    icon={<EditOutlined />}
+                    onClick={() => handleUpdate(record)} // Sửa thông tin slot
+                />
+                <Popconfirm
+                    title="Xác nhận xóa slot này?"
+                    onConfirm={() => handleDelete(record.id)}
+                    okText="Đồng ý"
+                    cancelText="Hủy"
+                >
+                    <Button type="link" icon={<DeleteOutlined />} danger />
+                </Popconfirm>
+            </Space>
+        );
     };
     const columns = [
         // {
@@ -78,11 +213,6 @@ const StudentConsultationRegistration = () => {
             fixed: 'left',
         },
         {
-            title: "Email",
-            dataIndex: "email",
-            key: "email",
-        },
-        {
             title: "Khóa học",
             dataIndex: "courseName",
             key: "courseName",
@@ -105,6 +235,7 @@ const StudentConsultationRegistration = () => {
             dataIndex: "studentStatus",
             key: "studentStatus",
             align: "center",
+            render: renderStatusBadge,
             filters: [
                 {
                     text: 'NotConsult',
@@ -118,26 +249,41 @@ const StudentConsultationRegistration = () => {
                     text: 'WaitListed',
                     value: 'Waitlisted',
                 },
+                {
+                    text: 'Cancel',
+                    value: 'Cancel',
+                },
             ],
             filterMultiple: false,
         },
-        // {
-        //     title: "Consultation Date",
-        //     dataIndex: "consultationDate",
-        //     key: "consultationDate",
-        //     align: "center",
-        // },
+        {
+            title: "Ngày đăng ký",
+            dataIndex: "registerDate",
+            key: "registerDate",
+            align: "center",
+            render: (registerDate) => {
+                const date = new Date(registerDate);
+                return date.toLocaleDateString("vi-VN");
+            },
+        },
+        {
+            title: "Email",
+            dataIndex: "email",
+            key: "email",
+        },
         {
             title: "Action 1",
-            dataIndex: "action",
+            dataIndex: "studentStatus",
             key: "action",
+            render: (text, record) => renderActionButtons(text, record),
             fixed: 'right',
         },
         {
             title: "Action 2",
             dataIndex: "operation",
             key: "operation",
-            fixed: 'right', // Cố định cột ở bên phải
+            fixed: 'right',
+            render: (text, record) => renderAction2Buttons(record, handleUpdate, handleDelete),
         },
     ];
 
@@ -177,6 +323,14 @@ const StudentConsultationRegistration = () => {
                     />
                 </div>
             </div>
+            <CreatePaymentCourseModal
+                visible={isPaymentModalVisible}
+                onClose={() => setPaymentModalVisible(false)}
+                onSubmit={handlePaymentSubmit}
+                userId={selectedUserId}
+                spinning={loading}
+                courseDetails={selectedCourseDetails}
+            />
         </div>
     );
 };
