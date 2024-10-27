@@ -1,9 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import { Table, Button } from "antd";
 import { useSelector } from "react-redux";
+import CreateAssessmentModal from "../Modal/CreateAssessmentModal";
 
 const ViewAssessment = () => {
   const { assessments } = useSelector((state) => state.CourseReducer);
+  const [isDrawerVisible, setIsDrawerVisible] = useState(false);
+
+  const showDrawer = () => {
+    setIsDrawerVisible(true);
+  };
+
+  const closeDrawer = () => {
+    setIsDrawerVisible(false);
+  };
 
   const columns = [
     {
@@ -47,8 +57,8 @@ const ViewAssessment = () => {
     <div className="card">
       <div className="card-body">
         <div className="d-flex justify-content-between align-items-center mb-3">
-          <h5 className="card-title">Chi tiết assessment</h5>
-          <Button type="primary">Thêm assessment</Button>
+          <h5 className="card-title">Chi tiết đánh giá</h5>
+          <Button type="primary" onClick={showDrawer}>Thêm đánh giá</Button>
         </div>
         {/* Bảng hiển thị assessment */}
         <Table
@@ -59,6 +69,10 @@ const ViewAssessment = () => {
           rowKey="id"
         />
       </div>
+      <CreateAssessmentModal
+        isDrawerVisible={isDrawerVisible}
+        closeDrawer={closeDrawer}
+      />
     </div>
   );
 };

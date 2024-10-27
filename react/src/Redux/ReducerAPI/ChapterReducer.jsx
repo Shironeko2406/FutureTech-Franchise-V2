@@ -1,27 +1,27 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { httpClient } from "../../Utils/Interceptors";
-import { GetCourseByIdActionAsync } from "./CourseReducer";
 import { message } from "antd";
+import { GetCourseByIdActionAsync } from "./CourseReducer";
+import { httpClient } from "../../Utils/Interceptors";
 
 const initialState = {};
 
-const SyllabusReducer = createSlice({
-  name: "SyllabusReducer",
+const ChapterReducer = createSlice({
+  name: "ChapterReducer",
   initialState,
   reducers: {},
 });
 
-export const {} = SyllabusReducer.actions;
+export const {} = ChapterReducer.actions;
 
-export default SyllabusReducer.reducer;
-//---------API-CALL------------
-export const CreateSyllabusActionAsync = (data) => {
+export default ChapterReducer.reducer;
+//-------API-CALL-------------
+export const CreateChapterActionAsync = (chapter) => {
   return async (dispatch) => {
     try {
-      const res = await httpClient.post(`/api/v1/syllabuses`, data);
+      const res = await httpClient.post(`/api/v1/chapters`, chapter);
       if (res.isSuccess && res.data) {
         message.success(`${res.message}`);
-        dispatch(GetCourseByIdActionAsync(data.courseId));
+        dispatch(GetCourseByIdActionAsync(chapter.courseId));
         return true;
       } else {
         message.error(`${res.message}`);
@@ -34,10 +34,10 @@ export const CreateSyllabusActionAsync = (data) => {
   };
 };
 
-export const EditSyllabusActionAsync = (data, syllabusId, courseId) => {
+export const DeleteChapterActionAsync = (chapterId, courseId) => {
   return async (dispatch) => {
     try {
-      const res = await httpClient.put(`/api/v1/syllabuses/${syllabusId}`, data);
+      const res = await httpClient.delete(`/api/v1/chapters/${chapterId}`);
       if (res.isSuccess && res.data) {
         message.success(`${res.message}`);
         dispatch(GetCourseByIdActionAsync(courseId));
@@ -53,10 +53,10 @@ export const EditSyllabusActionAsync = (data, syllabusId, courseId) => {
   };
 };
 
-export const DelateSyllabusActionAsync = (syllabusId, courseId) => {
+export const EditChapterByIdActionAsync = (chapterId, dataEdit, courseId) => {
   return async (dispatch) => {
     try {
-      const res = await httpClient.delete(`/api/v1/syllabuses/${syllabusId}`);
+      const res = await httpClient.put(`/api/v1/chapters/${chapterId}`, dataEdit);
       if (res.isSuccess && res.data) {
         message.success(`${res.message}`);
         dispatch(GetCourseByIdActionAsync(courseId));

@@ -1,21 +1,33 @@
+import React, { useEffect } from "react";
 import { Button, Drawer, Form, Input, InputNumber, Row, Col } from "antd";
-import React from "react";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
-import { CreateSyllabusActionAsync } from "../../Redux/ReducerAPI/SyllabusReducer";
+import { DeleteOutlined } from "@ant-design/icons";
+import { DelateSyllabusActionAsync, EditSyllabusActionAsync } from "../../Redux/ReducerAPI/SyllabusReducer";
 
-const CreateSyllabus = ({ isDrawerVisible, closeDrawer }) => {
+const EditSyllabusModal = ({ visible, onClose, syllabus }) => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const { id } = useParams();
 
+  useEffect(() => {
+    if (syllabus) {
+      form.setFieldsValue({
+        description: syllabus.description,
+        studentTask: syllabus.studentTask,
+        timeAllocation: syllabus.timeAllocation,
+        toolsRequire: syllabus.toolsRequire,
+        scale: syllabus.scale,
+        minAvgMarkToPass: syllabus.minAvgMarkToPass,
+      });
+    }
+  }, [syllabus]);
+
   const onFinish = (values) => {
-    const syllabusData = { ...values, courseId: id };
-    dispatch(CreateSyllabusActionAsync(syllabusData))
+    dispatch(EditSyllabusActionAsync(values, syllabus.id, id))
       .then((response) => {
         if (response) {
-          closeDrawer();
-          form.resetFields();
+          onClose();
         }
       })
       .catch((error) => {
@@ -25,18 +37,18 @@ const CreateSyllabus = ({ isDrawerVisible, closeDrawer }) => {
 
   return (
     <Drawer
-      title="Tạo giáo trình"
+      title={"Sửa giáo trình"}
       width={720}
-      onClose={closeDrawer}
-      open={isDrawerVisible}
+      onClose={onClose}
+      open={visible}
       styles={{ body: { paddingBottom: 80 } }}
       footer={
         <div style={{ textAlign: "right" }}>
-          <Button onClick={closeDrawer} className="me-2" danger>
+          <Button className="me-2" onClick={onClose} danger>
             Hủy
           </Button>
           <Button onClick={() => form.submit()} type="primary">
-            Tạo
+            Sửa
           </Button>
         </div>
       }
@@ -44,20 +56,20 @@ const CreateSyllabus = ({ isDrawerVisible, closeDrawer }) => {
       <Form
         form={form}
         layout="vertical"
-        requiredMark={false}
         onFinish={onFinish}
+        requiredMark={false}
       >
         <Form.Item
           name="description"
-          label="Mô tả"
-          rules={[{ required: true, message: "Vui lòng nhập mô tả" }]}
+          label="Mô tả khóa học"
+          rules={[{ required: true, message: "Vui lòng nhập mô tả khóa học" }]}
         >
-          <Input.TextArea placeholder="Mô tả khóa học (ví dụ: mục tiêu học tập, nội dung chính)" />
+          <Input.TextArea placeholder="Nhập mô tả chương trình học" rows={4} />
         </Form.Item>
 
         <Form.Item
           name="studentTask"
-          label="Công việc"
+          label="Công việc của sinh viên"
           rules={[
             {
               required: true,
@@ -65,7 +77,7 @@ const CreateSyllabus = ({ isDrawerVisible, closeDrawer }) => {
             },
           ]}
         >
-          <Input.TextArea placeholder="Công việc sinh viên cần hoàn thành (ví dụ: làm bài tập, thực hành, thảo luận)" />
+          <Input.TextArea placeholder="Nhập công việc của sinh viên" rows={4} />
         </Form.Item>
 
         <Form.Item
@@ -75,7 +87,7 @@ const CreateSyllabus = ({ isDrawerVisible, closeDrawer }) => {
             { required: true, message: "Vui lòng nhập phân bổ thời gian" },
           ]}
         >
-          <Input placeholder="Thời gian học (ví dụ: 45 giờ học trên lớp, 104 giờ tự học)" />
+          <Input placeholder="Nhập phân bổ thời gian (giờ)" />
         </Form.Item>
 
         <Form.Item
@@ -83,7 +95,7 @@ const CreateSyllabus = ({ isDrawerVisible, closeDrawer }) => {
           label="Công cụ yêu cầu"
           rules={[{ required: true, message: "Vui lòng nhập công cụ yêu cầu" }]}
         >
-          <Input.TextArea placeholder="Công cụ học tập cần thiết (ví dụ: phần mềm, sách giáo khoa)" />
+          <Input.TextArea placeholder="Nhập công cụ yêu cầu" />
         </Form.Item>
 
         <Row gutter={16}>
@@ -97,7 +109,7 @@ const CreateSyllabus = ({ isDrawerVisible, closeDrawer }) => {
                 min={0}
                 max={100}
                 style={{ width: "100%" }}
-                placeholder="Thang điểm tối đa (ví dụ: 100)"
+                placeholder="Nhập thang điểm (ví dụ: 1-10)"
               />
             </Form.Item>
           </Col>
@@ -115,7 +127,7 @@ const CreateSyllabus = ({ isDrawerVisible, closeDrawer }) => {
               <InputNumber
                 min={0}
                 max={100}
-                placeholder="Điểm tối thiểu để vượt qua (ví dụ: 60)"
+                placeholder="Nhập điểm trung bình để đạt"
                 style={{ width: "100%" }}
               />
             </Form.Item>
@@ -126,4 +138,4 @@ const CreateSyllabus = ({ isDrawerVisible, closeDrawer }) => {
   );
 };
 
-export default CreateSyllabus;
+export default EditSyllabusModal;

@@ -1,353 +1,35 @@
-// import { Button } from "antd";
-// import React, { useEffect, useState } from "react";
-// import CreateCourseModal from "../../Modal/CreateCourseModal";
-// import { useDispatch } from "react-redux";
-// import { GetCourseCategoryActionAsync } from "../../../Redux/ReducerAPI/CourseCategoryReducer";
-
-// const CourseManage = () => {
-//   const dispatch = useDispatch();
-//   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
-
-//   useEffect(() => {
-//     dispatch(GetCourseCategoryActionAsync());
-//   }, []);
-
-//   const showDrawer = () => {
-//     setIsDrawerVisible(true);
-//   };
-
-//   const closeDrawer = () => {
-//     setIsDrawerVisible(false);
-//   };
-
-//   return (
-//     <div>
-//       <h2>Course Management</h2>
-//       <Button type="primary" onClick={showDrawer}>
-//         Thêm Khóa
-//       </Button>
-//       {/* Hiển thị CreateCourseModal dưới dạng Drawer */}
-//       <CreateCourseModal
-//         isDrawerVisible={isDrawerVisible}
-//         closeDrawer={closeDrawer}
-//       />
-//     </div>
-//   );
-// };
-
-// export default CourseManage;
-
-// import { Button, Pagination, Select } from "antd";
-// import React, { useEffect, useState } from "react";
-// import CreateCourseModal from "../../Modal/CreateCourseModal";
-// import { useDispatch, useSelector } from "react-redux";
-// import { GetCourseCategoryActionAsync } from "../../../Redux/ReducerAPI/CourseCategoryReducer";
-// import { GetCourseActionAsync } from "../../../Redux/ReducerAPI/CourseReducer";
-
-// const items = [
-//   {
-//     id: "bc1615bc-479b-43b6-162c-08dcf0fb420d",
-//     name: "Lập trình C++ nâng cao",
-//     description:
-//       "Khóa học C++ nâng cao được thiết kế dành cho những lập trình viên đã có kiến thức cơ bản về C++ và mong muốn nâng cao kỹ năng lập trình của mình.",
-//     urlImage:
-//       "https://firebasestorage.googleapis.com/v0/b/imageupdatedb.appspot.com/o/images%2FC%2B%2B_Advance.png?alt=media&token=87925102-9846-4299-9d5a-ab58d5806f21",
-//     numberOfLession: 60,
-//     price: 2500000,
-//     code: "PRF201",
-//     version: 0,
-//     status: "Draft",
-//     courseCategoryId: "2ebe54b1-41de-42e3-4fd4-08dcf0fae5e4",
-//     courseCategoryName: "Lập trình nâng cao",
-//   },
-// ];
-
-// const CourseManage = () => {
-//   const { course, totalPagesCount } = useSelector(
-//     (state) => state.CourseReducer
-//   );
-//   const dispatch = useDispatch();
-//   const [status, setStatus] = useState("Draft");
-//   const [pageIndex, setPageIndex] = useState(1);
-//   const [pageSize] = useState(1);
-//   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
-
-//   useEffect(() => {
-//     dispatch(GetCourseCategoryActionAsync());
-//     dispatch(GetCourseActionAsync(status, pageIndex, pageSize))
-//   }, [status, pageIndex]);
-
-//   useEffect(() => {
-//     // Reset the page index to 1 whenever the status changes
-//     setPageIndex(1);
-//   }, [status]);
-
-//   const handleStatusChange = (value) => {
-//     setStatus(value);
-//   };
-
-//   const handlePageChange = (page) => {
-//     setPageIndex(page);
-//   };
-
-//   const showDrawer = () => {
-//     setIsDrawerVisible(true);
-//   };
-
-//   const closeDrawer = () => {
-//     setIsDrawerVisible(false);
-//   };
-
-//   return (
-//     <div>
-//       <div className="card">
-//         <div className="card-body">
-//           <div className="d-flex justify-content-between align-items-center mb-3">
-//             <h5 className="card-title">Course Management</h5>
-//             <Select
-//               defaultValue={status}
-//               style={{ width: 150 }}
-//               onChange={handleStatusChange}
-//             >
-//               <Select.Option value="Draft">Draft</Select.Option>
-//               <Select.Option value="PendingApproval">
-//                 PendingApproval
-//               </Select.Option>
-//               {/* Add more options as needed */}
-//             </Select>
-//           </div>
-
-//           <div className="table-responsive">
-//             <table className="table text-nowrap align-middle mb-0">
-//               <thead>
-//                 <tr className="border-2 border-bottom border-primary border-0">
-//                   <th scope="col" className="ps-0">
-//                     No
-//                   </th>
-//                   <th scope="col">Course Name</th>
-//                   <th scope="col" className="text-center">
-//                     Code
-//                   </th>
-//                   <th scope="col" className="text-center">
-//                     Number of Lessons
-//                   </th>
-//                   <th scope="col" className="text-center">
-//                     Price
-//                   </th>
-//                   <th scope="col" className="text-center">
-//                     Action
-//                   </th>
-//                 </tr>
-//               </thead>
-//               <tbody className="table-group-divider">
-//                 {course && course.length > 0 ? (
-//                   course.map((course, index) => (
-//                     <tr key={course.id}>
-//                       <th scope="row" className="ps-0 fw-medium">
-//                         <span className="table-link1 text-truncate d-block">
-//                           {index + 1}
-//                         </span>
-//                       </th>
-//                       <td>
-//                         <a
-//                           href="javascript:void(0)"
-//                           className="link-primary text-dark fw-medium d-block"
-//                         >
-//                           {course.name}
-//                         </a>
-//                       </td>
-//                       <td className="text-center fw-medium">{course.code}</td>
-//                       <td className="text-center fw-medium">
-//                         {course.numberOfLession}
-//                       </td>
-//                       <td className="text-center fw-medium">
-//                         {course.price.toLocaleString()} VND
-//                       </td>
-//                       <td className="text-center fw-medium">
-//                         <button
-//                           className="btn btn-sm btn-success me-2"
-//                           onClick={() => handleApproveCourse(course.id)}
-//                         >
-//                           Approve
-//                         </button>
-//                         <button className="btn btn-sm btn-danger">
-//                           Reject
-//                         </button>
-//                       </td>
-//                     </tr>
-//                   ))
-//                 ) : (
-//                   <tr>
-//                     <td colSpan="8" className="text-center">
-//                       No courses available.
-//                     </td>
-//                   </tr>
-//                 )}
-//               </tbody>
-//             </table>
-//           </div>
-
-//           {/* Pagination */}
-//           <div className="d-flex justify-content-end mt-3">
-//             <Pagination
-//               current={pageIndex}
-//               pageSize={pageSize}
-//               total={totalPagesCount * pageSize}
-//               onChange={handlePageChange}
-//               showSizeChanger={false}
-//             />
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default CourseManage;
-
-// import { Button, Pagination, Select, Table, Input } from "antd";
-// import React, { useEffect, useState } from "react";
-// import { useDispatch, useSelector } from "react-redux";
-// import { GetCourseCategoryActionAsync } from "../../../Redux/ReducerAPI/CourseCategoryReducer";
-// import { GetCourseActionAsync } from "../../../Redux/ReducerAPI/CourseReducer";
-
-// const CourseManage = () => {
-//   const { course, totalPagesCount } = useSelector((state) => state.CourseReducer);
-//   const dispatch = useDispatch();
-//   const [status, setStatus] = useState("Draft");
-//   const [pageIndex, setPageIndex] = useState(1);
-//   const [pageSize, setPageSize] = useState(1); // Default page size is 10
-//   const [searchTerm, setSearchTerm] = useState(""); // State for search term
-
-//   useEffect(() => {
-//     dispatch(GetCourseCategoryActionAsync());
-//     dispatch(GetCourseActionAsync(status, pageIndex, pageSize, searchTerm));
-//   }, [status, pageIndex, pageSize, searchTerm]);
-
-//   const handleStatusChange = (value) => {
-//     setStatus(value);
-//     setPageIndex(1); // Reset page to 1 when status changes
-//   };
-
-//   const handlePageChange = (page, pageSize) => {
-//     setPageIndex(page);
-//     setPageSize(pageSize);
-//   };
-
-//   const handleSearch = (value) => {
-//     setSearchTerm(value);
-//     setPageIndex(1); // Reset to page 1 when search term changes
-//   };
-
-//   const columns = [
-//     {
-//       title: "No",
-//       dataIndex: "no",
-//       key: "no",
-//       render: (text, record, index) => index + 1 + (pageIndex - 1) * pageSize,
-//     },
-//     {
-//       title: "Course Name",
-//       dataIndex: "name",
-//       key: "name",
-//     },
-//     {
-//       title: "Code",
-//       dataIndex: "code",
-//       key: "code",
-//       align: "center",
-//     },
-//     {
-//       title: "Number of Lessons",
-//       dataIndex: "numberOfLession",
-//       key: "numberOfLession",
-//       align: "center",
-//     },
-//     {
-//       title: "Price",
-//       dataIndex: "price",
-//       key: "price",
-//       align: "center",
-//       render: (price) => `${price.toLocaleString()} VND`,
-//     },
-//     {
-//       title: "Action",
-//       key: "action",
-//       align: "center",
-//       render: (text, record) => (
-//         <>
-//           <Button type="primary" className="me-2" onClick={() => handleApproveCourse(record.id)}>
-//             Approve
-//           </Button>
-//           <Button type="danger" onClick={() => handleRejectCourse(record.id)}>
-//             Reject
-//           </Button>
-//         </>
-//       ),
-//     },
-//   ];
-
-//   return (
-//     <div>
-//       <div className="card">
-//         <div className="card-body">
-//           <div className="d-flex justify-content-between align-items-center mb-3">
-//             <h5 className="card-title">Course Management</h5>
-//             <Select
-//               defaultValue={status}
-//               style={{ width: 150 }}
-//               onChange={handleStatusChange}
-//             >
-//               <Select.Option value="Draft">Draft</Select.Option>
-//               <Select.Option value="PendingApproval">PendingApproval</Select.Option>
-//               {/* Add more options as needed */}
-//             </Select>
-//           </div>
-
-//           <Input.Search
-//             placeholder="Search courses"
-//             allowClear
-//             enterButton
-//             onSearch={handleSearch}
-//             className="mb-3"
-//           />
-
-//           <Table
-//             columns={columns}
-//             dataSource={course}
-//             rowKey={(record) => record.id}
-//             pagination={{
-//               current: pageIndex,
-//               pageSize,
-//               total: totalPagesCount * pageSize,
-//               onChange: handlePageChange,
-//               showSizeChanger: true,
-//               pageSizeOptions: ['10', '20', '50'],
-//             }}
-//           />
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default CourseManage;
-
 import React, { useEffect, useState } from "react";
-import { Button, Select, Table, Input, Dropdown, Menu } from "antd";
+import { Button, Select, Table, Input, Dropdown, Tag } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { GetCourseActionAsync, UpdateStatusCourseActionAsync } from "../../../Redux/ReducerAPI/CourseReducer";
-import { CheckCircleOutlined, CheckOutlined, ClockCircleOutlined, CloseCircleOutlined, CloseOutlined, EditOutlined, PauseOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
+import { CheckCircleOutlined, ClockCircleOutlined, CloseCircleOutlined, PauseOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import CreateCourseModal from "../../Modal/CreateCourseModal";
 import { GetCourseCategoryActionAsync } from "../../../Redux/ReducerAPI/CourseCategoryReducer";
 import { NavLink } from "react-router-dom";
 
 const statusItems = [
-  { label: "Chờ duyệt", key: "PendingApproval", icon: <ClockCircleOutlined /> }, // Chờ phê duyệt
-  { label: "Công khai", key: "AvailableForFranchise", icon: <CheckCircleOutlined /> }, // public
-  { label: "Tạm đóng", key: "TemporarilySuspended", icon: <PauseOutlined /> }, // Tạm ngưng
-  { label: "Đóng", key: "Closed", icon: <CloseCircleOutlined />, style: { color: "red" } }, // Đã đóng
+  { label: "Chờ duyệt", key: "PendingApproval", icon: <ClockCircleOutlined style={{ color: "orange" }} /> }, 
+  { label: "Công khai", key: "AvailableForFranchise", icon: <CheckCircleOutlined style={{ color: "green" }} /> }, 
+  { label: "Tạm đóng", key: "TemporarilySuspended", icon: <PauseOutlined style={{ color: "gray" }} /> }, 
+  { label: "Đóng", key: "Closed", icon: <CloseCircleOutlined style={{ color: "red" }} /> }, 
 ];
+
+const getStatusItems = (status) => {
+  switch (status) {
+    case "Draft":
+      return statusItems.filter(item => item.key === "PendingApproval"); 
+    case "PendingApproval":
+      return statusItems.filter(item => ["AvailableForFranchise", "Closed"].includes(item.key)); 
+    case "AvailableForFranchise":
+      return statusItems.filter(item => ["TemporarilySuspended", "Closed"].includes(item.key)); 
+    case "TemporarilySuspended":
+      return statusItems.filter(item => ["AvailableForFranchise", "Closed"].includes(item.key)); 
+    case "Closed":
+      return []; 
+    default:
+      return statusItems;
+  }
+};
 
 
 const CourseManage = () => {
@@ -401,7 +83,7 @@ const CourseManage = () => {
     }) => (
       <div style={{ padding: 8 }}>
         <Input
-          placeholder={`Search Course Name`}
+          placeholder={`Tìm tên khóa học`}
           value={selectedKeys[0]}
           onChange={(e) =>
             setSelectedKeys(e.target.value ? [e.target.value] : [])
@@ -416,14 +98,14 @@ const CourseManage = () => {
           size="small"
           style={{ width: 90, marginRight: 8 }}
         >
-          Search
+          Tìm kiếm
         </Button>
         <Button
           onClick={() => handleReset(clearFilters)}
           size="small"
           style={{ width: 90 }}
         >
-          Reset
+          Xóa lọc
         </Button>
       </div>
     ),
@@ -476,21 +158,58 @@ const CourseManage = () => {
       render: (price) => `${price.toLocaleString()} VND`,
     },
     {
+      title: "Trạng thái",
+      dataIndex: "status",
+      key: "status",
+      align: "center",
+      render: (status) => {
+        let color = "";
+        let text = "";
+    
+        switch (status) {
+          case "Draft":
+            color = "default";
+            text = "Nháp";
+            break;
+          case "PendingApproval":
+            color = "orange";
+            text = "Chờ duyệt";
+            break;
+          case "AvailableForFranchise":
+            color = "green";
+            text = "Công khai";
+            break;
+          case "TemporarilySuspended":
+            color = "red";
+            text = "Tạm ngừng";
+            break;
+          case "Closed":
+            color = "gray";
+            text = "Đã đóng";
+            break;
+          default:
+            color = "default";
+            text = "Không xác định";
+        }
+    
+        return <Tag color={color}>{text}</Tag>;
+      },
+    },
+    {
       title: "Action",
       key: "action",
       align: "center",
       render: (text, record) => (
         <>
-          <Dropdown
+          <Dropdown.Button
+            type="primary"
             menu={{
-              items: statusItems,
+              items: getStatusItems(record.status),
               onClick: (key) => handleMenuClick(record.id, key),
             }}
           >
-            <Button type="primary" className="me-2">
-              Approval
-            </Button>
-          </Dropdown>
+            Duyệt
+          </Dropdown.Button>
         </>
       ),
     },
@@ -501,14 +220,14 @@ const CourseManage = () => {
       <div className="card">
         <div className="card-body">
           <div className="d-flex justify-content-between align-items-center mb-3">
-            <h5 className="card-title">Course Management</h5>
+            <h5 className="card-title">Quản lý khóa học</h5>
             <Select
               defaultValue={status}
               style={{ width: 150 }}
               onChange={handleStatusChange}
             >
               <Select.Option value="">Tất cả</Select.Option>
-              <Select.Option value="Draft">Beta</Select.Option>
+              <Select.Option value="Draft">Nháp</Select.Option>
               <Select.Option value="PendingApproval">Chờ duyệt</Select.Option>
               <Select.Option value="AvailableForFranchise">
                 Công khai

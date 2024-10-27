@@ -79,18 +79,7 @@ function App() {
             </Route>
           </Route>
 
-          {/* <Route element={<ProtectedRoute requiredRole="Manager" />}>
-            <Route path="manager" element={<TempUIManager />}>
-              <Route path="" element={<HomeManager />} />
-              <Route path="consult" element={<ConsultationManagement />} />
-              <Route path="course-category" element={<CourseCategoryManager />} />
-              <Route path="course" element={<CourseManage />} />
-              <Route path="course-detail/:id" element={<CourseDetailManager/>} />
-              <Route path="slot" element={<SlotManager />} />
-            </Route>
-          </Route> */}
-          {/*Tạm tắt requiredRole manager có comment ở trên*/}
-          <Route>  
+          <Route element={<ProtectedRoute requiredRole="Manager" />}>
             <Route path="manager" element={<TempUIManager />}>
               <Route path="" element={<HomeManager />} />
               <Route path="consult" element={<ConsultationManagement />} />
