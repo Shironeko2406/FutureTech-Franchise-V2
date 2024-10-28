@@ -21,7 +21,7 @@ export const CreateSyllabusActionAsync = (data) => {
       const res = await httpClient.post(`/api/v1/syllabuses`, data);
       if (res.isSuccess && res.data) {
         message.success(`${res.message}`);
-        dispatch(GetCourseByIdActionAsync(data.courseId));
+        await dispatch(GetCourseByIdActionAsync(data.courseId));
         return true;
       } else {
         message.error(`${res.message}`);

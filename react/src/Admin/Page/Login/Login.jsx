@@ -35,6 +35,9 @@ const Login = () => {
             case "Manager":
               navigate("/manager");
               break;
+            case "SystemInstructor":
+              navigate("/system-instructor");
+              break;
             default:
               navigate("/");
           }
@@ -65,7 +68,7 @@ const Login = () => {
                     to="/"
                     className="text-nowrap logo-img text-center d-block py-3 w-100"
                   >
-                    <img src="/assets/images/logos/logo-light.svg"/>
+                    <img src="/assets/images/logos/logo-light.svg" />
                   </NavLink>
                   <p className="text-center">Đăng nhập</p>
                   <form onSubmit={userForm.handleSubmit}>
