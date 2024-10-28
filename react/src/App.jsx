@@ -32,6 +32,7 @@ import TempUIInstructor from "./Instructor/TempUIInstructor/TempUIInstructor";
 import ScheduleInstructor from "./Instructor/Page/Schedule/ScheduleInstructor";
 import StudentConsultationRegistration from "./AgencyManager/Page/StudentConsultationRegistration/StudentConsultationRegistration";
 import StudentPaymentManagement from "./AgencyManager/Page/StudentPaymentManagement/StudentPaymentManagement";
+import ClassManagement from "./AgencyManager/Page/ClassManagement/ClassManagement";
 
 function App() {
   return (
@@ -58,8 +59,9 @@ function App() {
           <Route path="agency-manager" element={<TempUIAgencyManager />} >
             <Route path="" element={<HomeAgencyManager />} />
             <Route path="student-consultation-registration" element={<StudentConsultationRegistration />} />
-            <Route path="student-payment-management" element={<StudentPaymentManagement />} />
+            <Route path="student-payment" element={<StudentPaymentManagement />} />
             <Route path="slot" element={<SlotManager />} />
+            <Route path="class" element={<ClassManagement />} />
           </Route>
           {/* </Route> */}
 
