@@ -72,7 +72,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
                     className="fs-6"
                   />
                 </span>
-                <span className="hide-menu">Intructors</span>
+                <span className="hide-menu">Giảng viên</span>
               </NavLink>
             </li>
             <li className="sidebar-item">
@@ -87,7 +87,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
                     className="fs-6"
                   />
                 </span>
-                <span className="hide-menu">Enrollments</span>
+                <span className="hide-menu">Ghi danh</span>
               </NavLink>
             </li>
             <li className="sidebar-item">
@@ -102,7 +102,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
                     className="fs-6"
                   />
                 </span>
-                <span className="hide-menu">Payments</span>
+                <span className="hide-menu">Giao dịch</span>
               </NavLink>
             </li>
             <li className="sidebar-item">

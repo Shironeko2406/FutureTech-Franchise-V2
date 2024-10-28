@@ -67,7 +67,7 @@ const StudentPaymentManagement = () => {
                 <div className="card-body">
                     <h5 className="card-title mb-3">Thông Tin Thanh Toán</h5>
                     <div style={{ marginBottom: 16 }}>
-                        <span style={{ marginRight: 8 }}>Search:</span> {/* Thêm chữ "Search" */}
+                        <span style={{ marginRight: 8 }}>Tìm kiếm:</span> {/* Thêm chữ "Search" */}
                         <Input
                             placeholder="Tìm kiếm tên học viên"
                             onChange={handleSearchChange}

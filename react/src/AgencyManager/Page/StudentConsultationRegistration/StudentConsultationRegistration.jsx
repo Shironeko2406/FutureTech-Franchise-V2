@@ -1,11 +1,12 @@
 import { Button, Select, Table, Input, Popconfirm, Space } from "antd";
 import React, { useEffect, useState } from "react";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, UsergroupAddOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { GetStudentConsultationActionAsync, UpdateStudentStatusAsync } from "../../../Redux/ReducerAPI/RegisterCourseReducer";
 import { GetAllCoursesAvailableActionAsync } from "../../../Redux/ReducerAPI/CourseReducer";
 import CreatePaymentCourseModal from "../../Modal/CreatePaymentCourseModal"
 import { CreateStudentPaymentActionAsync } from "../../../Redux/ReducerAPI/PaymentReducer";
+import AddToClassModal from "../../Modal/AddToClassModal";
 
 
 const StudentConsultationRegistration = () => {
@@ -16,7 +17,7 @@ const StudentConsultationRegistration = () => {
     const dispatch = useDispatch();
     const [pageIndex, setPageIndex] = useState(1);
     const [pageSize, setPageSize] = useState(3); // Default page size is 10
-    // const [searchTerm, setSearchTerm] = useState(""); // State for search term
+
     const [selectedCourse, setSelectedCourse] = useState(null);
     const [selectedStudentStatus, setSelectedStudentStatus] = useState(null);
     const [selectedRowKeys, setSelectedRowKeys] = useState([]); // Track selected rows
@@ -24,10 +25,14 @@ const StudentConsultationRegistration = () => {
     const [loading, setLoading] = useState(false);
     const [selectedUserId, setSelectedUserId] = useState(null);
     const [selectedCourseDetails, setselectedCourseDetails] = useState(null);
+    const [isAddToClassModalVisible, setIsAddToClassModalVisible] = useState(false);
+    const [isFilterApplied, setIsFilterApplied] = useState(false);
 
 
     useEffect(() => {
-        dispatch(GetStudentConsultationActionAsync(pageIndex, pageSize, selectedStudentStatus, selectedCourse));
+        setLoading(true);
+        dispatch(GetStudentConsultationActionAsync(pageIndex, pageSize, selectedStudentStatus, selectedCourse))
+            .finally(() => setLoading(false));
     }, [dispatch, pageIndex, pageSize, selectedStudentStatus, selectedCourse]);
 
     useEffect(() => {
@@ -37,7 +42,13 @@ const StudentConsultationRegistration = () => {
     const handleTableChange = (pagination, filters) => {
         setPageIndex(pagination.current);
         setPageSize(pagination.pageSize);
-        setSelectedCourse(filters.courseName ? filters.courseName[0] : null);
+        const newCourse = filters.courseName ? filters.courseName[0] : null;
+        // Reset selected rows if course filter changes
+        if (newCourse !== selectedCourse) {
+            setSelectedRowKeys([]); // Clear selected rows
+        }
+        setSelectedCourse(newCourse);
+        setIsFilterApplied(!!newCourse);
         setSelectedStudentStatus(filters.studentStatus ? filters.studentStatus[0] : null);
         console.log(filters.studentStatus)
     };
@@ -55,19 +66,26 @@ const StudentConsultationRegistration = () => {
         console.log("Selected rows:", selectedRowKeys);
         setSelectedRowKeys(newSelectedRowKeys);
     };
-    const rowSelection = {
-        selectedRowKeys,
-        onChange: onSelectChange,
-        preserveSelectedRowKeys: true, // Keep selected rows across pages
-    };
+    const rowSelection = isFilterApplied
+        ? {
+            selectedRowKeys,
+            onChange: onSelectChange,
+            preserveSelectedRowKeys: true, // Keep selected rows across pages
+            getCheckboxProps: (record) => ({
+                disabled: record.studentStatus !== 'Waitlisted', // Disable rows that are not "Waitlisted"
+            }),
+        } : null;
 
     const hasSelected = selectedRowKeys.length > 0;
 
     // Function to handle reload and reset selected rows
     const handleReload = () => {
+        setLoading(true);
         setSelectedRowKeys([]); // Reset selected rows
-        dispatch(GetStudentConsultationActionAsync(pageIndex, pageSize, selectedStudentStatus, selectedCourse)); // Reload data
+        dispatch(GetStudentConsultationActionAsync(pageIndex, pageSize, selectedStudentStatus, selectedCourse))
+            .finally(() => setLoading(false)); // Reload data
     };
+
 
     //render color 
     const renderStatusBadge = (status) => {
@@ -104,6 +122,7 @@ const StudentConsultationRegistration = () => {
         );
     };
 
+    // 
     // Function to display and handle payment course modal (waitlisted status)
     const handleWaitlistedClick = (userId, courseName, coursePrice) => {
         setSelectedUserId(userId);
@@ -190,14 +209,14 @@ const StudentConsultationRegistration = () => {
         );
     };
     const columns = [
-        // {
-        //     title: "No",
-        //     dataIndex: "no",
-        //     key: "no",
-        //     align: "center",
-        //     fixed: 'left',
-        //     render: (text, record, index) => index + 1 + (pageIndex - 1) * pageSize,
-        // },
+        {
+            title: "No",
+            dataIndex: "no",
+            key: "no",
+            align: "center",
+            fixed: 'left',
+            render: (text, record, index) => index + 1 + (pageIndex - 1) * pageSize,
+        },
         {
             title: "Tên học viên",
             dataIndex: "fullName",
@@ -267,19 +286,19 @@ const StudentConsultationRegistration = () => {
             },
         },
         {
-            title: "Email",
+            title: "Địa chỉ email",
             dataIndex: "email",
             key: "email",
         },
         {
-            title: "Action 1",
+            title: "Hành động 1",
             dataIndex: "studentStatus",
             key: "action",
             render: (text, record) => renderActionButtons(text, record),
             fixed: 'right',
         },
         {
-            title: "Action 2",
+            title: "Hành động 2",
             dataIndex: "operation",
             key: "operation",
             fixed: 'right',
@@ -288,49 +307,68 @@ const StudentConsultationRegistration = () => {
     ];
 
     return (
-        <div>
-            <div className="card">
-                <div className="card-body">
-                    <h5 className="card-title mb-3">Danh Sách Học Sinh Đăng Ký Khóa Học</h5>
-                    <Button
-                        className="mb-3"
-                        type="primary"
-                        disabled={!hasSelected}
-                        onClick={handleReload}
-                    >
-                        Reload
-                    </Button>
-                    {hasSelected && (
-                        <span style={{ marginLeft: 8, color: 'black' }}>
-                            {`Selected ${selectedRowKeys.length} items`}
+        <div className="card">
+            <div className="card-body">
+                <h5 className="card-title mb-3">Danh Sách Học Sinh Đăng Ký Khóa Học</h5>
+                {isFilterApplied && (
+                    <Space style={{ marginBottom: 16 }}>
+                        <Button
+                            type="primary"
+                            onClick={() => setIsAddToClassModalVisible(true)}
+                            disabled={!hasSelected}
+                            icon={<UsergroupAddOutlined />}
+                        >
+                            Thêm vào lớp
+                        </Button>
+                        <Button
+                            type="default"
+                            variant="solid"
+                            disabled={!hasSelected}
+                            onClick={handleReload}
+                            icon={<CloseCircleOutlined />}
+                            style={{ marginLeft: 4 }}
+                        >
+                            Bỏ chọn
+                        </Button>
+                        <span style={{ marginLeft: 4, color: 'black' }}>
+                            {hasSelected ? `Đã chọn ${selectedRowKeys.length} học sinh` : ''}
                         </span>
-                    )}
-                    <Table
-                        bordered
-                        rowSelection={rowSelection}
-                        columns={columns}
-                        dataSource={studentConsultations}
-                        rowKey={(record) => record.id}
-                        pagination={{
-                            current: pageIndex,
-                            pageSize,
-                            total: totalPagesCount * pageSize,
-                            showSizeChanger: true,
-                            pageSizeOptions: ["10", "20", "50"],
-                        }}
-                        scroll={{ x: 'max-content' }}
-                        onChange={handleTableChange}
-                    />
-                </div>
+                    </Space>
+                )}
+                <Table
+                    bordered
+                    rowSelection={rowSelection}
+                    columns={columns}
+                    dataSource={studentConsultations}
+                    rowKey={(record) => record.id}
+                    pagination={{
+                        current: pageIndex,
+                        pageSize,
+                        total: totalPagesCount * pageSize,
+                        showSizeChanger: true,
+                        pageSizeOptions: ["10", "20", "50"],
+                    }}
+                    scroll={{ x: 'max-content' }}
+                    onChange={handleTableChange}
+                    loading={loading}
+                />
+
+                <CreatePaymentCourseModal
+                    visible={isPaymentModalVisible}
+                    onClose={() => setPaymentModalVisible(false)}
+                    onSubmit={handlePaymentSubmit}
+                    userId={selectedUserId}
+                    spinning={loading}
+                    courseDetails={selectedCourseDetails}
+                />
+
+                <AddToClassModal
+                    visible={isAddToClassModalVisible}
+                    onClose={() => setIsAddToClassModalVisible(false)}
+                    listStudents={selectedRowKeys} // Truyền danh sách học sinh đã chọn vào modal
+                    courseId={selectedCourse} //
+                />
             </div>
-            <CreatePaymentCourseModal
-                visible={isPaymentModalVisible}
-                onClose={() => setPaymentModalVisible(false)}
-                onSubmit={handlePaymentSubmit}
-                userId={selectedUserId}
-                spinning={loading}
-                courseDetails={selectedCourseDetails}
-            />
         </div>
     );
 };

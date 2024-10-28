@@ -54,6 +54,7 @@ export default RegisterCourseReducer.reducer;
 export const GetStudentConsultationActionAsync = (pageIndex, pageSize, studentStatus, courseId) => {
     return async (dispatch) => {
         try {
+            console.log("courseId: ", courseId);
             const res = await httpClient.get(`/api/v1/register-course/filter`, {
                 params: {
                     Status: studentStatus,
