@@ -21,7 +21,7 @@ export const CreateChapterActionAsync = (chapter) => {
       const res = await httpClient.post(`/api/v1/chapters`, chapter);
       if (res.isSuccess && res.data) {
         message.success(`${res.message}`);
-        dispatch(GetCourseByIdActionAsync(chapter.courseId));
+        await dispatch(GetCourseByIdActionAsync(chapter.courseId));
         return true;
       } else {
         message.error(`${res.message}`);
@@ -40,7 +40,7 @@ export const DeleteChapterActionAsync = (chapterId, courseId) => {
       const res = await httpClient.delete(`/api/v1/chapters/${chapterId}`);
       if (res.isSuccess && res.data) {
         message.success(`${res.message}`);
-        dispatch(GetCourseByIdActionAsync(courseId));
+        await dispatch(GetCourseByIdActionAsync(courseId));
         return true;
       } else {
         message.error(`${res.message}`);
@@ -59,7 +59,7 @@ export const EditChapterByIdActionAsync = (chapterId, dataEdit, courseId) => {
       const res = await httpClient.put(`/api/v1/chapters/${chapterId}`, dataEdit);
       if (res.isSuccess && res.data) {
         message.success(`${res.message}`);
-        dispatch(GetCourseByIdActionAsync(courseId));
+        await dispatch(GetCourseByIdActionAsync(courseId));
         return true;
       } else {
         message.error(`${res.message}`);

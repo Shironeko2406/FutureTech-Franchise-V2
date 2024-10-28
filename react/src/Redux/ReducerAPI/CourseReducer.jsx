@@ -77,7 +77,7 @@ export const CreateCourseActionAsync = (
       const res = await httpClient.post(`/api/v1/courses`, data);
       if (res.isSuccess && res.data) {
         message.success(`${res.message}`);
-        dispatch(GetCourseActionAsync(search, status, pageIndex, pageSize));
+        await dispatch(GetCourseActionAsync(search, status, pageIndex, pageSize));
         return true;
       } else {
         message.error(`${res.message}`);
@@ -109,7 +109,7 @@ export const UpdateStatusCourseActionAsync = (
       );
       if (res.isSuccess && res.data) {
         message.success(`${res.message}`);
-        dispatch(GetCourseActionAsync(search, status, pageIndex, pageSize));
+        await dispatch(GetCourseActionAsync(search, status, pageIndex, pageSize));
         return true;
       } else {
         message.error(`${res.message}`);
@@ -128,7 +128,7 @@ export const CreateAssessmentActionAsync = (assessment, courseId) => {
       const res = await httpClient.post(`/api/v1/courses/${courseId}/assessments`, assessment);
       if (res.isSuccess && res.data) {
         message.success(`${res.message}`);
-        dispatch(GetCourseByIdActionAsync(courseId));
+        await dispatch(GetCourseByIdActionAsync(courseId));
         return true;
       } else {
         message.error(`${res.message}`);
@@ -147,7 +147,7 @@ export const CreateSessionActionAsync = (session, courseId) => {
       const res = await httpClient.post(`/api/v1/courses/${courseId}/sessions`, session);
       if (res.isSuccess && res.data) {
         message.success(`${res.message}`);
-        dispatch(GetCourseByIdActionAsync(courseId));
+        await dispatch(GetCourseByIdActionAsync(courseId));
         return true;
       } else {
         message.error(`${res.message}`);

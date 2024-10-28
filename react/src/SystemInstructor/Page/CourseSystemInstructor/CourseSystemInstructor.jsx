@@ -6,10 +6,7 @@ import {
   UpdateStatusCourseActionAsync,
 } from "../../../Redux/ReducerAPI/CourseReducer";
 import {
-  CheckCircleOutlined,
   ClockCircleOutlined,
-  CloseCircleOutlined,
-  PauseOutlined,
   PlusOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
@@ -24,24 +21,9 @@ const statusItems = [
     key: "PendingApproval",
     icon: <ClockCircleOutlined style={{ color: "orange" }} />,
   },
-  {
-    label: "Công khai",
-    key: "AvailableForFranchise",
-    icon: <CheckCircleOutlined style={{ color: "green" }} />,
-  },
-  {
-    label: "Tạm đóng",
-    key: "TemporarilySuspended",
-    icon: <PauseOutlined style={{ color: "gray" }} />,
-  },
-  {
-    label: "Đóng",
-    key: "Closed",
-    icon: <CloseCircleOutlined style={{ color: "red" }} />,
-  },
 ];
 
-const CourseManage = () => {
+const CourseSystemInstructor = () => {
   const { course, totalPagesCount } = useSelector(
     (state) => state.CourseReducer
   );
@@ -86,26 +68,7 @@ const CourseManage = () => {
   };
 
   const getStatusItems = (status) => {
-    switch (status) {
-      case "Draft":
-        return statusItems.filter((item) => item.key === "PendingApproval");
-      case "PendingApproval":
-        return statusItems.filter((item) =>
-          ["AvailableForFranchise", "Closed"].includes(item.key)
-        );
-      case "AvailableForFranchise":
-        return statusItems.filter((item) =>
-          ["TemporarilySuspended", "Closed"].includes(item.key)
-        );
-      case "TemporarilySuspended":
-        return statusItems.filter((item) =>
-          ["AvailableForFranchise", "Closed"].includes(item.key)
-        );
-      case "Closed":
-        return [];
-      default:
-        return statusItems;
-    }
+    return status === "Draft" ? statusItems : [];
   };
 
   const handleMenuClick = (courseId, { key }) => {
@@ -191,7 +154,9 @@ const CourseManage = () => {
       dataIndex: "name",
       key: "name",
       render: (text, record) => (
-        <NavLink to={`/manager/course-detail/${record.id}`}>{text}</NavLink>
+        <NavLink to={`/system-instructor/course-detail/${record.id}`}>
+          {text}
+        </NavLink>
       ),
       ...getColumnSearchProps(), // Apply search props to the column
     },
@@ -338,4 +303,4 @@ const CourseManage = () => {
   );
 };
 
-export default CourseManage;
+export default CourseSystemInstructor;

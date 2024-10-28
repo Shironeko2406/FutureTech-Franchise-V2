@@ -2,15 +2,15 @@ import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { GetCourseByIdActionAsync } from "../../../Redux/ReducerAPI/CourseReducer";
-import ViewSyllabus from "../../Component/ViewSyllabus";
-import ViewSession from "../../Component/ViewSession";
-import ViewChapter from "../../Component/ViewChapter";
-import ViewAssessment from "../../Component/ViewAssessment";
-import ViewMaterialCourse from "../../Component/ViewMaterialCourse";
+import ViewSyllabus from "../../Components/ViewSyllabus";
 import { useLoading } from "../../../Utils/LoadingContext";
+import ViewChapter from "../../Components/ViewChapter";
+import ViewSession from "../../Components/ViewSession";
+import ViewAssessment from "../../Components/ViewAssessment";
+import ViewMaterialCourse from "../../Components/ViewMaterialCourse";
 
 
-const CourseDetailManager = () => {
+const CourseDetailSystemInstructor = () => {
   const dispatch = useDispatch();
   const params = useParams();
   const { id } = params;
@@ -33,4 +33,4 @@ const CourseDetailManager = () => {
   );
 };
 
-export default CourseDetailManager;
+export default CourseDetailSystemInstructor;

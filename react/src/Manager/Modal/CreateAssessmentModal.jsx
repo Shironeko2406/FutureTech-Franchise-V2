@@ -13,12 +13,14 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { CreateAssessmentActionAsync } from "../../Redux/ReducerAPI/CourseReducer";
+import { useLoading } from "../../Utils/LoadingContext";
 
 const CreateAssessmentModal = ({ isDrawerVisible, closeDrawer }) => {
   const { assessments } = useSelector((state) => state.CourseReducer);
   const dispatch = useDispatch();
   const [form] = Form.useForm();
   const { id } = useParams();
+  const {setLoading} = useLoading()
 
   const updateNumbers = () => {
     const items = form.getFieldValue("items");
@@ -27,14 +29,17 @@ const CreateAssessmentModal = ({ isDrawerVisible, closeDrawer }) => {
   };
 
   const onSubmit = (values) => {
+    setLoading(true)
     dispatch(CreateAssessmentActionAsync(values.items, id))
       .then((response) => {
+        setLoading(false)
         if (response) {
           closeDrawer();
         }
       })
       .catch((error) => {
         console.log(error);
+        setLoading(false)
       });
   };
 

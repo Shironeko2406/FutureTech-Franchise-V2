@@ -8,7 +8,7 @@ const sidebarItems = [
   { type: 'section', label: 'Quản lý', icon: 'ti ti-dots' },
   { type: 'link', label: 'Người dùng', path: '#', icon: 'solar:layers-minimalistic-bold-duotone' },
   { type: 'link', label: 'Giảng viên', path: '#', icon: 'solar:danger-circle-bold-duotone' },
-  { type: 'link', label: 'Khóa học', path: '#', icon: 'solar:bookmark-square-minimalistic-bold-duotone' },
+  { type: 'link', label: 'Khóa học', path: '/system-instructor/course', icon: 'solar:bookmark-square-minimalistic-bold-duotone' },
   { type: 'link', label: 'Lịch học', path: '#', icon: 'solar:file-text-bold-duotone' },
   { type: 'link', label: 'Kiểu chữ', path: '#', icon: 'solar:text-field-focus-bold-duotone' },
   { type: 'section', label: 'Tư vấn' },
@@ -21,7 +21,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
     <aside className="left-sidebar">
       <div>
         <div className="brand-logo d-flex align-items-center justify-content-between">
-          <NavLink to="/instructor" className="text-nowrap logo-img">
+          <NavLink to="/system-instructor" className="text-nowrap logo-img">
             <img src="/assets/images/logos/logo-light.svg" alt="logo" />
           </NavLink>
           <div
