@@ -1,11 +1,19 @@
 import React from "react";
-import { Modal, Select, Form, Input, Button } from "antd";
+import { Modal, Select, Form, Input, Button, DatePicker } from "antd";
 
-const CreateSlotModal = ({ visible, onCancel, onSubmit, scheduleData }) => (
+const CreateSlotModal = ({ visible, onCancel, onSubmit, scheduleData, slots }) => {
+    const [form] = Form.useForm();
+    console.log("slot", slots)
+    // Optional: Reset form when modal is closed
+    const handleCancel = () => {
+        form.resetFields();
+        onCancel();
+    };
+
     <Modal
         open={visible}
-        title="Tạo Thời Khóa Biểu"
-        onCancel={onCancel}
+        title="Tạo Thời Khóa Biểu (Tùy Chọn)"
+        onCancel={handleCancel}
         footer={null}
     >
         <Form layout="vertical" onFinish={onSubmit} initialValues={scheduleData}>
@@ -22,7 +30,11 @@ const CreateSlotModal = ({ visible, onCancel, onSubmit, scheduleData }) => (
                 rules={[{ required: true, message: "Vui lòng chọn slot" }]}
             >
                 <Select placeholder="Chọn slot" allowClear>
-                    {/* Options for slots */}
+                    {slots.map(slot => (
+                        <Select.Option key={slot.id} value={slot.id}>
+                            {slot.name}, {slot.startTime} - {slot.endTime}
+                        </Select.Option>
+                    ))}
                 </Select>
             </Form.Item>
             <Form.Item
@@ -30,7 +42,10 @@ const CreateSlotModal = ({ visible, onCancel, onSubmit, scheduleData }) => (
                 label="Ngày bắt đầu"
                 rules={[{ required: true, message: "Vui lòng chọn ngày bắt đầu" }]}
             >
-                <Input type="date" />
+                <DatePicker
+                    format="YYYY-MM-DD"
+                    style={{ width: '100%' }}
+                />
             </Form.Item>
             <Form.Item
                 name="dayOfWeeks"
@@ -54,6 +69,6 @@ const CreateSlotModal = ({ visible, onCancel, onSubmit, scheduleData }) => (
             </Form.Item>
         </Form>
     </Modal>
-);
+};
 
 export default CreateSlotModal;

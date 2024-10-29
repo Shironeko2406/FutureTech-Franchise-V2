@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Button, Modal, Select, Form, Input, Spin } from "antd";
+import { Button, Modal, Select, Form, Input, Spin, DatePicker } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { GetAllInstructorsAvailableActionAsync, CreateClassActionAsync } from "../../Redux/ReducerAPI/ClassReducer";
 import { CreateClassScheduleActionAsync } from "../../Redux/ReducerAPI/ClassScheduleReducer";
-import CreateSlotModal from "../Modal/CreateSlotModal";
+import { GetSlotActionAsync } from "../../Redux/ReducerAPI/SlotReducer";
 
 const AddToClassModal = ({ visible, onClose, listStudents, courseId, onClassCreated }) => {
     const dispatch = useDispatch();
@@ -13,13 +13,14 @@ const AddToClassModal = ({ visible, onClose, listStudents, courseId, onClassCrea
     const [classSlots, setClassSlots] = useState([]);
     const { instructors } = useSelector((state) => state.ClassReducer);
     const [isLoading, setLoading] = useState(false);
-    const [classScheduleModalVisible, setClassScheduleModalVisible] = useState(false);
-    const [scheduleData, setScheduleData] = useState({ room: "", classId: "", slotId: "", startDate: "", dayOfWeeks: [] });
-
+    const [isScheduleModalVisible, setIsScheduleModalVisible] = useState(false);
+    const { slotData } = useSelector((state) => state.SlotReducer);
+    const [createdClassId, setCreatedClassId] = useState(null);
 
     // Fetch available classes on mount
     useEffect(() => {
         console.log("listStudents: ", listStudents);
+        if (visible) dispatch(GetSlotActionAsync());
         // if (visible) dispatch(fetchAvailableClasses());
     }, [visible, dispatch]);
 
@@ -33,6 +34,11 @@ const AddToClassModal = ({ visible, onClose, listStudents, courseId, onClassCrea
     const handleCreateClassClick = () => {
         onClose();
         setIsCreateModalVisible(true);
+    };
+
+    // Open modal Create Schedule
+    const handleScheduleCreation = () => {
+        setIsScheduleModalVisible(true);
     };
 
     // Fetch available instructors when the create modal is opened
@@ -55,23 +61,29 @@ const AddToClassModal = ({ visible, onClose, listStudents, courseId, onClassCrea
 
         dispatch(CreateClassActionAsync(classData))
             .then((res) => {
-                if (res) {
-                    setIsCreateModalVisible(false);
-                    onClose();
-                    setClassScheduleModalVisible(true);
-                    setScheduleData({ ...scheduleData, classId: res.data });
-                    if (onClassCreated) onClassCreated();
-                }
+                setCreatedClassId(res.data);
+                setIsCreateModalVisible(false);
+                onClose();
+                handleScheduleCreation(); // Mở modal tạo thời khóa biểu sau khi tạo lớp thành công
+                if (onClassCreated) onClassCreated();
             })
             .finally(() => setLoading(false));
     };
 
+    // Submit the create schedule form
     const handleScheduleSubmit = (values) => {
-        const newScheduleData = { ...scheduleData, ...values };
-        dispatch(CreateClassScheduleActionAsync(newScheduleData));
-        setClassScheduleModalVisible(false);
-    };
+        const scheduleData = {
+            room: values.room,
+            classId: createdClassId,
+            slotId: values.slotId,
+            startDate: values.startDate.format("YYYY-MM-DD"), // Định dạng ngày
+            dayOfWeeks: values.daysOfWeek,
+        };
 
+        // Gọi API để tạo thời khóa biểu
+        dispatch(CreateClassScheduleActionAsync(scheduleData)); // Tạo action này trong ClassScheduleReducer
+        setIsScheduleModalVisible(false);
+    };
 
     return (
         <>
@@ -167,13 +179,52 @@ const AddToClassModal = ({ visible, onClose, listStudents, courseId, onClassCrea
                 </Spin>
             </Modal>
 
-            {/* Create Slot Modal */}
-            <CreateSlotModal
-                visible={classScheduleModalVisible}
-                onCancel={() => setClassScheduleModalVisible(false)}
-                onSubmit={handleScheduleSubmit}
-                scheduleData={scheduleData}
-            />
+            {/* Schedule Creation Modal */}
+            <Modal
+                open={isScheduleModalVisible}
+                title="Tạo Thời Khóa Biểu (Tùy Chọn)"
+                onCancel={() => setIsScheduleModalVisible(false)}
+                footer={null}
+            >
+                <Form layout="vertical" onFinish={handleScheduleSubmit}>
+                    <Form.Item
+                        name="room"
+                        label="Phòng học"
+                        rules={[{ required: true, message: "Vui lòng nhập phòng học" }]}
+                    >
+                        <Input placeholder="Nhập phòng học" />
+                    </Form.Item>
+                    <Form.Item name="slotId" label="Chọn Slot">
+                        <Select placeholder="Chọn slot">
+                            {slotData.map((slot) => (
+                                <Select.Option key={slot.id} value={slot.id}>
+                                    {`${slot.name} - ${slot.startTime} đến ${slot.endTime}`}
+                                </Select.Option>
+                            ))}
+                        </Select>
+                    </Form.Item>
+                    <Form.Item
+                        name="startDate"
+                        label="Ngày bắt đầu"
+                        rules={[{ required: true, message: "Vui lòng chọn ngày bắt đầu" }]}
+                    >
+                        <DatePicker />
+                    </Form.Item>
+                    <Form.Item name="daysOfWeek" label="Chọn các ngày trong tuần">
+                        <Select mode="multiple" placeholder="Chọn các ngày">
+                            {["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].map(day => (
+                                <Select.Option key={day} value={day}>{day}</Select.Option>
+                            ))}
+                        </Select>
+                    </Form.Item>
+                    <Form.Item>
+                        <Button type="primary" htmlType="submit">
+                            Tạo Thời Khóa Biểu
+                        </Button>
+                    </Form.Item>
+                </Form>
+            </Modal>
+
         </>
     );
 };
