@@ -1,25 +1,24 @@
-import { Button, Select, Table, Input } from "antd";
-import { useEffect, useState } from "react";
+import { Table, Space, Button, Popconfirm } from "antd";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { SearchOutlined } from "@ant-design/icons";
+import { GetClassesActionAsync } from "../../../Redux/ReducerAPI/ClassReducer";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 
 const ClassManagement = () => {
+    const { classes, totalPagesCount } = useSelector((state) => state.ClassReducer);
     const dispatch = useDispatch();
     const [pageIndex, setPageIndex] = useState(1);
-    const [pageSize, setPageSize] = useState(10); // Kích thước trang mặc định là 10
-    const [searchName, setSearchName] = useState("");
+    const [pageSize, setPageSize] = useState(10);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        // Fetch data
-    }, [pageIndex, pageSize, searchName, dispatch]);
+        setLoading(true);
+        dispatch(GetClassesActionAsync(pageIndex, pageSize)).finally(() => setLoading(false));
+    }, [dispatch, pageIndex, pageSize]);
 
-    const handlePageChange = (page, pageSize) => {
-        setPageIndex(page);
-        setPageSize(pageSize);
-    };
-
-    const handleSearchChange = (e) => {
-        setSearchName(e.target.value);
+    const handleTableChange = (pagination) => {
+        setPageIndex(pagination.current);
+        setPageSize(pagination.pageSize);
     };
 
     const columns = [
@@ -27,67 +26,88 @@ const ClassManagement = () => {
             title: "No",
             dataIndex: "no",
             key: "no",
+            align: "center",
             render: (text, record, index) => index + 1 + (pageIndex - 1) * pageSize,
         },
         {
-            title: "Tiêu đề",
-            dataIndex: "title",
-            key: "title",
+            title: "Tên lớp",
+            dataIndex: "name",
+            key: "name",
+            align: "center",
         },
         {
-            title: "Tên học viên",
-            dataIndex: "studentName",
-            key: "studentName",
+            title: "Sức chứa",
+            dataIndex: "capacity",
+            key: "capacity",
+            align: "center",
         },
         {
-            title: "Mô tả",
-            dataIndex: "description",
-            key: "description",
+            title: "SL hiện tại",
+            dataIndex: "currentEnrollment",
+            key: "currentEnrollment",
+            align: "center",
         },
         {
-            title: "Số tiền (VNĐ)",
-            dataIndex: "amount",
-            key: "amount",
-            render: (amount) => amount.toLocaleString("vi-VN"), // Định dạng số tiền
+            title: "Tên khóa",
+            dataIndex: "courseName",
+            key: "courseName",
+            align: "center",
         },
         {
-            title: "Thời gian thanh toán",
-            dataIndex: "dateTime",
-            key: "dateTime",
-            render: (dateTime) => new Date(dateTime).toLocaleString("vi-VN"), // Định dạng ngày giờ
+            title: "Tình trạng",
+            dataIndex: "status",
+            key: "status",
+            align: "center",
+            render: (status) => (
+                <span style={{ color: status === "Active" ? "green" : "red" }}>
+                    {status}
+                </span>
+            ),
+        },
+        {
+            title: "Hành động",
+            key: "action",
+            align: "center",
+            render: (text, record) => (
+                <Space size="middle">
+                    <Button type="link" icon={<EditOutlined />} onClick={() => handleEdit(record.id)}>Sửa</Button>
+                    <Popconfirm title="Bạn có chắc chắn muốn xóa?" onConfirm={() => handleDelete(record.id)}>
+                        <Button type="link" icon={<DeleteOutlined />} danger />
+                    </Popconfirm>
+                </Space>
+            ),
         },
     ];
 
+    const handleEdit = (id) => {
+        // Thực hiện logic chỉnh sửa tại đây
+        console.log("Edit class with id:", id);
+    };
+
+    const handleDelete = (id) => {
+        // Thực hiện logic xóa tại đây
+        console.log("Delete class with id:", id);
+    };
+
     return (
-        <div>
-            <div className="card">
-                <div className="card-body">
-                    <h5 className="card-title mb-3">Thông Tin Thanh Toán</h5>
-                    <div style={{ marginBottom: 16 }}>
-                        <span style={{ marginRight: 8 }}>Tìm kiếm:</span> {/* Thêm chữ "Search" */}
-                        <Input
-                            placeholder="Tìm kiếm tên học viên"
-                            onChange={handleSearchChange}
-                            style={{ width: 300 }}
-                            suffix={<SearchOutlined />}
-                        />
-                    </div>
-                    <Table
-                        bordered
-                        columns={columns}
-                        // dataSource={paymentInfo}
-                        rowKey={(record) => record.id}
-                        pagination={{
-                            current: pageIndex,
-                            pageSize,
-                            // total: totalPagesCount * pageSize,
-                            onChange: handlePageChange,
-                            showSizeChanger: true,
-                            pageSizeOptions: ["10", "20", "50"],
-                        }}
-                        scroll={{ x: 'max-content' }}
-                    />
-                </div>
+        <div className="card">
+            <div className="card-body">
+                <h5 className="card-title mb-3">Danh Sách Lớp Học</h5>
+                <Table
+                    bordered
+                    columns={columns}
+                    dataSource={classes}
+                    rowKey={(record) => record.id}
+                    pagination={{
+                        current: pageIndex,
+                        pageSize,
+                        total: totalPagesCount * pageSize,
+                        showSizeChanger: true,
+                        pageSizeOptions: ["10", "20", "50"],
+                    }}
+                    loading={loading}
+                    onChange={handleTableChange}
+                />
             </div>
         </div>
     );

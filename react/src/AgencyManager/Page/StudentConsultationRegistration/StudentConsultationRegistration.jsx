@@ -16,8 +16,7 @@ const StudentConsultationRegistration = () => {
     const { course } = useSelector((state) => state.CourseReducer);
     const dispatch = useDispatch();
     const [pageIndex, setPageIndex] = useState(1);
-    const [pageSize, setPageSize] = useState(3); // Default page size is 10
-
+    const [pageSize, setPageSize] = useState(10); // Default page size is 10
     const [selectedCourse, setSelectedCourse] = useState(null);
     const [selectedStudentStatus, setSelectedStudentStatus] = useState(null);
     const [selectedRowKeys, setSelectedRowKeys] = useState([]); // Track selected rows
@@ -86,6 +85,13 @@ const StudentConsultationRegistration = () => {
             .finally(() => setLoading(false)); // Reload data
     };
 
+    // Function
+    const handleReloadTableAfterCreateClass = () => {
+        setLoading(true);
+        dispatch(GetStudentConsultationActionAsync(pageIndex, pageSize, selectedStudentStatus, selectedCourse))
+            .finally(() => setLoading(false));
+    };
+
 
     //render color 
     const renderStatusBadge = (status) => {
@@ -122,7 +128,7 @@ const StudentConsultationRegistration = () => {
         );
     };
 
-    // 
+
     // Function to display and handle payment course modal (waitlisted status)
     const handleWaitlistedClick = (userId, courseName, coursePrice, courseId) => {
         setSelectedUserId(userId);
@@ -366,7 +372,8 @@ const StudentConsultationRegistration = () => {
                     visible={isAddToClassModalVisible}
                     onClose={() => setIsAddToClassModalVisible(false)}
                     listStudents={selectedRowKeys} // Truyền danh sách học sinh đã chọn vào modal
-                    courseId={selectedCourse} //
+                    courseId={selectedCourse}
+                    onClassCreated={handleReloadTableAfterCreateClass} // Thêm dòng này
                 />
             </div>
         </div>

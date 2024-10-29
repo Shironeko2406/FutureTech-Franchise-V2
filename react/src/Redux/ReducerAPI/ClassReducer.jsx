@@ -12,14 +12,35 @@ const ClassReducer = createSlice({
     reducers: {
         setInstructors: (state, action) => {
             state.instructors = action.payload;
+        },
+        setClasses: (state, action) => {
+            state.classes = action.payload.items;
+            state.totalPagesCount = action.payload.totalPagesCount;
         }
     },
 });
 
-export const { setInstructors } = ClassReducer.actions;
+export const { setInstructors, setClasses, setClass } = ClassReducer.actions;
 
 export default ClassReducer.reducer;
 //---------API CALL-------------
+export const GetClassesActionAsync = (pageIndex, pageSize) => {
+    return async (dispatch) => {
+        try {
+            const res = await httpClient.get(`/api/v1/classes/filter`, {
+                params: {
+                    PageIndex: pageIndex,
+                    PageSize: pageSize,
+                },
+            });
+            console.log("GetClassesActionAsync: ", res.data);
+            dispatch(setClasses(res.data));
+        } catch (error) {
+            console.error(error);
+        }
+    };
+};
+
 
 export const GetAllInstructorsAvailableActionAsync = () => {
     return async (dispatch) => {
@@ -38,13 +59,14 @@ export const GetAllInstructorsAvailableActionAsync = () => {
 };
 
 export const CreateClassActionAsync = (classData) => {
-    return async () => {
+    return async (dispatch) => {
         console.log("CreateClassActionAsync:", classData);
         try {
             const res = await httpClient.post(`/api/v1/classes`, classData);
-            if (res.isSuccess && res.data) {
+            if (res.isSuccess && res.data != null) {
                 message.success("Tạo lớp học thành công!");
-            } else if (res.isSuccess && !res.data) {
+                return res;
+            } else if (res.isSuccess && res.data == null) {
                 message.error(`${res.message}`);
             } else {
                 throw new Error(`${res.message}`);

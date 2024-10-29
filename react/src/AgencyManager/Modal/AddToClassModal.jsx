@@ -3,14 +3,18 @@ import { Button, Modal, Select, Form, Input, Spin } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { GetAllInstructorsAvailableActionAsync, CreateClassActionAsync } from "../../Redux/ReducerAPI/ClassReducer";
+import { CreateClassScheduleActionAsync } from "../../Redux/ReducerAPI/ClassScheduleReducer";
+import CreateSlotModal from "../Modal/CreateSlotModal";
 
-const AddToClassModal = ({ visible, onClose, listStudents, courseId }) => {
+const AddToClassModal = ({ visible, onClose, listStudents, courseId, onClassCreated }) => {
     const dispatch = useDispatch();
     const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
     const [selectedClass, setSelectedClass] = useState(null);
     const [classSlots, setClassSlots] = useState([]);
     const { instructors } = useSelector((state) => state.ClassReducer);
     const [isLoading, setLoading] = useState(false);
+    const [classScheduleModalVisible, setClassScheduleModalVisible] = useState(false);
+    const [scheduleData, setScheduleData] = useState({ room: "", classId: "", slotId: "", startDate: "", dayOfWeeks: [] });
 
 
     // Fetch available classes on mount
@@ -50,12 +54,24 @@ const AddToClassModal = ({ visible, onClose, listStudents, courseId }) => {
         };
 
         dispatch(CreateClassActionAsync(classData))
-            .then(() => {
-                setIsCreateModalVisible(false);
-                onClose();
+            .then((res) => {
+                if (res) {
+                    setIsCreateModalVisible(false);
+                    onClose();
+                    setClassScheduleModalVisible(true);
+                    setScheduleData({ ...scheduleData, classId: res.data });
+                    if (onClassCreated) onClassCreated();
+                }
             })
             .finally(() => setLoading(false));
     };
+
+    const handleScheduleSubmit = (values) => {
+        const newScheduleData = { ...scheduleData, ...values };
+        dispatch(CreateClassScheduleActionAsync(newScheduleData));
+        setClassScheduleModalVisible(false);
+    };
+
 
     return (
         <>
@@ -150,6 +166,14 @@ const AddToClassModal = ({ visible, onClose, listStudents, courseId }) => {
                     </Form>
                 </Spin>
             </Modal>
+
+            {/* Create Slot Modal */}
+            <CreateSlotModal
+                visible={classScheduleModalVisible}
+                onCancel={() => setClassScheduleModalVisible(false)}
+                onSubmit={handleScheduleSubmit}
+                scheduleData={scheduleData}
+            />
         </>
     );
 };

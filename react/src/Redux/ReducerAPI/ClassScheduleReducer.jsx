@@ -1,15 +1,38 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice } from "@reduxjs/toolkit";
+import { httpClient } from "../../Utils/Interceptors";
+import { message } from "antd";
 
 const initialState = {
-    classSchedules: []
-}
+  schedules: [],
+};
 
 const ClassScheduleReducer = createSlice({
   name: "ClassScheduleReducer",
   initialState,
-  reducers: {}
+  reducers: {
+    setSchedules: (state, action) => {
+      state.schedules = action.payload;
+    },
+  },
 });
 
-export const {} = ClassScheduleReducer.actions
+export const { setSchedules } = ClassScheduleReducer.actions;
 
-export default ClassScheduleReducer.reducer
+export default ClassScheduleReducer.reducer;
+
+//---------API CALL-------------//
+export const CreateClassScheduleActionAsync = (scheduleData) => {
+  return async () => {
+    try {
+      const res = await httpClient.post(`/api/v1/class-schedule/date-range`, scheduleData);
+      if (res.isSuccess) {
+        message.success("Thời khóa biểu đã được tạo thành công!");
+      } else {
+        throw new Error(res.message);
+      }
+    } catch (error) {
+      console.error(error);
+      message.error("Đã xảy ra lỗi khi tạo thời khóa biểu, vui lòng thử lại sau.");
+    }
+  };
+};
