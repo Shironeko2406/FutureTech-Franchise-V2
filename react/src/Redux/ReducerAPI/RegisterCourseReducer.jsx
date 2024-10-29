@@ -72,11 +72,11 @@ export const GetStudentConsultationActionAsync = (pageIndex, pageSize, studentSt
 };
 
 
-export const UpdateStudentStatusAsync = (id, newStatus) => {
+export const UpdateStudentStatusAsync = (id, newStatus, courseId) => {
     return async () => {
         try {
             // Make the API call to update the student's status
-            const res = await httpClient.put(`api/v1/register-course/${id}?status=${newStatus}`);
+            const res = await httpClient.put(`api/v1/register-course/${id}?courseId=${courseId}&status=${newStatus}`);
             if (res.isSuccess && res.data) {
                 message.success(`${res.message}`);
             } else if (res.isSuccess && !res.data) {

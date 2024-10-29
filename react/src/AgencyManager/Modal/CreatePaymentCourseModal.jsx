@@ -26,7 +26,7 @@ const CreatePaymentCourseModal = ({ visible, onClose, onSubmit, userId, spinning
     const handleFinish = (values) => {
         // Chuyển đổi amount từ định dạng chuỗi về kiểu số
         const amountNumber = parseInt(values.amount.replace(/\./g, '').replace(' VNĐ', ''), 10);
-        onSubmit({ ...values, userId, amount: amountNumber });
+        onSubmit({ ...values, userId, amount: amountNumber, courseId: courseDetails.courseId });
         form.resetFields();
     };
 

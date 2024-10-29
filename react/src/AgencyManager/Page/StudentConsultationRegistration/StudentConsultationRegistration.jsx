@@ -124,10 +124,10 @@ const StudentConsultationRegistration = () => {
 
     // 
     // Function to display and handle payment course modal (waitlisted status)
-    const handleWaitlistedClick = (userId, courseName, coursePrice) => {
+    const handleWaitlistedClick = (userId, courseName, coursePrice, courseId) => {
         setSelectedUserId(userId);
         setPaymentModalVisible(true);
-        setselectedCourseDetails({ courseName, coursePrice });
+        setselectedCourseDetails({ courseName, coursePrice, courseId });
     };
 
     const handlePaymentSubmit = (paymentData) => {
@@ -145,7 +145,7 @@ const StudentConsultationRegistration = () => {
     // Function to handle status registration
     const renderActionButtons = (status, record) => {
         const handleUpdateStatus = (newStatus) => {
-            dispatch(UpdateStudentStatusAsync(record.id, newStatus))
+            dispatch(UpdateStudentStatusAsync(record.id, newStatus, record.courseId))
                 .then(() => {
                     dispatch(GetStudentConsultationActionAsync(pageIndex, pageSize, selectedStudentStatus, selectedCourse));
                 })
@@ -173,7 +173,7 @@ const StudentConsultationRegistration = () => {
             case 'Pending':
                 return (
                     <>
-                        <Button onClick={() => handleWaitlistedClick(record.id, record.courseName, record.coursePrice)} type="primary">Waitlisted</Button>
+                        <Button onClick={() => handleWaitlistedClick(record.id, record.courseName, record.coursePrice, record.courseId)} type="primary">Waitlisted</Button>
                         <Button onClick={() => handleUpdateStatus('Cancel')} type="default" style={{ marginLeft: 8 }}>Cancel</Button>
                     </>
                 );

@@ -50,6 +50,7 @@ export const GetStudentPaymentInfoActionAsync = (pageIndex, pageSize, search) =>
 
 export const CreateStudentPaymentActionAsync = (paymentData) => {
     return async () => {
+        console.log("create payment", paymentData);
         try {
             const res = await httpClient.post(`/api/v1/payments?status=Completed`, paymentData);
             if (res.isSuccess && res.data) {
