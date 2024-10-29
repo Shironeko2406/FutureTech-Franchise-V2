@@ -39,14 +39,14 @@ const RegisterCourseReducer = createSlice({
     name: "RegisterCourseReducer",
     initialState,
     reducers: {
-        setClass: (state, action) => {
+        setRegisterCourse: (state, action) => {
             state.studentConsultations = action.payload.items;
             state.totalPagesCount = action.payload.totalPagesCount;
         }
     },
 });
 
-export const { setClass } = RegisterCourseReducer.actions;
+export const { setRegisterCourse } = RegisterCourseReducer.actions;
 
 export default RegisterCourseReducer.reducer;
 
@@ -64,7 +64,7 @@ export const GetStudentConsultationActionAsync = (pageIndex, pageSize, studentSt
                 },
             });
             console.log("GetStudentConsultationActionAsync: ", res.data);
-            dispatch(setClass(res.data));
+            dispatch(setRegisterCourse(res.data));
         } catch (error) {
             console.error(error);
         }

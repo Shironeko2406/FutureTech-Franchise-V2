@@ -83,22 +83,6 @@ const LeftSidebar = ({ onSidebarToggle }) => {
             <li className="sidebar-item">
               <NavLink
                 className="sidebar-link"
-                to="student-consultation-registration"
-                aria-expanded="false"
-                activeClassName="active"
-              >
-                <span>
-                  <iconify-icon
-                    icon="solar:file-text-bold-duotone"
-                    className="fs-6"
-                  />
-                </span>
-                <span className="hide-menu">Ghi danh</span>
-              </NavLink>
-            </li>
-            <li className="sidebar-item">
-              <NavLink
-                className="sidebar-link"
                 to="student-payment"
                 aria-expanded="false"
                 activeClassName="active"
@@ -114,6 +98,22 @@ const LeftSidebar = ({ onSidebarToggle }) => {
             </li>
             <li className="nav-small-cap">
               <span className="hide-menu">Lớp học</span>
+            </li>
+            <li className="sidebar-item">
+              <NavLink
+                className="sidebar-link"
+                to="student-consultation-registration"
+                aria-expanded="false"
+                activeClassName="active"
+              >
+                <span>
+                  <iconify-icon
+                    icon="solar:file-text-bold-duotone"
+                    className="fs-6"
+                  />
+                </span>
+                <span className="hide-menu">Ghi danh</span>
+              </NavLink>
             </li>
             <li className="sidebar-item">
               <NavLink

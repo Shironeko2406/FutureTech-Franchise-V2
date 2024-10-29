@@ -65,7 +65,7 @@ export const GetAllCoursesAvailableActionAsync = () => {
         throw new Error(response.message)
       }
     } catch (error) {
-      console.error("Error fetching agencies:", error);
+      console.error("Error fetching courses:", error);
       message.error("Đã xảy ra lỗi khi lấy danh sách khóa học!");
     }
   }
