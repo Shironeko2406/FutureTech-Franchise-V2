@@ -3,14 +3,14 @@ import { useSelector } from "react-redux";
 import { Descriptions } from "antd";
 import CreateSyllabus from "../Modal/CreateSyllabus";
 import EditSyllabusModal from "../Modal/EditSyllabusModal";
+import SendFileCourseDetailModal from "../Modal/SendFileCourseDetailModal";
 
 const labelStyle = { textAlign: "right", width: "220px" };
 
 const ViewSyllabus = () => {
   const { courseById } = useSelector((state) => state.CourseReducer);
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
-  const [isDrawerEditSyllabusVisible, setIsDrawerEditSyllabusVisible] =
-    useState(false);
+  const [isDrawerEditSyllabusVisible, setIsDrawerEditSyllabusVisible] = useState(false);
   const [syllabusSelected, setSyllabusSelected] = useState(null);
 
   const showDrawer = () => {
@@ -85,10 +85,7 @@ const ViewSyllabus = () => {
             <Descriptions.Item label="Thang điểm:" labelStyle={labelStyle}>
               {courseById?.syllabus?.scale ?? "Chưa có giáo trình"}
             </Descriptions.Item>
-            <Descriptions.Item
-              label="Điểm trung bình:"
-              labelStyle={labelStyle}
-            >
+            <Descriptions.Item label="Điểm trung bình:" labelStyle={labelStyle}>
               {courseById?.syllabus?.minAvgMarkToPass ?? "Chưa có giáo trình"}
             </Descriptions.Item>
           </Descriptions>

@@ -4,11 +4,16 @@ import { Table } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import CreateChapterModal from "../Modal/CreateChapterModal";
 import { Link } from "react-router-dom";
-import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import {
+  EditOutlined,
+  DeleteOutlined,
+  FileAddOutlined,
+} from "@ant-design/icons";
 import { useParams } from "react-router-dom";
 import { DeleteChapterActionAsync } from "../../Redux/ReducerAPI/ChapterReducer";
 import EditChapterModal from "../Modal/EditChapterModal";
 import { useLoading } from "../../Utils/LoadingContext";
+import CreateMaterialModal from "../Modal/CreateMaterialModal";
 
 const ViewChapter = () => {
   const { chapters } = useSelector((state) => state.CourseReducer);
@@ -16,8 +21,16 @@ const ViewChapter = () => {
   const { id } = useParams();
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
   const [selectedChapter, setSelectedChapter] = useState(null);
+  const [
+    selectedChapterForCreateMaterial,
+    setSelectedChapterForCreateMaterial,
+  ] = useState(null);
+
   const [isModalEditChapterVisible, setIsModalEditChapterVisible] =
     useState(false);
+  const [isModalCreateMaterialVisible, setsModalCreateMaterialVisible] =
+    useState(false);
+
   const { setLoading } = useLoading();
 
   const handleDelete = async (chapterId) => {
@@ -47,40 +60,64 @@ const ViewChapter = () => {
     setIsDrawerVisible(false);
   };
 
+  const showModalCreateMaterialChapter = (chapter) => {
+    setSelectedChapterForCreateMaterial(chapter);
+    setsModalCreateMaterialVisible(true);
+  };
+
+  const closeModalCreateMaterialChapter = () => {
+    setsModalCreateMaterialVisible(false);
+    setSelectedChapterForCreateMaterial(null);
+  };
+
   const columns = [
     {
       title: "Số chương",
       dataIndex: "number",
       key: "number",
+      width: "10%",
+      align: "center",
     },
     {
       title: "Chủ đề",
       dataIndex: "topic",
       key: "topic",
+      width: "20%",
     },
     {
       title: "Mô tả",
       dataIndex: "description",
       key: "description",
+      width: "45%",
     },
     {
-      title: "Action",
+      title: "Hành động",
       key: "action",
+      width: "20%",
       render: (_, record) => (
         <Space size="middle">
-          <EditOutlined
-            className="me-3"
-            style={{ color: "#1890ff", cursor: "pointer" }}
+          <Button
+            type="default"
+            icon={<EditOutlined />}
+            style={{ backgroundColor: "#faad14", color: "#fff" }} // Warning color
             onClick={() => showModalEditChapter(record)}
           />
+
           <Popconfirm
             title="Bạn muốn xóa chương này?"
             onConfirm={() => handleDelete(record.id)}
             okText="Đồng ý"
             cancelText="Hủy"
           >
-            <DeleteOutlined style={{ color: "red", cursor: "pointer" }} />
+            <Button type="primary" danger icon={<DeleteOutlined />} />
           </Popconfirm>
+
+          <Button
+            type="default"
+            icon={<FileAddOutlined />}
+            style={{ color: "#fff", backgroundColor: "#1890ff" }}
+            onClick={() => showModalCreateMaterialChapter(record)}
+          />
         </Space>
       ),
     },
@@ -117,7 +154,7 @@ const ViewChapter = () => {
       dataSource={record.chapterMaterials}
       pagination={false}
       rowKey="id"
-      title={() => <h5>Tài nguyên</h5>} // Tiêu đề cho bảng mở rộng
+      title={() => <h5>Tài nguyên</h5>}
     />
   );
 
@@ -127,8 +164,8 @@ const ViewChapter = () => {
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h5 className="card-title">Chi tiết các chương</h5>
           <button className="btn btn-primary" onClick={showDrawer}>
-              Thêm chương
-            </button>
+            Thêm chương
+          </button>
         </div>
         {/* Bảng hiển thị chapter */}
         <Table
@@ -136,10 +173,11 @@ const ViewChapter = () => {
           columns={columns}
           expandable={{
             expandedRowRender,
-            rowExpandable: (record) => record.chapterMaterials.length > 0, // Chỉ mở rộng nếu có materials
+            rowExpandable: (record) => record.chapterMaterials.length > 0, 
           }}
           dataSource={chapters}
-          rowKey="id" // Đảm bảo mỗi hàng có một khóa duy nhất
+          rowKey="id" 
+          scroll={{ x: 768 }}
         />
       </div>
       <CreateChapterModal
@@ -150,6 +188,11 @@ const ViewChapter = () => {
         visible={isModalEditChapterVisible}
         onClose={closeModalEditChapter}
         chapter={selectedChapter}
+      />
+      <CreateMaterialModal
+        visible={isModalCreateMaterialVisible}
+        onClose={closeModalCreateMaterialChapter}
+        chapter={selectedChapterForCreateMaterial}
       />
     </div>
   );

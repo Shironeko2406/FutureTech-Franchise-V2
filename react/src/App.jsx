@@ -34,6 +34,8 @@ import HomeInstructor from "./Instructor/Page/HomeInstructor/HomeInstructor";
 import CourseDetailManager from "./Manager/Page/CourseDetailManager/CourseDetailManager";
 import { LoadingProvider, useLoading } from "./Utils/LoadingContext";
 import { Spin } from "antd";
+import { ConfigProvider } from 'antd';
+import vi_VN from 'antd/es/locale/vi_VN';
 import TempUISystemInstructor from "./SystemInstructor/TempUISystemInstructor/TempUISystemInstructor";
 import HomeSystemInstructor from "./SystemInstructor/Page/HomeSystemInstructor/HomeSystemInstructor";
 import CourseSystemInstructor from "./SystemInstructor/Page/CourseSystemInstructor/CourseSystemInstructor";
@@ -51,81 +53,83 @@ const LoadingOverlay = () => {
 
 function App() {
   return (
-    <BrowserRouter>
-      <Provider store={store}>
-        <LoadingProvider>
-          <LoadingOverlay/>
-          <Routes>
-            <Route element={<AnonymousRoute />}>
-              <Route path="" element={<Login></Login>} />
-              <Route path="register" element={<Register></Register>} />
-              <Route path="forgot-password" element={<ForgotPassword />} />
-              <Route
-                path="forgot-password/reset-password"
-                element={<ResetPassword />}
-              />
-            </Route>
-
-            <Route element={<ProtectedRoute requiredRole="Administrator" />}>
-              <Route path="admin" element={<TempUI />}>
-                <Route path="" element={<Home />} />
-                <Route path="franchise" element={<FranchiseManagement />} />
-                <Route path="course-category" element={<CourseCategoryAdmin />} />
-                <Route path="course" element={<CourseManageAdmin />} />
-                <Route path="profile" element={<Profile />} />
+    <ConfigProvider locale={vi_VN}>
+      <BrowserRouter>
+        <Provider store={store}>
+          <LoadingProvider>
+            <LoadingOverlay/>
+            <Routes>
+              <Route element={<AnonymousRoute />}>
+                <Route path="" element={<Login></Login>} />
+                <Route path="register" element={<Register></Register>} />
+                <Route path="forgot-password" element={<ForgotPassword />} />
+                <Route
+                  path="forgot-password/reset-password"
+                  element={<ResetPassword />}
+                />
               </Route>
-            </Route>
 
-            <Route element={<ProtectedRoute requiredRole="AgencyManager" />}>
-              <Route path="agency-manager" element={<TempUIAgencyManager />}>
-                <Route path="" element={<HomeAgencyManager />} />
+              <Route element={<ProtectedRoute requiredRole="Administrator" />}>
+                <Route path="admin" element={<TempUI />}>
+                  <Route path="" element={<Home />} />
+                  <Route path="franchise" element={<FranchiseManagement />} />
+                  <Route path="course-category" element={<CourseCategoryAdmin />} />
+                  <Route path="course" element={<CourseManageAdmin />} />
+                  <Route path="profile" element={<Profile />} />
+                </Route>
               </Route>
-            </Route>
 
-            <Route element={<ProtectedRoute requiredRole="Student" />}>
-              <Route path="student" element={<TempUIStudent />}>
-                <Route path="" element={<HomeStudentNoti />} />
-                <Route path="schedule" element={<ScheduleStudent />} />
-                <Route path="change-password" element={<ChangePassword />} />
+              <Route element={<ProtectedRoute requiredRole="AgencyManager" />}>
+                <Route path="agency-manager" element={<TempUIAgencyManager />}>
+                  <Route path="" element={<HomeAgencyManager />} />
+                </Route>
               </Route>
-            </Route>
 
-            <Route element={<ProtectedRoute requiredRole="Instructor" />}>
-              <Route path="instructor" element={<TempUIInstructor />}>
-                <Route path="" element={<HomeInstructor/>} />
-                <Route path="schedule" element={<ScheduleTeaching/>} />
+              <Route element={<ProtectedRoute requiredRole="Student" />}>
+                <Route path="student" element={<TempUIStudent />}>
+                  <Route path="" element={<HomeStudentNoti />} />
+                  <Route path="schedule" element={<ScheduleStudent />} />
+                  <Route path="change-password" element={<ChangePassword />} />
+                </Route>
               </Route>
-            </Route>
 
-            <Route element={<ProtectedRoute requiredRole="Manager" />}>
-              <Route path="manager" element={<TempUIManager />}>
-                <Route path="" element={<HomeManager />} />
-                <Route path="consult" element={<ConsultationManagement />} />
-                <Route path="course-category" element={<CourseCategoryManager />} />
-                <Route path="course" element={<CourseManage />} />
-                <Route path="course-detail/:id" element={<CourseDetailManager/>} />
-                <Route path="slot" element={<SlotManager />} />
+              <Route element={<ProtectedRoute requiredRole="Instructor" />}>
+                <Route path="instructor" element={<TempUIInstructor />}>
+                  <Route path="" element={<HomeInstructor/>} />
+                  <Route path="schedule" element={<ScheduleTeaching/>} />
+                </Route>
               </Route>
-            </Route>
 
-            <Route element={<ProtectedRoute requiredRole="SystemInstructor" />}>
-              <Route path="system-instructor" element={<TempUISystemInstructor />}>
-                <Route path="" element={<HomeSystemInstructor/>} />
-                <Route path="course" element={<CourseSystemInstructor/>} />
-                <Route path="course-detail/:id" element={<CourseDetailSystemInstructor/>} />
-                
+              <Route element={<ProtectedRoute requiredRole="Manager" />}>
+                <Route path="manager" element={<TempUIManager />}>
+                  <Route path="" element={<HomeManager />} />
+                  <Route path="consult" element={<ConsultationManagement />} />
+                  <Route path="course-category" element={<CourseCategoryManager />} />
+                  <Route path="course" element={<CourseManage />} />
+                  <Route path="course-detail/:id" element={<CourseDetailManager/>} />
+                  <Route path="slot" element={<SlotManager />} />
+                </Route>
               </Route>
-            </Route>
 
-            {/*Test page */}
-            <Route path="student-page" element={<TempUIStudent />}>
-              <Route path="" element={<HomeStudent />} />
-              <Route path="course-detail" element={<CourseDetail />} />
-            </Route>
-          </Routes>
-        </LoadingProvider>
-      </Provider>
-    </BrowserRouter>
+              <Route element={<ProtectedRoute requiredRole="SystemInstructor" />}>
+                <Route path="system-instructor" element={<TempUISystemInstructor />}>
+                  <Route path="" element={<HomeSystemInstructor/>} />
+                  <Route path="course" element={<CourseSystemInstructor/>} />
+                  <Route path="course-detail/:id" element={<CourseDetailSystemInstructor/>} />
+                  
+                </Route>
+              </Route>
+
+              {/*Test page */}
+              <Route path="student-page" element={<TempUIStudent />}>
+                <Route path="" element={<HomeStudent />} />
+                <Route path="course-detail" element={<CourseDetail />} />
+              </Route>
+            </Routes>
+          </LoadingProvider>
+        </Provider>
+      </BrowserRouter>
+    </ConfigProvider>
   );
 }
 

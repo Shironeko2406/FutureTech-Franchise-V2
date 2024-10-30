@@ -146,7 +146,7 @@ const ForgotPassword = () => {
                     to="/"
                     className="text-nowrap logo-img text-center d-block py-3 w-100"
                   >
-                    <img src="/assets/images/logos/logo-light.svg" />
+                    <img src="/assets/images/logos/FutureTechLogo.png" />
                   </NavLink>
                   <p className="text-center">Lấy lại mật khẩu</p>
                   <form onSubmit={user.handleSubmit}>
@@ -174,7 +174,7 @@ const ForgotPassword = () => {
                       Quên mật khẩu
                     </button>
                     <div className="d-flex align-items-center justify-content-center">
-                      <p className="fs-4 mb-0 fw-bold">New to SeoDash?</p>
+                      <p className="fs-4 mb-0 fw-bold">Đăng nhập?</p>
                       <NavLink className="text-primary fw-bold ms-2" to="/">
                         Trở lại
                       </NavLink>
