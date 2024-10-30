@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { GetClassesActionAsync } from "../../../Redux/ReducerAPI/ClassReducer";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 
 const ClassManagement = () => {
     const { classes, totalPagesCount } = useSelector((state) => state.ClassReducer);
@@ -10,6 +11,7 @@ const ClassManagement = () => {
     const [pageIndex, setPageIndex] = useState(1);
     const [pageSize, setPageSize] = useState(10);
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         setLoading(true);
@@ -19,6 +21,10 @@ const ClassManagement = () => {
     const handleTableChange = (pagination) => {
         setPageIndex(pagination.current);
         setPageSize(pagination.pageSize);
+    };
+
+    const handleRowClick = (id) => {
+        navigate(`${id}`);  // Assumes route setup for class detail page
     };
 
     const columns = [
@@ -34,6 +40,14 @@ const ClassManagement = () => {
             dataIndex: "name",
             key: "name",
             align: "center",
+            render: (text, record) => (
+                <span
+                    style={{ color: "blue", cursor: "pointer" }}
+                    onClick={() => handleRowClick(record.id)}
+                >
+                    {text}
+                </span>
+            ),
         },
         {
             title: "Sức chứa",

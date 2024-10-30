@@ -8,8 +8,8 @@ const LeftSidebar = ({ onSidebarToggle }) => {
       {/* Sidebar scroll*/}
       <div>
         <div className="brand-logo d-flex align-items-center justify-content-between">
-          <NavLink to="/admin" className="text-nowrap logo-img">
-            <img src="/assets/images/logos/logo-light.svg" alt="" />
+          <NavLink to="" className="text-nowrap logo-img">
+            {/* <img src="/assets/images/logos/logo-light.svg" alt="" /> */}
           </NavLink>
           <div
             className="close-btn d-xl-none d-block sidebartoggler cursor-pointer"
@@ -118,7 +118,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
             <li className="sidebar-item">
               <NavLink
                 className="sidebar-link"
-                to="class"
+                to="classes"
                 activeClassName="active"
               >
                 <span>

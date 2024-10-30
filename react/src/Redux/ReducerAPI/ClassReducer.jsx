@@ -16,11 +16,14 @@ const ClassReducer = createSlice({
         setClasses: (state, action) => {
             state.classes = action.payload.items;
             state.totalPagesCount = action.payload.totalPagesCount;
-        }
+        },
+        setClassDetail: (state, action) => {
+            state.classDetail = action.payload;
+        },
     },
 });
 
-export const { setInstructors, setClasses, setClass } = ClassReducer.actions;
+export const { setInstructors, setClasses, setClass, setClassDetail } = ClassReducer.actions;
 
 export default ClassReducer.reducer;
 //---------API CALL-------------
@@ -76,4 +79,22 @@ export const CreateClassActionAsync = (classData) => {
             message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
         }
     }
+};
+
+export const GetClassDetailActionAsync = (id) => {
+    return async (dispatch) => {
+        try {
+            const res = await httpClient.get(`/api/v1/classes/${id}`);
+            if (res.isSuccess) {
+
+                console.log("res:", res.data)
+                dispatch(setClassDetail(res.data));
+            } else {
+                throw new Error(res.message);
+            }
+        } catch (error) {
+            console.error("Error fetching class details:", error);
+            message.error("Đã xảy ra lỗi khi lấy thông tin lớp học!");
+        }
+    };
 };
