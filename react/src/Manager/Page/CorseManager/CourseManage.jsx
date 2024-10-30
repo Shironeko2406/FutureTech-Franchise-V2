@@ -1,7 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Button, Select, Table, Input, Dropdown, Tag } from "antd";
+import {
+  Button,
+  Select,
+  Table,
+  Input,
+  Dropdown,
+  Tag,
+  Space,
+  Popconfirm,
+} from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  CreateCourseCloneByIdActionAsync,
+  DeleteCourseByIdActionAsync,
   GetCourseActionAsync,
   UpdateStatusCourseActionAsync,
 } from "../../../Redux/ReducerAPI/CourseReducer";
@@ -9,14 +20,19 @@ import {
   CheckCircleOutlined,
   ClockCircleOutlined,
   CloseCircleOutlined,
+  CopyOutlined,
+  DeleteOutlined,
+  EditOutlined,
   PauseOutlined,
   PlusOutlined,
   SearchOutlined,
+  UploadOutlined,
 } from "@ant-design/icons";
 import CreateCourseModal from "../../Modal/CreateCourseModal";
 import { GetCourseCategoryActionAsync } from "../../../Redux/ReducerAPI/CourseCategoryReducer";
 import { NavLink } from "react-router-dom";
 import { useLoading } from "../../../Utils/LoadingContext";
+import SendFileCourseDetailModal from "../../Modal/SendFileCourseDetailModal";
 
 const statusItems = [
   {
@@ -51,6 +67,7 @@ const CourseManage = () => {
   const [pageSize, setPageSize] = useState(7); // Default page size is 10
   const [searchTerm, setSearchTerm] = useState(""); // State for search term
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
+  const [isModalUploadVisible, setIsModalUploadVisible] = useState(false);
   const { setLoading } = useLoading();
 
   useEffect(() => {
@@ -129,6 +146,34 @@ const CourseManage = () => {
       });
   };
 
+  const handleClone = async (id) => {
+    setLoading(true);
+    try {
+      await dispatch(
+        CreateCourseCloneByIdActionAsync(
+          id,
+          status,
+          pageIndex,
+          pageSize,
+          searchTerm
+        )
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteCourseById = async (id) => {
+    setLoading(true);
+    try {
+      await dispatch(
+        DeleteCourseByIdActionAsync(id, status, pageIndex, pageSize, searchTerm)
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const getColumnSearchProps = () => ({
     filterDropdown: ({
       setSelectedKeys,
@@ -179,6 +224,14 @@ const CourseManage = () => {
     setIsDrawerVisible(false);
   };
 
+  const showModalUpload = () => {
+    setIsModalUploadVisible(true);
+  };
+
+  const closeModalUpload = () => {
+    setIsModalUploadVisible(false);
+  };
+
   const columns = [
     {
       title: "No",
@@ -199,6 +252,12 @@ const CourseManage = () => {
       title: "Mã môn",
       dataIndex: "code",
       key: "code",
+      align: "center",
+    },
+    {
+      title: "Phiên bản",
+      dataIndex: "version",
+      key: "version",
       align: "center",
     },
     {
@@ -253,20 +312,48 @@ const CourseManage = () => {
       },
     },
     {
-      title: "Action",
+      title: "Hành động",
       key: "action",
-      align: "center",
       render: (text, record) => (
         <>
-          <Dropdown.Button
-            type="primary"
-            menu={{
-              items: getStatusItems(record.status),
-              onClick: (key) => handleMenuClick(record.id, key),
-            }}
-          >
-            Duyệt
-          </Dropdown.Button>
+          <Space>
+            <Dropdown.Button
+              type="primary"
+              menu={{
+                items: getStatusItems(record.status),
+                onClick: (key) => handleMenuClick(record.id, key),
+              }}
+            >
+              Duyệt
+            </Dropdown.Button>
+            <Button
+              type="default"
+              icon={<EditOutlined />}
+              style={{ backgroundColor: "#faad14", color: "#fff" }} // Warning color
+            ></Button>
+
+            <Popconfirm
+              title="Bạn muốn xóa khóa học này?" 
+              onConfirm={() => handleDeleteCourseById(record.id)} 
+              okText="Có"
+              cancelText="Không"
+            >
+              <Button type="primary" danger icon={<DeleteOutlined />}></Button>
+            </Popconfirm>
+
+            {record.status === "TemporarilySuspended" && ( // Chỉ hiển thị nút tạo bản sao nếu trạng thái là TemporarilySuspended
+              <Popconfirm
+                title="Bạn có muốn tạo bản sao khóa học?" 
+                okText="Có"
+                cancelText="Không"
+              >
+                <Button
+                  type="default" 
+                  icon={<CopyOutlined />} 
+                ></Button>
+              </Popconfirm>
+            )}
+          </Space>
         </>
       ),
     },
@@ -276,24 +363,35 @@ const CourseManage = () => {
     <div>
       <div className="card">
         <div className="card-body">
-          <div className="d-flex justify-content-between align-items-center mb-3">
-            <h5 className="card-title">Quản lý khóa học</h5>
-            <Select
-              defaultValue={status}
-              style={{ width: 150 }}
-              onChange={handleStatusChange}
-            >
-              <Select.Option value="">Tất cả</Select.Option>
-              <Select.Option value="Draft">Nháp</Select.Option>
-              <Select.Option value="PendingApproval">Chờ duyệt</Select.Option>
-              <Select.Option value="AvailableForFranchise">
-                Công khai
-              </Select.Option>
-              <Select.Option value="TemporarilySuspended">
-                Tạm đóng
-              </Select.Option>
-              <Select.Option value="Closed">Đóng</Select.Option>
-            </Select>
+          <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3">
+            <h5 className="card-title mb-2 mb-md-0">Quản lý khóa học</h5>
+            <div className="d-flex align-items-center flex-wrap">
+              <Button
+                type="primary"
+                icon={<UploadOutlined />}
+                className="me-2 mb-2 mb-md-0"
+                onClick={showModalUpload}
+              >
+                Thêm File
+              </Button>
+
+              <Select
+                defaultValue={status}
+                style={{ width: 150 }}
+                onChange={handleStatusChange}
+              >
+                <Select.Option value="">Tất cả</Select.Option>
+                <Select.Option value="Draft">Nháp</Select.Option>
+                <Select.Option value="PendingApproval">Chờ duyệt</Select.Option>
+                <Select.Option value="AvailableForFranchise">
+                  Công khai
+                </Select.Option>
+                <Select.Option value="TemporarilySuspended">
+                  Tạm đóng
+                </Select.Option>
+                <Select.Option value="Closed">Đóng</Select.Option>
+              </Select>
+            </div>
           </div>
 
           <Table
@@ -307,7 +405,7 @@ const CourseManage = () => {
               total: totalPagesCount * pageSize,
               onChange: handlePageChange,
               showSizeChanger: true,
-              pageSizeOptions: ["10", "20", "50"],
+              pageSizeOptions: ["7", "10"],
             }}
             scroll={{ x: 768 }}
           />
@@ -326,6 +424,15 @@ const CourseManage = () => {
           boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)",
         }}
       />
+      <SendFileCourseDetailModal
+        visible={isModalUploadVisible}
+        onClose={closeModalUpload}
+        status={status}
+        pageIndex={pageIndex}
+        pageSize={pageSize}
+        searchTerm={searchTerm}
+      />
+
       <CreateCourseModal
         isDrawerVisible={isDrawerVisible}
         closeDrawer={closeDrawer}

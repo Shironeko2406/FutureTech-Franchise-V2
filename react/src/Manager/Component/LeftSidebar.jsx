@@ -22,7 +22,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
       <div>
         <div className="brand-logo d-flex align-items-center justify-content-between">
           <NavLink to="/manager" className="text-nowrap logo-img">
-            <img src="/assets/images/logos/logo-light.svg" alt="logo" />
+            <img src="/assets/images/logos/FutureTechLogo.png" alt="logo" />
           </NavLink>
           <div
             className="close-btn d-xl-none d-block sidebartoggler cursor-pointer"
@@ -52,21 +52,6 @@ const LeftSidebar = ({ onSidebarToggle }) => {
               )
             ))}
           </ul>
-          <div className="unlimited-access hide-menu bg-primary-subtle position-relative mb-7 mt-7 rounded-3">
-            <div className="d-flex">
-              <div className="unlimited-access-title me-3">
-                <h6 className="fw-semibold fs-4 mb-6 text-dark w-75">
-                  Upgrade to pro
-                </h6>
-                <a target="_blank" className="btn btn-primary fs-2 fw-semibold lh-sm">
-                  Buy Pro
-                </a>
-              </div>
-              <div className="unlimited-access-img">
-                <img src="/assets/images/backgrounds/rocket.png" alt="rocket" className="img-fluid" />
-              </div>
-            </div>
-          </div>
         </nav>
       </div>
     </aside>

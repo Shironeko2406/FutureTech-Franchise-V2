@@ -77,7 +77,9 @@ export const CreateCourseActionAsync = (
       const res = await httpClient.post(`/api/v1/courses`, data);
       if (res.isSuccess && res.data) {
         message.success(`${res.message}`);
-        await dispatch(GetCourseActionAsync(search, status, pageIndex, pageSize));
+        await dispatch(
+          GetCourseActionAsync(search, status, pageIndex, pageSize)
+        );
         return true;
       } else {
         message.error(`${res.message}`);
@@ -109,7 +111,9 @@ export const UpdateStatusCourseActionAsync = (
       );
       if (res.isSuccess && res.data) {
         message.success(`${res.message}`);
-        await dispatch(GetCourseActionAsync(search, status, pageIndex, pageSize));
+        await dispatch(
+          GetCourseActionAsync(search, status, pageIndex, pageSize)
+        );
         return true;
       } else {
         message.error(`${res.message}`);
@@ -125,7 +129,10 @@ export const UpdateStatusCourseActionAsync = (
 export const CreateAssessmentActionAsync = (assessment, courseId) => {
   return async (dispatch) => {
     try {
-      const res = await httpClient.post(`/api/v1/courses/${courseId}/assessments`, assessment);
+      const res = await httpClient.post(
+        `/api/v1/courses/${courseId}/assessments`,
+        assessment
+      );
       if (res.isSuccess && res.data) {
         message.success(`${res.message}`);
         await dispatch(GetCourseByIdActionAsync(courseId));
@@ -144,7 +151,113 @@ export const CreateAssessmentActionAsync = (assessment, courseId) => {
 export const CreateSessionActionAsync = (session, courseId) => {
   return async (dispatch) => {
     try {
-      const res = await httpClient.post(`/api/v1/courses/${courseId}/sessions`, session);
+      const res = await httpClient.post(
+        `/api/v1/courses/${courseId}/sessions`,
+        session
+      );
+      if (res.isSuccess && res.data) {
+        message.success(`${res.message}`);
+        await dispatch(GetCourseByIdActionAsync(courseId));
+        return true;
+      } else {
+        message.error(`${res.message}`);
+        return false;
+      }
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  };
+};
+
+export const CreateCourseDetailByFileActionAsync = (
+  file,
+  status,
+  pageIndex,
+  pageSize,
+  search
+) => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.post(
+        `/api/v1/courses/api/v1/courses/files`,
+        file
+      );
+      if (res.isSuccess && res.data) {
+        message.success(`${res.message}`);
+        await dispatch(
+          GetCourseActionAsync(search, status, pageIndex, pageSize)
+        );
+        return true;
+      } else {
+        message.error(`${res.message}`);
+        return false;
+      }
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  };
+};
+
+export const CreateCourseCloneByIdActionAsync = (
+  courseId,
+  status,
+  pageIndex,
+  pageSize,
+  search
+) => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.post(`/api/v1/courses/${courseId}/versions`);
+      if (res.isSuccess && res.data) {
+        message.success(`${res.message}`);
+        await dispatch(
+          GetCourseActionAsync(search, status, pageIndex, pageSize)
+        );
+        return true;
+      } else {
+        message.error(`${res.message}`);
+        return false;
+      }
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  };
+};
+
+export const DeleteCourseByIdActionAsync = (
+  courseId,
+  status,
+  pageIndex,
+  pageSize,
+  search
+) => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.delete(`/api/v1/courses/${courseId}`);
+      if (res.isSuccess && res.data) {
+        message.success(`${res.message}`);
+        await dispatch(
+          GetCourseActionAsync(search, status, pageIndex, pageSize)
+        );
+        return true;
+      } else {
+        message.error(`${res.message}`);
+        return false;
+      }
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  };
+};
+
+export const CreateMaterialChapterIdActionAsync = (material, courseId) => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.post(`/api/v1/chapter-materials`, material);
       if (res.isSuccess && res.data) {
         message.success(`${res.message}`);
         await dispatch(GetCourseByIdActionAsync(courseId));
