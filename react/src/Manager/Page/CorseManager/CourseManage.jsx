@@ -326,31 +326,34 @@ const CourseManage = () => {
             >
               Duyệt
             </Dropdown.Button>
-            <Button
-              type="default"
-              icon={<EditOutlined />}
-              style={{ backgroundColor: "#faad14", color: "#fff" }} // Warning color
-            ></Button>
 
-            <Popconfirm
-              title="Bạn muốn xóa khóa học này?" 
-              onConfirm={() => handleDeleteCourseById(record.id)} 
-              okText="Có"
-              cancelText="Không"
-            >
-              <Button type="primary" danger icon={<DeleteOutlined />}></Button>
-            </Popconfirm>
+            {record.status === "Draft" && (
+              <>
+                <Button
+                  type="default"
+                  icon={<EditOutlined />}
+                  style={{ backgroundColor: "#faad14", color: "#fff" }}
+                  onClick={() => handleEdit(record.id)}
+                />
+                <Popconfirm
+                  title="Bạn muốn xóa khóa học này?"
+                  onConfirm={() => handleDeleteCourseById(record.id)}
+                  okText="Có"
+                  cancelText="Không"
+                >
+                  <Button type="primary" danger icon={<DeleteOutlined />} />
+                </Popconfirm>
+              </>
+            )}
 
             {record.status === "TemporarilySuspended" && ( // Chỉ hiển thị nút tạo bản sao nếu trạng thái là TemporarilySuspended
               <Popconfirm
-                title="Bạn có muốn tạo bản sao khóa học?" 
+                title="Bạn có muốn tạo bản sao khóa học?"
+                onConfirm={() => handleClone(record.id)}
                 okText="Có"
                 cancelText="Không"
               >
-                <Button
-                  type="default" 
-                  icon={<CopyOutlined />} 
-                ></Button>
+                <Button type="default" icon={<CopyOutlined />}></Button>
               </Popconfirm>
             )}
           </Space>

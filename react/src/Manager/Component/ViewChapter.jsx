@@ -21,16 +21,9 @@ const ViewChapter = () => {
   const { id } = useParams();
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
   const [selectedChapter, setSelectedChapter] = useState(null);
-  const [
-    selectedChapterForCreateMaterial,
-    setSelectedChapterForCreateMaterial,
-  ] = useState(null);
-
-  const [isModalEditChapterVisible, setIsModalEditChapterVisible] =
-    useState(false);
-  const [isModalCreateMaterialVisible, setsModalCreateMaterialVisible] =
-    useState(false);
-
+  const [selectedChapterForCreateMaterial, setSelectedChapterForCreateMaterial] = useState(null);
+  const [isModalEditChapterVisible, setIsModalEditChapterVisible] = useState(false);
+  const [isModalCreateMaterialVisible, setsModalCreateMaterialVisible] = useState(false);
   const { setLoading } = useLoading();
 
   const handleDelete = async (chapterId) => {
@@ -180,15 +173,18 @@ const ViewChapter = () => {
           scroll={{ x: 768 }}
         />
       </div>
+
       <CreateChapterModal
         isDrawerVisible={isDrawerVisible}
         closeDrawer={closeDrawer}
       />
+
       <EditChapterModal
         visible={isModalEditChapterVisible}
         onClose={closeModalEditChapter}
         chapter={selectedChapter}
       />
+      
       <CreateMaterialModal
         visible={isModalCreateMaterialVisible}
         onClose={closeModalCreateMaterialChapter}
