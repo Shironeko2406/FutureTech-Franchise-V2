@@ -1,9 +1,11 @@
-import { Table, Space, Button, Popconfirm } from "antd";
+import { Table, Space, Button, Popconfirm, Badge, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { GetClassesActionAsync } from "../../../Redux/ReducerAPI/ClassReducer";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, RightCircleOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
+
+const { Text } = Typography;
 
 const ClassManagement = () => {
     const { classes, totalPagesCount } = useSelector((state) => state.ClassReducer);
@@ -24,7 +26,35 @@ const ClassManagement = () => {
     };
 
     const handleRowClick = (id) => {
-        navigate(`${id}`);  // Assumes route setup for class detail page
+        navigate(`${id}`);
+    };
+
+    const getStatusBadge = (status) => {
+        const statusConfig = {
+            Active: {
+                status: 'success',
+                text: 'Hoạt động',
+                color: '#52c41a'
+            },
+            Inactive: {
+                status: 'error',
+                text: 'Không hoạt động',
+                color: '#ff4d4f'
+            }
+        };
+
+        const config = statusConfig[status] || statusConfig.Inactive;
+
+        return (
+            <Badge
+                status={config.status}
+                text={
+                    <Text style={{ color: config.color }}>
+                        {config.text}
+                    </Text>
+                }
+            />
+        );
     };
 
     const columns = [
@@ -41,12 +71,23 @@ const ClassManagement = () => {
             key: "name",
             align: "center",
             render: (text, record) => (
-                <span
-                    style={{ color: "blue", cursor: "pointer" }}
+                <Button
+                    type="link"
                     onClick={() => handleRowClick(record.id)}
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        padding: '4px 8px',
+                        height: 'auto',
+                        fontSize: '14px',
+                        transition: 'all 0.3s ease'
+                    }}
+                    className="hover:bg-blue-50"
                 >
-                    {text}
-                </span>
+                    <Text strong style={{ marginRight: '4px' }}>{text}</Text>
+                    <RightCircleOutlined style={{ fontSize: '16px' }} />
+                </Button>
             ),
         },
         {
@@ -60,6 +101,16 @@ const ClassManagement = () => {
             dataIndex: "currentEnrollment",
             key: "currentEnrollment",
             align: "center",
+            render: (text, record) => (
+                <Text
+                    style={{
+                        color: record.currentEnrollment >= record.capacity ? '#ff4d4f' : '#52c41a'
+                    }}
+                    strong
+                >
+                    {text}
+                </Text>
+            ),
         },
         {
             title: "Tên khóa",
@@ -72,11 +123,7 @@ const ClassManagement = () => {
             dataIndex: "status",
             key: "status",
             align: "center",
-            render: (status) => (
-                <span style={{ color: status === "Active" ? "green" : "red" }}>
-                    {status}
-                </span>
-            ),
+            render: getStatusBadge,
         },
         {
             title: "Hành động",
@@ -84,9 +131,37 @@ const ClassManagement = () => {
             align: "center",
             render: (text, record) => (
                 <Space size="middle">
-                    <Button type="link" icon={<EditOutlined />} onClick={() => handleEdit(record.id)}>Sửa</Button>
-                    <Popconfirm title="Bạn có chắc chắn muốn xóa?" onConfirm={() => handleDelete(record.id)}>
-                        <Button type="link" icon={<DeleteOutlined />} danger />
+                    <Button
+                        type="text"
+                        icon={<EditOutlined />}
+                        onClick={() => handleEdit(record.id)}
+                        style={{
+                            color: '#1890ff',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px'
+                        }}
+                    >
+                        Sửa
+                    </Button>
+                    <Popconfirm
+                        title="Bạn có chắc chắn muốn xóa?"
+                        onConfirm={() => handleDelete(record.id)}
+                        okText="Có"
+                        cancelText="Không"
+                    >
+                        <Button
+                            type="text"
+                            danger
+                            icon={<DeleteOutlined />}
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '4px'
+                            }}
+                        >
+                            Xóa
+                        </Button>
                     </Popconfirm>
                 </Space>
             ),
@@ -94,12 +169,10 @@ const ClassManagement = () => {
     ];
 
     const handleEdit = (id) => {
-        // Thực hiện logic chỉnh sửa tại đây
         console.log("Edit class with id:", id);
     };
 
     const handleDelete = (id) => {
-        // Thực hiện logic xóa tại đây
         console.log("Delete class with id:", id);
     };
 
@@ -121,6 +194,11 @@ const ClassManagement = () => {
                     }}
                     loading={loading}
                     onChange={handleTableChange}
+                    style={{
+                        backgroundColor: 'white',
+                        borderRadius: '8px',
+                        overflow: 'hidden'
+                    }}
                 />
             </div>
         </div>

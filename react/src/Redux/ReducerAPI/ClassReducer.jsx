@@ -86,7 +86,6 @@ export const GetClassDetailActionAsync = (id) => {
         try {
             const res = await httpClient.get(`/api/v1/classes/${id}`);
             if (res.isSuccess) {
-
                 console.log("res:", res.data)
                 dispatch(setClassDetail(res.data));
             } else {

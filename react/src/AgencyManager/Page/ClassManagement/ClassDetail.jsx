@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { GetClassDetailActionAsync } from "../../../Redux/ReducerAPI/ClassReducer";
-import { Card, Table, Avatar, Typography, Row, Col, Tag, Button, Tooltip } from 'antd';
+import { Card, Table, Avatar, Typography, Spin, Row, Col, Tag, Button, Tooltip } from 'antd';
 import { UserOutlined, BookOutlined, TeamOutlined, CalendarOutlined, ClockCircleOutlined, EditOutlined } from '@ant-design/icons';
 
 const { Title } = Typography;
@@ -20,6 +20,8 @@ const ClassDetail = () => {
         console.log(`Editing ${section}`);
         // Handle edit logic here
     };
+
+    if (!classDetail) return <Spin size="large" />;
 
 
     const columns = [
@@ -217,13 +219,15 @@ const ClassDetail = () => {
                             <Col xs={24} sm={12}>
                                 <Tag color="purple" style={{ padding: '8px 16px', fontSize: '14px' }}>
                                     <CalendarOutlined style={{ marginRight: '8px' }} />
-                                    {classDetail.dayOfWeek}
+                                    {classDetail.slotViewModels ? classDetail.dayOfWeek : 'N/A'}
                                 </Tag>
                             </Col>
                             <Col xs={24} sm={12}>
                                 <Tag color="cyan" style={{ padding: '8px 16px', fontSize: '14px' }}>
                                     <ClockCircleOutlined style={{ marginRight: '8px' }} />
-                                    08:00:00 - 11:00:00
+                                    {classDetail.slotViewModels
+                                        ? `${classDetail.slotViewModels.startTime} - ${classDetail.slotViewModels.endTime}`
+                                        : 'N/A'}
                                 </Tag>
                             </Col>
                         </Row>
