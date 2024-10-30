@@ -1,10 +1,9 @@
-import React from 'react';
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { GetClassDetailActionAsync } from "../../../Redux/ReducerAPI/ClassReducer";
-import { Card, Descriptions, Table, Avatar, Typography, Spin, Row, Col, Tag, Badge } from 'antd';
-import { UserOutlined, BookOutlined, TeamOutlined, CalendarOutlined, ClockCircleOutlined } from '@ant-design/icons';
+import { Card, Table, Avatar, Typography, Row, Col, Tag, Button, Tooltip } from 'antd';
+import { UserOutlined, BookOutlined, TeamOutlined, CalendarOutlined, ClockCircleOutlined, EditOutlined } from '@ant-design/icons';
 
 const { Title } = Typography;
 
@@ -17,7 +16,11 @@ const ClassDetail = () => {
         dispatch(GetClassDetailActionAsync(id));
     }, [dispatch, id]);
 
-    if (!classDetail) return <Spin size="large" />;
+    const handleEdit = (section) => {
+        console.log(`Editing ${section}`);
+        // Handle edit logic here
+    };
+
 
     const columns = [
         {
@@ -94,18 +97,37 @@ const ClassDetail = () => {
             >
                 <Row justify="center" align="middle" gutter={[0, 24]}>
                     <Col span={24}>
-                        <Badge.Ribbon text="Active" color="green">
-                            <Title level={2} style={{
-                                color: '#1890ff',
-                                textAlign: 'center',
-                                margin: '0 32px',
-                                background: 'linear-gradient(to right, #1890ff, #69c0ff)',
-                                WebkitBackgroundClip: 'text',
-                                WebkitTextFillColor: 'transparent'
-                            }}>
-                                {classDetail.className}
-                            </Title>
-                        </Badge.Ribbon>
+                        <Title level={2} style={{
+                            color: '#1890ff',
+                            textAlign: 'center',
+                            margin: '0 32px',
+                            background: 'linear-gradient(to right, #1890ff, #69c0ff)',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent'
+                        }}>
+                            {classDetail.className}
+                        </Title>
+                        <Tooltip title="Chỉnh sửa thông tin lớp">
+                            <Button
+                                type="text"
+                                icon={<EditOutlined />}
+                                onClick={() => handleEdit('class')}
+                                style={{
+                                    position: 'absolute',
+                                    right: 0,
+                                    top: '50%',
+                                    transform: 'translateY(-50%)',
+                                    color: '#1890ff',
+                                    width: '32px',
+                                    height: '32px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    border: 'none',
+                                    background: 'transparent'
+                                }}
+                            />
+                        </Tooltip>
                     </Col>
 
                     <Col span={24}>
@@ -157,9 +179,33 @@ const ClassDetail = () => {
                 <Col span={24}>
                     <Card
                         title={
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <CalendarOutlined style={{ color: '#1890ff' }} />
-                                <span>Lịch Học</span>
+                            <div style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                width: '100%'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <CalendarOutlined style={{ color: '#1890ff' }} />
+                                    <span>Lịch Học</span>
+                                </div>
+                                <Tooltip title="Chỉnh sửa lịch học">
+                                    <Button
+                                        type="text"
+                                        icon={<EditOutlined />}
+                                        onClick={() => handleEdit('schedule')}
+                                        style={{
+                                            color: '#1890ff',
+                                            width: '32px',
+                                            height: '32px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            border: 'none',
+                                            padding: 0
+                                        }}
+                                    />
+                                </Tooltip>
                             </div>
                         }
                         style={{
@@ -187,9 +233,33 @@ const ClassDetail = () => {
                 <Col span={24}>
                     <Card
                         title={
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <TeamOutlined style={{ color: '#1890ff' }} />
-                                <span>Danh Sách Học Viên</span>
+                            <div style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                width: '100%'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <TeamOutlined style={{ color: '#1890ff' }} />
+                                    <span>Danh Sách Học Viên</span>
+                                </div>
+                                <Tooltip title="Chỉnh sửa danh sách học viên">
+                                    <Button
+                                        type="text"
+                                        icon={<EditOutlined />}
+                                        onClick={() => handleEdit('students')}
+                                        style={{
+                                            color: '#1890ff',
+                                            width: '32px',
+                                            height: '32px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            border: 'none',
+                                            padding: 0
+                                        }}
+                                    />
+                                </Tooltip>
                             </div>
                         }
                         style={{
