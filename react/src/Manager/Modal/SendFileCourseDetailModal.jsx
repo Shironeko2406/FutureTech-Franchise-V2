@@ -25,14 +25,19 @@ const SendFileCourseDetailModal = ({
   };
 
   const handleSubmit = async (value) => {
-    const file = value.file[0].originFileObj;
+    const courseFile = value.courseFile[0].originFileObj;
+    const questionFile = value.questionFile[0].originFileObj;
+    const chapterMaterialFile = value.chapterMaterialFile[0].originFileObj;
 
-    const fileData = new FormData();
-    fileData.append("file", file);
+    const formData = new FormData();
+    formData.append("CourseFile", courseFile);
+    formData.append("QuestionFile", questionFile);
+    formData.append("ChapterMaterialFile", chapterMaterialFile);
+    console.log(formData)
     setLoading(true);
     dispatch(
       CreateCourseDetailByFileActionAsync(
-        fileData,
+        formData,
         status,
         pageIndex,
         pageSize,
@@ -73,8 +78,30 @@ const SendFileCourseDetailModal = ({
         requiredMark={false}
       >
         <Form.Item
-          name="file"
+          name="courseFile"
           label="Tải lên file khóa học"
+          valuePropName="fileList"
+          getValueFromEvent={(e) => e.fileList}
+          rules={[{ required: true, message: "Vui lòng tải lên file" }]}
+        >
+          <Upload accept=".xlsx" maxCount={1} customRequest={handleUpload}>
+            <Button icon={<UploadOutlined />}>Chọn file</Button>
+          </Upload>
+        </Form.Item>
+        <Form.Item
+          name="questionFile"
+          label="Tải lên file câu hỏi"
+          valuePropName="fileList"
+          getValueFromEvent={(e) => e.fileList}
+          rules={[{ required: true, message: "Vui lòng tải lên file" }]}
+        >
+          <Upload accept=".xlsx" maxCount={1} customRequest={handleUpload}>
+            <Button icon={<UploadOutlined />}>Chọn file</Button>
+          </Upload>
+        </Form.Item>
+        <Form.Item
+          name="chapterMaterialFile"
+          label="Tải lên file tài nguyên"
           valuePropName="fileList"
           getValueFromEvent={(e) => e.fileList}
           rules={[{ required: true, message: "Vui lòng tải lên file" }]}
