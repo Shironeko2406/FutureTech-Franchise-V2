@@ -34,6 +34,7 @@ import StudentConsultationRegistration from "./AgencyManager/Page/StudentConsult
 import StudentPaymentManagement from "./AgencyManager/Page/StudentPaymentManagement/StudentPaymentManagement";
 import ClassManagement from "./AgencyManager/Page/ClassManagement/ClassManagement";
 import ClassDetail from "./AgencyManager/Page/ClassManagement/ClassDetail";
+import ScheduleAgencyManager from "./AgencyManager/Page/ScheduleManagement/ScheduleAgencyManager";
 
 function App() {
   return (
@@ -64,6 +65,7 @@ function App() {
             <Route path="slots" element={<SlotManager />} />
             <Route path="classes" element={<ClassManagement />} />
             <Route path="classes/:id" element={<ClassDetail />} />
+            <Route path="schedules" element={<ScheduleAgencyManager />} />
           </Route>
           {/* </Route> */}
 

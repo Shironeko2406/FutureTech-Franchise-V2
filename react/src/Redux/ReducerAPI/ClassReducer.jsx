@@ -97,3 +97,39 @@ export const GetClassDetailActionAsync = (id) => {
         }
     };
 };
+
+export const UpdateClassStatusActionAsync = (id, newStatus) => {
+    return async () => {
+        try {
+            const res = await httpClient.patch(`api/v1/classes/${id}/status?status=${newStatus}`);
+            if (res.isSuccess && res.data) {
+                message.success(`${res.message}`);
+            } else if (res.isSuccess && !res.data) {
+                message.error(`${res.message}`);
+            } else {
+                throw new Error(`${res.message}`);
+            }
+        } catch (error) {
+            console.error(error);
+            message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
+        }
+    };
+};
+
+export const UpdateClassActionAsync = (classId, classData) => {
+    return async () => {
+        try {
+            const res = await httpClient.put(`/api/v1/classes/${classId}`, classData);
+            if (res.isSuccess && res.data) {
+                message.success(`${res.message}`);
+            } else if (res.isSuccess && !res.data) {
+                message.error(`${res.message}`);
+            } else {
+                throw new Error(`${res.message}`);
+            }
+        } catch (error) {
+            console.error(error);
+            message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
+        }
+    };
+};

@@ -133,7 +133,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
             <li className="sidebar-item">
               <NavLink
                 className="sidebar-link"
-                to="schedule"
+                to="schedules"
                 aria-expanded="false"
                 activeClassName="active"
               >
@@ -149,7 +149,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
             <li className="sidebar-item">
               <NavLink
                 className="sidebar-link"
-                to="slot"
+                to="slots"
                 aria-expanded="false"
                 activeClassName="active"
               >

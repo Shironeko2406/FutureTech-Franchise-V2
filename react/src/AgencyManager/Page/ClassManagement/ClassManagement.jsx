@@ -1,9 +1,10 @@
-import { Table, Space, Button, Popconfirm, Badge, Typography } from "antd";
+import { Table, Button, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { GetClassesActionAsync } from "../../../Redux/ReducerAPI/ClassReducer";
-import { DeleteOutlined, EditOutlined, RightCircleOutlined } from "@ant-design/icons";
+import { RightCircleOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
+import { UpdateClassStatusActionAsync } from "../../../Redux/ReducerAPI/ClassReducer";
 
 const { Text } = Typography;
 
@@ -32,29 +33,47 @@ const ClassManagement = () => {
     const getStatusBadge = (status) => {
         const statusConfig = {
             Active: {
-                status: 'success',
                 text: 'Hoạt động',
-                color: '#52c41a'
+                color: '#52c41a',
+                backgroundColor: '#e6fffb',
+                borderColor: '#b7eb8f'
             },
             Inactive: {
-                status: 'error',
                 text: 'Không hoạt động',
-                color: '#ff4d4f'
+                color: '#ff4d4f',
+                backgroundColor: '#fff2f0',
+                borderColor: '#ffa39e'
             }
         };
 
         const config = statusConfig[status] || statusConfig.Inactive;
 
         return (
-            <Badge
-                status={config.status}
-                text={
-                    <Text style={{ color: config.color }}>
-                        {config.text}
-                    </Text>
-                }
-            />
+            <div
+                style={{
+                    display: 'inline-block',
+                    padding: '4px 12px',
+                    borderRadius: '6px',
+                    backgroundColor: config.backgroundColor,
+                    border: `1px solid ${config.borderColor}`,
+                }}
+            >
+                <Text strong style={{ color: config.color }}>
+                    {config.text}
+                </Text>
+            </div>
+
         );
+    };
+
+    const handleStatusUpdate = async (id, currentStatus) => {
+        const newStatus = currentStatus === "Active" ? "Inactive" : "Active";
+        setLoading(true);
+        dispatch(UpdateClassStatusActionAsync(id, newStatus))
+            .then(() => dispatch(GetClassesActionAsync(pageIndex, pageSize)))
+            .finally(
+                setLoading(false)
+            );
     };
 
     const columns = [
@@ -130,51 +149,17 @@ const ClassManagement = () => {
             key: "action",
             align: "center",
             render: (text, record) => (
-                <Space size="middle">
-                    <Button
-                        type="text"
-                        icon={<EditOutlined />}
-                        onClick={() => handleEdit(record.id)}
-                        style={{
-                            color: '#1890ff',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '4px'
-                        }}
-                    >
-                        Sửa
-                    </Button>
-                    <Popconfirm
-                        title="Bạn có chắc chắn muốn xóa?"
-                        onConfirm={() => handleDelete(record.id)}
-                        okText="Có"
-                        cancelText="Không"
-                    >
-                        <Button
-                            type="text"
-                            danger
-                            icon={<DeleteOutlined />}
-                            style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '4px'
-                            }}
-                        >
-                            Xóa
-                        </Button>
-                    </Popconfirm>
-                </Space>
+                <Button
+                    type="primary"
+                    onClick={() => handleStatusUpdate(record.id, record.status)}
+                    onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
+                    onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+                >
+                    {record.status === "Active" ? "Chuyển sang Không hoạt động" : "Chuyển sang Hoạt động"}
+                </Button>
             ),
         },
     ];
-
-    const handleEdit = (id) => {
-        console.log("Edit class with id:", id);
-    };
-
-    const handleDelete = (id) => {
-        console.log("Delete class with id:", id);
-    };
 
     return (
         <div className="card">

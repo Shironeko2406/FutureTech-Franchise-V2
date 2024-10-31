@@ -1,20 +1,35 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { GetClassDetailActionAsync } from "../../../Redux/ReducerAPI/ClassReducer";
+import { GetClassDetailActionAsync, GetAllInstructorsAvailableActionAsync } from "../../../Redux/ReducerAPI/ClassReducer";
+import { GetSlotActionAsync } from "../../../Redux/ReducerAPI/SlotReducer";
 import { Card, Table, Avatar, Typography, Spin, Row, Col, Tag, Button, Tooltip } from 'antd';
 import { UserOutlined, BookOutlined, TeamOutlined, CalendarOutlined, ClockCircleOutlined, EditOutlined } from '@ant-design/icons';
+import EditClassModal from "../../Modal/EditClassModal";
+import EditScheduleModal from "../../Modal/EditScheduleModal";
 
 const { Title } = Typography;
 
 const ClassDetail = () => {
     const { id } = useParams();
     const dispatch = useDispatch();
-    const { classDetail } = useSelector((state) => state.ClassReducer);
+    const { classDetail, instructors } = useSelector((state) => state.ClassReducer);
+    const { slotData } = useSelector((state) => state.SlotReducer);
+
+    // State cho modal
+    const [isClassModalVisible, setIsClassModalVisible] = useState(false);
+    const [isScheduleModalVisible, setIsScheduleModalVisible] = useState(false);
+    const [isStudentsModalVisible, setIsStudentsModalVisible] = useState(false);
 
     useEffect(() => {
         dispatch(GetClassDetailActionAsync(id));
+        dispatch(GetAllInstructorsAvailableActionAsync());
+        dispatch(GetSlotActionAsync());
     }, [dispatch, id]);
+
+    const handleEditSuccess = () => {
+        dispatch(GetClassDetailActionAsync(id));
+    };
 
     const handleEdit = (section) => {
         console.log(`Editing ${section}`);
@@ -66,7 +81,7 @@ const ClassDetail = () => {
                         borderRadius: '6px'
                     }}
                 >
-                    {new Date(text).toLocaleDateString()}
+                    {classDetail.studentInfo.dateOfBirth ? new Date(text).toLocaleDateString() : "N/A"}
                 </Tag>
             ),
         },
@@ -113,7 +128,7 @@ const ClassDetail = () => {
                             <Button
                                 type="text"
                                 icon={<EditOutlined />}
-                                onClick={() => handleEdit('class')}
+                                onClick={() => setIsClassModalVisible(true)}
                                 style={{
                                     position: 'absolute',
                                     right: 0,
@@ -195,7 +210,7 @@ const ClassDetail = () => {
                                     <Button
                                         type="text"
                                         icon={<EditOutlined />}
-                                        onClick={() => handleEdit('schedule')}
+                                        onClick={() => setIsScheduleModalVisible(true)}
                                         style={{
                                             color: '#1890ff',
                                             width: '32px',
@@ -288,6 +303,26 @@ const ClassDetail = () => {
                     </Card>
                 </Col>
             </Row>
+
+            {/* Component edit class */}
+            <EditClassModal
+                visible={isClassModalVisible}
+                onCancel={() => setIsClassModalVisible(false)}
+                classData={classDetail}
+                instructors={instructors}
+                onUpdateSuccess={handleEditSuccess}
+            />
+
+            {/* Component edit schedule */}
+
+            <EditScheduleModal
+                visible={isScheduleModalVisible}
+                onCancel={() => setIsScheduleModalVisible(false)}
+                slotData={slotData}
+                classData={classDetail}
+                onUpdateSuccess={handleEditSuccess}
+            />
+
         </div>
     );
 };
