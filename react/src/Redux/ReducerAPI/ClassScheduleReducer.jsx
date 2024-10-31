@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { httpClient } from "../../Utils/Interceptors";
 import { message } from "antd";
 
+
 const initialState = {
   schedules: [],
 };
@@ -34,6 +35,30 @@ export const CreateClassScheduleActionAsync = (scheduleData) => {
     } catch (error) {
       console.error(error);
       message.error("Đã xảy ra lỗi khi tạo thời khóa biểu, vui lòng thử lại sau.");
+    }
+  };
+};
+
+export const GetClassSchedulesActionAsync = (startDate, endDate) => {
+  return async (dispatch) => {
+    try {
+      console.log("GetClassSchedulesActionAsync, startDate: ", startDate);
+      console.log("GetClassSchedulesActionAsync, endDate: ", endDate);
+      const response = await httpClient.get(`/api/v1/class-schedules`, {
+        params: {
+          StartDate: startDate,
+          EndDate: endDate,
+        },
+      });
+      if (response.isSuccess) {
+        dispatch(setSchedules(response.data));
+        console.log("GetClassSchedulesActionAsync, response: ", response.data);
+      } else {
+        throw new Error(response.message);
+      }
+    } catch (error) {
+      console.error(error);
+      message.error("Không thể lấy lịch học, vui lòng thử lại sau.");
     }
   };
 };
