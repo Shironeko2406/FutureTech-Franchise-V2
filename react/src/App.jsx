@@ -72,7 +72,7 @@ function App() {
           {/* <Route element={<ProtectedRoute requiredRole="Student" />}> */}
           <Route path="student" element={<TempUIStudent />} >
             <Route path="" element={<HomeStudentNoti />} />
-            <Route path="schedule" element={<ScheduleStudent />} />
+            <Route path="schedules" element={<ScheduleStudent />} />
             <Route path="change-password" element={<ChangePassword />} />
           </Route>
           {/* </Route> */}

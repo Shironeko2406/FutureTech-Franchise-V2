@@ -42,8 +42,6 @@ export const CreateClassScheduleActionAsync = (scheduleData) => {
 export const GetClassSchedulesActionAsync = (startDate, endDate) => {
   return async (dispatch) => {
     try {
-      console.log("GetClassSchedulesActionAsync, startDate: ", startDate);
-      console.log("GetClassSchedulesActionAsync, endDate: ", endDate);
       const response = await httpClient.get(`/api/v1/class-schedules`, {
         params: {
           StartDate: startDate,

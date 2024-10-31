@@ -4,7 +4,8 @@ import { message } from "antd";
 
 const initialState = {
   userData: [],
-  userProfile:{}
+  userProfile: {},
+  schedules: [],
 };
 
 const UserReducer = createSlice({
@@ -14,13 +15,16 @@ const UserReducer = createSlice({
     setUserData: (state, action) => {
       state.userData = action.payload;
     },
-    setUserProfile: (state, action)=>{
+    setUserProfile: (state, action) => {
       state.userProfile = action.payload
-    }
+    },
+    setSchedules: (state, action) => {
+      state.schedules = action.payload;
+    },
   },
 });
 
-export const { setUserData, setUserProfile } = UserReducer.actions;
+export const { setUserData, setUserProfile, setSchedules } = UserReducer.actions;
 
 export default UserReducer.reducer;
 //------------API-CALL-------
@@ -101,3 +105,28 @@ export const GetUserLoginActionAsync = () => {
     }
   };
 };
+
+export const GetClassSchedulesByLoginActionAsync = (startDate, endDate) => {
+  return async (dispatch) => {
+    try {
+      console.log("GetClassSchedulesByLoginActionAsync, startDate: ", startDate);
+      console.log("GetClassSchedulesByLoginActionAsync, endDate: ", endDate);
+      const response = await httpClient.get(`/api/v1/users/mine/class-schedules`, {
+        params: {
+          startTime: startDate,
+          endTime: endDate,
+        },
+      });
+      if (response.isSuccess) {
+        dispatch(setSchedules(response.data));
+        console.log("GetClassSchedulesByLoginActionAsync, response: ", response.data);
+      } else {
+        throw new Error(response.message);
+      }
+    } catch (error) {
+      console.error(error);
+      message.error("Không thể lấy lịch học, vui lòng thử lại sau.");
+    }
+  };
+};
+
