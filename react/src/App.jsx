@@ -40,6 +40,7 @@ import TempUISystemInstructor from "./SystemInstructor/TempUISystemInstructor/Te
 import HomeSystemInstructor from "./SystemInstructor/Page/HomeSystemInstructor/HomeSystemInstructor";
 import CourseSystemInstructor from "./SystemInstructor/Page/CourseSystemInstructor/CourseSystemInstructor";
 import CourseDetailSystemInstructor from "./SystemInstructor/Page/CourseDetailSystemInstructor/CourseDetailSystemInstructor";
+import QuizTest from "./Student/Page/QuizTest/QuizTest";
 
 
 const LoadingOverlay = () => {
@@ -88,6 +89,7 @@ function App() {
               <Route element={<ProtectedRoute requiredRole="Student" />}>
                 <Route path="student" element={<TempUIStudent />}>
                   <Route path="" element={<HomeStudentNoti />} />
+                  <Route path="quiz" element={<QuizTest/>} />
                   <Route path="schedule" element={<ScheduleStudent />} />
                   <Route path="change-password" element={<ChangePassword />} />
                 </Route>
