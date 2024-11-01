@@ -162,9 +162,8 @@ const StudentConsultationRegistration = () => {
         };
 
         const handleJoinClass = () => {
-            // Logic to handle joining the class (you'll need to dispatch an action)
-            console.log(`Joining class for ${record.fullName}`);
-            // Dispatch your action here
+            setSelectedRowKeys([record.id]);
+            setIsAddToClassModalVisible(true);
         };
 
         switch (status) {

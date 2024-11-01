@@ -145,7 +145,7 @@ const ClassManagement = () => {
             render: getStatusBadge,
         },
         {
-            title: "Hành động",
+            title: "Đổi trạng thái lớp học",
             key: "action",
             align: "center",
             render: (text, record) => (
@@ -155,7 +155,7 @@ const ClassManagement = () => {
                     onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
                     onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
                 >
-                    {record.status === "Active" ? "Chuyển sang Không hoạt động" : "Chuyển sang Hoạt động"}
+                    {record.status === "Active" ? "Không hoạt động" : "Hoạt động"}
                 </Button>
             ),
         },

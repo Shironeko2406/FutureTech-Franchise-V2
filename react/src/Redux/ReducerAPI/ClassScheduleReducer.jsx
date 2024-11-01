@@ -60,3 +60,21 @@ export const GetClassSchedulesActionAsync = (startDate, endDate) => {
     }
   };
 };
+
+export const RemoveAllSchedulesOfOneClassActionAsync = (classId) => {
+  return async () => {
+    try {
+      const res = await httpClient.delete(`/api/v1/classes/${classId}/class-schedules`);
+      if (res.isSuccess && res.data) {
+        message.success(`${res.message}`);
+      } else if (res.isSuccess && !res.data) {
+        message.error(`${res.message}`);
+      } else {
+        throw new Error(`${res.message}`);
+      }
+    } catch (error) {
+      console.error(error);
+      message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
+    }
+  };
+};

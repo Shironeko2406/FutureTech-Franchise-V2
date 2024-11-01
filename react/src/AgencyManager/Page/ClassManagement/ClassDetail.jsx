@@ -1,20 +1,23 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { GetClassDetailActionAsync, GetAllInstructorsAvailableActionAsync } from "../../../Redux/ReducerAPI/ClassReducer";
 import { GetSlotActionAsync } from "../../../Redux/ReducerAPI/SlotReducer";
-import { Card, Table, Avatar, Typography, Spin, Row, Col, Tag, Button, Tooltip } from 'antd';
-import { UserOutlined, BookOutlined, TeamOutlined, CalendarOutlined, ClockCircleOutlined, EditOutlined } from '@ant-design/icons';
+import { Card, Table, Avatar, Typography, Spin, Row, Col, Tag, Button, Tooltip, Popover } from 'antd';
+import { UserOutlined, BookOutlined, TeamOutlined, CalendarOutlined, ClockCircleOutlined, EditOutlined, TagOutlined, ArrowLeftOutlined, DeleteOutlined } from '@ant-design/icons';
 import EditClassModal from "../../Modal/EditClassModal";
 import EditScheduleModal from "../../Modal/EditScheduleModal";
+import { RemoveAllSchedulesOfOneClassActionAsync } from "../../../Redux/ReducerAPI/ClassScheduleReducer";
 
 const { Title } = Typography;
 
 const ClassDetail = () => {
-    const { id } = useParams();
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const { id } = useParams();
     const { classDetail, instructors } = useSelector((state) => state.ClassReducer);
     const { slotData } = useSelector((state) => state.SlotReducer);
+    const [popoverVisible, setPopoverVisible] = useState(false);
 
     // State cho modal
     const [isClassModalVisible, setIsClassModalVisible] = useState(false);
@@ -36,7 +39,34 @@ const ClassDetail = () => {
         // Handle edit logic here
     };
 
-    if (!classDetail) return <Spin size="large" />;
+    const handleDeleteConfirm = () => {
+        dispatch(RemoveAllSchedulesOfOneClassActionAsync(id)).then(() => {
+            handleEditSuccess();
+        }).finally(() => {
+            setPopoverVisible(false);
+        });
+    };
+
+    const deletePopoverContent = (
+        <div style={{ display: 'flex', gap: '8px' }}>
+            <Button type="primary" danger onClick={handleDeleteConfirm}>
+                Xóa
+            </Button>
+            <Button onClick={() => setPopoverVisible(false)}>Hủy</Button>
+        </div>
+    );
+
+    if (!classDetail) return (
+        <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100vh'
+        }}>
+            <Spin size="large" />
+        </div>
+    );
+
 
 
     const columns = [
@@ -114,6 +144,24 @@ const ClassDetail = () => {
             >
                 <Row justify="center" align="middle" gutter={[0, 24]}>
                     <Col span={24}>
+                        <Button
+                            icon={<ArrowLeftOutlined />}
+                            onClick={() => navigate(-1)}
+                            style={{
+                                position: 'absolute',
+                                left: 0,
+                                top: '50%',
+                                transform: 'translateY(-50%)',
+                                color: '#1890ff',
+                                width: '32px',
+                                height: '32px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                border: 'none',
+                                background: 'transparent'
+                            }}
+                        />
                         <Title level={2} style={{
                             color: '#1890ff',
                             textAlign: 'center',
@@ -168,6 +216,15 @@ const ClassDetail = () => {
                                 </Col>
                                 <Col xs={24} sm={12}>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                                        <TagOutlined style={{ color: '#1890ff', fontSize: '20px' }} />
+                                        <div>
+                                            <div style={{ color: '#8c8c8c', fontSize: '14px' }}>Mã Khóa Học</div>
+                                            <div style={{ fontWeight: '500', fontSize: '16px' }}>{classDetail.courseCode}</div>
+                                        </div>
+                                    </div>
+                                </Col>
+                                <Col xs={24} sm={12}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
                                         <UserOutlined style={{ color: '#1890ff', fontSize: '20px' }} />
                                         <div>
                                             <div style={{ color: '#8c8c8c', fontSize: '14px' }}>Giảng Viên</div>
@@ -196,33 +253,53 @@ const ClassDetail = () => {
                 <Col span={24}>
                     <Card
                         title={
-                            <div style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'space-between',
-                                width: '100%'
-                            }}>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                     <CalendarOutlined style={{ color: '#1890ff' }} />
                                     <span>Lịch Học</span>
                                 </div>
-                                <Tooltip title="Chỉnh sửa lịch học">
-                                    <Button
-                                        type="text"
-                                        icon={<EditOutlined />}
-                                        onClick={() => setIsScheduleModalVisible(true)}
-                                        style={{
-                                            color: '#1890ff',
-                                            width: '32px',
-                                            height: '32px',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            border: 'none',
-                                            padding: 0
-                                        }}
-                                    />
-                                </Tooltip>
+                                {classDetail.slotViewModels ? (
+                                    <Popover
+                                        content={deletePopoverContent}
+                                        title="Xác nhận xóa lịch học"
+                                        trigger="click"
+                                        open={popoverVisible}
+                                        onOpenChange={(visible) => setPopoverVisible(visible)}
+                                    >
+                                        <Button
+                                            type="text"
+                                            icon={<DeleteOutlined />}
+                                            style={{
+                                                color: '#ff4d4f',
+                                                width: '32px',
+                                                height: '32px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                border: 'none',
+                                                padding: 0
+                                            }}
+                                        />
+                                    </Popover>
+                                ) : (
+                                    <Tooltip title="Chỉnh sửa lịch học">
+                                        <Button
+                                            type="text"
+                                            icon={<EditOutlined />}
+                                            onClick={() => setIsScheduleModalVisible(true)}
+                                            style={{
+                                                color: '#1890ff',
+                                                width: '32px',
+                                                height: '32px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                border: 'none',
+                                                padding: 0
+                                            }}
+                                        />
+                                    </Tooltip>
+                                )}
                             </div>
                         }
                         style={{
