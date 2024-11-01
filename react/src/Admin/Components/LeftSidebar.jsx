@@ -78,7 +78,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
             <li className="sidebar-item">
               <NavLink
                 className="sidebar-link"
-                to="/admin/course"
+                to="/admin/course-category"
                 aria-expanded="false"
               >
                 <span>
@@ -87,7 +87,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
                     className="fs-6"
                   />
                 </span>
-                <span className="hide-menu">Course</span>
+                <span className="hide-menu">Course category</span>
               </NavLink>
             </li>
             <li className="sidebar-item">

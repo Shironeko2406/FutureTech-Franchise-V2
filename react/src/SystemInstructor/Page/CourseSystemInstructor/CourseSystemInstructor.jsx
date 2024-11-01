@@ -6,8 +6,8 @@ import {
   Input,
   Dropdown,
   Tag,
-  Space,
   Popconfirm,
+  Space,
 } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -17,13 +17,10 @@ import {
   UpdateStatusCourseActionAsync,
 } from "../../../Redux/ReducerAPI/CourseReducer";
 import {
-  CheckCircleOutlined,
   ClockCircleOutlined,
-  CloseCircleOutlined,
   CopyOutlined,
   DeleteOutlined,
   EditOutlined,
-  PauseOutlined,
   PlusOutlined,
   SearchOutlined,
   UploadOutlined,
@@ -40,24 +37,9 @@ const statusItems = [
     key: "PendingApproval",
     icon: <ClockCircleOutlined style={{ color: "orange" }} />,
   },
-  {
-    label: "Công khai",
-    key: "AvailableForFranchise",
-    icon: <CheckCircleOutlined style={{ color: "green" }} />,
-  },
-  {
-    label: "Tạm đóng",
-    key: "TemporarilySuspended",
-    icon: <PauseOutlined style={{ color: "gray" }} />,
-  },
-  {
-    label: "Đóng",
-    key: "Closed",
-    icon: <CloseCircleOutlined style={{ color: "red" }} />,
-  },
 ];
 
-const CourseManage = () => {
+const CourseSystemInstructor = () => {
   const { course, totalPagesCount } = useSelector(
     (state) => state.CourseReducer
   );
@@ -103,26 +85,7 @@ const CourseManage = () => {
   };
 
   const getStatusItems = (status) => {
-    switch (status) {
-      case "Draft":
-        return statusItems.filter((item) => item.key === "PendingApproval");
-      case "PendingApproval":
-        return statusItems.filter((item) =>
-          ["AvailableForFranchise", "Closed"].includes(item.key)
-        );
-      case "AvailableForFranchise":
-        return statusItems.filter((item) =>
-          ["TemporarilySuspended", "Closed"].includes(item.key)
-        );
-      case "TemporarilySuspended":
-        return statusItems.filter((item) =>
-          ["AvailableForFranchise", "Closed"].includes(item.key)
-        );
-      case "Closed":
-        return [];
-      default:
-        return statusItems;
-    }
+    return status === "Draft" ? statusItems : [];
   };
 
   const handleMenuClick = (courseId, { key }) => {
@@ -244,7 +207,9 @@ const CourseManage = () => {
       dataIndex: "name",
       key: "name",
       render: (text, record) => (
-        <NavLink to={`/manager/course-detail/${record.id}`}>{text}</NavLink>
+        <NavLink to={`/system-instructor/course-detail/${record.id}`}>
+          {text}
+        </NavLink>
       ),
       ...getColumnSearchProps(), // Apply search props to the column
     },
@@ -312,7 +277,7 @@ const CourseManage = () => {
       },
     },
     {
-      title: "Hành động",
+      title: "Action",
       key: "action",
       render: (text, record) => (
         <>
@@ -333,7 +298,7 @@ const CourseManage = () => {
                   type="default"
                   icon={<EditOutlined />}
                   style={{ backgroundColor: "#faad14", color: "#fff" }}
-                  onClick={() => handleEdit(record.id)}
+                  onClick={() => handleEdit(record.id)} 
                 />
                 <Popconfirm
                   title="Bạn muốn xóa khóa học này?"
@@ -353,7 +318,7 @@ const CourseManage = () => {
                 okText="Có"
                 cancelText="Không"
               >
-                <Button type="default" icon={<CopyOutlined />}></Button>
+                <Button type="default" icon={<CopyOutlined />} />
               </Popconfirm>
             )}
           </Space>
@@ -408,7 +373,7 @@ const CourseManage = () => {
               total: totalPagesCount * pageSize,
               onChange: handlePageChange,
               showSizeChanger: true,
-              pageSizeOptions: ["7", "10"],
+              pageSizeOptions: ["10", "20", "50"],
             }}
             scroll={{ x: 768 }}
           />
@@ -427,6 +392,7 @@ const CourseManage = () => {
           boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)",
         }}
       />
+
       <SendFileCourseDetailModal
         visible={isModalUploadVisible}
         onClose={closeModalUpload}
@@ -448,4 +414,4 @@ const CourseManage = () => {
   );
 };
 
-export default CourseManage;
+export default CourseSystemInstructor;

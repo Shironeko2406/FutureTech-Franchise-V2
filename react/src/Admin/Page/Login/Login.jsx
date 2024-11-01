@@ -29,11 +29,14 @@ const Login = () => {
             case "Student":
               navigate("/student");
               break;
-            case "Instuctor":
+            case "Instructor":
               navigate("/instructor");
               break;
             case "Manager":
               navigate("/manager");
+              break;
+            case "SystemInstructor":
+              navigate("/system-instructor");
               break;
             default:
               navigate("/");
@@ -65,7 +68,7 @@ const Login = () => {
                     to="/"
                     className="text-nowrap logo-img text-center d-block py-3 w-100"
                   >
-                    <img src="/assets/images/logos/logo-light.svg"/>
+                    <img src="/assets/images/logos/FutureTechLogo.png" />
                   </NavLink>
                   <p className="text-center">Đăng nhập</p>
                   <form onSubmit={userForm.handleSubmit}>
@@ -130,15 +133,6 @@ const Login = () => {
                     >
                       Đăng Nhập
                     </button>
-                    <div className="d-flex align-items-center justify-content-center">
-                      <p className="fs-4 mb-0 fw-bold">New to SeoDash?</p>
-                      <NavLink
-                        className="text-primary fw-bold ms-2"
-                        to="/register"
-                      >
-                        Trở lại
-                      </NavLink>
-                    </div>
                   </form>
                 </div>
               </div>

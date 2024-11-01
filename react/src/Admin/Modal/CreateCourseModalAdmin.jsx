@@ -5,9 +5,15 @@ import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { imageDB } from "../../Firebasse/Config";
 import { useDispatch, useSelector } from "react-redux";
 import { CreateCourseActionAsync } from "../../Redux/ReducerAPI/CourseReducer";
-import { useLoading } from "../../Utils/LoadingContext";
 
-const CreateCourseModal = ({ isDrawerVisible, closeDrawer, status, pageIndex, pageSize, searchTerm }) => {
+const CreateCourseModalAdmin = ({
+  isDrawerVisible,
+  closeDrawer,
+  status,
+  pageIndex,
+  pageSize,
+  searchTerm,
+}) => {
   const { courseCategory } = useSelector(
     (state) => state.CourseCategoryReducer
   );
@@ -16,7 +22,6 @@ const CreateCourseModal = ({ isDrawerVisible, closeDrawer, status, pageIndex, pa
   const [price, setPrice] = useState(0);
   const [imageUrl, setImageUrl] = useState("");
   const [fileList, setFileList] = useState([]);
-  const {setLoading} = useLoading()
 
   const onChangePrice = (newValue) => {
     setPrice(newValue);
@@ -60,11 +65,17 @@ const CreateCourseModal = ({ isDrawerVisible, closeDrawer, status, pageIndex, pa
 
   const onFinish = (values) => {
     const finalValues = { ...values, price, urlImage: imageUrl };
-    setLoading(true)
     console.log("Form Data:", finalValues);
-    dispatch(CreateCourseActionAsync(finalValues, status, pageIndex, pageSize, searchTerm))
+    dispatch(
+      CreateCourseActionAsync(
+        finalValues,
+        status,
+        pageIndex,
+        pageSize,
+        searchTerm
+      )
+    )
       .then((response) => {
-        setLoading(false)
         if (response) {
           closeDrawer();
           form.resetFields();
@@ -75,7 +86,6 @@ const CreateCourseModal = ({ isDrawerVisible, closeDrawer, status, pageIndex, pa
       })
       .catch((error) => {
         console.log(error);
-        setLoading(false)
       });
   };
 
@@ -84,6 +94,7 @@ const CreateCourseModal = ({ isDrawerVisible, closeDrawer, status, pageIndex, pa
       title="Tạo Khóa Học Mới"
       width={720}
       onClose={closeDrawer}
+      a
       open={isDrawerVisible}
       styles={{ body: { paddingBottom: 80 } }}
       footer={
@@ -97,7 +108,7 @@ const CreateCourseModal = ({ isDrawerVisible, closeDrawer, status, pageIndex, pa
         </div>
       }
     >
-      <Form form={form} layout="vertical" onFinish={onFinish} requiredMark={false}>
+      <Form form={form} layout="vertical" onFinish={onFinish}>
         {/* Dòng chứa tên khóa học và mã khóa học */}
         <Row gutter={16}>
           <Col span={12}>
@@ -231,4 +242,4 @@ const CreateCourseModal = ({ isDrawerVisible, closeDrawer, status, pageIndex, pa
   );
 };
 
-export default CreateCourseModal;
+export default CreateCourseModalAdmin;

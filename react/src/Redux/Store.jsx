@@ -10,6 +10,8 @@ import CourseReducer from "./ReducerAPI/CourseReducer";
 import RegisterCourseReducer from "./ReducerAPI/RegisterCourseReducer";
 import PaymentReducer from "./ReducerAPI/PaymentReducer";
 import ClassReducer from "./ReducerAPI/ClassReducer";
+import SyllabusReducer from "./ReducerAPI/SyllabusReducer";
+import ChapterReducer from "./ReducerAPI/ChapterReducer";
 
 export const store = configureStore({
   reducer: {
@@ -25,5 +27,7 @@ export const store = configureStore({
     RegisterCourseReducer,
     PaymentReducer,
     ClassReducer,
+    SyllabusReducer,
+    ChapterReducer
   },
 });
