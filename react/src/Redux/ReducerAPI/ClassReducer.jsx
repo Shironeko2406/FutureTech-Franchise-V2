@@ -120,6 +120,7 @@ export const UpdateClassActionAsync = (classId, classData) => {
     return async () => {
         try {
             const res = await httpClient.put(`/api/v1/classes/${classId}`, classData);
+            console.log("UpdateClassActionAsync:", res);
             if (res.isSuccess && res.data) {
                 message.success(`${res.message}`);
             } else if (res.isSuccess && !res.data) {
