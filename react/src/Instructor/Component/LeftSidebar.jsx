@@ -32,45 +32,36 @@ const LeftSidebar = ({ onSidebarToggle }) => {
             <i className="ti ti-x fs-8" />
           </div>
         </div>
+        {/* Sidebar navigation*/}
         <nav className="sidebar-nav scroll-sidebar" data-simplebar>
           <ul id="sidebarnav">
-            {sidebarItems.map((item, index) => (
-              item.type === 'section' ? (
-                <li key={index} className="nav-small-cap">
-                  <i className={`${item.icon} nav-small-cap-icon fs-6`} />
-                  <span className="hide-menu">{item.label}</span>
-                </li>
-              ) : (
-                <li key={index} className="sidebar-item">
-                  <NavLink className="sidebar-link" to={item.path} aria-expanded="false">
-                    <span>
-                      <iconify-icon icon={item.icon} className="fs-6" />
-                    </span>
-                    <span className="hide-menu">{item.label}</span>
-                  </NavLink>
-                </li>
-              )
-            ))}
+            <li className="nav-small-cap">
+              <i className="ti ti-dots nav-small-cap-icon fs-6" />
+              <span className="hide-menu"></span>
+            </li>
+            <li className="sidebar-item">
+              <NavLink
+                className="sidebar-link"
+                to="schedules"
+                aria-expanded="false"
+                activeClassName="active"
+              >
+                <span>
+                  <iconify-icon
+                    icon="uis:schedule"
+                    className="fs-6"
+                  />
+                </span>
+                <span className="hide-menu">Lịch học</span>
+              </NavLink>
+            </li>
           </ul>
-          <div className="unlimited-access hide-menu bg-primary-subtle position-relative mb-7 mt-7 rounded-3">
-            <div className="d-flex">
-              <div className="unlimited-access-title me-3">
-                <h6 className="fw-semibold fs-4 mb-6 text-dark w-75">
-                  Upgrade to pro
-                </h6>
-                <a target="_blank" className="btn btn-primary fs-2 fw-semibold lh-sm">
-                  Buy Pro
-                </a>
-              </div>
-              <div className="unlimited-access-img">
-                <img src="/assets/images/backgrounds/rocket.png" alt="rocket" className="img-fluid" />
-              </div>
-            </div>
-          </div>
         </nav>
+        {/* End Sidebar navigation */}
       </div>
+      {/* End Sidebar scroll*/}
     </aside>
-  );
-};
+  )
+}
 
-export default LeftSidebar;
+export default LeftSidebar

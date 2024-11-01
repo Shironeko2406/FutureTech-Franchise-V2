@@ -47,9 +47,9 @@ const ConsultationManagement = () => {
         <div className="card-body">
           <div className="d-flex justify-content-between align-items-center mb-3">
             <h5 className="card-title">Pending approval consult</h5>
-            <Select 
-              defaultValue={status} 
-              style={{ width: 150 }} 
+            <Select
+              defaultValue={status}
+              style={{ width: 150 }}
               onChange={handleStatusChange}
             >
               <Select.Option value="Consulted">Consulted</Select.Option>
@@ -104,11 +104,11 @@ const ConsultationManagement = () => {
 
           {/* Pagination */}
           <div className="d-flex justify-content-end mt-3">
-            <Pagination 
-              current={pageIndex} 
-              pageSize={pageSize} 
-              total={totalPagesCount * pageSize} 
-              onChange={handlePageChange} 
+            <Pagination
+              current={pageIndex}
+              pageSize={pageSize}
+              total={totalPagesCount * pageSize}
+              onChange={handlePageChange}
               showSizeChanger={false}
             />
           </div>

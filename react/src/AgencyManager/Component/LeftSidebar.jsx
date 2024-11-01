@@ -2,14 +2,14 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 
 const LeftSidebar = ({ onSidebarToggle }) => {
-  
+
   return (
     <aside className="left-sidebar">
       {/* Sidebar scroll*/}
       <div>
         <div className="brand-logo d-flex align-items-center justify-content-between">
-          <NavLink to="/admin" className="text-nowrap logo-img">
-            <img src="/assets/images/logos/logo-light.svg" alt="" />
+          <NavLink to="" className="text-nowrap logo-img">
+            {/* <img src="/assets/images/logos/logo-light.svg" alt="" /> */}
           </NavLink>
           <div
             className="close-btn d-xl-none d-block sidebartoggler cursor-pointer"
@@ -29,7 +29,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
             <li className="sidebar-item">
               <NavLink
                 className="sidebar-link"
-                to="/admin"
+                to="/"
                 aria-expanded="false"
               >
                 <span>
@@ -43,58 +43,68 @@ const LeftSidebar = ({ onSidebarToggle }) => {
             </li>
             <li className="nav-small-cap">
               <i className="ti ti-dots nav-small-cap-icon fs-6" />
-              <span className="hide-menu">Management</span>
+              <span className="hide-menu">Quản lý</span>
             </li>
             <li className="sidebar-item">
               <NavLink
                 className="sidebar-link"
-                to="#"
+                to="/"
                 aria-expanded="false"
               >
                 <span>
                   <iconify-icon
                     icon="solar:layers-minimalistic-bold-duotone"
                     className="fs-6"
+
+                    activeClassName="active"
                   />
                 </span>
-                <span className="hide-menu">Users</span>
+                <span className="hide-menu">Người dùng</span>
               </NavLink>
             </li>
             <li className="sidebar-item">
               <NavLink
                 className="sidebar-link"
-                to="#"
+                to="/"
                 aria-expanded="false"
+
               >
                 <span>
                   <iconify-icon
-                    icon="solar:danger-circle-bold-duotone"
+                    icon="solar:layers-minimalistic-bold-duotone"
                     className="fs-6"
+
+                    activeClassName="active"
                   />
                 </span>
-                <span className="hide-menu">Intructors</span>
+                <span className="hide-menu">Giảng viên</span>
               </NavLink>
             </li>
             <li className="sidebar-item">
               <NavLink
                 className="sidebar-link"
-                to="#"
+                to="student-payment"
                 aria-expanded="false"
+                activeClassName="active"
               >
                 <span>
                   <iconify-icon
-                    icon="solar:bookmark-square-minimalistic-bold-duotone"
+                    icon="fluent:payment-20-filled"
                     className="fs-6"
                   />
                 </span>
-                <span className="hide-menu">Card</span>
+                <span className="hide-menu">Giao dịch</span>
               </NavLink>
+            </li>
+            <li className="nav-small-cap">
+              <span className="hide-menu">Lớp học</span>
             </li>
             <li className="sidebar-item">
               <NavLink
                 className="sidebar-link"
-                to="#"
+                to="student-consultation-registration"
                 aria-expanded="false"
+                activeClassName="active"
               >
                 <span>
                   <iconify-icon
@@ -102,116 +112,57 @@ const LeftSidebar = ({ onSidebarToggle }) => {
                     className="fs-6"
                   />
                 </span>
-                <span className="hide-menu">Forms</span>
+                <span className="hide-menu">Ghi danh</span>
               </NavLink>
             </li>
             <li className="sidebar-item">
               <NavLink
                 className="sidebar-link"
-                to="#"
+                to="classes"
+                activeClassName="active"
+              >
+                <span>
+                  <iconify-icon
+                    icon="ri:file-list-3-fill"
+                    className="fs-6"
+                  />
+                </span>
+                <span className="hide-menu">Danh sách</span>
+              </NavLink>
+            </li>
+            <li className="sidebar-item">
+              <NavLink
+                className="sidebar-link"
+                to="schedules"
                 aria-expanded="false"
+                activeClassName="active"
               >
                 <span>
                   <iconify-icon
-                    icon="solar:text-field-focus-bold-duotone"
+                    icon="uis:schedule"
                     className="fs-6"
                   />
                 </span>
-                <span className="hide-menu">Typography</span>
-              </NavLink>
-            </li>
-            <li className="nav-small-cap">
-              <span className="hide-menu">Consult</span>
-            </li>
-            <li className="sidebar-item">
-              <NavLink
-                className="sidebar-link"
-                to="#"
-              >
-                <span>
-                  <iconify-icon
-                    icon="solar:login-3-bold-duotone"
-                    className="fs-6"
-                  />
-                </span>
-                <span className="hide-menu">Approcal</span>
+                <span className="hide-menu">Lịch học</span>
               </NavLink>
             </li>
             <li className="sidebar-item">
               <NavLink
                 className="sidebar-link"
-                to="#"
+                to="slots"
                 aria-expanded="false"
+                activeClassName="active"
               >
                 <span>
                   <iconify-icon
-                    icon="solar:user-plus-rounded-bold-duotone"
+                    icon="mdi:clock"
                     className="fs-6"
                   />
                 </span>
-                <span className="hide-menu">Status</span>
-              </NavLink>
-            </li>
-            <li className="nav-small-cap">
-              <iconify-icon
-                icon="solar:menu-dots-linear"
-                className="nav-small-cap-icon fs-4"
-              />
-              <span className="hide-menu">EXTRA</span>
-            </li>
-            <li className="sidebar-item">
-              <NavLink
-                className="sidebar-link"
-                to="#"
-                aria-expanded="false"
-              >
-                <span>
-                  <iconify-icon
-                    icon="solar:sticker-smile-circle-2-bold-duotone"
-                    className="fs-6"
-                  />
-                </span>
-                <span className="hide-menu">Icons</span>
-              </NavLink>
-            </li>
-            <li className="sidebar-item">
-              <NavLink
-                className="sidebar-link"
-                to="#"
-                aria-expanded="false"
-              >
-                <span>
-                  <iconify-icon
-                    icon="solar:planet-3-bold-duotone"
-                    className="fs-6"
-                  />
-                </span>
-                <span className="hide-menu">Sample Page</span>
+                <span className="hide-menu">Slots</span>
               </NavLink>
             </li>
           </ul>
-          <div className="unlimited-access hide-menu bg-primary-subtle position-relative mb-7 mt-7 rounded-3">
-            <div className="d-flex">
-              <div className="unlimited-access-title me-3">
-                <h6 className="fw-semibold fs-4 mb-6 text-dark w-75">
-                  Upgrade to pro
-                </h6>
-                <a
-                  target="_blank"
-                  className="btn btn-primary fs-2 fw-semibold lh-sm"
-                >
-                  Buy Pro
-                </a>
-              </div>
-              <div className="unlimited-access-img">
-                <img
-                  src="/assets/images/backgrounds/rocket.png"
-                  alt=""
-                  className="img-fluid"
-                />
-              </div>
-            </div>
-          </div>
         </nav>
         {/* End Sidebar navigation */}
       </div>

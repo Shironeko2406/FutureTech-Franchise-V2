@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import MyHeader from "../Component/MyHeader";
 import { Outlet } from "react-router-dom";
 import LeftSidebar from "../Component/LeftSidebar";
+import "./TempUIAgencyManager.css";
 
 const TempUIAgencyManager = () => {
   const [sidebarType, setSidebarType] = useState("full");
@@ -40,9 +41,8 @@ const TempUIAgencyManager = () => {
 
   return (
     <div
-      className={`page-wrapper ${miniSidebar ? "mini-sidebar" : ""} ${
-        showSidebar ? "show-sidebar" : ""
-      }`}
+      className={`page-wrapper ${miniSidebar ? "mini-sidebar" : ""} ${showSidebar ? "show-sidebar" : ""
+        }`}
       id="main-wrapper"
       data-layout="vertical"
       data-navbarbg="skin6"

@@ -20,12 +20,18 @@ import CourseDetail from "./Student/Page/CourseDetail/CourseDetail";
 import HomeStudentNoti from "./Student/Page/HomeStudentNoti";
 import TempUIAgencyManager from "./AgencyManager/TempUIAgencyManager/TempUIAgencyManager";
 import HomeAgencyManager from "./AgencyManager/Page/HomeAgencyManager/HomeAgencyManager";
-import SlotManager from "./Manager/Page/Slot/SlotManager";
 import Profile from "./Admin/Page/Profile/Profile";
 import ChangePassword from "./Student/Page/ChangePassword/ChangePassword";
+import SlotManager from "./AgencyManager/Page/Slot/SlotManager";
 import ScheduleStudent from "./Student/Page/Schedule/ScheduleStudent";
 import CourseCategoryManager from "./Manager/Page/CourseCategory/CourseCategoryManager";
 import CourseManage from "./Manager/Page/CorseManager/CourseManage";
+import ScheduleInstructor from "./Instructor/Page/Schedule/ScheduleInstructor";
+import StudentConsultationRegistration from "./AgencyManager/Page/StudentConsultationRegistration/StudentConsultationRegistration";
+import StudentPaymentManagement from "./AgencyManager/Page/StudentPaymentManagement/StudentPaymentManagement";
+import ClassManagement from "./AgencyManager/Page/ClassManagement/ClassManagement";
+import ClassDetail from "./AgencyManager/Page/ClassManagement/ClassDetail";
+import ScheduleAgencyManager from "./AgencyManager/Page/ScheduleManagement/ScheduleAgencyManager";
 import CourseCategoryAdmin from "./Admin/Page/CourseCategory/CourseAdmin";
 import CourseManageAdmin from "./Admin/Page/CourseManageAdmin/CourseManageAdmin";
 import TempUIInstructor from "./Instructor/TempUIInstructor/TempUIInstructor";
@@ -58,7 +64,7 @@ function App() {
       <BrowserRouter>
         <Provider store={store}>
           <LoadingProvider>
-            <LoadingOverlay/>
+            <LoadingOverlay />
             <Routes>
               <Route element={<AnonymousRoute />}>
                 <Route path="" element={<Login></Login>} />
@@ -69,7 +75,6 @@ function App() {
                   element={<ResetPassword />}
                 />
               </Route>
-
               <Route element={<ProtectedRoute requiredRole="Administrator" />}>
                 <Route path="admin" element={<TempUI />}>
                   <Route path="" element={<Home />} />
@@ -81,24 +86,31 @@ function App() {
               </Route>
 
               <Route element={<ProtectedRoute requiredRole="AgencyManager" />}>
-                <Route path="agency-manager" element={<TempUIAgencyManager />}>
+                <Route path="agency-manager" element={<TempUIAgencyManager />} >
                   <Route path="" element={<HomeAgencyManager />} />
+                  <Route path="student-consultation-registration" element={<StudentConsultationRegistration />} />
+                  <Route path="student-payment" element={<StudentPaymentManagement />} />
+                  <Route path="slots" element={<SlotManager />} />
+                  <Route path="classes" element={<ClassManagement />} />
+                  <Route path="classes/:id" element={<ClassDetail />} />
+                  <Route path="schedules" element={<ScheduleAgencyManager />} />
                 </Route>
               </Route>
 
               <Route element={<ProtectedRoute requiredRole="Student" />}>
                 <Route path="student" element={<TempUIStudent />}>
                   <Route path="" element={<HomeStudentNoti />} />
-                  <Route path="quiz" element={<QuizTest/>} />
-                  <Route path="schedule" element={<ScheduleStudent />} />
+                  <Route path="quiz" element={<QuizTest />} />
+                  <Route path="schedules" element={<ScheduleStudent />} />
                   <Route path="change-password" element={<ChangePassword />} />
                 </Route>
               </Route>
 
               <Route element={<ProtectedRoute requiredRole="Instructor" />}>
                 <Route path="instructor" element={<TempUIInstructor />}>
-                  <Route path="" element={<HomeInstructor/>} />
-                  <Route path="schedule" element={<ScheduleTeaching/>} />
+                  <Route path="" element={<HomeInstructor />} />
+                  <Route path="schedule" element={<ScheduleTeaching />} />
+                  <Route path="schedules" element={<ScheduleInstructor />} />
                 </Route>
               </Route>
 
@@ -108,17 +120,17 @@ function App() {
                   <Route path="consult" element={<ConsultationManagement />} />
                   <Route path="course-category" element={<CourseCategoryManager />} />
                   <Route path="course" element={<CourseManage />} />
-                  <Route path="course-detail/:id" element={<CourseDetailManager/>} />
+                  <Route path="course-detail/:id" element={<CourseDetailManager />} />
                   <Route path="slot" element={<SlotManager />} />
                 </Route>
               </Route>
 
               <Route element={<ProtectedRoute requiredRole="SystemInstructor" />}>
                 <Route path="system-instructor" element={<TempUISystemInstructor />}>
-                  <Route path="" element={<HomeSystemInstructor/>} />
-                  <Route path="course" element={<CourseSystemInstructor/>} />
-                  <Route path="course-detail/:id" element={<CourseDetailSystemInstructor/>} />
-                  
+                  <Route path="" element={<HomeSystemInstructor />} />
+                  <Route path="course" element={<CourseSystemInstructor />} />
+                  <Route path="course-detail/:id" element={<CourseDetailSystemInstructor />} />
+
                 </Route>
               </Route>
 
@@ -127,11 +139,11 @@ function App() {
                 <Route path="" element={<HomeStudent />} />
                 <Route path="course-detail" element={<CourseDetail />} />
               </Route>
-            </Routes>
-          </LoadingProvider>
-        </Provider>
-      </BrowserRouter>
-    </ConfigProvider>
+            </Routes >
+          </LoadingProvider >
+        </Provider >
+      </BrowserRouter >
+    </ConfigProvider >
   );
 }
 

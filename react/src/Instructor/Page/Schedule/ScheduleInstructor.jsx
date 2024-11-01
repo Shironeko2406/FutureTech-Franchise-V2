@@ -9,7 +9,7 @@ import { Spin } from 'antd';
 
 const localizer = momentLocalizer(moment);
 
-const ScheduleStudent = () => {
+const ScheduleInstructor = () => {
 
   const dispatch = useDispatch();
   const { slotData } = useSelector((state) => state.SlotReducer);
@@ -125,4 +125,4 @@ const ScheduleStudent = () => {
   );
 };
 
-export default ScheduleStudent;
+export default ScheduleInstructor;

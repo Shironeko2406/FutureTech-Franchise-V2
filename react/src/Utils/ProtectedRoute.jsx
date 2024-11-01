@@ -20,6 +20,7 @@ import { TOKEN_AUTHOR, USER_LOGIN } from "./Interceptors";
 const ProtectedRoute = ({ requiredRole }) => {
   const accessToken = getDataTextStorage(TOKEN_AUTHOR); // Get the accessToken from localStorage
   const userLogin = getDataJSONStorage(USER_LOGIN); // Get the user data, including role
+  console.log(userLogin);
 
   if (!accessToken || !userLogin) {
     return <Navigate to="/" />; // Redirect to login if not authenticated
