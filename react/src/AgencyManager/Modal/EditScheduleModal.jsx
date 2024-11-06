@@ -77,7 +77,7 @@ const EditScheduleModal = ({ visible, onCancel, scheduleData, slotData, onUpdate
                         label="Ngày bắt đầu"
                         rules={[{ required: true, message: "Vui lòng chọn ngày bắt đầu" }]}
                     >
-                        <DatePicker disabledDate={(current) => current && current < moment().endOf('day')} />
+                        <DatePicker disabledDate={(current) => current && current < moment().startOf('day')} />
                     </Form.Item>
                     <Form.Item
                         name="daysOfWeek"
