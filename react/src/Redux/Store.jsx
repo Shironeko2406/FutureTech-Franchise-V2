@@ -12,6 +12,7 @@ import PaymentReducer from "./ReducerAPI/PaymentReducer";
 import ClassReducer from "./ReducerAPI/ClassReducer";
 import SyllabusReducer from "./ReducerAPI/SyllabusReducer";
 import ChapterReducer from "./ReducerAPI/ChapterReducer";
+import QuizReducer from "./ReducerAPI/QuizReducer";
 import AttendanceReducer from "./ReducerAPI/AttendanceReducer";
 
 export const store = configureStore({
@@ -30,6 +31,7 @@ export const store = configureStore({
     ClassReducer,
     SyllabusReducer,
     ChapterReducer,
+    QuizReducer,
     AttendanceReducer
   },
 });

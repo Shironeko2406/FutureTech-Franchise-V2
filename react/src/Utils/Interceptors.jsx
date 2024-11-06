@@ -4,6 +4,7 @@ const TOKEN_AUTHOR = "accessToken";
 const REFRESH_TOKEN = "refreshToken";
 const USER_LOGIN = "userLogin";
 const HOST_DOMAIN = "https://localhost:7116";
+const QUIZ_SELECTED_OPTION = "quizAnswers"
 
 // Cấu hình interceptors
 const httpClient = axios.create({
@@ -67,4 +68,4 @@ httpClient.interceptors.response.use(
   }
 );
 
-export { httpClient, USER_LOGIN, TOKEN_AUTHOR, REFRESH_TOKEN, HOST_DOMAIN };
+export { httpClient, USER_LOGIN, TOKEN_AUTHOR, REFRESH_TOKEN, HOST_DOMAIN, QUIZ_SELECTED_OPTION };
