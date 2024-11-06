@@ -53,7 +53,9 @@ const CreatePaymentCourseModal = ({ visible, onClose, onSubmit, registerCourseId
 
     const handleAmountChange = (e) => {
         const value = e.target.value;
-        setFormattedAmount(formatCurrency(value));
+        if (/^\d*$/.test(value)) { // Only allow integers
+            setFormattedAmount(formatCurrency(value));
+        }
     };
 
     return (
@@ -93,10 +95,13 @@ const CreatePaymentCourseModal = ({ visible, onClose, onSubmit, registerCourseId
                     <Form.Item
                         label="Số tiền"
                         name="amount"
-                        rules={[{ required: true, message: "Vui lòng nhập số tiền" }]}
+                        rules={[
+                            { required: true, message: "Vui lòng nhập số tiền" },
+                            { pattern: /^\d+$/, message: "Vui lòng nhập số nguyên" } // Add pattern validation
+                        ]}
                         style={{ marginBottom: 12 }}
                     >
-                        <Input type="number" onChange={handleAmountChange} />
+                        <Input type="text" onChange={handleAmountChange} />
                     </Form.Item>
                     {formattedAmount && (
                         <Form.Item

@@ -1,45 +1,48 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Card, Avatar, Radio, Button, message, Row, Col, Statistic, Typography } from 'antd';
 import { UserOutlined, CalendarOutlined, ClockCircleOutlined, BookOutlined, CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
+import { useLocation } from 'react-router-dom';
 import './AttendancePage.css';
+import { useDispatch } from 'react-redux';
+import { SaveAttendanceActionAsync } from '../../../Redux/ReducerAPI/AttendanceReducer';
+import { GetClassScheduleDetailsActionAsync } from '../../../Redux/ReducerAPI/ClassScheduleReducer';
 
 const { Title, Text } = Typography;
 
-// Giả định dữ liệu môn học
-const courseInfo = {
-  code: 'CS101',
-  name: 'Lập trình cơ bản',
-  date: '2023-11-05',
-  time: '08:00 - 10:00',
-};
-
-// Giả định danh sách học sinh
-const students = [
-  { id: 1, name: 'Nguyễn Văn A', username: 'nguyenvana', avatar: 'https://xsgames.co/randomusers/avatar.php?g=pixel&key=1' },
-  { id: 2, name: 'Trần Thị B', username: 'tranthib', avatar: 'https://xsgames.co/randomusers/avatar.php?g=pixel&key=2' },
-  { id: 3, name: 'Lê Văn C', username: 'levanc', avatar: 'https://xsgames.co/randomusers/avatar.php?g=pixel&key=3' },
-  { id: 4, name: 'Phạm Thị D', username: 'phamthid', avatar: 'https://xsgames.co/randomusers/avatar.php?g=pixel&key=4' },
-  { id: 5, name: 'Hoàng Văn E', username: 'hoangvane', avatar: 'https://xsgames.co/randomusers/avatar.php?g=pixel&key=5' },
-  { id: 6, name: 'Ngô Thị F', username: 'ngothif', avatar: 'https://xsgames.co/randomusers/avatar.php?g=pixel&key=6' },
-];
-
 export default function AttendancePage() {
+  const location = useLocation();
+  const { scheduleId } = location.state;
+  const [scheduleDetails, setScheduleDetails] = useState(null);
   const [attendance, setAttendance] = useState({});
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const fetchScheduleDetails = async () => {
+      const details = await dispatch(GetClassScheduleDetailsActionAsync(scheduleId));
+      setScheduleDetails(details);
+    };
+    fetchScheduleDetails();
+  }, [dispatch, scheduleId]);
 
   const handleAttendanceChange = (studentId, isPresent) => {
     setAttendance(prev => ({ ...prev, [studentId]: isPresent }));
   };
 
   const handleSaveAttendance = () => {
-    console.log('Attendance saved:', attendance);
-    message.success('Điểm danh đã được lưu thành công!');
+    const presentStudentIds = Object.keys(attendance).filter(id => attendance[id]);
+    dispatch(SaveAttendanceActionAsync(scheduleId, presentStudentIds));
   };
 
   const attendanceStats = useMemo(() => {
+    if (!scheduleDetails) return { present: 0, absent: 0, total: 0 };
     const present = Object.values(attendance).filter(Boolean).length;
     const absent = Object.values(attendance).filter(v => v === false).length;
-    return { present, absent, total: students.length };
-  }, [attendance]);
+    return { present, absent, total: scheduleDetails.studentInfo.length };
+  }, [attendance, scheduleDetails]);
+
+  if (!scheduleDetails) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="attendance-page">
@@ -47,8 +50,8 @@ export default function AttendancePage() {
         className="course-info-card"
         cover={
           <div className="course-info-header">
-            <Title level={2} className="course-title">{courseInfo.name}</Title>
-            <Text className="course-code">{courseInfo.code}</Text>
+            <Title level={2} className="course-title">{scheduleDetails.className}</Title>
+            <Text className="course-code">{scheduleDetails.courseCode}</Text>
           </div>
         }
       >
@@ -56,21 +59,21 @@ export default function AttendancePage() {
           <Col span={8}>
             <Statistic
               title="Ngày học"
-              value={courseInfo.date}
+              value={scheduleDetails.date}
               prefix={<CalendarOutlined />}
             />
           </Col>
           <Col span={8}>
             <Statistic
               title="Thời gian"
-              value={courseInfo.time}
+              value={`${scheduleDetails.startTime} - ${scheduleDetails.endTime}`}
               prefix={<ClockCircleOutlined />}
             />
           </Col>
           <Col span={8}>
             <Statistic
               title="Tổng số học sinh"
-              value={students.length}
+              value={scheduleDetails.studentInfo.length}
               prefix={<UserOutlined />}
             />
           </Col>
@@ -114,22 +117,22 @@ export default function AttendancePage() {
       </Row>
 
       <Row gutter={[16, 16]}>
-        {students.map(student => (
-          <Col key={student.id} xs={24} sm={12} md={8} lg={6}>
+        {scheduleDetails.studentInfo.map(student => (
+          <Col key={student.userId} xs={24} sm={12} md={8} lg={6}>
             <Card
               hoverable
               className="student-card"
             >
               <Card.Meta
-                avatar={<Avatar size={64} src={student.avatar} icon={<UserOutlined />} />}
-                title={student.name}
-                description={student.username}
+                avatar={<Avatar size={64} src={student.urlImage} icon={<UserOutlined />} />}
+                title={student.studentName}
+                description={student.userName}
               />
               <div className="attendance-buttons">
                 <Radio.Group
                   className="radio-group"
-                  onChange={(e) => handleAttendanceChange(student.id, e.target.value)}
-                  value={attendance[student.id]}
+                  onChange={(e) => handleAttendanceChange(student.userId, e.target.value)}
+                  value={attendance[student.userId]}
                 >
                   <Radio.Button value={true} className="attendance-button attendance-button-present">
                     <CheckCircleOutlined />

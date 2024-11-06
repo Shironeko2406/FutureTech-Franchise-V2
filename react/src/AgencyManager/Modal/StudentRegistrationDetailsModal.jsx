@@ -130,17 +130,11 @@ export default function StudentRegistrationDetailsModal({
                                     ))}
                                 </Select>
                             </Form.Item>
-                            <Form.Item name="coursePrice" label="Giá khóa học">
-                                <Input />
-                            </Form.Item>
                             <Form.Item name="dateTime" label="Lịch học mong muốn">
                                 <Input />
                             </Form.Item>
                             <Form.Item name="paymentDeadline" label="Hạn thanh toán">
                                 <DatePicker format="YYYY-MM-DD" disabledDate={(current) => current && current < moment().endOf('day')} />
-                            </Form.Item>
-                            <Form.Item name="studentAmountPaid" label="Số tiền đã thanh toán"> {/* Add this block */}
-                                <Input />
                             </Form.Item>
                         </Form>
                     ) : (
