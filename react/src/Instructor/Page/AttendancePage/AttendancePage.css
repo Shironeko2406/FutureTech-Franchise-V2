@@ -1,0 +1,118 @@
+.attendance-page {
+    min-height: 100vh;
+}
+
+.course-info-card {
+    margin-bottom: 24px;
+    overflow: hidden;
+}
+
+.course-info-header {
+    background: linear-gradient(to right, #4096ff, #9254de);
+    padding: 24px;
+    color: white;
+}
+
+.course-title {
+    color: white;
+    margin-bottom: 0;
+}
+
+.course-code {
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.stats-row {
+    margin-bottom: 24px;
+}
+
+.student-card {
+    transition: all 0.3s ease-in-out;
+}
+
+.student-card:hover {
+    transform: scale(1.05);
+}
+
+.attendance-buttons {
+    margin-top: 16px;
+}
+
+.radio-group {
+    width: 100%;
+    display: flex;
+    gap: 8px;
+}
+
+.attendance-button {
+    width: 50%;
+    text-align: center;
+    white-space: nowrap;
+    padding: 8px 16px;
+    font-size: 14px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    border-width: 2px;
+    border-style: solid;
+}
+
+/* Icon inside the button */
+.attendance-button .anticon {
+    margin-right: 8px;
+    font-size: 16px;
+}
+
+/* Styles for present button */
+.attendance-button.attendance-button-present {
+    border-color: #b7eb8f;
+    color: #62bb14;
+}
+
+.attendance-button.attendance-button-present:hover {
+    background-color: #d9f7be;
+    border-color: #73d13d;
+    color: #3f8600;
+}
+
+.attendance-button.attendance-button-present.ant-radio-button-wrapper-checked {
+    background-color: #d9f7be;
+    border-color: #52c41a;
+    box-shadow: 0 0 0 2px rgba(82, 196, 26, 0.2);
+    color: #3f8600;
+}
+
+/* Styles for absent button */
+.attendance-button.attendance-button-absent::before {
+    display: none;
+}
+
+.attendance-button.attendance-button-absent {
+    border-color: #ffd4d2;
+    color: #ef5a66;
+}
+
+.attendance-button.attendance-button-absent:hover {
+    background-color: #fff4f3;
+    border-color: #ff7875;
+    color: #cf1322;
+}
+
+.attendance-button.attendance-button-absent.ant-radio-button-wrapper-checked {
+    background-color: #fff1f0;
+    border-color: #ff4d4f;
+    box-shadow: 0 0 0 2px rgba(255, 77, 79, 0.2);
+    color: #cf1322;
+}
+
+
+.save-button {
+    margin-top: 24px;
+    width: 100%;
+    height: 48px;
+    font-size: 18px;
+    font-weight: 600;
+}

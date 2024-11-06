@@ -71,12 +71,11 @@ export const GetStudentConsultationActionAsync = (pageIndex, pageSize, studentSt
     };
 };
 
-
 export const UpdateStudentStatusAsync = (id, newStatus, courseId) => {
     return async () => {
         try {
             // Make the API call to update the student's status
-            const res = await httpClient.put(`api/v1/register-course/${id}?courseId=${courseId}&status=${newStatus}`);
+            const res = await httpClient.put(`api/v1/register-course/students/${id}?courseId=${courseId}&status=${newStatus}`);
             if (res.isSuccess && res.data) {
                 message.success(`${res.message}`);
             } else if (res.isSuccess && !res.data) {
@@ -87,6 +86,26 @@ export const UpdateStudentStatusAsync = (id, newStatus, courseId) => {
         } catch (error) {
             console.error(error);
             // Hiển thị thông báo lỗi nếu không kết nối được tới server
+            message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
+        }
+    };
+};
+
+export const UpdateStudentRegistrationAsync = (id, updatedDetails) => {
+    console.log("updatedDetails: ", updatedDetails);
+    console.log("id: ", id);
+    return async (dispatch) => {
+        try {
+            const res = await httpClient.put(`/api/v1/register-course/${id}`, updatedDetails);
+            if (res.isSuccess && res.data) {
+                message.success(`${res.message}`);
+            } else if (res.isSuccess && !res.data) {
+                message.error(`${res.message}`);
+            } else {
+                throw new Error(`${res.message}`);
+            }
+        } catch (error) {
+            console.error(error);
             message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
         }
     };

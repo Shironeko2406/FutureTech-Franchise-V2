@@ -47,6 +47,7 @@ import HomeSystemInstructor from "./SystemInstructor/Page/HomeSystemInstructor/H
 import CourseSystemInstructor from "./SystemInstructor/Page/CourseSystemInstructor/CourseSystemInstructor";
 import CourseDetailSystemInstructor from "./SystemInstructor/Page/CourseDetailSystemInstructor/CourseDetailSystemInstructor";
 import QuizTest from "./Student/Page/QuizTest/QuizTest";
+import AttendancePage from "./Instructor/Page/AttendancePage/AttendancePage";
 
 
 const LoadingOverlay = () => {
@@ -85,17 +86,17 @@ function App() {
                 </Route>
               </Route>
 
-              <Route element={<ProtectedRoute requiredRole="AgencyManager" />}>
-                <Route path="agency-manager" element={<TempUIAgencyManager />} >
-                  <Route path="" element={<HomeAgencyManager />} />
-                  <Route path="student-consultation-registration" element={<StudentConsultationRegistration />} />
-                  <Route path="student-payment" element={<StudentPaymentManagement />} />
-                  <Route path="slots" element={<SlotManager />} />
-                  <Route path="classes" element={<ClassManagement />} />
-                  <Route path="classes/:id" element={<ClassDetail />} />
-                  <Route path="schedules" element={<ScheduleAgencyManager />} />
-                </Route>
+              {/* <Route element={<ProtectedRoute requiredRole="AgencyManager" />}> */}
+              <Route path="agency-manager" element={<TempUIAgencyManager />} >
+                <Route path="" element={<HomeAgencyManager />} />
+                <Route path="student-consultation-registration" element={<StudentConsultationRegistration />} />
+                <Route path="student-payment" element={<StudentPaymentManagement />} />
+                <Route path="slots" element={<SlotManager />} />
+                <Route path="classes" element={<ClassManagement />} />
+                <Route path="classes/:id" element={<ClassDetail />} />
+                <Route path="schedules" element={<ScheduleAgencyManager />} />
               </Route>
+              {/* </Route> */}
 
               <Route element={<ProtectedRoute requiredRole="Student" />}>
                 <Route path="student" element={<TempUIStudent />}>
@@ -106,13 +107,14 @@ function App() {
                 </Route>
               </Route>
 
-              <Route element={<ProtectedRoute requiredRole="Instructor" />}>
-                <Route path="instructor" element={<TempUIInstructor />}>
-                  <Route path="" element={<HomeInstructor />} />
-                  <Route path="schedule" element={<ScheduleTeaching />} />
-                  <Route path="schedules" element={<ScheduleInstructor />} />
-                </Route>
+              {/* <Route element={<ProtectedRoute requiredRole="Instructor" />}> */}
+              <Route path="instructor" element={<TempUIInstructor />}>
+                <Route path="" element={<HomeInstructor />} />
+                <Route path="schedule" element={<ScheduleTeaching />} />
+                <Route path="schedules" element={<ScheduleInstructor />} />
+                <Route path="attendances" element={<AttendancePage />} />
               </Route>
+              {/* </Route> */}
 
               <Route element={<ProtectedRoute requiredRole="Manager" />}>
                 <Route path="manager" element={<TempUIManager />}>

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { Modal, Input, Form, Button, Spin } from "antd";
 
 // Hàm để định dạng số tiền
@@ -13,7 +13,7 @@ const CreatePaymentCourseModal = ({ visible, onClose, onSubmit, userId, spinning
         if (visible && courseDetails) {
             // Cập nhật dữ liệu vào form khi modal mở
             form.setFieldsValue({
-                title: `Thanh toán khóa học ${courseDetails.courseName}`,
+                title: `Thanh toán khóa học ${courseDetails.courseCode}`,
                 amount: formatCurrency(courseDetails.coursePrice),
             });
         }

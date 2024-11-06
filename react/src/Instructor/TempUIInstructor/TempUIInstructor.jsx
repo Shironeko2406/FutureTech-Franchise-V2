@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import MyHeader from "../Component/MyHeader";
 import LeftSidebar from "../Component/LeftSidebar";
+import "./TempUIInstructor.css";
 
 const TempUIInstructor = () => {
   const [sidebarType, setSidebarType] = useState("full");
