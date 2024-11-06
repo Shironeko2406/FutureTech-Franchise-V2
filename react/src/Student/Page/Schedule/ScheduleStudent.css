@@ -1,0 +1,13 @@
+.event-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.event-title {
+    font-weight: bold;
+}
+
+.event-status {
+    margin-top: 4px;
+}

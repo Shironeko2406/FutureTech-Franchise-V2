@@ -1,13 +1,15 @@
-import { Button, Select, Table, Input, Popconfirm, Space } from "antd";
+import { Button, Select, Table, Input, Popconfirm, Space, Typography, Spin } from "antd";
 import React, { useEffect, useState } from "react";
-import { DeleteOutlined, EditOutlined, UsergroupAddOutlined, CloseCircleOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, UsergroupAddOutlined, CloseCircleOutlined, RightCircleOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
-import { GetStudentConsultationActionAsync, UpdateStudentStatusAsync } from "../../../Redux/ReducerAPI/RegisterCourseReducer";
+import { GetStudentConsultationActionAsync, UpdateStudentStatusAsync, UpdateStudentRegistrationAsync } from "../../../Redux/ReducerAPI/RegisterCourseReducer";
 import { GetAllCoursesAvailableActionAsync } from "../../../Redux/ReducerAPI/CourseReducer";
-import CreatePaymentCourseModal from "../../Modal/CreatePaymentCourseModal"
+import CreatePaymentCourseModal from "../../Modal/CreatePaymentCourseModal";
 import { CreateStudentPaymentActionAsync } from "../../../Redux/ReducerAPI/PaymentReducer";
 import AddToClassModal from "../../Modal/AddToClassModal";
+import StudentRegistrationDetailsModal from "../../Modal/StudentRegistrationDetailsModal";
 
+const { Text } = Typography;
 
 const StudentConsultationRegistration = () => {
     const { studentConsultations, totalPagesCount } = useSelector(
@@ -22,11 +24,13 @@ const StudentConsultationRegistration = () => {
     const [selectedRowKeys, setSelectedRowKeys] = useState([]); // Track selected rows
     const [isPaymentModalVisible, setPaymentModalVisible] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [selectedUserId, setSelectedUserId] = useState(null);
+    const [selectedRegisterCourseId, setSelectedRegisterCourseId] = useState(null);
     const [selectedCourseDetails, setselectedCourseDetails] = useState(null);
     const [isAddToClassModalVisible, setIsAddToClassModalVisible] = useState(false);
     const [isFilterApplied, setIsFilterApplied] = useState(false);
-
+    const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
+    const [selectedStudentDetails, setSelectedStudentDetails] = useState(null);
+    const [isEditing, setIsEditing] = useState(false);
 
     useEffect(() => {
         setLoading(true);
@@ -36,12 +40,13 @@ const StudentConsultationRegistration = () => {
 
     useEffect(() => {
         dispatch(GetAllCoursesAvailableActionAsync());
+        console.log("Get all courses available", course);
     }, [dispatch]);
 
     const handleTableChange = (pagination, filters) => {
         setPageIndex(pagination.current);
         setPageSize(pagination.pageSize);
-        const newCourse = filters.courseName ? filters.courseName[0] : null;
+        const newCourse = filters.courseCode ? filters.courseCode[0] : null;
         // Reset selected rows if course filter changes
         if (newCourse !== selectedCourse) {
             setSelectedRowKeys([]); // Clear selected rows
@@ -49,7 +54,7 @@ const StudentConsultationRegistration = () => {
         setSelectedCourse(newCourse);
         setIsFilterApplied(!!newCourse);
         setSelectedStudentStatus(filters.studentStatus ? filters.studentStatus[0] : null);
-        console.log(filters.studentStatus)
+        console.log(filters.studentStatus);
     };
 
     //handle edit
@@ -92,54 +97,112 @@ const StudentConsultationRegistration = () => {
             .finally(() => setLoading(false));
     };
 
+    const studentStatusMapping = {
+        NotConsult: 'Chưa tư vấn',
+        Pending: 'Đang tư vấn',
+        Waitlisted: 'Chờ xếp lớp',
+        Enrolled: 'Đã vào lớp',
+        Cancel: 'Đã hủy',
+    };
+
+    const paymentStatusMapping = {
+        Pending_Payment: 'Chờ thanh toán',
+        Advance_Payment: 'Đã đặt cọc',
+        Completed: 'Đã hoàn thành',
+        Late_Payment: 'Thanh toán trễ',
+    };
 
     //render color 
-    const renderStatusBadge = (status) => {
-        let color;
-        switch (status) {
-            case 'NotConsult':
-                color = 'gray';
-                break;
-            case 'Pending':
-                color = 'orange';
-                break;
-            case 'Waitlisted':
-                color = '#3498db';
-                break;
-            case 'Cancel':
-                color = 'red';
-                break;
-            default:
-                color = 'White';
-        }
+    const renderStatusBadge = (status, type) => {
+        const statusConfig = {
+            NotConsult: {
+                text: studentStatusMapping[status],
+                color: 'gray',
+                backgroundColor: '#f0f0f0',
+                borderColor: '#d9d9d9'
+            },
+            Pending: {
+                text: studentStatusMapping[status],
+                color: 'orange',
+                backgroundColor: '#fff7e6',
+                borderColor: '#ffd591'
+            },
+            Waitlisted: {
+                text: studentStatusMapping[status],
+                color: '#3498db',
+                backgroundColor: '#e6f7ff',
+                borderColor: '#91d5ff'
+            },
+            Enrolled: {
+                text: studentStatusMapping[status],
+                color: 'green',
+                backgroundColor: '#f6ffed',
+                borderColor: '#b7eb8f'
+            },
+            Cancel: {
+                text: studentStatusMapping[status],
+                color: 'red',
+                backgroundColor: '#fff2f0',
+                borderColor: '#ffa39e'
+            },
+            Pending_Payment: {
+                text: paymentStatusMapping[status],
+                color: 'orange',
+                backgroundColor: '#fff7e6',
+                borderColor: '#ffd591'
+            },
+            Advance_Payment: {
+                text: paymentStatusMapping[status],
+                color: '#3498db',
+                backgroundColor: '#e6f7ff',
+                borderColor: '#91d5ff'
+            },
+            Completed: {
+                text: paymentStatusMapping[status],
+                color: 'green',
+                backgroundColor: '#f6ffed',
+                borderColor: '#b7eb8f'
+            },
+            Late_Payment: {
+                text: paymentStatusMapping[status],
+                color: 'red',
+                backgroundColor: '#fff2f0',
+                borderColor: '#ffa39e'
+            }
+        };
+
+        const config = statusConfig[status] || statusConfig.NotConsult;
 
         return (
-            <span
+            <div
                 style={{
                     display: 'inline-block',
-                    padding: '4px 8px',
-                    borderRadius: '4px',
-                    backgroundColor: color,
-                    color: 'white',
+                    padding: '4px 12px',
+                    borderRadius: '6px',
+                    backgroundColor: config.backgroundColor,
+                    border: `1px solid ${config.borderColor}`,
                 }}
             >
-                {status}
-            </span>
+                <Text strong style={{ color: config.color }}>
+                    {config.text}
+                </Text>
+            </div>
         );
     };
 
-
     // Function to display and handle payment course modal (waitlisted status)
-    const handleWaitlistedClick = (userId, courseName, coursePrice, courseId) => {
-        setSelectedUserId(userId);
+    const handleWaitlistedClick = (id, courseCode, coursePrice, courseId) => {
+        setSelectedRegisterCourseId(id);
         setPaymentModalVisible(true);
-        setselectedCourseDetails({ courseName, coursePrice, courseId });
+        setselectedCourseDetails({ courseCode, coursePrice, courseId });
+        setIsDetailModalVisible(false); // Ensure detail modal is closed
     };
 
-    const handlePaymentSubmit = (paymentData) => {
+    const handlePaymentSubmit = (paymentData, paymentType) => {
         setLoading(true);
-        console.log("Payment data:", paymentData);
-        dispatch(CreateStudentPaymentActionAsync(paymentData)).then(() => {
+        console.log("Payment data:",
+            paymentData);
+        dispatch(CreateStudentPaymentActionAsync(paymentData, paymentType)).then(() => {
             dispatch(GetStudentConsultationActionAsync(pageIndex, pageSize, selectedStudentStatus, selectedCourse));
             setLoading(false);
             setPaymentModalVisible(false);
@@ -151,7 +214,7 @@ const StudentConsultationRegistration = () => {
     // Function to handle status registration
     const renderActionButtons = (status, record) => {
         const handleUpdateStatus = (newStatus) => {
-            dispatch(UpdateStudentStatusAsync(record.id, newStatus, record.courseId))
+            dispatch(UpdateStudentStatusAsync(record.userId, newStatus, record.courseId))
                 .then(() => {
                     dispatch(GetStudentConsultationActionAsync(pageIndex, pageSize, selectedStudentStatus, selectedCourse));
                 })
@@ -162,72 +225,140 @@ const StudentConsultationRegistration = () => {
         };
 
         const handleJoinClass = () => {
-            setSelectedRowKeys([record.id]);
+            setSelectedRowKeys([record.userId]);
             setIsAddToClassModalVisible(true);
+        };
+
+        const handleCancelRegistration = () => {
+            dispatch(UpdateStudentStatusAsync(record.userId, 'Cancel', record.courseId))
+                .then(() => {
+                    dispatch(GetStudentConsultationActionAsync(pageIndex, pageSize, selectedStudentStatus, selectedCourse));
+                });
         };
 
         switch (status) {
             case 'NotConsult':
                 return (
                     <>
-                        <Button onClick={() => handleUpdateStatus('Pending')} type="primary">Pending</Button>
-                        <Button onClick={() => handleUpdateStatus('Cancel')} type="default" style={{ marginLeft: 8 }}>Cancel</Button>
+                        <Button onClick={() => handleUpdateStatus('Pending')} type="primary">Đang tư vấn</Button>
+                        <Popconfirm
+                            title="Bạn có chắc chắn muốn hủy đăng ký này không?"
+                            onConfirm={handleCancelRegistration}
+                            okText="Đồng ý"
+                            cancelText="Hủy"
+                        >
+                            <Button type="default" style={{ marginLeft: 8 }}>Hủy</Button>
+                        </Popconfirm>
                     </>
                 );
 
             case 'Pending':
                 return (
                     <>
-                        <Button onClick={() => handleWaitlistedClick(record.id, record.courseName, record.coursePrice, record.courseId)} type="primary">Waitlisted</Button>
-                        <Button onClick={() => handleUpdateStatus('Cancel')} type="default" style={{ marginLeft: 8 }}>Cancel</Button>
+                        <Button onClick={() => handleWaitlistedClick(record.id, record.courseCode, record.coursePrice, record.courseId)} type="primary">Chờ xếp lớp</Button>
+                        <Popconfirm
+                            title="Bạn có chắc chắn muốn hủy đăng ký này không?"
+                            onConfirm={handleCancelRegistration}
+                            okText="Đồng ý"
+                            cancelText="Hủy"
+                        >
+                            <Button type="default" style={{ marginLeft: 8 }}>Hủy</Button>
+                        </Popconfirm>
                     </>
                 );
 
             case 'Waitlisted':
                 return (
-                    <Button onClick={handleJoinClass} type="primary">Join Class</Button>
+                    <>
+                        <Button onClick={handleJoinClass} type="primary">Vào lớp</Button>
+                        <Popconfirm
+                            title="Bạn có chắc chắn muốn hủy đăng ký này không?"
+                            onConfirm={handleCancelRegistration}
+                            okText="Đồng ý"
+                            cancelText="Hủy"
+                        >
+                            <Button type="default" style={{ marginLeft: 8 }}>Hủy</Button>
+                        </Popconfirm>
+                    </>
                 );
 
             default:
-                return null; // No action buttons for other statuses
+                return null;
         }
     };
 
-    // Function to render action2 buttons
-    const renderAction2Buttons = (record, handleUpdate, handleDelete) => {
-        return (
-            <Space size="middle">
-                <Button
-                    type="link"
-                    icon={<EditOutlined />}
-                    onClick={() => handleUpdate(record)} // Sửa thông tin slot
-                />
-                <Popconfirm
-                    title="Xác nhận xóa slot này?"
-                    onConfirm={() => handleDelete(record.id)}
-                    okText="Đồng ý"
-                    cancelText="Hủy"
-                >
-                    <Button type="link" icon={<DeleteOutlined />} danger />
-                </Popconfirm>
-            </Space>
-        );
+    const handleRowClick = (record) => {
+        setSelectedStudentDetails(record);
+        setIsDetailModalVisible(true);
     };
+
+    const handleDetailModalClose = () => {
+        setIsDetailModalVisible(false);
+        setSelectedStudentDetails(null);
+    };
+
+    // Function handle update registration
+    const handleUpdateRegistrationDetails = (updatedDetails) => {
+        setIsEditing(true);
+        dispatch(UpdateStudentRegistrationAsync(selectedStudentDetails.id, updatedDetails))
+            .then(() => {
+                dispatch(GetStudentConsultationActionAsync(pageIndex, pageSize, selectedStudentStatus, selectedCourse));
+            })
+            .finally(() => {
+                setIsEditing(false);
+                setIsDetailModalVisible(false);
+            });
+    };
+
+    // Function handle cancel registration
+    const handleCancelRegistration = () => {
+        dispatch(UpdateStudentStatusAsync(selectedStudentDetails.userId, 'Cancel', selectedStudentDetails.courseId))
+            .then(() => {
+                dispatch(GetStudentConsultationActionAsync(pageIndex, pageSize, selectedStudentStatus, selectedCourse));
+            })
+            .finally(() => {
+                setIsDetailModalVisible(false);
+            });
+    };
+
+    const handleCompletePayment = (studentDetails) => {
+        setSelectedRegisterCourseId(studentDetails.id);
+        setPaymentModalVisible(true);
+        setselectedCourseDetails({
+            courseCode: studentDetails.courseCode,
+            coursePrice: studentDetails.coursePrice,
+            studentAmountPaid: studentDetails.studentAmountPaid,
+            courseId: studentDetails.courseId
+        });
+        setIsDetailModalVisible(false); // Ensure detail modal is closed
+    };
+
     const columns = [
-        {
-            title: "No",
-            dataIndex: "no",
-            key: "no",
-            align: "center",
-            fixed: 'left',
-            render: (text, record, index) => index + 1 + (pageIndex - 1) * pageSize,
-        },
         {
             title: "Tên học viên",
             dataIndex: "fullName",
             key: "fullName",
             align: "center",
             fixed: 'left',
+            render: (text, record) => (
+                <Button
+                    type="link"
+                    onClick={() => handleRowClick(record)}
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        padding: '4px 8px',
+                        height: 'auto',
+                        fontSize: '14px',
+                        transition: 'all 0.3s ease'
+                    }}
+                    className="hover:bg-blue-50"
+                >
+                    <Text strong style={{ marginRight: '4px' }}>{text}</Text>
+                    <RightCircleOutlined style={{ fontSize: '16px' }} />
+                </Button>
+            ),
         },
         {
             title: "Số điện thoại",
@@ -238,12 +369,12 @@ const StudentConsultationRegistration = () => {
         },
         {
             title: "Khóa học",
-            dataIndex: "courseName",
-            key: "courseName",
+            dataIndex: "courseCode",
+            key: "courseCode",
             align: "center",
             filterSearch: true,
             filters: course.map((course) => ({
-                text: course.name,
+                text: course.code,
                 value: course.id,
             })),
             filterMultiple: false,
@@ -255,116 +386,89 @@ const StudentConsultationRegistration = () => {
             align: "center",
         },
         {
+            title: "Trạng thái thanh toán",
+            dataIndex: "paymentStatus",
+            key: "paymentStatus",
+            align: "center",
+            render: (text) => renderStatusBadge(text, 'payment'),
+        },
+        {
             title: "Trạng thái",
             dataIndex: "studentStatus",
             key: "studentStatus",
             align: "center",
-            render: renderStatusBadge,
+            render: (text) => renderStatusBadge(text, 'student'),
             filters: [
-                {
-                    text: 'NotConsult',
-                    value: 'NotConsult',
-                },
-                {
-                    text: 'Pending',
-                    value: 'Pending',
-                },
-                {
-                    text: 'WaitListed',
-                    value: 'Waitlisted',
-                },
-                {
-                    text: 'Cancel',
-                    value: 'Cancel',
-                },
+                { text: 'Chưa tư vấn', value: 'NotConsult' },
+                { text: 'Đang tư vấn', value: 'Pending' },
+                { text: 'Chờ xếp lớp', value: 'Waitlisted' },
+                { text: 'Đã vào lớp', value: 'Enrolled' },
+                { text: 'Đã hủy', value: 'Cancel' },
             ],
             filterMultiple: false,
         },
         {
-            title: "Ngày đăng ký",
-            dataIndex: "registerDate",
-            key: "registerDate",
-            align: "center",
-            render: (registerDate) => {
-                const date = new Date(registerDate);
-                return date.toLocaleDateString("vi-VN");
-            },
-        },
-        {
-            title: "Địa chỉ email",
-            dataIndex: "email",
-            key: "email",
-        },
-        {
-            title: "Hành động 1",
+            title: "Chuyển trạng thái",
             dataIndex: "studentStatus",
             key: "action",
             render: (text, record) => renderActionButtons(text, record),
-            fixed: 'right',
-        },
-        {
-            title: "Hành động 2",
-            dataIndex: "operation",
-            key: "operation",
-            fixed: 'right',
-            render: (text, record) => renderAction2Buttons(record, handleUpdate, handleDelete),
-        },
+        }
     ];
 
     return (
         <div className="card">
             <div className="card-body">
                 <h5 className="card-title mb-3">Danh Sách Học Sinh Đăng Ký Khóa Học</h5>
-                {isFilterApplied && (
-                    <Space style={{ marginBottom: 16 }}>
-                        <Button
-                            type="primary"
-                            onClick={() => setIsAddToClassModalVisible(true)}
-                            disabled={!hasSelected}
-                            icon={<UsergroupAddOutlined />}
-                        >
-                            Thêm vào lớp
-                        </Button>
-                        <Button
-                            type="default"
-                            variant="solid"
-                            disabled={!hasSelected}
-                            onClick={handleReload}
-                            icon={<CloseCircleOutlined />}
-                            style={{ marginLeft: 4 }}
-                        >
-                            Bỏ chọn
-                        </Button>
-                        <span style={{ marginLeft: 4, color: 'black' }}>
-                            {hasSelected ? `Đã chọn ${selectedRowKeys.length} học sinh` : ''}
-                        </span>
-                    </Space>
-                )}
-                <Table
-                    bordered
-                    rowSelection={rowSelection}
-                    columns={columns}
-                    dataSource={studentConsultations}
-                    rowKey={(record) => record.id}
-                    pagination={{
-                        current: pageIndex,
-                        pageSize,
-                        total: totalPagesCount * pageSize,
-                        showSizeChanger: true,
-                        pageSizeOptions: ["10", "20", "50"],
-                    }}
-                    scroll={{ x: 'max-content' }}
-                    onChange={handleTableChange}
-                    loading={loading}
-                />
+                <Space style={{ marginBottom: 16 }}>
+                    <Button
+                        type="primary"
+                        onClick={() => setIsAddToClassModalVisible(true)}
+                        disabled={!hasSelected}
+                        icon={<UsergroupAddOutlined />}
+                    >
+                        Thêm vào lớp
+                    </Button>
+                    <Button
+                        type="default"
+                        variant="solid"
+                        disabled={!hasSelected}
+                        onClick={handleReload}
+                        icon={<CloseCircleOutlined />}
+                        style={{ marginLeft: 4 }}
+                    >
+                        Bỏ chọn
+                    </Button>
+                    <span style={{ marginLeft: 4, color: 'black' }}>
+                        {hasSelected ? `Đã chọn ${selectedRowKeys.length} học sinh` : ''}
+                    </span>
+                </Space>
+                <Spin spinning={loading}>
+                    <Table
+                        bordered
+                        rowSelection={rowSelection}
+                        columns={columns}
+                        dataSource={studentConsultations}
+                        rowKey={(record) => record.id}
+                        pagination={{
+                            current: pageIndex,
+                            pageSize,
+                            total: totalPagesCount * pageSize,
+                            showSizeChanger: true,
+                            pageSizeOptions: ["10", "20", "50"],
+                        }}
+                        scroll={{ x: 'max-content' }}
+                        onChange={handleTableChange}
+                        loading={loading}
+                    />
+                </Spin>
 
                 <CreatePaymentCourseModal
                     visible={isPaymentModalVisible}
                     onClose={() => setPaymentModalVisible(false)}
                     onSubmit={handlePaymentSubmit}
-                    userId={selectedUserId}
                     spinning={loading}
                     courseDetails={selectedCourseDetails}
+                    registerCourseId={selectedRegisterCourseId}
                 />
 
                 <AddToClassModal
@@ -373,6 +477,20 @@ const StudentConsultationRegistration = () => {
                     listStudents={selectedRowKeys} // Truyền danh sách học sinh đã chọn vào modal
                     courseId={selectedCourse}
                     onClassCreated={handleReloadTableAfterCreateClass} // Thêm dòng này
+                />
+
+                <StudentRegistrationDetailsModal
+                    visible={isDetailModalVisible}
+                    onClose={handleDetailModalClose}
+                    studentDetails={selectedStudentDetails}
+                    studentStatusMapping={studentStatusMapping}
+                    paymentStatusMapping={paymentStatusMapping}
+                    onUpdate={handleUpdateRegistrationDetails}
+                    onCancelRegistration={handleCancelRegistration}
+                    courses={course}
+                    spinning={isEditing}
+                    onCompletePayment={handleCompletePayment} // Add this line
+                    paymentStatus={selectedStudentDetails?.paymentStatus} // Add this line
                 />
             </div>
         </div>

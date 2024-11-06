@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Modal, Form, Input, Select, DatePicker, Button, Spin } from 'antd';
 import { useDispatch } from 'react-redux';
 import { CreateClassScheduleActionAsync } from '../../Redux/ReducerAPI/ClassScheduleReducer'; // Adjust the import based on your action
+import moment from 'moment';
 
 const { Option } = Select;
 
@@ -44,7 +45,7 @@ const EditScheduleModal = ({ visible, onCancel, scheduleData, slotData, onUpdate
 
     return (
         <Modal
-            title="Chỉnh sửa Thời Khóa Biểu"
+            title="Tạo thời Khóa Biểu"
             open={visible}
             onCancel={onCancel}
             footer={null}
@@ -76,21 +77,29 @@ const EditScheduleModal = ({ visible, onCancel, scheduleData, slotData, onUpdate
                         label="Ngày bắt đầu"
                         rules={[{ required: true, message: "Vui lòng chọn ngày bắt đầu" }]}
                     >
-                        <DatePicker />
+                        <DatePicker disabledDate={(current) => current && current < moment().startOf('day')} />
                     </Form.Item>
                     <Form.Item
                         name="daysOfWeek"
                         label="Chọn các ngày trong tuần"
                     >
                         <Select mode="multiple" placeholder="Chọn các ngày">
-                            {["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].map(day => (
-                                <Option key={day} value={day}>{day}</Option>
+                            {[
+                                { label: "Chủ Nhật", value: "Sunday" },
+                                { label: "Thứ Hai", value: "Monday" },
+                                { label: "Thứ Ba", value: "Tuesday" },
+                                { label: "Thứ Tư", value: "Wednesday" },
+                                { label: "Thứ Năm", value: "Thursday" },
+                                { label: "Thứ Sáu", value: "Friday" },
+                                { label: "Thứ Bảy", value: "Saturday" }
+                            ].map(day => (
+                                <Option key={day.value} value={day.value}>{day.label}</Option>
                             ))}
                         </Select>
                     </Form.Item>
                     <Form.Item>
                         <Button type="primary" htmlType="submit">
-                            Lưu Thay Đổi
+                            Tạo lịch học
                         </Button>
                     </Form.Item>
                 </Form>

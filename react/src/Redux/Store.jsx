@@ -13,6 +13,7 @@ import ClassReducer from "./ReducerAPI/ClassReducer";
 import SyllabusReducer from "./ReducerAPI/SyllabusReducer";
 import ChapterReducer from "./ReducerAPI/ChapterReducer";
 import QuizReducer from "./ReducerAPI/QuizReducer";
+import AttendanceReducer from "./ReducerAPI/AttendanceReducer";
 
 export const store = configureStore({
   reducer: {
@@ -31,5 +32,6 @@ export const store = configureStore({
     SyllabusReducer,
     ChapterReducer,
     QuizReducer,
+    AttendanceReducer
   },
 });

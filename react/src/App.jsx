@@ -48,6 +48,7 @@ import CourseSystemInstructor from "./SystemInstructor/Page/CourseSystemInstruct
 import CourseDetailSystemInstructor from "./SystemInstructor/Page/CourseDetailSystemInstructor/CourseDetailSystemInstructor";
 import QuizTest from "./Student/Page/QuizTest/QuizTest";
 import QuizDescription from "./Student/Page/QuizDescription/QuizDescription";
+import AttendancePage from "./Instructor/Page/AttendancePage/AttendancePage";
 
 
 const LoadingOverlay = () => {
@@ -117,6 +118,7 @@ function App() {
                   <Route path="" element={<HomeInstructor />} />
                   <Route path="schedule" element={<ScheduleTeaching />} />
                   <Route path="schedules" element={<ScheduleInstructor />} />
+                  <Route path="schedules/attendances" element={<AttendancePage />} />
                 </Route>
               </Route>
 

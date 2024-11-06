@@ -1,33 +1,61 @@
-import { useEffect } from "react";
-import { Modal, Input, Form, Button, Spin } from "antd";
+import React, { useEffect, useState } from "react";
+import { Modal, Input, Form, Button, Spin, Select, Typography } from "antd";
+
+const { Option } = Select;
+const { Text } = Typography;
 
 // Hàm để định dạng số tiền
 const formatCurrency = (amount) => {
     return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + " VNĐ";
 };
 
-const CreatePaymentCourseModal = ({ visible, onClose, onSubmit, userId, spinning, courseDetails }) => {
+const CreatePaymentCourseModal = ({ visible, onClose, onSubmit, registerCourseId, spinning, courseDetails }) => {
     const [form] = Form.useForm();
+    const [paymentType, setPaymentType] = useState("Completed");
+    const [formattedAmount, setFormattedAmount] = useState("");
 
     useEffect(() => {
         if (visible && courseDetails) {
-            // Cập nhật dữ liệu vào form khi modal mở
+            const remainingAmount = courseDetails.coursePrice - (courseDetails.studentAmountPaid || 0);
             form.setFieldsValue({
-                title: `Thanh toán khóa học ${courseDetails.courseName}`,
-                amount: formatCurrency(courseDetails.coursePrice),
+                title: `Thanh toán khóa học ${courseDetails.courseCode}`,
+                amount: remainingAmount,
+                paymentType: "Completed" // Auto set to Completed
             });
+            setFormattedAmount(formatCurrency(remainingAmount));
         }
-        // Reset form fields when modal is closed
         if (!visible) {
             form.resetFields();
+            setFormattedAmount("");
         }
     }, [visible, courseDetails, form]);
 
     const handleFinish = (values) => {
-        // Chuyển đổi amount từ định dạng chuỗi về kiểu số
-        const amountNumber = parseInt(values.amount.replace(/\./g, '').replace(' VNĐ', ''), 10);
-        onSubmit({ ...values, userId, amount: amountNumber, courseId: courseDetails.courseId });
+        const amountNumber = parseInt(values.amount, 10);
+        onSubmit({ description: values.description, title: values.title, amount: amountNumber, registerCourseId: registerCourseId }, paymentType);
         form.resetFields();
+    };
+
+    const handlePaymentTypeChange = (value) => {
+        setPaymentType(value);
+        if (value === "Completed" && courseDetails) {
+            form.setFieldsValue({
+                amount: courseDetails.coursePrice,
+            });
+            setFormattedAmount(formatCurrency(courseDetails.coursePrice));
+        } else {
+            form.setFieldsValue({
+                amount: "",
+            });
+            setFormattedAmount("");
+        }
+    };
+
+    const handleAmountChange = (e) => {
+        const value = e.target.value;
+        if (/^\d*$/.test(value)) { // Only allow integers
+            setFormattedAmount(formatCurrency(value));
+        }
     };
 
     return (
@@ -47,6 +75,17 @@ const CreatePaymentCourseModal = ({ visible, onClose, onSubmit, userId, spinning
                         <Input placeholder="Nhập tiêu đề" />
                     </Form.Item>
                     <Form.Item
+                        label="Loại thanh toán"
+                        name="paymentType"
+                        rules={[{ required: true, message: "Vui lòng chọn loại thanh toán" }]}
+                        style={{ display: courseDetails && courseDetails.studentAmountPaid ? 'none' : 'block' }} // Hide when handling remaining payment
+                    >
+                        <Select onChange={handlePaymentTypeChange} defaultValue="Completed" disabled={courseDetails && courseDetails.studentAmountPaid}>
+                            <Option value="Advance_Payment">Đặt cọc</Option>
+                            <Option value="Completed">Hoàn thành</Option>
+                        </Select>
+                    </Form.Item>
+                    <Form.Item
                         label="Ghi chú"
                         name="description"
                         rules={[{ required: true, message: "Vui lòng nhập ghi chú" }]}
@@ -56,11 +95,20 @@ const CreatePaymentCourseModal = ({ visible, onClose, onSubmit, userId, spinning
                     <Form.Item
                         label="Số tiền"
                         name="amount"
+                        rules={[
+                            { required: true, message: "Vui lòng nhập số tiền" },
+                            { pattern: /^\d+$/, message: "Vui lòng nhập số nguyên" } // Add pattern validation
+                        ]}
+                        style={{ marginBottom: 12 }}
                     >
-                        <Input
-                            readOnly
-                        />
+                        <Input type="text" onChange={handleAmountChange} />
                     </Form.Item>
+                    {formattedAmount && (
+                        <Form.Item
+                            style={{ marginBottom: 12 }}>
+                            <Text type="secondary">Số tiền: {formattedAmount}</Text>
+                        </Form.Item>
+                    )}
                     <Form.Item>
                         <Button type="primary" htmlType="submit">
                             Tạo Thanh Toán

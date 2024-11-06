@@ -58,6 +58,12 @@ const EditClassModal = ({ visible, onCancel, classData, instructors, onUpdateSuc
                         name="instructorId"
                         label="Giảng viên"
                         rules={[{ required: true, message: 'Vui lòng chọn giảng viên' }]}
+                        allowClear
+                        showSearch
+                        optionFilterProp="children"
+                        filterOption={(input, option) =>
+                            option?.children.toLowerCase().includes(input.toLowerCase())
+                        }
                     >
                         <Select placeholder="Chọn giảng viên">
                             {/* Tạo các tùy chọn giảng viên từ dữ liệu */}

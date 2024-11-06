@@ -78,3 +78,21 @@ export const RemoveAllSchedulesOfOneClassActionAsync = (classId) => {
     }
   };
 };
+
+export const GetClassScheduleDetailsActionAsync = (id) => {
+  return async (dispatch) => {
+    try {
+      const response = await httpClient.get(`/api/v1/class-schedules/${id}`);
+      console.log("GetClassScheduleDetailsActionAsync: ", response)
+      if (response.isSuccess) {
+        return response.data;
+      } else {
+        throw new Error(response.message);
+      }
+    } catch (error) {
+      console.error(error);
+      message.error("Không thể lấy chi tiết lịch học, vui lòng thử lại sau.");
+      return null;
+    }
+  };
+};

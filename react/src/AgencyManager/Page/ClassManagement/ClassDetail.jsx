@@ -67,7 +67,18 @@ const ClassDetail = () => {
         </div>
     );
 
-
+    const translateDayOfWeek = (daysString) => {
+        const days = {
+            "Monday": "Thứ Hai",
+            "Tuesday": "Thứ Ba",
+            "Wednesday": "Thứ Tư",
+            "Thursday": "Thứ Năm",
+            "Friday": "Thứ Sáu",
+            "Saturday": "Thứ Bảy",
+            "Sunday": "Chủ Nhật"
+        };
+        return daysString.split(' ').filter(day => day).map(day => days[day] || day).join(', ');
+    };
 
     const columns = [
         {
@@ -282,7 +293,7 @@ const ClassDetail = () => {
                                         />
                                     </Popover>
                                 ) : (
-                                    <Tooltip title="Chỉnh sửa lịch học">
+                                    <Tooltip title="Tạo mới lịch học">
                                         <Button
                                             type="text"
                                             icon={<EditOutlined />}
@@ -311,7 +322,7 @@ const ClassDetail = () => {
                             <Col xs={24} sm={12}>
                                 <Tag color="purple" style={{ padding: '8px 16px', fontSize: '14px' }}>
                                     <CalendarOutlined style={{ marginRight: '8px' }} />
-                                    {classDetail.slotViewModels ? classDetail.dayOfWeek : 'N/A'}
+                                    {classDetail.slotViewModels ? translateDayOfWeek(classDetail.dayOfWeek) : 'N/A'}
                                 </Tag>
                             </Col>
                             <Col xs={24} sm={12}>
@@ -339,7 +350,7 @@ const ClassDetail = () => {
                                     <TeamOutlined style={{ color: '#1890ff' }} />
                                     <span>Danh Sách Học Viên</span>
                                 </div>
-                                <Tooltip title="Chỉnh sửa danh sách học viên">
+                                {/* <Tooltip title="Chỉnh sửa danh sách học viên">
                                     <Button
                                         type="text"
                                         icon={<EditOutlined />}
@@ -355,7 +366,7 @@ const ClassDetail = () => {
                                             padding: 0
                                         }}
                                     />
-                                </Tooltip>
+                                </Tooltip> */}
                             </div>
                         }
                         style={{

@@ -48,11 +48,13 @@ export const GetStudentPaymentInfoActionAsync = (pageIndex, pageSize, search) =>
     };
 };
 
-export const CreateStudentPaymentActionAsync = (paymentData) => {
+export const CreateStudentPaymentActionAsync = (paymentData, paymentType) => {
+    console.log("paymentData", paymentData);
+    console.log("paymentType", paymentType);
     return async () => {
         console.log("create payment", paymentData);
         try {
-            const res = await httpClient.post(`/api/v1/payments?status=Completed`, paymentData);
+            const res = await httpClient.post(`/api/v1/payments?status=${paymentType}`, paymentData);
             if (res.isSuccess && res.data) {
                 message.success(`${res.message}`);
             } else if (res.isSuccess && !res.data) {
