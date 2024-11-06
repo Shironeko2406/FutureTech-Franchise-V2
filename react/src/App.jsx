@@ -16,7 +16,7 @@ import HomeManager from "./Manager/Page/Home/HomeManager";
 import ConsultationManagement from "./Manager/Page/ConsultationManagement/ConsultationManagement";
 import TempUIStudent from "./Student/TempUI/TempUIStudent";
 import HomeStudent from "./Student/Page/HomeStudent/HomeStudent";
-import CourseDetail from "./Student/Page/CourseDetail/CourseDetail";
+import ClassDetailStudent from "./Student/Page/ClassDetailStudent/ClassDetailStudent";
 import HomeStudentNoti from "./Student/Page/HomeStudentNoti";
 import TempUIAgencyManager from "./AgencyManager/TempUIAgencyManager/TempUIAgencyManager";
 import HomeAgencyManager from "./AgencyManager/Page/HomeAgencyManager/HomeAgencyManager";
@@ -47,6 +47,7 @@ import HomeSystemInstructor from "./SystemInstructor/Page/HomeSystemInstructor/H
 import CourseSystemInstructor from "./SystemInstructor/Page/CourseSystemInstructor/CourseSystemInstructor";
 import CourseDetailSystemInstructor from "./SystemInstructor/Page/CourseDetailSystemInstructor/CourseDetailSystemInstructor";
 import QuizTest from "./Student/Page/QuizTest/QuizTest";
+import QuizDescription from "./Student/Page/QuizDescription/QuizDescription";
 
 
 const LoadingOverlay = () => {
@@ -57,6 +58,8 @@ const LoadingOverlay = () => {
     </div>
   ) : null;
 };
+
+
 
 function App() {
   return (
@@ -100,7 +103,10 @@ function App() {
               <Route element={<ProtectedRoute requiredRole="Student" />}>
                 <Route path="student" element={<TempUIStudent />}>
                   <Route path="" element={<HomeStudentNoti />} />
+                  <Route path="course/:class/:id" element={<ClassDetailStudent/>} />
                   <Route path="quiz" element={<QuizTest />} />
+                  <Route path="quiz/:quizId" element={<QuizDescription />} />
+                  <Route path="quiz/:quizId/start" element={<QuizTest />} />
                   <Route path="schedules" element={<ScheduleStudent />} />
                   <Route path="change-password" element={<ChangePassword />} />
                 </Route>
@@ -137,7 +143,7 @@ function App() {
               {/*Test page */}
               <Route path="student-page" element={<TempUIStudent />}>
                 <Route path="" element={<HomeStudent />} />
-                <Route path="course-detail" element={<CourseDetail />} />
+                <Route path="course-detail" element={<ClassDetailStudent />} />
               </Route>
             </Routes >
           </LoadingProvider >

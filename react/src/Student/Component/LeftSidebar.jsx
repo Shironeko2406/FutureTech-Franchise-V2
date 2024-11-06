@@ -1,14 +1,55 @@
-import React from 'react'
-import { NavLink } from 'react-router-dom'
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { NavLink } from "react-router-dom";
+import { GetClassOfStudentLoginActionAsync } from "../../Redux/ReducerAPI/UserReducer";
+
+
 
 const LeftSidebar = ({ onSidebarToggle }) => {
+  const dispatch = useDispatch();
+  const { classOfUserLogin } = useSelector((state) => state.UserReducer);
+  const [openSubmenus, setOpenSubmenus] = useState({});
+
+  useEffect(()=>{
+    dispatch(GetClassOfStudentLoginActionAsync())
+  },[])
+
+  const sidebarItems = [
+    { type: "section", label: "Trang chủ", icon: "ti ti-dots" },
+    {
+      type: "submenu",
+      label: "Bảng điều khiển",
+      path: "#",
+      icon: "mdi:view-dashboard",
+    },
+    { type: "section", label: "Khóa học", icon: "ti ti-dots" },
+
+    ...classOfUserLogin?.map((classItem, index) => ({
+      type: "submenu",
+      label: classItem.className, 
+      icon: "mdi:school",
+      subItems: [
+        { label: "Xem Tài nguyên", path: `/student/course/${classItem.className}/${classItem.classId}` },
+        { label: "Bài kiểm tra", path: `/student/course/${classItem.className}/${classItem.classId}` },
+      ],
+    })),
+  ];
+
+  console.log(classOfUserLogin)
+
+  const toggleSubmenu = (index) => {
+    setOpenSubmenus((prevOpenSubmenus) => ({
+      ...prevOpenSubmenus,
+      [index]: !prevOpenSubmenus[index],
+    }));
+  };
+
   return (
     <aside className="left-sidebar">
-      {/* Sidebar scroll*/}
       <div>
         <div className="brand-logo d-flex align-items-center justify-content-between">
-          <NavLink to="/manager" className="text-nowrap logo-img">
-            <img src="/assets/images/logos/logo-light.svg" alt="" />
+          <NavLink to="/student" className="text-nowrap logo-img">
+            <img src="/assets/images/logos/FutureTechLogo.png" alt="logo" />
           </NavLink>
           <div
             className="close-btn d-xl-none d-block sidebartoggler cursor-pointer"
@@ -18,36 +59,58 @@ const LeftSidebar = ({ onSidebarToggle }) => {
             <i className="ti ti-x fs-8" />
           </div>
         </div>
-        {/* Sidebar navigation*/}
         <nav className="sidebar-nav scroll-sidebar" data-simplebar>
           <ul id="sidebarnav">
-            <li className="nav-small-cap">
-              <i className="ti ti-dots nav-small-cap-icon fs-6" />
-              <span className="hide-menu"></span>
-            </li>
-            <li className="sidebar-item">
-              <NavLink
-                className="sidebar-link"
-                to="schedules"
-                aria-expanded="false"
-                activeClassName="active"
-              >
-                <span>
-                  <iconify-icon
-                    icon="uis:schedule"
-                    className="fs-6"
-                  />
-                </span>
-                <span className="hide-menu">Lịch học</span>
-              </NavLink>
-            </li>
+            {sidebarItems.map((item, index) =>
+              item.type === "section" ? (
+                <li key={index} className="nav-small-cap">
+                  <i className={`${item.icon} nav-small-cap-icon fs-6`} />
+                  <span className="hide-menu">{item.label}</span>
+                </li>
+              ) : item.type === "submenu" ? (
+                <li key={index} className="sidebar-item">
+                  <div
+                    className="sidebar-link"
+                    onClick={() => toggleSubmenu(index)}
+                    aria-expanded={openSubmenus[index]}
+                  >
+                    <span>
+                      <iconify-icon icon={item.icon} className="fs-6" />
+                    </span>
+                    <span className="hide-menu">{item.label}</span>
+                  </div>
+                  {openSubmenus[index] && (
+                    <ul className="submenu">
+                      {item.subItems.map((subItem, subIndex) => (
+                        <li key={subIndex}>
+                          <NavLink className="sidebar-link" to={subItem.path}>
+                            {subItem.label}
+                          </NavLink>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </li>
+              ) : (
+                <li key={index} className="sidebar-item">
+                  <NavLink
+                    className="sidebar-link"
+                    to={item.path}
+                    aria-expanded="false"
+                  >
+                    <span>
+                      <iconify-icon icon={item.icon} className="fs-6" />
+                    </span>
+                    <span className="hide-menu">{item.label}</span>
+                  </NavLink>
+                </li>
+              )
+            )}
           </ul>
         </nav>
-        {/* End Sidebar navigation */}
       </div>
-      {/* End Sidebar scroll*/}
     </aside>
-  )
-}
+  );
+};
 
-export default LeftSidebar
+export default LeftSidebar;

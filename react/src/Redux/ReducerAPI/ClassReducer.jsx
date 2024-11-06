@@ -3,7 +3,8 @@ import { httpClient } from "../../Utils/Interceptors";
 import { message } from "antd";
 
 const initialState = {
-    instructors: []
+    instructors: [],
+    quizOfClassStudent: []
 };
 
 const ClassReducer = createSlice({
@@ -20,10 +21,13 @@ const ClassReducer = createSlice({
         setClassDetail: (state, action) => {
             state.classDetail = action.payload;
         },
+        setQuizOfClassStudent: (state, action) => {
+            state.quizOfClassStudent = action.payload;
+        },
     },
 });
 
-export const { setInstructors, setClasses, setClass, setClassDetail } = ClassReducer.actions;
+export const { setInstructors, setClasses, setClass, setClassDetail, setQuizOfClassStudent } = ClassReducer.actions;
 
 export default ClassReducer.reducer;
 //---------API CALL-------------
@@ -131,6 +135,23 @@ export const UpdateClassActionAsync = (classId, classData) => {
         } catch (error) {
             console.error(error);
             message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
+        }
+    };
+};
+
+export const GetQuizByClassIdStudentActionAsync = (classId) => {
+    return async (dispatch) => {
+        try {
+            const res = await httpClient.get(`/student/api/v1/classes/${classId}/quizzes`);
+            if (res.isSuccess) {
+                console.log("res:", res.data)
+                dispatch(setQuizOfClassStudent (res.data));
+            } else {
+                throw new Error(res.message);
+            }
+        } catch (error) {
+            console.error("Error fetching class details:", error);
+            message.error("Đã xảy ra lỗi khi lấy thông tin lớp học!");
         }
     };
 };

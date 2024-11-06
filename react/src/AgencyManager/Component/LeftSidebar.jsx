@@ -29,7 +29,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
             <li className="sidebar-item">
               <NavLink
                 className="sidebar-link"
-                to="/"
+                to="/agency-manager"
                 aria-expanded="false"
               >
                 <span>
@@ -48,7 +48,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
             <li className="sidebar-item">
               <NavLink
                 className="sidebar-link"
-                to="/"
+                to="#"
                 aria-expanded="false"
               >
                 <span>
@@ -65,7 +65,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
             <li className="sidebar-item">
               <NavLink
                 className="sidebar-link"
-                to="/"
+                to="#"
                 aria-expanded="false"
 
               >

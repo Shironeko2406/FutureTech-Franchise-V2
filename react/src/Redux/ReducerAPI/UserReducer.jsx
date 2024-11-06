@@ -6,6 +6,7 @@ const initialState = {
   userData: [],
   userProfile: {},
   schedules: [],
+  classOfUserLogin: []
 };
 
 const UserReducer = createSlice({
@@ -21,10 +22,13 @@ const UserReducer = createSlice({
     setSchedules: (state, action) => {
       state.schedules = action.payload;
     },
+    setCLassOfUserLogin: (state, action)=>{
+      state.classOfUserLogin = action.payload
+    }
   },
 });
 
-export const { setUserData, setUserProfile, setSchedules } = UserReducer.actions;
+export const { setUserData, setUserProfile, setSchedules, setCLassOfUserLogin } = UserReducer.actions;
 
 export default UserReducer.reducer;
 //------------API-CALL-------
@@ -126,6 +130,21 @@ export const GetClassSchedulesByLoginActionAsync = (startDate, endDate) => {
     } catch (error) {
       console.error(error);
       message.error("Không thể lấy lịch học, vui lòng thử lại sau.");
+    }
+  };
+};
+
+export const GetClassOfStudentLoginActionAsync = () => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.get(`/api/v1/users/mine/classes`);
+      if (res.isSuccess && res.data) {
+        dispatch(setCLassOfUserLogin(res.data))
+      } else {
+        message.error(`${res.message}`);
+      }
+    } catch (error) {
+      console.error(error);
     }
   };
 };

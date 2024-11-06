@@ -180,7 +180,7 @@ export const CreateCourseDetailByFileActionAsync = (
   return async (dispatch) => {
     try {
       const res = await httpClient.post(
-        `/api/v1/courses/api/v1/courses/files`,
+        `/api/v1/courses/files`,
         file
       );
       if (res.isSuccess && res.data) {

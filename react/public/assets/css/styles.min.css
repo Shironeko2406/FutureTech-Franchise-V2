@@ -16604,6 +16604,36 @@ textarea.form-control-lg {
 .sidebar-nav ul .sidebar-item .link-disabled {
   opacity: 0.38;
 }
+
+
+/* Submenu styles */
+.sidebar-nav ul .sidebar-item .submenu {
+  margin-top: 5px; /* Space between parent and submenu */
+  background-color: #f7ebeb; /* Background color for submenu */
+  border-radius: 8px; /* Rounded corners for submenu */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+.sidebar-nav ul .sidebar-item .submenu li {
+  margin-bottom: 0; /* Remove bottom margin from submenu items */
+}
+
+.sidebar-nav ul .sidebar-item .submenu li .sidebar-link {
+  color: #3a4752; /* Keep the same text color as parent items */
+  font-size: 14px; /* Slightly smaller font size */
+  padding: 10px 20px; /* Padding for submenu items */
+  border-radius: 6px; /* Rounded corners for submenu links */
+}
+
+.sidebar-nav ul .sidebar-item .submenu li .sidebar-link:hover {
+  background-color: rgba(41, 82, 255, 0.1); /* Hover effect for submenu items */
+  color: #2952ff; /* Text color on hover */
+}
+
+
+
+
+
 /* .sidebar-nav ul .sidebar-item.selected > .sidebar-link.active, .sidebar-nav ul .sidebar-item.selected > .sidebar-link,
 .sidebar-nav ul .sidebar-item > .sidebar-link.active {
   background-color: #2952ff;
