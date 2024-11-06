@@ -8,6 +8,7 @@ import { GetSlotActionAsync } from '../../../Redux/ReducerAPI/SlotReducer';
 import { Spin } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { GetClassScheduleDetailsActionAsync } from '../../../Redux/ReducerAPI/ClassScheduleReducer';
+import './ScheduleInstructor.css';
 
 const localizer = momentLocalizer(moment);
 
@@ -73,20 +74,53 @@ const ScheduleInstructor = () => {
     title: `${schedule.className} - ${schedule.room}`,
     start: new Date(moment(schedule.date).format('YYYY-MM-DD') + ' ' + schedule.startTime),
     end: new Date(moment(schedule.date).format('YYYY-MM-DD') + ' ' + schedule.endTime),
+    status: schedule.status,
+    date: schedule.date
   })) : [];
   console.log(events);
 
-  const eventStyleGetter = (event) => ({
-    style: {
-      backgroundColor: '#3174ad',
-      color: 'white',
-      borderRadius: "5px",
-      display: "block",
+  const eventStyleGetter = (event) => {
+    const currentDate = new Date();
+    let backgroundColor = '#3174ad'; // Default color
+    if (moment(event.date).isSameOrBefore(currentDate, 'day')) {
+      if (event.status) {
+        backgroundColor = '#28a745'; // Green for attended
+      } else {
+        backgroundColor = '#dc3545'; // Red for not attended
+      }
     }
-  });
+    return {
+      style: {
+        backgroundColor,
+        color: 'white',
+        borderRadius: "5px",
+        display: "block",
+      }
+    };
+  };
 
   const handleSelectEvent = (event) => {
-    navigate('attendances', { state: { scheduleId: event.id } });
+    const currentDate = new Date();
+    if (moment(event.date).isSameOrBefore(currentDate, 'day')) {
+      navigate('attendances', { state: { scheduleId: event.id, status: event.status } });
+    }
+  };
+
+  const EventComponent = ({ event }) => {
+    const currentDate = new Date();
+    let statusText = "(Chưa tới ngày)";
+    if (moment(event.date).isSameOrBefore(currentDate, 'day')) {
+      statusText = event.status ? "(Đã điểm danh)" : "(Chưa điểm danh)";
+    }
+    return (
+      <div className="event-container">
+        <span className="event-title">{event.title}</span>
+        <br />
+        <span className="event-status">
+          {statusText}
+        </span>
+      </div>
+    );
   };
 
   return (
@@ -120,6 +154,9 @@ const ScheduleInstructor = () => {
         onSelectSlot={handleSelectSlot}
         onSelectEvent={handleSelectEvent}
         selectable
+        components={{
+          event: EventComponent
+        }}
       />
     </div>
   );

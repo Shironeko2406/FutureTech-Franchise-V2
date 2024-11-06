@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Card, Avatar, Radio, Button, message, Row, Col, Statistic, Typography } from 'antd';
 import { UserOutlined, CalendarOutlined, ClockCircleOutlined, BookOutlined, CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import './AttendancePage.css';
 import { useDispatch } from 'react-redux';
 import { SaveAttendanceActionAsync } from '../../../Redux/ReducerAPI/AttendanceReducer';
@@ -11,7 +11,8 @@ const { Title, Text } = Typography;
 
 export default function AttendancePage() {
   const location = useLocation();
-  const { scheduleId } = location.state;
+  const navigate = useNavigate();
+  const { scheduleId, status } = location.state;
   const [scheduleDetails, setScheduleDetails] = useState(null);
   const [attendance, setAttendance] = useState({});
   const dispatch = useDispatch();
@@ -20,17 +21,25 @@ export default function AttendancePage() {
     const fetchScheduleDetails = async () => {
       const details = await dispatch(GetClassScheduleDetailsActionAsync(scheduleId));
       setScheduleDetails(details);
+      if (status) {
+        const initialAttendance = {};
+        details.studentInfo.forEach(student => {
+          initialAttendance[student.userId] = student.attendanceStatus === "Present";
+        });
+        setAttendance(initialAttendance);
+      }
     };
     fetchScheduleDetails();
-  }, [dispatch, scheduleId]);
+  }, [dispatch, scheduleId, status]);
 
   const handleAttendanceChange = (studentId, isPresent) => {
     setAttendance(prev => ({ ...prev, [studentId]: isPresent }));
   };
 
-  const handleSaveAttendance = () => {
+  const handleSaveAttendance = async () => {
     const presentStudentIds = Object.keys(attendance).filter(id => attendance[id]);
-    dispatch(SaveAttendanceActionAsync(scheduleId, presentStudentIds));
+    await dispatch(SaveAttendanceActionAsync(scheduleId, presentStudentIds));
+    navigate(-1); // Navigate back to the previous page
   };
 
   const attendanceStats = useMemo(() => {
