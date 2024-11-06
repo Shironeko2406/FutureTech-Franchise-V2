@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { GetAllInstructorsAvailableActionAsync, CreateClassActionAsync } from "../../Redux/ReducerAPI/ClassReducer";
 import { CreateClassScheduleActionAsync } from "../../Redux/ReducerAPI/ClassScheduleReducer";
 import { GetSlotActionAsync } from "../../Redux/ReducerAPI/SlotReducer";
+import moment from 'moment';
 
 const AddToClassModal = ({ visible, onClose, listStudents, courseId, onClassCreated }) => {
     const dispatch = useDispatch();
@@ -208,12 +209,20 @@ const AddToClassModal = ({ visible, onClose, listStudents, courseId, onClassCrea
                         label="Ngày bắt đầu"
                         rules={[{ required: true, message: "Vui lòng chọn ngày bắt đầu" }]}
                     >
-                        <DatePicker />
+                        <DatePicker disabledDate={(current) => current && current < moment().endOf('day')} />
                     </Form.Item>
                     <Form.Item name="daysOfWeek" label="Chọn các ngày trong tuần">
                         <Select mode="multiple" placeholder="Chọn các ngày">
-                            {["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].map(day => (
-                                <Select.Option key={day} value={day}>{day}</Select.Option>
+                            {[
+                                { label: "Chủ Nhật", value: "Sunday" },
+                                { label: "Thứ Hai", value: "Monday" },
+                                { label: "Thứ Ba", value: "Tuesday" },
+                                { label: "Thứ Tư", value: "Wednesday" },
+                                { label: "Thứ Năm", value: "Thursday" },
+                                { label: "Thứ Sáu", value: "Friday" },
+                                { label: "Thứ Bảy", value: "Saturday" }
+                            ].map(day => (
+                                <Select.Option key={day.value} value={day.value}>{day.label}</Select.Option>
                             ))}
                         </Select>
                     </Form.Item>

@@ -24,7 +24,7 @@ const StudentConsultationRegistration = () => {
     const [selectedRowKeys, setSelectedRowKeys] = useState([]); // Track selected rows
     const [isPaymentModalVisible, setPaymentModalVisible] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [selectedUserId, setSelectedUserId] = useState(null);
+    const [selectedRegisterCourseId, setSelectedRegisterCourseId] = useState(null);
     const [selectedCourseDetails, setselectedCourseDetails] = useState(null);
     const [isAddToClassModalVisible, setIsAddToClassModalVisible] = useState(false);
     const [isFilterApplied, setIsFilterApplied] = useState(false);
@@ -191,17 +191,18 @@ const StudentConsultationRegistration = () => {
     };
 
     // Function to display and handle payment course modal (waitlisted status)
-    const handleWaitlistedClick = (userId, courseCode, coursePrice, courseId) => {
-        setSelectedUserId(userId);
+    const handleWaitlistedClick = (id, courseCode, coursePrice, courseId) => {
+        setSelectedRegisterCourseId(id);
         setPaymentModalVisible(true);
         setselectedCourseDetails({ courseCode, coursePrice, courseId });
         setIsDetailModalVisible(false); // Ensure detail modal is closed
     };
 
-    const handlePaymentSubmit = (paymentData) => {
+    const handlePaymentSubmit = (paymentData, paymentType) => {
         setLoading(true);
-        console.log("Payment data:", paymentData);
-        dispatch(CreateStudentPaymentActionAsync(paymentData)).then(() => {
+        console.log("Payment data:",
+            paymentData);
+        dispatch(CreateStudentPaymentActionAsync(paymentData, paymentType)).then(() => {
             dispatch(GetStudentConsultationActionAsync(pageIndex, pageSize, selectedStudentStatus, selectedCourse));
             setLoading(false);
             setPaymentModalVisible(false);
@@ -224,50 +225,66 @@ const StudentConsultationRegistration = () => {
         };
 
         const handleJoinClass = () => {
-            setSelectedRowKeys([record.id]);
+            setSelectedRowKeys([record.userId]);
             setIsAddToClassModalVisible(true);
+        };
+
+        const handleCancelRegistration = () => {
+            dispatch(UpdateStudentStatusAsync(record.userId, 'Cancel', record.courseId))
+                .then(() => {
+                    dispatch(GetStudentConsultationActionAsync(pageIndex, pageSize, selectedStudentStatus, selectedCourse));
+                });
         };
 
         switch (status) {
             case 'NotConsult':
                 return (
-                    <Button onClick={() => handleUpdateStatus('Pending')} type="primary">Đang tư vấn</Button>
+                    <>
+                        <Button onClick={() => handleUpdateStatus('Pending')} type="primary">Đang tư vấn</Button>
+                        <Popconfirm
+                            title="Bạn có chắc chắn muốn hủy đăng ký này không?"
+                            onConfirm={handleCancelRegistration}
+                            okText="Đồng ý"
+                            cancelText="Hủy"
+                        >
+                            <Button type="default" style={{ marginLeft: 8 }}>Hủy</Button>
+                        </Popconfirm>
+                    </>
                 );
 
             case 'Pending':
                 return (
-                    <Button onClick={() => handleWaitlistedClick(record.id, record.courseCode, record.coursePrice, record.courseId)} type="primary">Chờ xếp lớp</Button>
+                    <>
+                        <Button onClick={() => handleWaitlistedClick(record.id, record.courseCode, record.coursePrice, record.courseId)} type="primary">Chờ xếp lớp</Button>
+                        <Popconfirm
+                            title="Bạn có chắc chắn muốn hủy đăng ký này không?"
+                            onConfirm={handleCancelRegistration}
+                            okText="Đồng ý"
+                            cancelText="Hủy"
+                        >
+                            <Button type="default" style={{ marginLeft: 8 }}>Hủy</Button>
+                        </Popconfirm>
+                    </>
                 );
 
             case 'Waitlisted':
                 return (
-                    <Button onClick={handleJoinClass} type="primary">Vào lớp</Button>
+                    <>
+                        <Button onClick={handleJoinClass} type="primary">Vào lớp</Button>
+                        <Popconfirm
+                            title="Bạn có chắc chắn muốn hủy đăng ký này không?"
+                            onConfirm={handleCancelRegistration}
+                            okText="Đồng ý"
+                            cancelText="Hủy"
+                        >
+                            <Button type="default" style={{ marginLeft: 8 }}>Hủy</Button>
+                        </Popconfirm>
+                    </>
                 );
 
             default:
-                return null; // No action buttons for other statuses
+                return null;
         }
-    };
-
-    // Function to render action2 buttons
-    const renderAction2Buttons = (record, handleUpdate, handleDelete) => {
-        return (
-            <Space size="middle">
-                <Button
-                    type="link"
-                    icon={<EditOutlined />}
-                    onClick={() => handleUpdate(record)} // Sửa thông tin slot
-                />
-                <Popconfirm
-                    title="Xác nhận xóa slot này?"
-                    onConfirm={() => handleDelete(record.id)}
-                    okText="Đồng ý"
-                    cancelText="Hủy"
-                >
-                    <Button type="link" icon={<DeleteOutlined />} danger />
-                </Popconfirm>
-            </Space>
-        );
     };
 
     const handleRowClick = (record) => {
@@ -302,6 +319,18 @@ const StudentConsultationRegistration = () => {
             .finally(() => {
                 setIsDetailModalVisible(false);
             });
+    };
+
+    const handleCompletePayment = (studentDetails) => {
+        setSelectedRegisterCourseId(studentDetails.id);
+        setPaymentModalVisible(true);
+        setselectedCourseDetails({
+            courseCode: studentDetails.courseCode,
+            coursePrice: studentDetails.coursePrice,
+            studentAmountPaid: studentDetails.studentAmountPaid,
+            courseId: studentDetails.courseId
+        });
+        setIsDetailModalVisible(false); // Ensure detail modal is closed
     };
 
     const columns = [
@@ -437,9 +466,9 @@ const StudentConsultationRegistration = () => {
                     visible={isPaymentModalVisible}
                     onClose={() => setPaymentModalVisible(false)}
                     onSubmit={handlePaymentSubmit}
-                    userId={selectedUserId}
                     spinning={loading}
                     courseDetails={selectedCourseDetails}
+                    registerCourseId={selectedRegisterCourseId}
                 />
 
                 <AddToClassModal
@@ -460,6 +489,8 @@ const StudentConsultationRegistration = () => {
                     onCancelRegistration={handleCancelRegistration}
                     courses={course}
                     spinning={isEditing}
+                    onCompletePayment={handleCompletePayment} // Add this line
+                    paymentStatus={selectedStudentDetails?.paymentStatus} // Add this line
                 />
             </div>
         </div>

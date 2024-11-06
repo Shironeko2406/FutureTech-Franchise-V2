@@ -19,7 +19,9 @@ export default function StudentRegistrationDetailsModal({
     onUpdate,
     onCancelRegistration,
     courses,
-    spinning
+    spinning,
+    onCompletePayment, // Add this line
+    paymentStatus // Add this line
 }) {
     const [isEditing, setIsEditing] = useState(false);
     const [form] = Form.useForm();
@@ -83,17 +85,16 @@ export default function StudentRegistrationDetailsModal({
                     </>
                 ) : (
                     <>
-                        {studentDetails.studentStatus !== 'Cancel' && (
-                            <Popconfirm
-                                title="Bạn có chắc chắn muốn hủy đăng ký này không?"
-                                onConfirm={onCancelRegistration}
-                                okText="Đồng ý"
-                                cancelText="Hủy"
+                        {paymentStatus === 'Advance_Payment' && (
+                            <Button
+                                key="completePayment"
+                                type="primary"
+                                onClick={() => onCompletePayment(studentDetails)}
+                                disabled={spinning}
+                                style={{ float: 'left', backgroundColor: '#52c41a', borderColor: '#52c41a' }}
                             >
-                                <Button key="cancel" type="primary" danger style={{ float: 'left' }} disabled={spinning}>
-                                    Hủy đăng ký
-                                </Button>
-                            </Popconfirm>
+                                Thanh toán nốt số tiền còn lại
+                            </Button>
                         )}
                         <Button key="edit" type="primary" onClick={handleEdit} icon={<EditOutlined />} disabled={spinning}>
                             Chỉnh sửa
@@ -138,6 +139,9 @@ export default function StudentRegistrationDetailsModal({
                             <Form.Item name="paymentDeadline" label="Hạn thanh toán">
                                 <DatePicker format="YYYY-MM-DD" disabledDate={(current) => current && current < moment().endOf('day')} />
                             </Form.Item>
+                            <Form.Item name="studentAmountPaid" label="Số tiền đã thanh toán"> {/* Add this block */}
+                                <Input />
+                            </Form.Item>
                         </Form>
                     ) : (
                         <Descriptions bordered column={1} size="small">
@@ -155,6 +159,9 @@ export default function StudentRegistrationDetailsModal({
                             </Descriptions.Item>
                             <Descriptions.Item label={<Space><DollarOutlined /> Giá khóa học</Space>}>
                                 {formatCurrency(studentDetails.coursePrice)}
+                            </Descriptions.Item>
+                            <Descriptions.Item label={<Space><DollarOutlined /> Số tiền đã thanh toán</Space>} >
+                                {formatCurrency(studentDetails.studentAmountPaid)}
                             </Descriptions.Item>
                             <Descriptions.Item label={<Space><CalendarOutlined /> Ngày đăng ký</Space>}>
                                 {studentDetails.registerDate}
@@ -179,6 +186,6 @@ export default function StudentRegistrationDetailsModal({
                     )}
                 </Spin>
             </Space>
-        </Modal>
+        </Modal >
     );
 }

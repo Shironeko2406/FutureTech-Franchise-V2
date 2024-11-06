@@ -92,8 +92,6 @@ export const UpdateStudentStatusAsync = (id, newStatus, courseId) => {
 };
 
 export const UpdateStudentRegistrationAsync = (id, updatedDetails) => {
-    console.log("updatedDetails: ", updatedDetails);
-    console.log("id: ", id);
     return async (dispatch) => {
         try {
             const res = await httpClient.put(`/api/v1/register-course/${id}`, updatedDetails);
