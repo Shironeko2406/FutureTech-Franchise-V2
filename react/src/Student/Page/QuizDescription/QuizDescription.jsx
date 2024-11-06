@@ -28,15 +28,15 @@ const QuizDescription = () => {
   };
 
   const handleBack = ()=>{
-    navigate(-1)
+    navigate(`/student/class/${quizReview.classId}`)
   }
 
   const scoreData = [
     {
       key: "1",
       status: "Đã hoàn thành",
-      score100: quizReview?.scores?.score || 0,
-      score10: (quizReview?.scores?.score || 0) / 10,
+      score100: (quizReview?.scores?.scoreNumber || 0) * 10,
+      score10: quizReview?.scores?.scoreNumber || 0,
     },
   ];
 
@@ -58,9 +58,9 @@ const QuizDescription = () => {
       key: "score100",
       align: "center",
       render: (score) => {
-        let color = "red"; // Màu mặc định là đỏ
-        if (score >= 5 && score < 7) color = "orange"; // Màu vàng cảnh báo
-        else if (score >= 7) color = "green"; // Màu xanh
+        let color = "red"; 
+        if (score >= 50 && score < 70) color = "orange"; 
+        else if (score >= 70) color = "green"; 
 
         return <Tag color={color}>{score}</Tag>;
       },
@@ -71,9 +71,9 @@ const QuizDescription = () => {
       key: "score10",
       align: "center",
       render: (score) => {
-        let color = "red"; // Màu mặc định là đỏ
-        if (score >= 5 && score < 7) color = "orange"; // Màu vàng cảnh báo
-        else if (score >= 7) color = "green"; // Màu xanh
+        let color = "red"; 
+        if (score >= 5 && score < 7) color = "orange"; 
+        else if (score >= 7) color = "green"; 
 
         return <Tag color={color}>{score}</Tag>;
       },

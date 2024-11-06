@@ -29,8 +29,8 @@ const LeftSidebar = ({ onSidebarToggle }) => {
       label: classItem.className, 
       icon: "mdi:school",
       subItems: [
-        { label: "Xem Tài nguyên", path: `/student/course/${classItem.className}/${classItem.classId}` },
-        { label: "Bài kiểm tra", path: `/student/course/${classItem.className}/${classItem.classId}` },
+        { label: "Xem Tài nguyên", path: `/student/class/${classItem.classId}` },
+        { label: "Bài kiểm tra", path: `/student/class/${classItem.classId}` },
       ],
     })),
   ];
