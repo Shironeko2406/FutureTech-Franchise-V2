@@ -108,11 +108,15 @@
     color: #cf1322;
 }
 
-
 .save-button {
     margin-top: 24px;
     width: 100%;
     height: 48px;
     font-size: 18px;
     font-weight: 600;
+}
+
+.unmarked {
+    border: 2px solid #faad14;
+    /* Highlight unmarked students with a yellow border */
 }
