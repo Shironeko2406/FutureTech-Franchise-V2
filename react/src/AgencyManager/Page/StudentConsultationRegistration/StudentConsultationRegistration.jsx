@@ -448,7 +448,7 @@ const StudentConsultationRegistration = () => {
                         rowSelection={rowSelection}
                         columns={columns}
                         dataSource={studentConsultations}
-                        rowKey={(record) => record.id}
+                        rowKey={(record) => record.userId}
                         pagination={{
                             current: pageIndex,
                             pageSize,
