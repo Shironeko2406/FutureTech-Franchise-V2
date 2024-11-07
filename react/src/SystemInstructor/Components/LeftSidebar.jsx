@@ -14,6 +14,7 @@ const sidebarItems = [
   { type: 'section', label: 'Tư vấn' },
   { type: 'link', label: 'Phê duyệt', path: '#', icon: 'solar:login-3-bold-duotone' },
   { type: 'link', label: 'Trạng thái', path: '#', icon: 'solar:user-plus-rounded-bold-duotone' },
+  
 ];
 
 const LeftSidebar = ({ onSidebarToggle }) => {

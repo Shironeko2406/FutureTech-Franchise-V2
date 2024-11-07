@@ -29,7 +29,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
             <li className="sidebar-item">
               <NavLink
                 className="sidebar-link"
-                to="/agency-manager"
+                to="/agency-manager/dashboard"
                 aria-expanded="false"
               >
                 <span>
@@ -38,7 +38,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
                     className="fs-6"
                   />
                 </span>
-                <span className="hide-menu">Dashboard</span>
+                <span className="hide-menu">Doanh thu</span>
               </NavLink>
             </li>
             <li className="nav-small-cap">
@@ -162,6 +162,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
                 <span className="hide-menu">Slots</span>
               </NavLink>
             </li>
+            
           </ul>
         </nav>
         {/* End Sidebar navigation */}

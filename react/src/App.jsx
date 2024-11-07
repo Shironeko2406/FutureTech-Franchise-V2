@@ -49,7 +49,7 @@ import CourseDetailSystemInstructor from "./SystemInstructor/Page/CourseDetailSy
 import QuizTest from "./Student/Page/QuizTest/QuizTest";
 import QuizDescription from "./Student/Page/QuizDescription/QuizDescription";
 import AttendancePage from "./Instructor/Page/AttendancePage/AttendancePage";
-
+import AgencyDashboardPage  from "./AgencyManager/Page/AgencyDashboard/AgencyDashboardpage";
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -91,13 +91,14 @@ function App() {
 
               <Route element={<ProtectedRoute requiredRole="AgencyManager" />}>
                 <Route path="agency-manager" element={<TempUIAgencyManager />} >
-                  <Route path="" element={<HomeAgencyManager />} />
+                  {/* <Route path="" element={<HomeAgencyManager />} /> */}
                   <Route path="student-consultation-registration" element={<StudentConsultationRegistration />} />
                   <Route path="student-payment" element={<StudentPaymentManagement />} />
                   <Route path="slots" element={<SlotManager />} />
                   <Route path="classes" element={<ClassManagement />} />
                   <Route path="classes/:id" element={<ClassDetail />} />
                   <Route path="schedules" element={<ScheduleAgencyManager />} />
+                  <Route path="dashboard" element={<AgencyDashboardPage />} />
                 </Route>
               </Route>
 
