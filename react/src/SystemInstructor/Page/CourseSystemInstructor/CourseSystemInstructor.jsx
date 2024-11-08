@@ -17,10 +17,12 @@ import {
   UpdateStatusCourseActionAsync,
 } from "../../../Redux/ReducerAPI/CourseReducer";
 import {
+  BookOutlined,
   ClockCircleOutlined,
   CopyOutlined,
   DeleteOutlined,
   EditOutlined,
+  EllipsisOutlined,
   PlusOutlined,
   SearchOutlined,
   UploadOutlined,
@@ -224,6 +226,22 @@ const CourseSystemInstructor = () => {
       dataIndex: "version",
       key: "version",
       align: "center",
+      render: (version, record) => {
+        if (["Draft", "PendingApproval"].includes(record.status)) {
+          return (
+            <div
+              style={{
+                display: "inline-block",
+                padding: "4px 12px",
+                borderRadius: "6px",
+                backgroundColor: "rgba(200, 200, 200, 0.5)", // Màu nền đục như sương mù
+                border: "1px solid rgba(180, 180, 180, 0.3)", // Màu viền nhẹ để hài hòa
+              }}
+            />
+          );
+        }
+        return version;
+      },
     },
     {
       title: "Số bài học",
@@ -282,23 +300,26 @@ const CourseSystemInstructor = () => {
       render: (text, record) => (
         <>
           <Space>
-            <Dropdown.Button
-              type="primary"
-              menu={{
-                items: getStatusItems(record.status),
-                onClick: (key) => handleMenuClick(record.id, key),
-              }}
-            >
-              Duyệt
-            </Dropdown.Button>
-
             {record.status === "Draft" && (
               <>
+                <Dropdown
+                  type="primary"
+                  menu={{
+                    items: getStatusItems(record.status),
+                    onClick: (key) => handleMenuClick(record.id, key),
+                  }}
+                >
+                  <Button
+                    type="primary"
+                    icon={<EllipsisOutlined />}
+                    style={{ backgroundColor: "#50e3c2", color: "#0A5A5A" }}
+                  />
+                </Dropdown>
                 <Button
                   type="default"
                   icon={<EditOutlined />}
                   style={{ backgroundColor: "#faad14", color: "#fff" }}
-                  onClick={() => handleEdit(record.id)} 
+                  onClick={() => handleEdit(record.id)}
                 />
                 <Popconfirm
                   title="Bạn muốn xóa khóa học này?"
@@ -311,14 +332,14 @@ const CourseSystemInstructor = () => {
               </>
             )}
 
-            {record.status === "TemporarilySuspended" && ( // Chỉ hiển thị nút tạo bản sao nếu trạng thái là TemporarilySuspended
+            {["AvailableForFranchise", "TemporarilySuspended", "Closed"].includes(record.status) && (
               <Popconfirm
                 title="Bạn có muốn tạo bản sao khóa học?"
                 onConfirm={() => handleClone(record.id)}
                 okText="Có"
                 cancelText="Không"
               >
-                <Button type="default" icon={<CopyOutlined />} />
+                <Button type="default" icon={<CopyOutlined />}></Button>
               </Popconfirm>
             )}
           </Space>
@@ -362,6 +383,16 @@ const CourseSystemInstructor = () => {
             </div>
           </div>
 
+          <Space style={{ marginBottom: 16 }}>
+              <Button
+                type="primary"
+                icon={<BookOutlined />}
+                onClick={showDrawer}
+              >
+                Thêm khóa học
+              </Button>
+          </Space>
+
           <Table
             bordered
             columns={columns}
@@ -379,19 +410,8 @@ const CourseSystemInstructor = () => {
           />
         </div>
       </div>
-      <Button
-        type="primary"
-        shape="circle"
-        icon={<PlusOutlined />}
-        size="large"
-        onClick={showDrawer}
-        style={{
-          position: "fixed",
-          bottom: 50,
-          right: 30,
-          boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)",
-        }}
-      />
+      
+      {/* Modal */}
 
       <SendFileCourseDetailModal
         visible={isModalUploadVisible}

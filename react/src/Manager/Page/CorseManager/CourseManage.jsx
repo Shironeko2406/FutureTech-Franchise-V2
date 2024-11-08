@@ -1,38 +1,13 @@
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Select,
-  Table,
-  Input,
-  Dropdown,
-  Tag,
-  Space,
-  Popconfirm,
-} from "antd";
+import { Button, Select, Table, Input, Dropdown, Tag, Space, Popconfirm } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  CreateCourseCloneByIdActionAsync,
-  DeleteCourseByIdActionAsync,
-  GetCourseActionAsync,
-  UpdateStatusCourseActionAsync,
-} from "../../../Redux/ReducerAPI/CourseReducer";
-import {
-  CheckCircleOutlined,
-  ClockCircleOutlined,
-  CloseCircleOutlined,
-  CopyOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  PauseOutlined,
-  PlusOutlined,
-  SearchOutlined,
-  UploadOutlined,
-} from "@ant-design/icons";
-import CreateCourseModal from "../../Modal/CreateCourseModal";
-import { GetCourseCategoryActionAsync } from "../../../Redux/ReducerAPI/CourseCategoryReducer";
 import { NavLink } from "react-router-dom";
+import { CheckCircleOutlined, ClockCircleOutlined, CloseCircleOutlined, CopyOutlined, EllipsisOutlined, PauseOutlined, SearchOutlined } from "@ant-design/icons";
+
+import { GetCourseCategoryActionAsync } from "../../../Redux/ReducerAPI/CourseCategoryReducer";
+import { CreateCourseCloneByIdActionAsync, GetCourseActionAsync, UpdateStatusCourseActionAsync } from "../../../Redux/ReducerAPI/CourseReducer";
 import { useLoading } from "../../../Utils/LoadingContext";
-import SendFileCourseDetailModal from "../../Modal/SendFileCourseDetailModal";
+
 
 const statusItems = [
   {
@@ -66,8 +41,6 @@ const CourseManage = () => {
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(7); // Default page size is 10
   const [searchTerm, setSearchTerm] = useState(""); // State for search term
-  const [isDrawerVisible, setIsDrawerVisible] = useState(false);
-  const [isModalUploadVisible, setIsModalUploadVisible] = useState(false);
   const { setLoading } = useLoading();
 
   useEffect(() => {
@@ -163,17 +136,6 @@ const CourseManage = () => {
     }
   };
 
-  const handleDeleteCourseById = async (id) => {
-    setLoading(true);
-    try {
-      await dispatch(
-        DeleteCourseByIdActionAsync(id, status, pageIndex, pageSize, searchTerm)
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const getColumnSearchProps = () => ({
     filterDropdown: ({
       setSelectedKeys,
@@ -216,22 +178,6 @@ const CourseManage = () => {
       record.name.toString().toLowerCase().includes(value.toLowerCase()),
   });
 
-  const showDrawer = () => {
-    setIsDrawerVisible(true);
-  };
-
-  const closeDrawer = () => {
-    setIsDrawerVisible(false);
-  };
-
-  const showModalUpload = () => {
-    setIsModalUploadVisible(true);
-  };
-
-  const closeModalUpload = () => {
-    setIsModalUploadVisible(false);
-  };
-
   const columns = [
     {
       title: "No",
@@ -259,6 +205,22 @@ const CourseManage = () => {
       dataIndex: "version",
       key: "version",
       align: "center",
+      render: (version, record) => {
+        if (["Draft", "PendingApproval"].includes(record.status)) {
+          return (
+            <div
+              style={{
+                display: "inline-block",
+                padding: "4px 12px",
+                borderRadius: "6px",
+                backgroundColor: "rgba(200, 200, 200, 0.5)", // Màu nền đục như sương mù
+                border: "1px solid rgba(180, 180, 180, 0.3)", // Màu viền nhẹ để hài hòa
+              }}
+            />
+          );
+        }
+        return version;
+      },
     },
     {
       title: "Số bài học",
@@ -317,36 +279,27 @@ const CourseManage = () => {
       render: (text, record) => (
         <>
           <Space>
-            <Dropdown.Button
-              type="primary"
-              menu={{
-                items: getStatusItems(record.status),
-                onClick: (key) => handleMenuClick(record.id, key),
-              }}
-            >
-              Duyệt
-            </Dropdown.Button>
-
-            {record.status === "Draft" && (
-              <>
+            {record.status !== "Closed" && (
+              <Dropdown
+                type="primary"
+                menu={{
+                  items: getStatusItems(record.status),
+                  onClick: (key) => handleMenuClick(record.id, key),
+                }}
+              >
                 <Button
-                  type="default"
-                  icon={<EditOutlined />}
-                  style={{ backgroundColor: "#faad14", color: "#fff" }}
-                  onClick={() => handleEdit(record.id)}
+                  type="primary"
+                  icon={<EllipsisOutlined />}
+                  style={{ backgroundColor: "#50e3c2", color: "#0A5A5A" }}
                 />
-                <Popconfirm
-                  title="Bạn muốn xóa khóa học này?"
-                  onConfirm={() => handleDeleteCourseById(record.id)}
-                  okText="Có"
-                  cancelText="Không"
-                >
-                  <Button type="primary" danger icon={<DeleteOutlined />} />
-                </Popconfirm>
-              </>
+              </Dropdown>
             )}
 
-            {record.status === "TemporarilySuspended" && ( // Chỉ hiển thị nút tạo bản sao nếu trạng thái là TemporarilySuspended
+            {[
+              "AvailableForFranchise",
+              "TemporarilySuspended",
+              "Closed",
+            ].includes(record.status) && (
               <Popconfirm
                 title="Bạn có muốn tạo bản sao khóa học?"
                 onConfirm={() => handleClone(record.id)}
@@ -366,35 +319,24 @@ const CourseManage = () => {
     <div>
       <div className="card">
         <div className="card-body">
-          <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3">
-            <h5 className="card-title mb-2 mb-md-0">Quản lý khóa học</h5>
-            <div className="d-flex align-items-center flex-wrap">
-              <Button
-                type="primary"
-                icon={<UploadOutlined />}
-                className="me-2 mb-2 mb-md-0"
-                onClick={showModalUpload}
-              >
-                Thêm File
-              </Button>
-
-              <Select
-                defaultValue={status}
-                style={{ width: 150 }}
-                onChange={handleStatusChange}
-              >
-                <Select.Option value="">Tất cả</Select.Option>
-                <Select.Option value="Draft">Nháp</Select.Option>
-                <Select.Option value="PendingApproval">Chờ duyệt</Select.Option>
-                <Select.Option value="AvailableForFranchise">
-                  Công khai
-                </Select.Option>
-                <Select.Option value="TemporarilySuspended">
-                  Tạm đóng
-                </Select.Option>
-                <Select.Option value="Closed">Đóng</Select.Option>
-              </Select>
-            </div>
+          <div className="d-flex justify-content-between align-items-center mb-3">
+            <h5 className="card-title">Quản lý khóa học</h5>
+            <Select
+              defaultValue={status}
+              style={{ width: 150 }}
+              onChange={handleStatusChange}
+            >
+              <Select.Option value="">Tất cả</Select.Option>
+              <Select.Option value="Draft">Nháp</Select.Option>
+              <Select.Option value="PendingApproval">Chờ duyệt</Select.Option>
+              <Select.Option value="AvailableForFranchise">
+                Công khai
+              </Select.Option>
+              <Select.Option value="TemporarilySuspended">
+                Tạm đóng
+              </Select.Option>
+              <Select.Option value="Closed">Đóng</Select.Option>
+            </Select>
           </div>
 
           <Table
@@ -414,36 +356,6 @@ const CourseManage = () => {
           />
         </div>
       </div>
-      <Button
-        type="primary"
-        shape="circle"
-        icon={<PlusOutlined />}
-        size="large"
-        onClick={showDrawer}
-        style={{
-          position: "fixed",
-          bottom: 50,
-          right: 30,
-          boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)",
-        }}
-      />
-      <SendFileCourseDetailModal
-        visible={isModalUploadVisible}
-        onClose={closeModalUpload}
-        status={status}
-        pageIndex={pageIndex}
-        pageSize={pageSize}
-        searchTerm={searchTerm}
-      />
-
-      <CreateCourseModal
-        isDrawerVisible={isDrawerVisible}
-        closeDrawer={closeDrawer}
-        status={status}
-        pageIndex={pageIndex}
-        pageSize={pageSize}
-        searchTerm={searchTerm}
-      />
     </div>
   );
 };

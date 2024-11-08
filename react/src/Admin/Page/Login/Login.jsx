@@ -104,22 +104,7 @@ const Login = () => {
                         value={userForm.values.password}
                       />
                     </div>
-                    <div className="d-flex align-items-center justify-content-between mb-4">
-                      <div className="form-check">
-                        <input
-                          className="form-check-input primary"
-                          type="checkbox"
-                          defaultValue
-                          id="flexCheckChecked"
-                          defaultChecked
-                        />
-                        <label
-                          className="form-check-label text-dark"
-                          htmlFor="flexCheckChecked"
-                        >
-                          Remeber this Device
-                        </label>
-                      </div>
+                    <div className="text-center mb-4">
                       <NavLink
                         className="text-primary fw-bold"
                         to="/forgot-password"

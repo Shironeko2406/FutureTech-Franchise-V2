@@ -10,10 +10,6 @@ const sidebarItems = [
   { type: 'link', label: 'Giảng viên', path: '#', icon: 'solar:danger-circle-bold-duotone' },
   { type: 'link', label: 'Khóa học', path: '/system-instructor/course', icon: 'solar:bookmark-square-minimalistic-bold-duotone' },
   { type: 'link', label: 'Lịch học', path: '#', icon: 'solar:file-text-bold-duotone' },
-  { type: 'link', label: 'Kiểu chữ', path: '#', icon: 'solar:text-field-focus-bold-duotone' },
-  { type: 'section', label: 'Tư vấn' },
-  { type: 'link', label: 'Phê duyệt', path: '#', icon: 'solar:login-3-bold-duotone' },
-  { type: 'link', label: 'Trạng thái', path: '#', icon: 'solar:user-plus-rounded-bold-duotone' },
   
 ];
 
@@ -53,21 +49,6 @@ const LeftSidebar = ({ onSidebarToggle }) => {
               )
             ))}
           </ul>
-          <div className="unlimited-access hide-menu bg-primary-subtle position-relative mb-7 mt-7 rounded-3">
-            <div className="d-flex">
-              <div className="unlimited-access-title me-3">
-                <h6 className="fw-semibold fs-4 mb-6 text-dark w-75">
-                  Upgrade to pro
-                </h6>
-                <a target="_blank" className="btn btn-primary fs-2 fw-semibold lh-sm">
-                  Buy Pro
-                </a>
-              </div>
-              <div className="unlimited-access-img">
-                <img src="/assets/images/backgrounds/rocket.png" alt="rocket" className="img-fluid" />
-              </div>
-            </div>
-          </div>
         </nav>
       </div>
     </aside>
