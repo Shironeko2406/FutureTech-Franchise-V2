@@ -1,28 +1,59 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
+import { GetClassOfUserLoginActionAsync } from "../../Redux/ReducerAPI/UserReducer";
 
 // Dữ liệu cho sidebar
-const sidebarItems = [
-  { type: 'section', label: 'Trang chủ', icon: 'ti ti-dots' },
-  { type: 'link', label: 'Bảng điều khiển', path: '/instructor', icon: 'solar:home-smile-bold-duotone' },
-  { type: 'section', label: 'Quản lý', icon: 'ti ti-dots' },
-  { type: 'link', label: 'Người dùng', path: '#', icon: 'solar:layers-minimalistic-bold-duotone' },
-  { type: 'link', label: 'Giảng viên', path: '#', icon: 'solar:danger-circle-bold-duotone' },
-  { type: 'link', label: 'Khóa học', path: '#', icon: 'solar:bookmark-square-minimalistic-bold-duotone' },
-  { type: 'link', label: 'Lịch học', path: '#', icon: 'solar:file-text-bold-duotone' },
-  { type: 'link', label: 'Kiểu chữ', path: '#', icon: 'solar:text-field-focus-bold-duotone' },
-  { type: 'section', label: 'Tư vấn' },
-  { type: 'link', label: 'Phê duyệt', path: '#', icon: 'solar:login-3-bold-duotone' },
-  { type: 'link', label: 'Trạng thái', path: '#', icon: 'solar:user-plus-rounded-bold-duotone' },
-];
+
 
 const LeftSidebar = ({ onSidebarToggle }) => {
+  const dispatch = useDispatch()
+  const [openSubmenus, setOpenSubmenus] = useState({});
+  const { classOfUserLogin } = useSelector((state) => state.UserReducer);
+
+  const sidebarItems = [
+    { type: "section", label: "Trang chủ", icon: "ti ti-dots" },
+    {
+      type: "submenu",
+      label: "Bảng điều khiển",
+      path: "#",
+      icon: "mdi:view-dashboard",
+    },
+    { type: "section", label: "Các lớp học", icon: "ti ti-dots" },
+
+    ...classOfUserLogin?.map((classItem, index) => ({
+      type: "submenu",
+      label: classItem.className, 
+      icon: "mdi:school",
+      subItems: [
+        { label: "Chi tiết lớp học", path: `/instructor/class/${classItem.classId}` },
+        { label: "Bài kiểm tra", path: `/instructor/class/${classItem.classId}/quiz` },
+        { label: "Bài đánh giá", path: `/instructor/class/${classItem.classId}` },
+        { label: "Điểm danh", path: `/instructor/class/${classItem.classId}` },
+      ],
+    })),
+    { type: "section", label: "Lịch dạy", icon: "ti ti-dots" },
+
+  ];
+
+
+  const toggleSubmenu = (index) => {
+    setOpenSubmenus((prevOpenSubmenus) => ({
+      ...prevOpenSubmenus,
+      [index]: !prevOpenSubmenus[index],
+    }));
+  };
+
+  useEffect(()=>{
+    dispatch(GetClassOfUserLoginActionAsync())
+  },[])
+
   return (
     <aside className="left-sidebar">
       <div>
         <div className="brand-logo d-flex align-items-center justify-content-between">
           <NavLink to="/instructor" className="text-nowrap logo-img">
-            <img src="/assets/images/logos/logo-light.svg" alt="logo" />
+            <img src="/assets/images/logos/FutureTechLogo.png" alt="logo" />
           </NavLink>
           <div
             className="close-btn d-xl-none d-block sidebartoggler cursor-pointer"
@@ -32,34 +63,56 @@ const LeftSidebar = ({ onSidebarToggle }) => {
             <i className="ti ti-x fs-8" />
           </div>
         </div>
-        {/* Sidebar navigation*/}
         <nav className="sidebar-nav scroll-sidebar" data-simplebar>
           <ul id="sidebarnav">
-            <li className="nav-small-cap">
-              <i className="ti ti-dots nav-small-cap-icon fs-6" />
-              <span className="hide-menu"></span>
-            </li>
-            <li className="sidebar-item">
-              <NavLink
-                className="sidebar-link"
-                to="schedules"
-                aria-expanded="false"
-                activeClassName="active"
-              >
-                <span>
-                  <iconify-icon
-                    icon="uis:schedule"
-                    className="fs-6"
-                  />
-                </span>
-                <span className="hide-menu">Lịch học</span>
-              </NavLink>
-            </li>
+            {sidebarItems.map((item, index) =>
+              item.type === "section" ? (
+                <li key={index} className="nav-small-cap">
+                  <i className={`${item.icon} nav-small-cap-icon fs-6`} />
+                  <span className="hide-menu">{item.label}</span>
+                </li>
+              ) : item.type === "submenu" ? (
+                <li key={index} className="sidebar-item">
+                  <div
+                    className="sidebar-link"
+                    onClick={() => toggleSubmenu(index)}
+                    aria-expanded={openSubmenus[index]}
+                  >
+                    <span>
+                      <iconify-icon icon={item.icon} className="fs-6" />
+                    </span>
+                    <span className="hide-menu">{item.label}</span>
+                  </div>
+                  {openSubmenus[index] && (
+                    <ul className="submenu">
+                      {item.subItems.map((subItem, subIndex) => (
+                        <li key={subIndex}>
+                          <NavLink className="sidebar-link" to={subItem.path}>
+                            {subItem.label}
+                          </NavLink>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </li>
+              ) : (
+                <li key={index} className="sidebar-item">
+                  <NavLink
+                    className="sidebar-link"
+                    to={item.path}
+                    aria-expanded="false"
+                  >
+                    <span>
+                      <iconify-icon icon={item.icon} className="fs-6" />
+                    </span>
+                    <span className="hide-menu">{item.label}</span>
+                  </NavLink>
+                </li>
+              )
+            )}
           </ul>
         </nav>
-        {/* End Sidebar navigation */}
       </div>
-      {/* End Sidebar scroll*/}
     </aside>
   )
 }

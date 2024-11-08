@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
-import { GetClassOfStudentLoginActionAsync } from "../../Redux/ReducerAPI/UserReducer";
+import { GetClassOfUserLoginActionAsync } from "../../Redux/ReducerAPI/UserReducer";
 
 
 
@@ -11,7 +11,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
   const [openSubmenus, setOpenSubmenus] = useState({});
 
   useEffect(()=>{
-    dispatch(GetClassOfStudentLoginActionAsync())
+    dispatch(GetClassOfUserLoginActionAsync())
   },[])
 
   const sidebarItems = [
@@ -35,7 +35,6 @@ const LeftSidebar = ({ onSidebarToggle }) => {
     })),
   ];
 
-  console.log(classOfUserLogin)
 
   const toggleSubmenu = (index) => {
     setOpenSubmenus((prevOpenSubmenus) => ({

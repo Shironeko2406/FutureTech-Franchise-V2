@@ -21,8 +21,8 @@ const ClassDetailStudent = () => {
 
   return (
     <div>
-      <SkillRoadmap />
-      <DetailRoadmap/>
+      {/* <SkillRoadmap />
+      <DetailRoadmap/> */}
       <ViewTests/>
     </div>
   );

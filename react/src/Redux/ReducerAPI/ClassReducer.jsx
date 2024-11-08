@@ -4,7 +4,10 @@ import { message } from "antd";
 
 const initialState = {
     instructors: [],
-    quizOfClassStudent: []
+    quizOfClassStudent: [],
+    classDetail:{},
+    chapterFilter: [],
+    quizData: []
 };
 
 const ClassReducer = createSlice({
@@ -24,10 +27,16 @@ const ClassReducer = createSlice({
         setQuizOfClassStudent: (state, action) => {
             state.quizOfClassStudent = action.payload;
         },
+        setChapterFilter: (state, action)=>{
+            state.chapterFilter = action.payload
+        },
+        setQuizData: (state, action)=>{
+            state.quizData = action.payload
+        }
     },
 });
 
-export const { setInstructors, setClasses, setClass, setClassDetail, setQuizOfClassStudent } = ClassReducer.actions;
+export const { setInstructors, setClasses, setClass, setClassDetail, setQuizOfClassStudent, setChapterFilter, setQuizData } = ClassReducer.actions;
 
 export default ClassReducer.reducer;
 //---------API CALL-------------
@@ -152,6 +161,38 @@ export const GetQuizByClassIdStudentActionAsync = (classId) => {
         } catch (error) {
             console.error("Error fetching class details:", error);
             message.error("Đã xảy ra lỗi khi lấy thông tin lớp học!");
+        }
+    };
+};
+
+export const GetChapterFilterByClassIdActionAsync = (classId) => {
+    return async (dispatch) => {
+        try {
+            const res = await httpClient.get(`/api/v1/classes/${classId}/chapters`);
+            if (res.isSuccess) {
+                dispatch(setChapterFilter(res.data));
+            } else {
+                message.error("Đã xảy ra lỗi khi lấy thông tin lớp học!");
+            }
+        } catch (error) {
+            console.error("Error fetching class details:", error);
+            message.error("Đã xảy ra lỗi khi lấy thông tin lớp học!");
+        }
+    };
+};
+
+export const GetQuizDataAndScoreByClassIdActionAsync = (classId) => {
+    return async (dispatch) => {
+        try {
+            const res = await httpClient.get(`/instructor/api/v1/classes/${classId}/quizzes`);
+            if (res.isSuccess) {
+                dispatch(setQuizData(res.data));
+            } else {
+                message.error("Đã xảy ra lỗi khi lấy thông tin bài kiểm tra!");
+            }
+        } catch (error) {
+            console.error("Error fetching class details:", error);
+            message.error("Đã xảy ra lỗi khi lấy thông tin bài kiểm tra!");
         }
     };
 };
