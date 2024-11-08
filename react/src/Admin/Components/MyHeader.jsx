@@ -36,14 +36,6 @@ const MyHeader = ({ onSidebarToggle }) => {
           id="navbarNav"
         >
           <ul className="navbar-nav flex-row ms-auto align-items-center justify-content-end">
-            <a target="_blank" className="btn btn-primary me-2">
-              <span className="d-none d-md-block">Check Pro Version</span>{" "}
-              <span className="d-block d-md-none">Pro</span>
-            </a>
-            <a target="_blank" className="btn btn-success">
-              <span className="d-none d-md-block">Download Free </span>{" "}
-              <span className="d-block d-md-none">Free</span>
-            </a>
             <li className="nav-item dropdown">
               <a
                 className="nav-link nav-icon-hover"

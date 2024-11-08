@@ -6,13 +6,10 @@ const sidebarItems = [
   { type: 'link', label: 'Bảng điều khiển', path: '/manager', icon: 'solar:home-smile-bold-duotone' },
   { type: 'section', label: 'Quản lý', icon: 'ti ti-dots' },
   { type: 'link', label: 'Người dùng', path: '#', icon: 'solar:layers-minimalistic-bold-duotone' },
-  { type: 'link', label: 'Giảng viên', path: '#', icon: 'solar:danger-circle-bold-duotone' },
   { type: 'link', label: 'Khóa học', path: '/manager/course', icon: 'solar:bookmark-square-minimalistic-bold-duotone' },
   { type: 'link', label: 'Lịch học', path: '/manager/slot', icon: 'solar:file-text-bold-duotone' },
-  { type: 'link', label: 'Kiểu chữ', path: '#', icon: 'solar:text-field-focus-bold-duotone' },
   { type: 'section', label: 'Tư vấn' },
   { type: 'link', label: 'Phê duyệt', path: '/manager/consult', icon: 'solar:login-3-bold-duotone' },
-  { type: 'link', label: 'Trạng thái', path: '#', icon: 'solar:user-plus-rounded-bold-duotone' },
 ];
 
 
