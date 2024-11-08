@@ -134,7 +134,7 @@ export const GetClassSchedulesByLoginActionAsync = (startDate, endDate) => {
   };
 };
 
-export const GetClassOfStudentLoginActionAsync = () => {
+export const GetClassOfUserLoginActionAsync = () => {
   return async (dispatch) => {
     try {
       const res = await httpClient.get(`/api/v1/users/mine/classes`);

@@ -50,6 +50,8 @@ import QuizTest from "./Student/Page/QuizTest/QuizTest";
 import QuizDescription from "./Student/Page/QuizDescription/QuizDescription";
 import AttendancePage from "./Instructor/Page/AttendancePage/AttendancePage";
 import AgencyDashboardPage  from "./AgencyManager/Page/AgencyDashboard/AgencyDashboardpage";
+import ClassDetailInstructor from "./Instructor/Page/ClassDetailInstructor/ClassDetailInstructor";
+import QuizOfClass from "./Instructor/Page/QuizOfClass.jsx/QuizOfClass";
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -116,6 +118,8 @@ function App() {
 
               <Route element={<ProtectedRoute requiredRole="Instructor" />}>
                 <Route path="instructor" element={<TempUIInstructor />}>
+                  <Route path="class/:id" element={<ClassDetailInstructor />} />
+                  <Route path="class/:id/quiz" element={<QuizOfClass/>} />
                   <Route path="" element={<HomeInstructor />} />
                   <Route path="schedule" element={<ScheduleTeaching />} />
                   <Route path="schedules" element={<ScheduleInstructor />} />
