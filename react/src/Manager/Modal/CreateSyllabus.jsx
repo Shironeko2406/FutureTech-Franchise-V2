@@ -1,4 +1,4 @@
-import { Button, Drawer, Form, Input, InputNumber, Row, Col } from "antd";
+import { Button, Drawer, Form, Input, InputNumber, Row, Col, Modal } from "antd";
 import React from "react";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -29,12 +29,12 @@ const CreateSyllabus = ({ isDrawerVisible, closeDrawer }) => {
   };
 
   return (
-    <Drawer
+    <Modal
       title="Tạo giáo trình"
-      width={720}
-      onClose={closeDrawer}
+      width={700}
+      style={{top: 20}}
+      onCancel={closeDrawer}
       open={isDrawerVisible}
-      styles={{ body: { paddingBottom: 80 } }}
       footer={
         <div style={{ textAlign: "right" }}>
           <Button onClick={closeDrawer} className="me-2" danger>
@@ -57,7 +57,7 @@ const CreateSyllabus = ({ isDrawerVisible, closeDrawer }) => {
           label="Mô tả"
           rules={[{ required: true, message: "Vui lòng nhập mô tả" }]}
         >
-          <Input.TextArea placeholder="Mô tả khóa học (ví dụ: mục tiêu học tập, nội dung chính)" />
+          <Input.TextArea placeholder="Mô tả khóa học (ví dụ: mục tiêu học tập, nội dung chính)" rows={4} />
         </Form.Item>
 
         <Form.Item
@@ -127,7 +127,7 @@ const CreateSyllabus = ({ isDrawerVisible, closeDrawer }) => {
           </Col>
         </Row>
       </Form>
-    </Drawer>
+    </Modal>
   );
 };
 

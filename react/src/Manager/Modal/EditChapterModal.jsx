@@ -69,7 +69,7 @@ const EditChapterModal = ({ visible, onClose, chapter }) => {
           name="description"
           rules={[{ required: true, message: "Vui lòng nhập mô tả!" }]}
         >
-          <Input.TextArea rows={4} />
+          <Input.TextArea rows={5} />
         </Form.Item>
       </Form>
     </Modal>

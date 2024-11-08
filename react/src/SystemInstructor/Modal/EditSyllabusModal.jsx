@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Button, Drawer, Form, Input, InputNumber, Row, Col } from "antd";
+import { Button, Drawer, Form, Input, InputNumber, Row, Col, Modal } from "antd";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import { EditSyllabusActionAsync } from "../../Redux/ReducerAPI/SyllabusReducer";
@@ -40,12 +40,12 @@ const EditSyllabusModal = ({ visible, onClose, syllabus }) => {
   };
 
   return (
-    <Drawer
+    <Modal
       title={"Sửa giáo trình"}
-      width={550}
-      onClose={onClose}
+      style={{top: 20}}
+      width={700}
+      onCancel={onClose}
       open={visible}
-      styles={{ body: { paddingBottom: 80 } }}
       footer={
         <div style={{ textAlign: "right" }}>
           <Button className="me-2" onClick={onClose} danger>
@@ -68,7 +68,7 @@ const EditSyllabusModal = ({ visible, onClose, syllabus }) => {
           label="Mô tả khóa học"
           rules={[{ required: true, message: "Vui lòng nhập mô tả khóa học" }]}
         >
-          <Input.TextArea placeholder="Nhập mô tả chương trình học" rows={4} />
+          <Input.TextArea placeholder="Nhập mô tả chương trình học" rows={5} />
         </Form.Item>
 
         <Form.Item
@@ -138,7 +138,7 @@ const EditSyllabusModal = ({ visible, onClose, syllabus }) => {
           </Col>
         </Row>
       </Form>
-    </Drawer>
+    </Modal>
   );
 };
 

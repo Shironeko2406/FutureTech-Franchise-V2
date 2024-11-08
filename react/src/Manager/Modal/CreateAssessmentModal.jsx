@@ -7,6 +7,7 @@ import {
   Typography,
   InputNumber,
   Select,
+  Modal,
 } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import React from "react";
@@ -44,10 +45,12 @@ const CreateAssessmentModal = ({ isDrawerVisible, closeDrawer }) => {
   };
 
   return (
-    <Drawer
+    <Modal
       title="Tạo tiêu chí đánh giá"
-      width={550}
-      onClose={closeDrawer}
+      width={700}
+      styles={{ body: { overflowY: 'auto', maxHeight: 'calc(100vh - 200px)' }}}
+      style={{top: 20}}
+      onCancel={closeDrawer}
       open={isDrawerVisible}
       footer={
         <div style={{ textAlign: "right" }}>
@@ -160,7 +163,7 @@ const CreateAssessmentModal = ({ isDrawerVisible, closeDrawer }) => {
           )}
         </Form.Item>
       </Form>
-    </Drawer>
+    </Modal>
   );
 };
 
