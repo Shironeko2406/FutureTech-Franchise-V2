@@ -2,11 +2,11 @@ import React from "react";
 import {
   Button,
   Card,
-  Drawer,
   Form,
   Input,
   Typography,
   InputNumber,
+  Modal,
 } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
@@ -43,18 +43,20 @@ const CreateSessionModal = ({ isDrawerVisible, closeDrawer }) => {
   };
 
   return (
-    <Drawer
+    <Modal
       title="Tạo buổi học"
-      width={550}
-      onClose={closeDrawer}
+      width={700}
+      styles={{ body: { overflowY: 'auto', maxHeight: 'calc(100vh - 200px)' }}}
+      style={{top: 20}}
+      onCancel={closeDrawer}
       open={isDrawerVisible}
       footer={
         <div style={{ textAlign: "right" }}>
-          <Button onClick={closeDrawer} className="me-2">
+          <Button onClick={closeDrawer} className="me-2" danger>
             Hủy
           </Button>
           <Button onClick={() => form.submit()} type="primary">
-            Submit
+            Nộp
           </Button>
         </div>
       }
@@ -134,7 +136,7 @@ const CreateSessionModal = ({ isDrawerVisible, closeDrawer }) => {
           )}
         </Form.Item>
       </Form>
-    </Drawer>
+    </Modal>
   );
 };
 

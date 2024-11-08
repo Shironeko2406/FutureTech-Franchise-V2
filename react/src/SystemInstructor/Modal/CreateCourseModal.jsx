@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Drawer, Form, Input, InputNumber, Upload, Row, Col, Slider, message, Select } from "antd";
+import { Button, Drawer, Form, Input, InputNumber, Upload, Row, Col, Slider, message, Select, Modal } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { imageDB } from "../../Firebasse/Config";
@@ -80,19 +80,19 @@ const CreateCourseModal = ({ isDrawerVisible, closeDrawer, status, pageIndex, pa
   };
 
   return (
-    <Drawer
+    <Modal
       title="Tạo Khóa Học Mới"
-      width={720}
-      onClose={closeDrawer}
+      width={700}
+      onCancel={closeDrawer}
       open={isDrawerVisible}
-      styles={{ body: { paddingBottom: 80 } }}
+      style={{top: 20}}
       footer={
         <div style={{ textAlign: "right" }}>
-          <Button onClick={closeDrawer} className="me-2">
-            Cancel
+          <Button onClick={closeDrawer} className="me-2" danger>
+            Hủy
           </Button>
           <Button onClick={() => form.submit()} type="primary">
-            Submit
+            Tạo
           </Button>
         </div>
       }
@@ -227,7 +227,7 @@ const CreateCourseModal = ({ isDrawerVisible, closeDrawer, status, pageIndex, pa
           <Input.TextArea rows={5} placeholder="Nhập mô tả khóa học" />
         </Form.Item>
       </Form>
-    </Drawer>
+    </Modal>
   );
 };
 

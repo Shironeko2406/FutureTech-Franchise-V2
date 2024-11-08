@@ -1,4 +1,4 @@
-import { Button, Drawer, Form, InputNumber, Input } from "antd";
+import { Button, Drawer, Form, InputNumber, Input, Modal } from "antd";
 import { useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { CreateChapterActionAsync } from "../../Redux/ReducerAPI/ChapterReducer";
@@ -28,10 +28,10 @@ const CreateChapterModal = ({ isDrawerVisible, closeDrawer }) => {
   };
 
   return (
-    <Drawer
+    <Modal
       title="Tạo chương"
       width={550}
-      onClose={closeDrawer}
+      onCancel={closeDrawer}
       open={isDrawerVisible}
       footer={
         <div style={{ textAlign: "right" }}>
@@ -69,7 +69,7 @@ const CreateChapterModal = ({ isDrawerVisible, closeDrawer }) => {
           <Input.TextArea rows={4} placeholder="Nhập mô tả của chapter" />
         </Form.Item>
       </Form>
-    </Drawer>
+    </Modal>
   );
 };
 
