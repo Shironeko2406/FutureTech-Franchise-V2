@@ -66,22 +66,22 @@ const QuizList = () => {
     } else if (status === "Open") {
       if (quiz.scores === null) {
         return (
-          <Button type="primary" block>
-            <NavLink to={`/student/quiz/${quiz.id}`}>Làm bài</NavLink>
-          </Button>
+          <NavLink to={`/student/quiz/${quiz.id}`}>
+            <Button type="primary" block>Vào làm bài</Button>
+          </NavLink>
         );
       } else {
         return (
-          <Button type="default" block>
-            <NavLink to={`/student/quiz/${quiz.id}`}>Xem kết quả</NavLink>
-          </Button>
+          <NavLink to={`/student/quiz/${quiz.id}`}>
+            <Button type="default" block>Xem kết quả</Button>
+          </NavLink>
         );
       }
     } else { // Closed
       return (
-        <Button type="default" block>
-          <NavLink to={`/student/quiz/${quiz.id}`}>Xem kết quả</NavLink>
-        </Button>
+        <NavLink to={`/student/quiz/${quiz.id}`}>
+            <Button type="default" block>Xem kết quả</Button>
+        </NavLink>
       );
     }
   };
@@ -90,7 +90,7 @@ const QuizList = () => {
     if (quiz.scores === null) {
       return (
         <Space direction="vertical" style={{ width: '100%' }}>
-          {quiz.scores === null && <Tag color="blue" icon={<ExclamationCircleOutlined />}>Not Attempted</Tag>}
+          {quiz.scores === null && <Tag color="blue" icon={<ExclamationCircleOutlined />}>Chưa làm</Tag>}
           {renderQuizAction(quiz)}
         </Space>
       );
