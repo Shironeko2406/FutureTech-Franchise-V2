@@ -33,6 +33,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
         { label: "Bài kiểm tra", path: `/student/class/${classItem.classId}` },
       ],
     })),
+    { type: "section", label: "Lịch học", icon: "ti ti-dots" },
   ];
 
 
