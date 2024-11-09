@@ -1,191 +1,131 @@
-import { Button, Divider, Table, Tag, Typography } from "antd";
-import React, { useEffect } from "react";
-import moment from "moment";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
-import { GetQuizReviewByIdActionAsync } from "../../../Redux/ReducerAPI/QuizReducer";
-import { CheckCircleOutlined } from "@ant-design/icons";
+import React, { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate, useParams } from 'react-router-dom'
+import moment from 'moment'
+import { Button, Card, Col, Descriptions, Row, Statistic, Typography, Space } from 'antd'
+import { ClockCircleOutlined, FileTextOutlined, TrophyOutlined, UserOutlined } from '@ant-design/icons'
+import { GetQuizReviewByIdActionAsync } from '../../../Redux/ReducerAPI/QuizReducer'
+import { useLoading } from '../../../Utils/LoadingContext'
 
-const { Text, Paragraph } = Typography;
+const { Title, Paragraph } = Typography
 
-const QuizDescription = () => {
-  const dispatch = useDispatch();
-  const { quizId } = useParams();
-  const navigate = useNavigate();
-  const { quizReview } = useSelector((state) => state.QuizReducer);
-  const startTime = moment(quizReview?.startTime); // Thời gian bắt đầu của bài kiểm tra
-  const duration = quizReview?.duration; // Thời lượng của bài kiểm tra (đơn vị: phút)
-  const endTime = startTime.clone().add(duration, "minutes"); // Tính thời gian kết thúc
-  const isBeforeStartTime = moment().isBefore(startTime);
-  const isTimeExpired = moment().isAfter(endTime);
+const QuizDescription = ()  => {
+  const dispatch = useDispatch()
+  const { quizId } = useParams()
+  const navigate = useNavigate()
+  const {setLoading} = useLoading()
+  const { quizReview } = useSelector((state) => state.QuizReducer)
 
   useEffect(() => {
-    dispatch(GetQuizReviewByIdActionAsync(quizId));
-  }, []);
+    setLoading(true)
+    dispatch(GetQuizReviewByIdActionAsync(quizId)).finally(() => setLoading(false))
+  }, [dispatch, quizId])
+
+  const startTime = moment(quizReview?.startTime)
+  const duration = quizReview?.duration
+  const endTime = startTime.clone().add(duration, 'minutes')
+  const isBeforeStartTime = moment().isBefore(startTime)
+  const isTimeExpired = moment().isAfter(endTime)
 
   const handleStartQuiz = () => {
-    navigate(`/student/quiz/${quizId}/start`);
-  };
-
-  const handleBack = ()=>{
-    navigate(`/student/class/${quizReview.classId}`)
+    navigate(`/student/quiz/${quizId}/start`)
   }
 
-  const scoreData = [
-    {
-      key: "1",
-      status: "Đã hoàn thành",
-      score100: (quizReview?.scores?.scoreNumber || 0) * 10,
-      score10: quizReview?.scores?.scoreNumber || 0,
-    },
-  ];
-
-  const columns = [
-    {
-      title: "Trạng thái",
-      dataIndex: "status",
-      key: "status",
-      render: (text) => (
-        <Tag icon={<CheckCircleOutlined />} color="success">
-          {text}
-        </Tag>
-      ),
-      align: "center",
-    },
-    {
-      title: "Điểm / 100",
-      dataIndex: "score100",
-      key: "score100",
-      align: "center",
-      render: (score) => {
-        let color = "red"; 
-        if (score >= 50 && score < 70) color = "orange"; 
-        else if (score >= 70) color = "green"; 
-
-        return <Tag color={color}>{score}</Tag>;
-      },
-    },
-    {
-      title: "Điểm / 10",
-      dataIndex: "score10",
-      key: "score10",
-      align: "center",
-      render: (score) => {
-        let color = "red"; 
-        if (score >= 5 && score < 7) color = "orange"; 
-        else if (score >= 7) color = "green"; 
-
-        return <Tag color={color}>{score}</Tag>;
-      },
-    },
-  ];
+  const handleBack = () => {
+    navigate(`/student/class/${quizReview?.classId}`)
+  }
 
   return (
-    <div className="card">
-      <div className="card-body">
-        <h4 className="card-title text-center fs-7">
-          {quizReview?.title || "Không có dữ liệu"}
-        </h4>
-        <Divider />
+    <Card className="quiz-description-card">
+      <Space direction="vertical" size="large" style={{ width: '100%' }}>
+        <Title level={2} className="text-center">
+          {quizReview?.title || 'Không có dữ liệu'}
+        </Title>
 
-        <Paragraph style={{ textAlign: "justify" }}>
-          <Text strong>Mô tả bài kiểm tra</Text>
-          {quizReview?.description ? (
-            quizReview.description.split("\n").map((line, index) => (
-              <Paragraph key={index} style={{ margin: 0 }}>
-                {line}
-              </Paragraph>
-            ))
-          ) : (
-            <Text type="secondary">Không dữ liệu</Text>
-          )}
-        </Paragraph>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} md={12}>
+            <Card>
+              <Statistic
+                title="Thời gian làm bài"
+                value={quizReview?.duration || 'N/A'}
+                suffix="phút"
+                prefix={<ClockCircleOutlined />}
+              />
+            </Card>
+          </Col>
+          <Col xs={24} md={12}>
+            <Card>
+              <Statistic
+                title="Số câu hỏi"
+                value={quizReview?.quantity || 'N/A'}
+                prefix={<FileTextOutlined />}
+              />
+            </Card>
+          </Col>
+        </Row>
 
-        <Divider style={{ borderColor: "#7cb305" }} />
-
-        <div className="text-center mb-4">
-          <Text className="fs-5">
-            Số lần làm:{" "}
-            <Text strong className="fs-5">
-              1
-            </Text>
-          </Text>
-          <br />
-          <Text className="fs-5">
-            Thời gian bắt đầu{" "}
-            <Text strong className="fs-5">
-              {quizReview?.startTime
-                ? moment(quizReview.startTime).format("DD/MM/YYYY, HH:mm")
-                : "Không xác định"}
-            </Text>
-          </Text>
-          <br />
-          <Text className="fs-5">
-            Thời gian kết thúc{" "}
-            <Text strong className="fs-5">
+        <Card title="Thông tin chi tiết">
+          <Descriptions column={{ xs: 1, sm: 2 }}>
+            <Descriptions.Item label="Thời gian bắt đầu">
+              {quizReview?.startTime ? startTime.format('DD/MM/YYYY, HH:mm') : 'Không xác định'}
+            </Descriptions.Item>
+            <Descriptions.Item label="Thời gian kết thúc">
               {quizReview?.startTime && quizReview?.duration
-                ? moment(quizReview.startTime)
-                    .add(quizReview.duration, "minutes")
-                    .format("DD/MM/YYYY, HH:mm")
-                : "Không xác định"}
-            </Text>
-          </Text>
-          <br />
-          <Text className="fs-5 mb-3">
-            Thời gian làm bài:{" "}
-            <Text strong className="fs-5">
-              {quizReview?.duration || "Không có dữ liệu"} phút
-            </Text>
-          </Text>
-        </div>
+                ? endTime.format('DD/MM/YYYY, HH:mm')
+                : 'Không xác định'}
+            </Descriptions.Item>
+            <Descriptions.Item label="Số lần làm">1</Descriptions.Item>
+            <Descriptions.Item label="Mã lớp">{quizReview?.classId || 'N/A'}</Descriptions.Item>
+          </Descriptions>
+        </Card>
 
-        <Divider dashed />
-
-        {/* Hiển thị nút và bảng điểm */}
-        {quizReview?.scores ? (
-          <div className="text-center">
-            <Button type="primary" size="large" onClick={handleBack}>
-              Trở lại
-            </Button>
-            <Divider />
-            <Table
-              columns={columns}
-              dataSource={scoreData}
-              pagination={false}
-              bordered
-              size="middle"
-            />
-          </div>
-        ) : (
-          <div className="text-center">
-            {isBeforeStartTime ? (
-              <>
-                <p style={{ color: "red", fontWeight: "bold" }}>
-                  Chưa đến thời gian làm bài
-                </p>
-                <Button type="primary" size="large" onClick={handleBack}>
-                  Trở lại
-                </Button>
-              </>
-            ) : isTimeExpired ? (
-              <>
-                <p style={{ color: "red", fontWeight: "bold" }}>
-                  Đã lố thời gian làm bài
-                </p>
-                <Button type="primary" size="large" onClick={handleBack}>
-                  Trở lại
-                </Button>
-              </>
+        <Card title="Mô tả bài kiểm tra">
+          <Paragraph>
+            {quizReview?.description ? (
+              quizReview.description.split('\n').map((line, index) => (
+                <Paragraph key={index}>{line}</Paragraph>
+              ))
             ) : (
-              <Button type="primary" size="large" onClick={handleStartQuiz}>
-                Vào làm bài test
+              'Không có dữ liệu'
+            )}
+          </Paragraph>
+        </Card>
+
+        {quizReview?.scores ? (
+          <Card>
+            <Statistic
+              title="Điểm số"
+              value={quizReview.scores.scoreNumber}
+              suffix="/ 10"
+              prefix={<TrophyOutlined />}
+              valueStyle={{
+                color: quizReview.scores.scoreNumber >= 5 ? '#3f8600' : '#cf1322',
+              }}
+            />
+          </Card>
+        ) : (
+          <Space direction="vertical" align="center" style={{ width: '100%' }}>
+            {isBeforeStartTime ? (
+              <Paragraph strong type="warning">
+                Chưa đến thời gian làm bài
+              </Paragraph>
+            ) : isTimeExpired ? (
+              <Paragraph strong type="danger">
+                Đã hết hạn
+              </Paragraph>
+            ) : (
+              <Button type="primary" size="large" onClick={handleStartQuiz} icon={<UserOutlined />}>
+                Vào kiểm tra
               </Button>
             )}
-          </div>
+          </Space>
         )}
-      </div>
-    </div>
-  );
-};
 
+        <Button type="default" size="large" onClick={handleBack}>
+          Trở lại
+        </Button>
+      </Space>
+    </Card>
+  )
+}
 export default QuizDescription;
