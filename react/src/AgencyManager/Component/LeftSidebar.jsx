@@ -5,10 +5,10 @@ const LeftSidebar = ({ onSidebarToggle }) => {
 
   const sidebarItems = [
     { type: 'section', label: 'Trang chủ', icon: 'ti ti-dots' },
-    { type: 'link', label: 'Doanh thu', path: '/agency-manager/dashboard', icon: 'solar:home-smile-bold-duotone' },
+    { type: 'link', label: 'Doanh thu', path: '', icon: 'solar:home-smile-bold-duotone' },
     { type: 'section', label: 'Quản lý', icon: 'ti ti-dots' },
-    { type: 'link', label: 'Người dùng', path: '#', icon: 'solar:layers-minimalistic-bold-duotone' },
-    { type: 'link', label: 'Giảng viên', path: '#', icon: 'solar:layers-minimalistic-bold-duotone' },
+    // { type: 'link', label: 'Người dùng', path: '#', icon: 'solar:layers-minimalistic-bold-duotone' },
+    // { type: 'link', label: 'Giảng viên', path: '#', icon: 'solar:layers-minimalistic-bold-duotone' },
     { type: 'link', label: 'Giao dịch', path: '/agency-manager/student-payment', icon: 'fluent:payment-20-filled' },
     { type: 'section', label: 'Lớp học', icon: 'ti ti-dots' },
     { type: 'link', label: 'Ghi danh', path: '/agency-manager/student-consultation-registration', icon: 'solar:file-text-bold-duotone' },

@@ -93,15 +93,32 @@ const CreatePaymentCourseModal = ({ visible, onClose, onSubmit, registerCourseId
                         <Input.TextArea placeholder="Nhập ghi chú" />
                     </Form.Item>
                     <Form.Item
-                        label="Số tiền"
+                        label={
+                            <span>
+                                Số tiền
+                                {courseDetails && (
+                                    <Text type="secondary" style={{ marginLeft: 8 }}>
+                                        (Giá khóa học: {formatCurrency(courseDetails.coursePrice)})
+                                    </Text>
+                                )}
+                            </span>
+                        }
                         name="amount"
                         rules={[
                             { required: true, message: "Vui lòng nhập số tiền" },
-                            { pattern: /^\d+$/, message: "Vui lòng nhập số nguyên" } // Add pattern validation
+                            { pattern: /^\d+$/, message: "Vui lòng nhập số nguyên" },
+                            ({ getFieldValue }) => ({
+                                validator(_, value) {
+                                    if (paymentType === "Advance_Payment" && value && parseInt(value, 10) > courseDetails.coursePrice) {
+                                        return Promise.reject(new Error("Số tiền đặt cọc không được vượt quá giá khóa học"));
+                                    }
+                                    return Promise.resolve();
+                                },
+                            }),
                         ]}
                         style={{ marginBottom: 12 }}
                     >
-                        <Input type="text" onChange={handleAmountChange} />
+                        <Input type="text" onChange={handleAmountChange} disabled={paymentType === "Completed"} />
                     </Form.Item>
                     {formattedAmount && (
                         <Form.Item

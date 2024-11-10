@@ -5,9 +5,12 @@ import { message } from "antd";
 const initialState = {
     instructors: [],
     quizOfClassStudent: [],
-    classDetail:{},
+    classDetail: {},
     chapterFilter: [],
-    quizData: []
+    quizData: [],
+    classes: [],
+    totalPagesCount: 0,
+    availableClasses: []
 };
 
 const ClassReducer = createSlice({
@@ -27,16 +30,19 @@ const ClassReducer = createSlice({
         setQuizOfClassStudent: (state, action) => {
             state.quizOfClassStudent = action.payload;
         },
-        setChapterFilter: (state, action)=>{
+        setChapterFilter: (state, action) => {
             state.chapterFilter = action.payload
         },
-        setQuizData: (state, action)=>{
+        setQuizData: (state, action) => {
             state.quizData = action.payload
-        }
+        },
+        setAvailableClasses: (state, action) => {
+            state.availableClasses = action.payload;
+        },
     },
 });
 
-export const { setInstructors, setClasses, setClass, setClassDetail, setQuizOfClassStudent, setChapterFilter, setQuizData } = ClassReducer.actions;
+export const { setInstructors, setClasses, setClass, setClassDetail, setQuizOfClassStudent, setChapterFilter, setQuizData, setAvailableClasses } = ClassReducer.actions;
 
 export default ClassReducer.reducer;
 //---------API CALL-------------
@@ -154,7 +160,7 @@ export const GetQuizByClassIdStudentActionAsync = (classId) => {
             const res = await httpClient.get(`/student/api/v1/classes/${classId}/quizzes`);
             if (res.isSuccess) {
                 console.log("res:", res.data)
-                dispatch(setQuizOfClassStudent (res.data));
+                dispatch(setQuizOfClassStudent(res.data));
             } else {
                 throw new Error(res.message);
             }
@@ -193,6 +199,41 @@ export const GetQuizDataAndScoreByClassIdActionAsync = (classId) => {
         } catch (error) {
             console.error("Error fetching class details:", error);
             message.error("Đã xảy ra lỗi khi lấy thông tin bài kiểm tra!");
+        }
+    };
+};
+
+export const GetAvailableClassesByCourseIdActionAsync = (courseId) => {
+    return async (dispatch) => {
+        try {
+            console.log("GetAvailableClassesByCourseIdActionAsync: courseId", courseId)
+            const res = await httpClient.get(`/api/v1/classes/courses/${courseId}`);
+            console.log("GetAvailableClassesByCourseIdActionAsync: res", res)
+
+            if (res.isSuccess) {
+                dispatch(setAvailableClasses(res.data));
+            } else {
+                throw new Error(res.message);
+            }
+        } catch (error) {
+            console.error("Error fetching available classes:", error);
+            message.error("Đã xảy ra lỗi khi lấy danh sách lớp học!");
+        }
+    };
+};
+
+export const AddStudentsToClassActionAsync = (classId, studentIds) => {
+    return async () => {
+        try {
+            const res = await httpClient.post(`/api/v1/classes/${classId}/users`, { studentId: studentIds });
+            if (res.isSuccess) {
+                message.success("Thêm học sinh vào lớp thành công!");
+            } else {
+                throw new Error(res.message);
+            }
+        } catch (error) {
+            console.error("Error adding students to class:", error);
+            message.error("Đã xảy ra lỗi khi thêm học sinh vào lớp!");
         }
     };
 };

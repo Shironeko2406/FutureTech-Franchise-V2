@@ -1,6 +1,6 @@
-import { Button, Select, Table, Input, Popconfirm, Space, Typography, Spin } from "antd";
 import React, { useEffect, useState } from "react";
-import { DeleteOutlined, EditOutlined, UsergroupAddOutlined, CloseCircleOutlined, RightCircleOutlined } from "@ant-design/icons";
+import { Button, Dropdown, Menu, Select, Table, Input, Popconfirm, Space, Typography, Spin } from "antd";
+import { DeleteOutlined, EditOutlined, UsergroupAddOutlined, CloseCircleOutlined, RightCircleOutlined, DownOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { GetStudentConsultationActionAsync, UpdateStudentStatusAsync, UpdateStudentRegistrationAsync } from "../../../Redux/ReducerAPI/RegisterCourseReducer";
 import { GetAllCoursesAvailableActionAsync } from "../../../Redux/ReducerAPI/CourseReducer";
@@ -8,6 +8,7 @@ import CreatePaymentCourseModal from "../../Modal/CreatePaymentCourseModal";
 import { CreateStudentPaymentActionAsync } from "../../../Redux/ReducerAPI/PaymentReducer";
 import AddToClassModal from "../../Modal/AddToClassModal";
 import StudentRegistrationDetailsModal from "../../Modal/StudentRegistrationDetailsModal";
+import AddToClassWithoutCreateModal from "../../Modal/AddToClassWithoutCreateModal";
 
 const { Text } = Typography;
 
@@ -31,6 +32,9 @@ const StudentConsultationRegistration = () => {
     const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
     const [selectedStudentDetails, setSelectedStudentDetails] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
+    const [selectedStudentId, setSelectedStudentId] = useState(null);
+    const [selectedCourseId, setSelectedCourseId] = useState(null);
+    const [isAddToClassWithoutCreateModalVisible, setIsAddToClassWithoutCreateModalVisible] = useState(false);
 
     useEffect(() => {
         setLoading(true);
@@ -55,14 +59,6 @@ const StudentConsultationRegistration = () => {
         setIsFilterApplied(!!newCourse);
         setSelectedStudentStatus(filters.studentStatus ? filters.studentStatus[0] : null);
         console.log(filters.studentStatus);
-    };
-
-    //handle edit
-    const handleUpdate = () => {
-        // Hiển thị modal với dữ liệu của slot đang chỉnh sửa
-    };
-
-    const handleDelete = (id) => {
     };
 
     // Row selection logic
@@ -213,6 +209,10 @@ const StudentConsultationRegistration = () => {
 
     // Function to handle status registration
     const renderActionButtons = (status, record) => {
+        if (status === 'Cancel') {
+            return null; // Do not render the button if status is Cancel
+        }
+
         const handleUpdateStatus = (newStatus) => {
             dispatch(UpdateStudentStatusAsync(record.userId, newStatus, record.courseId))
                 .then(() => {
@@ -224,11 +224,6 @@ const StudentConsultationRegistration = () => {
                 });
         };
 
-        const handleJoinClass = () => {
-            setSelectedRowKeys([record.userId]);
-            setIsAddToClassModalVisible(true);
-        };
-
         const handleCancelRegistration = () => {
             dispatch(UpdateStudentStatusAsync(record.userId, 'Cancel', record.courseId))
                 .then(() => {
@@ -236,55 +231,36 @@ const StudentConsultationRegistration = () => {
                 });
         };
 
-        switch (status) {
-            case 'NotConsult':
-                return (
-                    <>
-                        <Button onClick={() => handleUpdateStatus('Pending')} type="primary">Đang tư vấn</Button>
-                        <Popconfirm
-                            title="Bạn có chắc chắn muốn hủy đăng ký này không?"
-                            onConfirm={handleCancelRegistration}
-                            okText="Đồng ý"
-                            cancelText="Hủy"
-                        >
-                            <Button type="default" style={{ marginLeft: 8 }}>Hủy</Button>
-                        </Popconfirm>
-                    </>
-                );
+        const menu = (
+            <Menu>
+                {status === 'NotConsult' && (
+                    <Menu.Item key="pending" onClick={() => handleUpdateStatus('Pending')}>
+                        Đang tư vấn
+                    </Menu.Item>
+                )}
+                {status === 'Pending' && (
+                    <Menu.Item key="waitlisted" onClick={() => handleWaitlistedClick(record.id, record.courseCode, record.coursePrice, record.courseId)}>
+                        Chờ xếp lớp
+                    </Menu.Item>
+                )}
+                {status === 'Waitlisted' && (
+                    <Menu.Item key="joinClass" onClick={() => handleJoinClass(record.userId, record.courseId)}>
+                        Vào lớp
+                    </Menu.Item>
+                )}
+                <Menu.Item key="cancel" onClick={handleCancelRegistration}>
+                    Hủy
+                </Menu.Item>
+            </Menu>
+        );
 
-            case 'Pending':
-                return (
-                    <>
-                        <Button onClick={() => handleWaitlistedClick(record.id, record.courseCode, record.coursePrice, record.courseId)} type="primary">Chờ xếp lớp</Button>
-                        <Popconfirm
-                            title="Bạn có chắc chắn muốn hủy đăng ký này không?"
-                            onConfirm={handleCancelRegistration}
-                            okText="Đồng ý"
-                            cancelText="Hủy"
-                        >
-                            <Button type="default" style={{ marginLeft: 8 }}>Hủy</Button>
-                        </Popconfirm>
-                    </>
-                );
-
-            case 'Waitlisted':
-                return (
-                    <>
-                        <Button onClick={handleJoinClass} type="primary">Vào lớp</Button>
-                        <Popconfirm
-                            title="Bạn có chắc chắn muốn hủy đăng ký này không?"
-                            onConfirm={handleCancelRegistration}
-                            okText="Đồng ý"
-                            cancelText="Hủy"
-                        >
-                            <Button type="default" style={{ marginLeft: 8 }}>Hủy</Button>
-                        </Popconfirm>
-                    </>
-                );
-
-            default:
-                return null;
-        }
+        return (
+            <Dropdown overlay={menu} trigger={['click']}>
+                <Button>
+                    Chuyển trạng thái <DownOutlined />
+                </Button>
+            </Dropdown>
+        );
     };
 
     const handleRowClick = (record) => {
@@ -331,6 +307,20 @@ const StudentConsultationRegistration = () => {
             courseId: studentDetails.courseId
         });
         setIsDetailModalVisible(false); // Ensure detail modal is closed
+    };
+
+    const handleJoinClass = (studentId, courseId) => {
+        setSelectedStudentId(studentId);
+        setSelectedCourseId(courseId);
+        setIsAddToClassWithoutCreateModalVisible(true);
+    };
+
+    // Function to map selectedRowKeys (ids) to userIds
+    const getSelectedUserIds = () => {
+        return selectedRowKeys.map(id => {
+            const selectedRecord = studentConsultations.find(record => record.id === id);
+            return selectedRecord ? selectedRecord.userId : null;
+        }).filter(userId => userId !== null);
     };
 
     const columns = [
@@ -408,7 +398,7 @@ const StudentConsultationRegistration = () => {
             filterMultiple: false,
         },
         {
-            title: "Chuyển trạng thái",
+            title: "Thao tác",
             dataIndex: "studentStatus",
             key: "action",
             render: (text, record) => renderActionButtons(text, record),
@@ -448,7 +438,7 @@ const StudentConsultationRegistration = () => {
                         rowSelection={rowSelection}
                         columns={columns}
                         dataSource={studentConsultations}
-                        rowKey={(record) => record.userId}
+                        rowKey={(record) => record.id}
                         pagination={{
                             current: pageIndex,
                             pageSize,
@@ -474,7 +464,7 @@ const StudentConsultationRegistration = () => {
                 <AddToClassModal
                     visible={isAddToClassModalVisible}
                     onClose={() => setIsAddToClassModalVisible(false)}
-                    listStudents={selectedRowKeys} // Truyền danh sách học sinh đã chọn vào modal
+                    listStudents={getSelectedUserIds()} // Map selectedRowKeys to userIds
                     courseId={selectedCourse}
                     onClassCreated={handleReloadTableAfterCreateClass} // Thêm dòng này
                 />
@@ -491,6 +481,13 @@ const StudentConsultationRegistration = () => {
                     spinning={isEditing}
                     onCompletePayment={handleCompletePayment} // Add this line
                     paymentStatus={selectedStudentDetails?.paymentStatus} // Add this line
+                />
+
+                <AddToClassWithoutCreateModal
+                    visible={isAddToClassWithoutCreateModalVisible}
+                    onClose={() => setIsAddToClassWithoutCreateModalVisible(false)}
+                    studentId={selectedStudentId}
+                    courseId={selectedCourseId}
                 />
             </div>
         </div>

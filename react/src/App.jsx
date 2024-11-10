@@ -100,7 +100,7 @@ function App() {
                   <Route path="classes" element={<ClassManagement />} />
                   <Route path="classes/:id" element={<ClassDetail />} />
                   <Route path="schedules" element={<ScheduleAgencyManager />} />
-                  <Route path="dashboard" element={<AgencyDashboardPage />} />
+                  <Route path="" element={<AgencyDashboardPage />} />
                 </Route>
               </Route>
 
