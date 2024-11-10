@@ -101,7 +101,7 @@ const QuizList = () => {
             <Tooltip title="Điểm của bạn">
               <Space>
                 <TrophyOutlined />
-                <Text>{quiz.scores.scoreNumber} / 10</Text>
+                <Text>{(quiz.scores.scoreNumber).toFixed(0)} / 10</Text>
               </Space>
             </Tooltip>
             <Tooltip title="Feedback available">

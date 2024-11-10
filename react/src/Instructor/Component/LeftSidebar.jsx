@@ -33,7 +33,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
       ],
     })),
     { type: "section", label: "Lịch dạy", icon: "ti ti-dots" },
-
+    { type: 'link', label: 'Lịch dạy', path: '/instructor/schedules', icon: 'mdi:clock' },
   ];
 
 
