@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Table } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import CreateChapterModal from "../Modal/CreateChapterModal";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   EditOutlined,
   DeleteOutlined,
@@ -18,6 +18,7 @@ import CreateMaterialModal from "../Modal/CreateMaterialModal";
 const ViewChapter = () => {
   const { chapters } = useSelector((state) => state.CourseReducer);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { id } = useParams();
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
   const [selectedChapter, setSelectedChapter] = useState(null);
@@ -81,12 +82,12 @@ const ViewChapter = () => {
       title: "Mô tả",
       dataIndex: "description",
       key: "description",
-      width: "45%",
+      width: "50%",
     },
     {
       title: "Hành động",
       key: "action",
-      width: "20%",
+      width: "10%",
       render: (_, record) => (
         <Space size="middle">
           <Button
@@ -112,6 +113,20 @@ const ViewChapter = () => {
             onClick={() => showModalCreateMaterialChapter(record)}
           />
         </Space>
+      ),
+    },
+    {
+      title: "Xem câu hỏi",
+      key: "viewQuestions",
+      width: "10%",
+      align: "center",
+      render: (_, record) => (
+        <Button
+          type="link"
+          onClick={() => navigate(`/manager/course-detail/${id}/questions?chapterId=${record.id}`)}
+        >
+          Xem câu hỏi
+        </Button>
       ),
     },
   ];

@@ -101,7 +101,7 @@ const QuizList = () => {
             <Tooltip title="Điểm của bạn">
               <Space>
                 <TrophyOutlined />
-                <Text>{quiz.scores.scoreNumber} / 10</Text>
+                <Text>{(quiz.scores.scoreNumber).toFixed(0)} / 10</Text>
               </Space>
             </Tooltip>
             <Tooltip title="Feedback available">
@@ -154,7 +154,7 @@ const QuizList = () => {
               <List.Item>
                 <Card
                   hoverable
-                  className="h-100"
+                  style={{ height: '300px' }} // Thiết lập chiều cao cố định
                   cover={
                     <div style={{ background: '#1890ff', padding: '12px', color: 'white' }}>
                       <Space>

@@ -28,12 +28,12 @@ const LeftSidebar = ({ onSidebarToggle }) => {
       subItems: [
         { label: "Chi tiết lớp học", path: `/instructor/class/${classItem.classId}` },
         { label: "Bài kiểm tra", path: `/instructor/class/${classItem.classId}/quiz` },
-        { label: "Bài đánh giá", path: `/instructor/class/${classItem.classId}` },
+        { label: "Bài tập", path: `/instructor/class/${classItem.classId}/assignment` },
         { label: "Điểm danh", path: `/instructor/class/${classItem.classId}` },
       ],
     })),
     { type: "section", label: "Lịch dạy", icon: "ti ti-dots" },
-
+    { type: 'link', label: 'Lịch dạy', path: '/instructor/schedules', icon: 'mdi:clock' },
   ];
 
 

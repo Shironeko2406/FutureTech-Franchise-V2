@@ -29,11 +29,12 @@ const LeftSidebar = ({ onSidebarToggle }) => {
       label: classItem.className, 
       icon: "mdi:school",
       subItems: [
-        { label: "Xem Tài nguyên", path: `/student/class/${classItem.classId}` },
         { label: "Bài kiểm tra", path: `/student/class/${classItem.classId}` },
+        { label: "Bài tập nộp", path: `/student/class/${classItem.classId}` },
       ],
     })),
     { type: "section", label: "Lịch học", icon: "ti ti-dots" },
+    { type: 'link', label: 'Lịch học', path: '/student/schedules', icon: 'mdi:clock' },
   ];
 
 

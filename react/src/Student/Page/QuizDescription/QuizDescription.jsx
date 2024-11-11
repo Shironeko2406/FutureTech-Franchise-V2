@@ -95,7 +95,7 @@ const QuizDescription = ()  => {
           <Card>
             <Statistic
               title="Điểm số"
-              value={quizReview.scores.scoreNumber}
+              value={(quizReview.scores.scoreNumber).toFixed(0)}
               suffix="/ 10"
               prefix={<TrophyOutlined />}
               valueStyle={{
