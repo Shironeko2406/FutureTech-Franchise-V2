@@ -52,6 +52,9 @@ import AttendancePage from "./Instructor/Page/AttendancePage/AttendancePage";
 import AgencyDashboardPage  from "./AgencyManager/Page/AgencyDashboard/AgencyDashboardpage";
 import ClassDetailInstructor from "./Instructor/Page/ClassDetailInstructor/ClassDetailInstructor";
 import QuizOfClass from "./Instructor/Page/QuizOfClass.jsx/QuizOfClass";
+import AssignmentOfClass from "./Instructor/Page/AssignmentOfClass/AssignmentOfClass";
+import ViewQuestionChapterManager from "./Manager/Page/ViewQuestionChapterManager/ViewQuestionChapterManager";
+import ViewQuestionChapterSystemInstructor from "./SystemInstructor/Page/ViewQuestionChapterSystemInstructor/ViewQuestionChapterSystemInstructor";
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -61,8 +64,6 @@ const LoadingOverlay = () => {
     </div>
   ) : null;
 };
-
-
 
 function App() {
   return (
@@ -120,6 +121,7 @@ function App() {
                 <Route path="instructor" element={<TempUIInstructor />}>
                   <Route path="class/:id" element={<ClassDetailInstructor />} />
                   <Route path="class/:id/quiz" element={<QuizOfClass/>} />
+                  <Route path="class/:id/assignment" element={<AssignmentOfClass/>} />
                   <Route path="" element={<HomeInstructor />} />
                   <Route path="schedule" element={<ScheduleTeaching />} />
                   <Route path="schedules" element={<ScheduleInstructor />} />
@@ -134,6 +136,7 @@ function App() {
                   <Route path="course-category" element={<CourseCategoryManager />} />
                   <Route path="course" element={<CourseManage />} />
                   <Route path="course-detail/:id" element={<CourseDetailManager />} />
+                  <Route path="course-detail/:id/questions" element={<ViewQuestionChapterManager/>} />
                   <Route path="slot" element={<SlotManager />} />
                 </Route>
               </Route>
@@ -143,6 +146,7 @@ function App() {
                   <Route path="" element={<HomeSystemInstructor />} />
                   <Route path="course" element={<CourseSystemInstructor />} />
                   <Route path="course-detail/:id" element={<CourseDetailSystemInstructor />} />
+                  <Route path="course-detail/:id/questions" element={<ViewQuestionChapterSystemInstructor/>} />
 
                 </Route>
               </Route>

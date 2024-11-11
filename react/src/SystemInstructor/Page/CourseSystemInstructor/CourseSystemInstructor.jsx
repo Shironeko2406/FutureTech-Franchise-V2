@@ -1,37 +1,14 @@
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Select,
-  Table,
-  Input,
-  Dropdown,
-  Tag,
-  Popconfirm,
-  Space,
-} from "antd";
+import { Button, Select, Table, Input, Dropdown, Tag, Popconfirm, Space } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  CreateCourseCloneByIdActionAsync,
-  DeleteCourseByIdActionAsync,
-  GetCourseActionAsync,
-  UpdateStatusCourseActionAsync,
-} from "../../../Redux/ReducerAPI/CourseReducer";
-import {
-  BookOutlined,
-  ClockCircleOutlined,
-  CopyOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  EllipsisOutlined,
-  PlusOutlined,
-  SearchOutlined,
-  UploadOutlined,
-} from "@ant-design/icons";
+import { CreateCourseCloneByIdActionAsync, DeleteCourseByIdActionAsync, GetCourseActionAsync, UpdateStatusCourseActionAsync } from "../../../Redux/ReducerAPI/CourseReducer";
+import { BookOutlined, ClockCircleOutlined, CopyOutlined, DeleteOutlined, EditOutlined, EllipsisOutlined, SearchOutlined, UploadOutlined } from "@ant-design/icons";
 import CreateCourseModal from "../../Modal/CreateCourseModal";
 import { GetCourseCategoryActionAsync } from "../../../Redux/ReducerAPI/CourseCategoryReducer";
 import { NavLink } from "react-router-dom";
 import { useLoading } from "../../../Utils/LoadingContext";
 import SendFileCourseDetailModal from "../../Modal/SendFileCourseDetailModal";
+
 
 const statusItems = [
   {
@@ -64,9 +41,9 @@ const CourseSystemInstructor = () => {
       .finally(() => setLoading(false)); //
   }, [status, pageIndex, pageSize, searchTerm]);
 
-  const handleStatusChange = (value) => {
+  const handleStatusFilter = (value) => {
     setStatus(value);
-    setPageIndex(1);
+    setPageIndex(1); // Reset page index when filter is applied
   };
 
   const handlePageChange = (page, pageSize) => {
@@ -261,6 +238,40 @@ const CourseSystemInstructor = () => {
       dataIndex: "status",
       key: "status",
       align: "center",
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+        <div style={{ padding: 8, minWidth: 240 }}>
+          <Space>
+            <Select
+              style={{ width: 160 }}
+              onChange={(value) => {
+                setSelectedKeys([value]);
+                confirm();
+                handleStatusFilter(value);
+              }}
+              value={status}
+              options={[
+                {value: "", label: 'Tất cả'},
+                {value: "Draft", label: 'Nháp'},
+                {value: "PendingApproval", label: 'Chờ duyệt'},
+                {value: "AvailableForFranchise", label: 'Công khai'},
+                {value: "TemporarilySuspended", label: 'Tạm ngừng'},
+                {value: "Closed", label: 'Đã đóng'},
+              ]}
+            />
+            <Button
+              type="link"
+              size="small"
+              style={{ width: '100%' }}
+              onClick={() => {
+                clearFilters();
+                handleStatusFilter("");
+              }}
+            >
+              Bỏ lọc
+            </Button>
+          </Space>
+        </div>
+      ),
       render: (status) => {
         let color = "";
         let text = "";
@@ -352,37 +363,7 @@ const CourseSystemInstructor = () => {
     <div>
       <div className="card">
         <div className="card-body">
-          <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3">
-            <h5 className="card-title mb-2 mb-md-0">Quản lý khóa học</h5>
-            <div className="d-flex align-items-center flex-wrap">
-              <Button
-                type="primary"
-                icon={<UploadOutlined />}
-                className="me-2 mb-2 mb-md-0"
-                onClick={showModalUpload}
-              >
-                Thêm File
-              </Button>
-
-              <Select
-                defaultValue={status}
-                style={{ width: 150 }}
-                onChange={handleStatusChange}
-              >
-                <Select.Option value="">Tất cả</Select.Option>
-                <Select.Option value="Draft">Nháp</Select.Option>
-                <Select.Option value="PendingApproval">Chờ duyệt</Select.Option>
-                <Select.Option value="AvailableForFranchise">
-                  Công khai
-                </Select.Option>
-                <Select.Option value="TemporarilySuspended">
-                  Tạm đóng
-                </Select.Option>
-                <Select.Option value="Closed">Đóng</Select.Option>
-              </Select>
-            </div>
-          </div>
-
+          <h5 className="card-title mb-3">Quản lý khóa học</h5>
           <Space style={{ marginBottom: 16 }}>
               <Button
                 type="primary"
@@ -390,6 +371,14 @@ const CourseSystemInstructor = () => {
                 onClick={showDrawer}
               >
                 Thêm khóa học
+              </Button>
+              <Button
+                type="primary"
+                icon={<UploadOutlined />}
+                className="me-2 mb-2 mb-md-0"
+                onClick={showModalUpload}
+              >
+                Thêm File
               </Button>
           </Space>
 

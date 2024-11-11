@@ -15,6 +15,8 @@ import ChapterReducer from "./ReducerAPI/ChapterReducer";
 import QuizReducer from "./ReducerAPI/QuizReducer";
 import AttendanceReducer from "./ReducerAPI/AttendanceReducer";
 import AgencyDashboardReducer from "./ReducerAPI/AgencyDashboardReducer";
+import AssignmentReducer from "./ReducerAPI/AssignmentReducer";
+import QuestionReducer from "./ReducerAPI/QuestionReducer";
 
 export const store = configureStore({
   reducer: {
@@ -34,6 +36,8 @@ export const store = configureStore({
     ChapterReducer,
     QuizReducer,
     AttendanceReducer,
-    AgencyDashboardReducer
+    AgencyDashboardReducer,
+    AssignmentReducer,
+    QuestionReducer,
   },
 });

@@ -154,7 +154,7 @@ const QuizList = () => {
               <List.Item>
                 <Card
                   hoverable
-                  className="h-100"
+                  style={{ height: '300px' }} // Thiết lập chiều cao cố định
                   cover={
                     <div style={{ background: '#1890ff', padding: '12px', color: 'white' }}>
                       <Space>

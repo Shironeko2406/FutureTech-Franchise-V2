@@ -53,6 +53,30 @@ export const GetCourseActionAsync = (search, status, pageIndex, pageSize) => {
   };
 };
 
+//-----------TEST----------------------
+
+export const GetCourseTestActionAsync = (search, status, pageIndex, pageSize) => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.get(`/api/v1/courses`, {
+        params: {
+          Search: search,
+          Status: status,
+          PageIndex: pageIndex,
+          PageSize: pageSize,
+        },
+      });
+      console.log(res.data);
+      dispatch(setCourse(res.data));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+};
+//--------------------------------------
+
+
+
 export const GetCourseByIdActionAsync = (id) => {
   return async (dispatch) => {
     try {
