@@ -35,3 +35,22 @@ export const DeleteQuestionByIdActionAsync = (questionId, chapterId) => {
       }
     };
   };
+
+  export const EditQuestionByIdActionAsync = (questionId, dataEdit, chapterId) => {
+    return async (dispatch) => {
+      try {
+        const res = await httpClient.put(`/api/v1/questions/${questionId}`, dataEdit);
+        if (res.isSuccess && res.data) {
+          message.success(`${res.message}`);
+          await dispatch(GetQuestionBankByChapterId(chapterId));
+          return true;
+        } else {
+          message.error(`Lỗi hệ thống`);
+          return false;
+        }
+      } catch (error) {
+        message.error(`Lỗi hệ thống`);
+        return false;
+      }
+    };
+  };
