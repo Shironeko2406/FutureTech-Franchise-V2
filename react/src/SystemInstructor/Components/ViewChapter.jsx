@@ -1,10 +1,10 @@
-import { Button, Popconfirm, Space } from "antd";
+import { Button, Dropdown, Popconfirm, Space } from "antd";
 import React, { useState } from "react";
 import { Table } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import CreateChapterModal from "../Modal/CreateChapterModal";
 import { Link, useNavigate } from "react-router-dom";
-import { EditOutlined, DeleteOutlined, FileAddOutlined } from "@ant-design/icons";
+import { EditOutlined, DeleteOutlined, FileAddOutlined, EllipsisOutlined } from "@ant-design/icons";
 import { useParams } from "react-router-dom";
 import { DeleteChapterActionAsync } from "../../Redux/ReducerAPI/ChapterReducer";
 import EditChapterModal from "../Modal/EditChapterModal";
@@ -22,6 +22,35 @@ const ViewChapter = () => {
   const [isModalEditChapterVisible, setIsModalEditChapterVisible] = useState(false);
   const [isModalCreateMaterialVisible, setsModalCreateMaterialVisible] = useState(false);
   const { setLoading } = useLoading();
+
+  const getActionItems = () => [
+    {
+      label: "Sửa",
+      key: "edit",
+      icon: <EditOutlined style={{ color: "#faad14" }} />,
+    },
+    {
+      label: "Xóa",
+      key: "delete",
+      icon: <DeleteOutlined style={{ color: "red" }} />,
+    },
+    {
+      label: "Thêm tài liệu",
+      key: "addMaterial",
+      icon: <FileAddOutlined style={{ color: "#1890ff" }} />,
+    },
+  ];
+
+  const handleMenuClick = (record, key) => {
+    if (key === "edit") {
+      showModalEditChapter(record);
+    } else if (key === "delete") {
+      // Xác nhận xóa
+      handleDelete(record.id);
+    } else if (key === "addMaterial") {
+      showModalCreateMaterialChapter(record);
+    }
+  };
 
   const handleDelete = async (chapterId) => {
     setLoading(true);
@@ -84,31 +113,20 @@ const ViewChapter = () => {
       title: "Hành động",
       key: "action",
       width: "10%",
+      align: "center",
       render: (_, record) => (
-        <Space size="middle">
+        <Dropdown
+          menu={{
+            items: getActionItems(),
+            onClick: ({ key }) => handleMenuClick(record, key),
+          }}
+        >
           <Button
-            type="default"
-            icon={<EditOutlined />}
-            style={{ backgroundColor: "#faad14", color: "#fff" }} // Warning color
-            onClick={() => showModalEditChapter(record)}
+            type="primary"
+            icon={<EllipsisOutlined />}
+            style={{ backgroundColor: "#50e3c2", color: "#0A5A5A" }}
           />
-
-          <Popconfirm
-            title="Bạn muốn xóa chương này?"
-            onConfirm={() => handleDelete(record.id)}
-            okText="Đồng ý"
-            cancelText="Hủy"
-          >
-            <Button type="primary" danger icon={<DeleteOutlined />} />
-          </Popconfirm>
-
-          <Button
-            type="default"
-            icon={<FileAddOutlined />}
-            style={{ color: "#fff", backgroundColor: "#1890ff" }}
-            onClick={() => showModalCreateMaterialChapter(record)}
-          />
-        </Space>
+        </Dropdown>
       ),
     },
     {
@@ -121,7 +139,7 @@ const ViewChapter = () => {
           type="link"
           onClick={() => navigate(`/system-instructor/course-detail/${id}/questions?chapterId=${record.id}`)}
         >
-          Xem câu hỏi
+          Chi tiết
         </Button>
       ),
     },

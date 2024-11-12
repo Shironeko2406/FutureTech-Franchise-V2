@@ -116,7 +116,7 @@ const SendFileCourseDetailModal = ({
             getValueFromEvent={(e) => e.fileList}
             rules={[{ required: true, message: "Vui lòng tải lên file" }]}
           >
-            <Upload accept=".xlsx" maxCount={1} customRequest={handleUpload}>
+            <Upload accept=".xlsx" maxCount={1} customRequest={handleUpload} className="d-flex gap-2">
               <Button icon={<UploadOutlined />}>Chọn file</Button>
             </Upload>
           </Form.Item>
@@ -127,7 +127,7 @@ const SendFileCourseDetailModal = ({
             getValueFromEvent={(e) => e.fileList}
             rules={[{ required: true, message: "Vui lòng tải lên file" }]}
           >
-            <Upload accept=".xlsx" maxCount={1} customRequest={handleUpload}>
+            <Upload accept=".xlsx" maxCount={1} customRequest={handleUpload} className="d-flex gap-2">
               <Button icon={<UploadOutlined />}>Chọn file</Button>
             </Upload>
           </Form.Item>
@@ -138,7 +138,7 @@ const SendFileCourseDetailModal = ({
             getValueFromEvent={(e) => e.fileList}
             rules={[{ required: true, message: "Vui lòng tải lên file" }]}
           >
-            <Upload accept=".xlsx" maxCount={1} customRequest={handleUpload}>
+            <Upload accept=".xlsx" maxCount={1} customRequest={handleUpload} className="d-flex gap-2">
               <Button icon={<UploadOutlined />}>Chọn file</Button>
             </Upload>
           </Form.Item>
