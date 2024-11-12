@@ -1,19 +1,13 @@
-import React, { useState } from "react";
-import { Button, Modal, Form, Input, Switch, Space, Upload, message } from "antd";
-import {
-  PlusOutlined,
-  MinusCircleOutlined,
-  CheckOutlined,
-  CloseOutlined,
-  UploadOutlined,
-} from "@ant-design/icons";
+import React, { useEffect, useState } from "react";
+import { Button, Form, Input, Modal, Space, Switch, Upload, message } from "antd";
 import { useDispatch } from "react-redux";
 import { useLocation } from "react-router-dom";
-import { CreateQuestionChapterByIdActionAsync } from "../../Redux/ReducerAPI/ChapterReducer";
-import { useLoading } from "../../Utils/LoadingContext";
-import { imageDB } from "../../Firebasse/Config";
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import styled from "styled-components";
+import { useLoading } from "../../Utils/LoadingContext";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { imageDB } from "../../Firebasse/Config";
+import { CheckOutlined, CloseOutlined, MinusCircleOutlined, PlusOutlined, UploadOutlined } from "@ant-design/icons";
+import { EditQuestionByIdActionAsync } from "../../Redux/ReducerAPI/QuestionReducer";
 
 const StyledModal = styled(Modal)`
   .ant-modal-content {
@@ -51,7 +45,7 @@ const StyledSwitch = styled(Switch)`
   }
 `;
 
-const CreateQuestionModal = ({ visible, onClose }) => {
+const EditQuestionModal = ({ visible, onClose, question }) => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const location = useLocation();
@@ -59,6 +53,30 @@ const CreateQuestionModal = ({ visible, onClose }) => {
   const queryParams = new URLSearchParams(location.search);
   const chapterId = queryParams.get("chapterId");
   const [imageUrl, setImageUrl] = useState("");
+  const [fileList, setFileList] = useState([]);
+
+  useEffect(() => {
+    if (question && visible) {
+      form.setFieldsValue({
+        description: question.description,
+        imageURL: question.imageURL,
+        questionOptions: question.questionOptions,
+      });
+      setImageUrl(question.imageURL);
+      if (question.imageURL) {
+        setFileList([
+          {
+            uid: '-1',
+            name: 'image.png',
+            status: 'done',
+            url: question.imageURL,
+          },
+        ]);
+      } else {
+        setFileList([]);
+      }
+    }
+  }, [question, form]);
 
   const handleUpload = ({ file, onSuccess, onError }) => {
     const storageRef = ref(imageDB, `images/${file.name}`);
@@ -76,6 +94,14 @@ const CreateQuestionModal = ({ visible, onClose }) => {
         try {
           const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
           setImageUrl(downloadURL);
+          setFileList([
+            {
+              uid: file.uid,
+              name: file.name,
+              status: 'done',
+              url: downloadURL,
+            },
+          ]);
           form.setFieldsValue({ imageURL: downloadURL });
           message.success("Upload successful!");
           onSuccess(null, file);
@@ -89,18 +115,16 @@ const CreateQuestionModal = ({ visible, onClose }) => {
   };
 
   const onFinish = (values) => {
-    const formData = {
-      ...values,
-      imageURL: imageUrl,
+    const dataEdit = {
+        ...values,
+        imageURL: imageUrl,
     };
     setLoading(true);
-    dispatch(CreateQuestionChapterByIdActionAsync(chapterId, formData))
+    dispatch(EditQuestionByIdActionAsync(question.id, dataEdit, chapterId))
       .then((res) => {
         setLoading(false);
         if (res) {
           onClose();
-          form.resetFields();
-          setImageUrl("");
         }
       })
       .catch((err) => {
@@ -111,7 +135,7 @@ const CreateQuestionModal = ({ visible, onClose }) => {
 
   return (
     <StyledModal
-      title="Tạo câu hỏi"
+      title="Sửa câu hỏi"
       width={700}
       style={{ top: 20 }}
       onCancel={onClose}
@@ -122,12 +146,17 @@ const CreateQuestionModal = ({ visible, onClose }) => {
             Hủy
           </Button>
           <Button onClick={() => form.submit()} type="primary">
-            Tạo
+            Sửa
           </Button>
         </div>
       }
     >
-      <StyledForm form={form} layout="vertical" onFinish={onFinish} requiredMark={false}>
+      <StyledForm
+        form={form}
+        layout="vertical"
+        onFinish={onFinish}
+        requiredMark={false}
+      >
         <Form.Item
           name="description"
           label="Mô tả câu hỏi"
@@ -140,19 +169,24 @@ const CreateQuestionModal = ({ visible, onClose }) => {
           name="imageURL"
           label="Hình ảnh"
           valuePropName="file"
-          getValueFromEvent={(e) => e && e.file.originFileObj}
+          getValueFromEvent={(e) => e && e.fileList}
         >
           <Upload
             customRequest={handleUpload}
-            listType="picture"
-            maxCount={1}
+            listType="picture-card"
+            fileList={fileList}
             onRemove={() => {
               setImageUrl("");
+              setFileList([]);
               form.setFieldsValue({ imageURL: "" });
             }}
+            onChange={({ fileList }) => setFileList(fileList)}
           >
-            {!imageUrl && (
-              <Button icon={<UploadOutlined />}>Tải lên hình ảnh</Button>
+            {fileList.length >= 1 ? null : (
+              <div>
+                <PlusOutlined />
+                <div style={{ marginTop: 8 }}>Upload</div>
+              </div>
             )}
           </Upload>
         </Form.Item>
@@ -229,4 +263,4 @@ const CreateQuestionModal = ({ visible, onClose }) => {
   );
 };
 
-export default CreateQuestionModal;
+export default EditQuestionModal;

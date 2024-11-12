@@ -7,6 +7,7 @@ import { GetQuestionBankByChapterId } from '../../../Redux/ReducerAPI/ChapterRed
 import { useLoading } from '../../../Utils/LoadingContext'
 import { DeleteQuestionByIdActionAsync } from '../../../Redux/ReducerAPI/QuestionReducer'
 import CreateQuestionModal from '../../Modal/CreateQuestionModal'
+import EditQuestionModal from '../../Modal/EditQuestionModal'
 
 const { Title, Text } = Typography
 
@@ -18,7 +19,8 @@ const ViewQuestionChapterManager = () => {
   const dispatch = useDispatch()
   const { setLoading } = useLoading();
   const [isModalCreateVisible, setIsModalCreateVisible] = useState(false)
-  const [selectedQuestion, setSelectedQuestion] = useState(null)
+  const [isModalEditVisible, setIsModalEditVisible] = useState(false)
+  const [selectedQuestion, setSelectedQuestion] = useState({})
 
   useEffect(() => {
     setLoading(true);
@@ -41,6 +43,16 @@ const ViewQuestionChapterManager = () => {
   const closeModalCreate = () => {
     setIsModalCreateVisible(false);
   };
+  
+  const showModalEdit = (question) => {
+    setIsModalEditVisible(true);
+    setSelectedQuestion(question)
+  };
+
+  const closeModalEdit = () => {
+    setIsModalEditVisible(false);
+    setSelectedQuestion({})
+  };
 
   return (
     <Card>
@@ -60,7 +72,7 @@ const ViewQuestionChapterManager = () => {
                 title={<Text strong>{question.description}</Text>}
                 extra={
                   <Space>
-                    <Button icon={<EditOutlined />} onClick={() => handleEdit(question)}>
+                    <Button icon={<EditOutlined />} onClick={() => showModalEdit(question)}>
                       Cập nhật
                     </Button>
                     <Popconfirm
@@ -108,6 +120,12 @@ const ViewQuestionChapterManager = () => {
       <CreateQuestionModal
         visible={isModalCreateVisible}
         onClose={closeModalCreate}
+      />
+
+      <EditQuestionModal
+        visible={isModalEditVisible}
+        onClose={closeModalEdit}
+        question={selectedQuestion}
       />
     </Card>
   )
