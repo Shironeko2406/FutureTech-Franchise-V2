@@ -55,6 +55,7 @@ import QuizOfClass from "./Instructor/Page/QuizOfClass.jsx/QuizOfClass";
 import AssignmentOfClass from "./Instructor/Page/AssignmentOfClass/AssignmentOfClass";
 import ViewQuestionChapterManager from "./Manager/Page/ViewQuestionChapterManager/ViewQuestionChapterManager";
 import ViewQuestionChapterSystemInstructor from "./SystemInstructor/Page/ViewQuestionChapterSystemInstructor/ViewQuestionChapterSystemInstructor";
+import CourseDetailOfClass from "./Instructor/Page/CourseDetailOfClass.jsx/CourseDetailOfClass";
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -120,6 +121,7 @@ function App() {
               <Route element={<ProtectedRoute requiredRole="Instructor" />}>
                 <Route path="instructor" element={<TempUIInstructor />}>
                   <Route path="class/:id" element={<ClassDetailInstructor />} />
+                  <Route path="class/:id/course-detail" element={<CourseDetailOfClass/>} />
                   <Route path="class/:id/quiz" element={<QuizOfClass/>} />
                   <Route path="class/:id/assignment" element={<AssignmentOfClass/>} />
                   <Route path="" element={<HomeInstructor />} />
