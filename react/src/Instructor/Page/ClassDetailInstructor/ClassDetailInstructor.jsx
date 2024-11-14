@@ -2,6 +2,7 @@ import {
   BookOutlined,
   CalendarOutlined,
   ClockCircleOutlined,
+  FileTextOutlined,
   TagOutlined,
   TeamOutlined,
   UserOutlined,
@@ -9,7 +10,7 @@ import {
 import { Avatar, Button, Card, Col, Popover, Row, Table, Tag, Tooltip, Typography } from "antd";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { NavLink, useNavigate, useParams } from "react-router-dom";
 import { GetClassDetailActionAsync } from "../../../Redux/ReducerAPI/ClassReducer";
 
 const { Title } = Typography;
@@ -219,6 +220,31 @@ const columns = [
                         <Tag color="blue">
                           {classDetail.currentEnrollment}/{classDetail.capacity}
                         </Tag>
+                      </div>
+                    </div>
+                  </div>
+                </Col>
+                <Col xs={24} sm={12}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "20px",
+                    }}
+                  >
+                    <FileTextOutlined
+                      style={{ color: "#1890ff", fontSize: "20px" }}
+                    />
+                    <div>
+                      <div style={{ color: "#8c8c8c", fontSize: "14px" }}>
+                        Tài liệu khóa học
+                      </div>
+                      <div style={{ fontWeight: "500", fontSize: "16px" }}>
+                        <NavLink to={`/instructor/class/${classDetail.classId}/course-detail?courseId=${classDetail.courseId}`}>
+                          <Button type="link" style={{ padding: "0" }}>
+                            Chi tiết
+                          </Button>
+                        </NavLink>
                       </div>
                     </div>
                   </div>

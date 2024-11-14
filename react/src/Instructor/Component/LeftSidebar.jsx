@@ -14,9 +14,9 @@ const LeftSidebar = ({ onSidebarToggle }) => {
   const sidebarItems = [
     { type: "section", label: "Trang chủ", icon: "ti ti-dots" },
     {
-      type: "submenu",
+      type: "link",
       label: "Bảng điều khiển",
-      path: "#",
+      path: "/instructor" ,
       icon: "mdi:view-dashboard",
     },
     { type: "section", label: "Các lớp học", icon: "ti ti-dots" },
@@ -29,7 +29,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
         { label: "Chi tiết lớp học", path: `/instructor/class/${classItem.classId}` },
         { label: "Bài kiểm tra", path: `/instructor/class/${classItem.classId}/quiz` },
         { label: "Bài tập", path: `/instructor/class/${classItem.classId}/assignment` },
-        { label: "Điểm danh", path: `/instructor/class/${classItem.classId}` },
+        { label: "Tài liệu khóa học", path: `/instructor/class/${classItem.classId}` },
       ],
     })),
     { type: "section", label: "Lịch dạy", icon: "ti ti-dots" },
