@@ -58,6 +58,7 @@ import ViewQuestionChapterSystemInstructor from "./SystemInstructor/Page/ViewQue
 import CourseDetailOfClass from "./Instructor/Page/CourseDetailOfClass.jsx/CourseDetailOfClass";
 import CreateContractPage from "./Manager/Page/ManageContract/CreateContractPage";
 import ManageContractPage from "./Manager/Page/ManageContract/ManageContractPage";
+import ManageContractAdminPage from "./Admin/Page/ManageContract/ManageContractAdminPage";
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -92,6 +93,7 @@ function App() {
                   <Route path="course-category" element={<CourseCategoryAdmin />} />
                   <Route path="course" element={<CourseManageAdmin />} />
                   <Route path="profile" element={<Profile />} />
+                  <Route path="contracts" element={<ManageContractAdminPage />} />
                 </Route>
               </Route>
 
@@ -142,7 +144,7 @@ function App() {
                   <Route path="course-detail/:id" element={<CourseDetailManager />} />
                   <Route path="course-detail/:id/questions" element={<ViewQuestionChapterManager/>} />
                   <Route path="slot" element={<SlotManager />} />
-                  <Route path="contract" element={<ManageContractPage />} />
+                  <Route path="contracts" element={<ManageContractPage />} />
                   <Route path="contract/create" element={<CreateContractPage />} />
                 </Route>
               </Route>

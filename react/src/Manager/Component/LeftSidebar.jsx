@@ -8,7 +8,7 @@ const sidebarItems = [
   { type: 'link', label: 'Người dùng', path: '#', icon: 'solar:layers-minimalistic-bold-duotone' },
   { type: 'link', label: 'Khóa học', path: '/manager/course', icon: 'solar:bookmark-square-minimalistic-bold-duotone' },
   { type: 'link', label: 'Lịch học', path: '/manager/slot', icon: 'solar:file-text-bold-duotone' },
-  { type: 'link', label: 'Hợp đồng', path: '/manager/contract', icon: 'clarity:contract-solid' },
+  { type: 'link', label: 'Hợp đồng', path: '/manager/contracts', icon: 'clarity:contract-solid' },
   { type: 'section', label: 'Tư vấn' },
   { type: 'link', label: 'Phê duyệt', path: '/manager/consult', icon: 'solar:login-3-bold-duotone' },
 ];
