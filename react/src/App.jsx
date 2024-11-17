@@ -56,6 +56,8 @@ import AssignmentOfClass from "./Instructor/Page/AssignmentOfClass/AssignmentOfC
 import ViewQuestionChapterManager from "./Manager/Page/ViewQuestionChapterManager/ViewQuestionChapterManager";
 import ViewQuestionChapterSystemInstructor from "./SystemInstructor/Page/ViewQuestionChapterSystemInstructor/ViewQuestionChapterSystemInstructor";
 import CourseDetailOfClass from "./Instructor/Page/CourseDetailOfClass.jsx/CourseDetailOfClass";
+import CreateContractPage from "./Manager/Page/ManageContract/CreateContractPage";
+import ManageContractPage from "./Manager/Page/ManageContract/ManageContractPage";
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -140,6 +142,8 @@ function App() {
                   <Route path="course-detail/:id" element={<CourseDetailManager />} />
                   <Route path="course-detail/:id/questions" element={<ViewQuestionChapterManager/>} />
                   <Route path="slot" element={<SlotManager />} />
+                  <Route path="contract" element={<ManageContractPage />} />
+                  <Route path="contract/create" element={<CreateContractPage />} />
                 </Route>
               </Route>
 
