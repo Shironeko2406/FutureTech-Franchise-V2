@@ -96,6 +96,22 @@ const LeftSidebar = ({ onSidebarToggle }) => {
                 <span className="hide-menu">Giao dịch</span>
               </NavLink>
             </li>
+            <li className="sidebar-item">
+              <NavLink
+                className="sidebar-link"
+                to="student-accounts"
+                aria-expanded="false"
+                activeClassName="active"
+              >
+                <span>
+                  <iconify-icon
+                    icon="mdi:account-group"
+                    className="fs-6"
+                  />
+                </span>
+                <span className="hide-menu">Học sinh</span>
+              </NavLink>
+            </li>
             <li className="nav-small-cap">
               <span className="hide-menu">Lớp học</span>
             </li>

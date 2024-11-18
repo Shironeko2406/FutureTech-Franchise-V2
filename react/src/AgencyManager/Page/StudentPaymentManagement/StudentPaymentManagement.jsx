@@ -1,4 +1,4 @@
-import { Button, Select, Table, Input } from "antd";
+import { Space, Table, Input } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { SearchOutlined } from "@ant-design/icons";
@@ -21,8 +21,8 @@ const StudentPaymentManagement = () => {
         setPageSize(pageSize);
     };
 
-    const handleSearchChange = (e) => {
-        setSearchName(e.target.value);
+    const handleSearch = (value) => {
+        setSearchName(value);
     };
 
     const columns = [
@@ -66,15 +66,15 @@ const StudentPaymentManagement = () => {
             <div className="card">
                 <div className="card-body">
                     <h5 className="card-title mb-3">Thông Tin Thanh Toán</h5>
-                    <div style={{ marginBottom: 16 }}>
-                        <span style={{ marginRight: 8 }}>Tìm kiếm:</span> {/* Thêm chữ "Search" */}
-                        <Input
-                            placeholder="Tìm kiếm tên học viên"
-                            onChange={handleSearchChange}
-                            style={{ width: 300 }}
-                            suffix={<SearchOutlined />}
+                    <Space style={{ marginBottom: 16 }}>
+                        <span style={{ marginRight: 8 }}>Tìm kiếm:</span>
+                        <Input.Search
+                            placeholder="Nhập tên học viên"
+                            onSearch={handleSearch}
+                            style={{ width: 360 }}
+                            enterButton={<SearchOutlined />}
                         />
-                    </div>
+                    </Space>
                     <Table
                         bordered
                         columns={columns}

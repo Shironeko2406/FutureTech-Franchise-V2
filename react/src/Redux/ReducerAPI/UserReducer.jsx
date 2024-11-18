@@ -6,7 +6,9 @@ const initialState = {
   userData: [],
   userProfile: {},
   schedules: [],
-  classOfUserLogin: []
+  classOfUserLogin: [],
+  accounts: [],
+  totalItemsCount: 0
 };
 
 const UserReducer = createSlice({
@@ -22,13 +24,17 @@ const UserReducer = createSlice({
     setSchedules: (state, action) => {
       state.schedules = action.payload;
     },
-    setCLassOfUserLogin: (state, action)=>{
+    setCLassOfUserLogin: (state, action) => {
       state.classOfUserLogin = action.payload
+    },
+    setAccounts: (state, action) => {
+      state.accounts = action.payload.items;
+      state.totalItemsCount = action.payload.totalItemsCount;
     }
   },
 });
 
-export const { setUserData, setUserProfile, setSchedules, setCLassOfUserLogin } = UserReducer.actions;
+export const { setUserData, setUserProfile, setSchedules, setCLassOfUserLogin, setAccounts } = UserReducer.actions;
 
 export default UserReducer.reducer;
 //------------API-CALL-------
@@ -145,6 +151,30 @@ export const GetClassOfStudentLoginActionAsync = () => {
       }
     } catch (error) {
       console.error(error);
+    }
+  };
+};
+
+export const GetAccountsActionAsync = (search, isActive, role, pageIndex, pageSize) => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.get(`/agency-manager/api/v1/users`, {
+        params: {
+          Search: search,
+          IsActive: isActive,
+          Role: role,
+          PageIndex: pageIndex,
+          PageSize: pageSize,
+        },
+      });
+      if (res.isSuccess && res.data) {
+        dispatch(setAccounts(res.data));
+      } else {
+        message.error(`${res.message}`);
+      }
+    } catch (error) {
+      console.error(error);
+      message.error("Không thể lấy danh sách tài khoản, vui lòng thử lại sau.");
     }
   };
 };
