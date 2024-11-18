@@ -3,13 +3,27 @@ import { NavLink } from "react-router-dom";
 
 const LeftSidebar = ({ onSidebarToggle }) => {
 
+  const sidebarItems = [
+    { type: 'section', label: 'Trang chủ', icon: 'ti ti-dots' },
+    { type: 'link', label: 'Doanh thu', path: '/agency-manager', icon: 'solar:home-smile-bold-duotone' },
+    { type: 'section', label: 'Quản lý', icon: 'ti ti-dots' },
+    { type: 'link', label: 'Giảng viên', path: '/agency-manager/instructor-accounts', icon: 'mdi:account-tie' },
+    { type: 'link', label: 'Nhân viên', path: '/agency-manager/agency-staff-accounts', icon: 'mdi:account-tie' },
+    { type: 'link', label: 'Học sinh', path: '/agency-manager/student-accounts', icon: 'mdi:account-group' },
+    { type: 'link', label: 'Giao dịch', path: '/agency-manager/student-payment', icon: 'fluent:payment-20-filled' },
+    { type: 'section', label: 'Lớp học', icon: 'ti ti-dots' },
+    { type: 'link', label: 'Ghi danh', path: '/agency-manager/student-consultation-registration', icon: 'solar:file-text-bold-duotone' },
+    { type: 'link', label: 'Danh sách', path: '/agency-manager/classes', icon: 'ri:file-list-3-fill' },
+    { type: 'link', label: 'Lịch học', path: '/agency-manager/schedules', icon: 'uis:schedule' },
+    { type: 'link', label: 'Slot', path: '/agency-manager/slots', icon: 'mdi:clock' },
+  ];
+
   return (
     <aside className="left-sidebar">
-      {/* Sidebar scroll*/}
       <div>
         <div className="brand-logo d-flex align-items-center justify-content-between">
-          <NavLink to="" className="text-nowrap logo-img">
-            {/* <img src="/assets/images/logos/logo-light.svg" alt="" /> */}
+          <NavLink to="/agency-manager/dashboard" className="text-nowrap logo-img">
+            <img src="/assets/images/logos/FutureTechLogo.png" alt="logo" />
           </NavLink>
           <div
             className="close-btn d-xl-none d-block sidebartoggler cursor-pointer"
@@ -19,170 +33,28 @@ const LeftSidebar = ({ onSidebarToggle }) => {
             <i className="ti ti-x fs-8" />
           </div>
         </div>
-        {/* Sidebar navigation*/}
         <nav className="sidebar-nav scroll-sidebar" data-simplebar>
           <ul id="sidebarnav">
-            <li className="nav-small-cap">
-              <i className="ti ti-dots nav-small-cap-icon fs-6" />
-              <span className="hide-menu">Home</span>
-            </li>
-            <li className="sidebar-item">
-              <NavLink
-                className="sidebar-link"
-                to="/agency-manager"
-                aria-expanded="false"
-              >
-                <span>
-                  <iconify-icon
-                    icon="solar:home-smile-bold-duotone"
-                    className="fs-6"
-                  />
-                </span>
-                <span className="hide-menu">Dashboard</span>
-              </NavLink>
-            </li>
-            <li className="nav-small-cap">
-              <i className="ti ti-dots nav-small-cap-icon fs-6" />
-              <span className="hide-menu">Quản lý</span>
-            </li>
-            <li className="sidebar-item">
-              <NavLink
-                className="sidebar-link"
-                to="#"
-                aria-expanded="false"
-              >
-                <span>
-                  <iconify-icon
-                    icon="solar:layers-minimalistic-bold-duotone"
-                    className="fs-6"
-
-                    activeClassName="active"
-                  />
-                </span>
-                <span className="hide-menu">Người dùng</span>
-              </NavLink>
-            </li>
-            <li className="sidebar-item">
-              <NavLink
-                className="sidebar-link"
-                to="#"
-                aria-expanded="false"
-
-              >
-                <span>
-                  <iconify-icon
-                    icon="solar:layers-minimalistic-bold-duotone"
-                    className="fs-6"
-
-                    activeClassName="active"
-                  />
-                </span>
-                <span className="hide-menu">Giảng viên</span>
-              </NavLink>
-            </li>
-            <li className="sidebar-item">
-              <NavLink
-                className="sidebar-link"
-                to="student-payment"
-                aria-expanded="false"
-                activeClassName="active"
-              >
-                <span>
-                  <iconify-icon
-                    icon="fluent:payment-20-filled"
-                    className="fs-6"
-                  />
-                </span>
-                <span className="hide-menu">Giao dịch</span>
-              </NavLink>
-            </li>
-            <li className="sidebar-item">
-              <NavLink
-                className="sidebar-link"
-                to="student-accounts"
-                aria-expanded="false"
-                activeClassName="active"
-              >
-                <span>
-                  <iconify-icon
-                    icon="mdi:account-group"
-                    className="fs-6"
-                  />
-                </span>
-                <span className="hide-menu">Học sinh</span>
-              </NavLink>
-            </li>
-            <li className="nav-small-cap">
-              <span className="hide-menu">Lớp học</span>
-            </li>
-            <li className="sidebar-item">
-              <NavLink
-                className="sidebar-link"
-                to="student-consultation-registration"
-                aria-expanded="false"
-                activeClassName="active"
-              >
-                <span>
-                  <iconify-icon
-                    icon="solar:file-text-bold-duotone"
-                    className="fs-6"
-                  />
-                </span>
-                <span className="hide-menu">Ghi danh</span>
-              </NavLink>
-            </li>
-            <li className="sidebar-item">
-              <NavLink
-                className="sidebar-link"
-                to="classes"
-                activeClassName="active"
-              >
-                <span>
-                  <iconify-icon
-                    icon="ri:file-list-3-fill"
-                    className="fs-6"
-                  />
-                </span>
-                <span className="hide-menu">Danh sách</span>
-              </NavLink>
-            </li>
-            <li className="sidebar-item">
-              <NavLink
-                className="sidebar-link"
-                to="schedules"
-                aria-expanded="false"
-                activeClassName="active"
-              >
-                <span>
-                  <iconify-icon
-                    icon="uis:schedule"
-                    className="fs-6"
-                  />
-                </span>
-                <span className="hide-menu">Lịch học</span>
-              </NavLink>
-            </li>
-            <li className="sidebar-item">
-              <NavLink
-                className="sidebar-link"
-                to="slots"
-                aria-expanded="false"
-                activeClassName="active"
-              >
-                <span>
-                  <iconify-icon
-                    icon="mdi:clock"
-                    className="fs-6"
-                  />
-                </span>
-                <span className="hide-menu">Slots</span>
-              </NavLink>
-            </li>
+            {sidebarItems.map((item, index) => (
+              item.type === 'section' ? (
+                <li key={index} className="nav-small-cap">
+                  <i className={`${item.icon} nav-small-cap-icon fs-6`} />
+                  <span className="hide-menu">{item.label}</span>
+                </li>
+              ) : (
+                <li key={index} className="sidebar-item">
+                  <NavLink className="sidebar-link" to={item.path} aria-expanded="false">
+                    <span>
+                      <iconify-icon icon={item.icon} className="fs-6" />
+                    </span>
+                    <span className="hide-menu">{item.label}</span>
+                  </NavLink>
+                </li>
+              )
+            ))}
           </ul>
         </nav>
-        {/* End Sidebar navigation */}
       </div>
-      {/* End Sidebar scroll*/}
     </aside>
   );
 };

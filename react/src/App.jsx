@@ -50,6 +50,8 @@ import QuizTest from "./Student/Page/QuizTest/QuizTest";
 import QuizDescription from "./Student/Page/QuizDescription/QuizDescription";
 import AttendancePage from "./Instructor/Page/AttendancePage/AttendancePage";
 import StudentAccountManagement from "./AgencyManager/Page/StudentAccountManagement/StudentAccountManagement";
+import InstructorAccountManagement from "./AgencyManager/Page/InstructorAccountManagement/InstructorAccountManagement";
+import AgencyStaffAccountManagement from "./AgencyManager/Page/AgencyStaffAccountManagement/AgencyStaffAccountManagement";
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -99,6 +101,8 @@ function App() {
                   <Route path="classes/:id" element={<ClassDetail />} />
                   <Route path="schedules" element={<ScheduleAgencyManager />} />
                   <Route path="student-accounts" element={<StudentAccountManagement />} />
+                  <Route path="instructor-accounts" element={<InstructorAccountManagement />} />
+                  <Route path="agency-staff-accounts" element={<AgencyStaffAccountManagement />} />
                 </Route>
               </Route>
 
