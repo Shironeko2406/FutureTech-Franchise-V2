@@ -1,10 +1,11 @@
-
-import { Table, Input, Space, Typography } from "antd";
+import { Table, Input, Space, Typography, Button, Modal, Form, DatePicker, Select, Upload } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { GetAccountsActionAsync } from "../../../Redux/ReducerAPI/UserReducer";
-import { SearchOutlined } from "@ant-design/icons";
+import { GetAccountsActionAsync, CreateAccountActionAsync } from "../../../Redux/ReducerAPI/UserReducer";
+import { SearchOutlined, PlusOutlined } from "@ant-design/icons";
 import { useLoading } from "../../../Utils/LoadingContext";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import CreateAccountModal from "../../Modal/CreateAccountModal";
 
 const { Text } = Typography;
 
@@ -16,6 +17,7 @@ const AgencyStaffAccountManagement = () => {
     const [search, setSearch] = useState("");
     const [isActive, setIsActive] = useState(null);
     const { setLoading } = useLoading();
+    const [isModalVisible, setIsModalVisible] = useState(false);
 
     useEffect(() => {
         setLoading(true);
@@ -114,19 +116,28 @@ const AgencyStaffAccountManagement = () => {
         setSearch(value);
     };
 
+    const handleCreateAccount = async (accountData) => {
+        return await dispatch(CreateAccountActionAsync(accountData));
+    };
+
     return (
         <div className="card">
             <div className="card-body">
                 <h5 className="card-title mb-3">Quản Lý Tài Khoản Nhân Viên</h5>
-                <Space style={{ marginBottom: 16 }}>
-                    <span style={{ marginRight: 8 }}>Tìm kiếm:</span>
-                    <Input.Search
-                        placeholder="Nhập tên đăng nhập, số điện thoại hoặc email"
-                        onSearch={handleSearch}
-                        style={{ width: 360 }}
-                        enterButton={<SearchOutlined />}
-                    />
-                </Space>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
+                    <Space>
+                        <span style={{ marginRight: 8 }}>Tìm kiếm:</span>
+                        <Input.Search
+                            placeholder="Nhập tên đăng nhập, số điện thoại hoặc email"
+                            onSearch={handleSearch}
+                            style={{ width: 360 }}
+                            enterButton={<SearchOutlined />}
+                        />
+                    </Space>
+                    <Button type="primary" onClick={() => setIsModalVisible(true)} icon={<PlusOutlined />}>
+                        Tạo tài khoản
+                    </Button>
+                </div>
                 <Table
                     bordered
                     columns={columns}
@@ -141,6 +152,12 @@ const AgencyStaffAccountManagement = () => {
                         pageSizeOptions: ["10", "20", "50"],
                     }}
                     onChange={handleTableChange}
+                />
+                <CreateAccountModal
+                    visible={isModalVisible}
+                    onClose={() => setIsModalVisible(false)}
+                    onSubmit={handleCreateAccount}
+                    role="AgencyStaff"
                 />
             </div>
         </div>
