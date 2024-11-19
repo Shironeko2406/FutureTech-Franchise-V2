@@ -39,7 +39,7 @@ const recentClasses = [
   { id: 3, name: 'Web Design Fundamentals' },
 ]
 
-export default function HomeInstructor() {
+const HomeInstructor = () => {
   return (
     <div>
       <WelcomeCard>
@@ -102,3 +102,5 @@ export default function HomeInstructor() {
     </div>
   )
 }
+
+export default HomeInstructor;

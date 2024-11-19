@@ -17,6 +17,9 @@ import AttendanceReducer from "./ReducerAPI/AttendanceReducer";
 import AgencyDashboardReducer from "./ReducerAPI/AgencyDashboardReducer";
 import AssignmentReducer from "./ReducerAPI/AssignmentReducer";
 import QuestionReducer from "./ReducerAPI/QuestionReducer";
+import AgencyReducer from "./ReducerAPI/AgencyReducer";
+import AppointmentReducer from "./ReducerAPI/AppointmentReducer";
+import WorkReducer from "./ReducerAPI/WorkReducer";
 
 export const store = configureStore({
   reducer: {
@@ -39,5 +42,8 @@ export const store = configureStore({
     AgencyDashboardReducer,
     AssignmentReducer,
     QuestionReducer,
+    AgencyReducer,
+    AppointmentReducer,
+    WorkReducer,
   },
 });
