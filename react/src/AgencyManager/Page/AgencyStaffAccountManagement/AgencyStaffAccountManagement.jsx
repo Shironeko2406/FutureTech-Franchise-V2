@@ -117,7 +117,11 @@ const AgencyStaffAccountManagement = () => {
     };
 
     const handleCreateAccount = async (accountData) => {
-        return await dispatch(CreateAccountActionAsync(accountData));
+        const success = await dispatch(CreateAccountActionAsync(accountData));
+        if (success) {
+            dispatch(GetAccountsActionAsync(search, isActive, "AgencyStaff", pageIndex, pageSize));
+        }
+        return success;
     };
 
     return (

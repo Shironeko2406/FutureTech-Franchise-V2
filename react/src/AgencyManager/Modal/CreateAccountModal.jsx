@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { Modal, Form, Input, DatePicker, Select, Upload, Button, Spin, message } from "antd";
 import { UploadOutlined, UserOutlined } from "@ant-design/icons";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { imageDB } from "../../Firebasse/Config";
+
 
 const CreateAccountModal = ({ visible, onClose, onSubmit, role }) => {
     const [form] = Form.useForm();
@@ -18,13 +20,10 @@ const CreateAccountModal = ({ visible, onClose, onSubmit, role }) => {
         try {
             const success = await onSubmit(accountData);
             if (success) {
-                message.success("Tạo tài khoản thành công!");
                 form.resetFields();
                 setFileList([]);
                 onClose();
             }
-        } catch (error) {
-            message.error("Có lỗi xảy ra khi tạo tài khoản!");
         } finally {
             setLoading(false);
         }
@@ -45,8 +44,7 @@ const CreateAccountModal = ({ visible, onClose, onSubmit, role }) => {
 
         setLoading(true);
         try {
-            const storage = getStorage();
-            const storageRef = ref(storage, `images/${file.name}`);
+            const storageRef = ref(imageDB, `images/${file.name}`);
             await uploadBytes(storageRef, file);
             const url = await getDownloadURL(storageRef);
             setFileList([{ uid: file.uid, name: file.name, status: 'done', url: url }]);
@@ -82,10 +80,18 @@ const CreateAccountModal = ({ visible, onClose, onSubmit, role }) => {
                         <Input prefix={<span>@</span>} placeholder="Nhập email" />
                     </Form.Item>
                     <Form.Item name="phoneNumber" label="Số điện thoại" rules={[{ required: true, pattern: /^[0-9]{10}$/, message: "Vui lòng nhập số điện thoại hợp lệ!" }]}>
-                        <Input prefix={<span>+84</span>} placeholder="Nhập số điện thoại" />
+                        <Input placeholder="Nhập số điện thoại 10 số và bắt đầu bằng số 0" />
                     </Form.Item>
-                    <Form.Item name="dateOfBirth" label="Ngày sinh" rules={[{ required: true, message: "Vui lòng chọn ngày sinh!" }]}>
-                        <DatePicker style={{ width: '100%' }} placeholder="Chọn ngày sinh" />
+                    <Form.Item
+                        name="dateOfBirth"
+                        label="Ngày sinh"
+                        rules={[{ required: true, message: "Vui lòng chọn ngày sinh!" }]}
+                    >
+                        <DatePicker
+                            style={{ width: '100%' }}
+                            placeholder="Chọn ngày sinh"
+                            disabledDate={(current) => current && current > new Date()}
+                        />
                     </Form.Item>
                     <Form.Item name="gender" label="Giới tính" rules={[{ required: true, message: "Vui lòng chọn giới tính!" }]}>
                         <Select placeholder="Chọn giới tính">

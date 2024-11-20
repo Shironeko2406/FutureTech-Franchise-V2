@@ -117,7 +117,11 @@ const InstructorAccountManagement = () => {
     };
 
     const handleCreateAccount = async (accountData) => {
-        return await dispatch(CreateAccountActionAsync(accountData));
+        const success = await dispatch(CreateAccountActionAsync(accountData));
+        if (success) {
+            dispatch(GetAccountsActionAsync(search, isActive, "Instructor", pageIndex, pageSize));
+        }
+        return success;
     };
 
     return (
