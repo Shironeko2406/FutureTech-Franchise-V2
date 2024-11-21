@@ -49,13 +49,14 @@ import CourseDetailSystemInstructor from "./SystemInstructor/Page/CourseDetailSy
 import QuizTest from "./Student/Page/QuizTest/QuizTest";
 import QuizDescription from "./Student/Page/QuizDescription/QuizDescription";
 import AttendancePage from "./Instructor/Page/AttendancePage/AttendancePage";
-import AgencyDashboardPage  from "./AgencyManager/Page/AgencyDashboard/AgencyDashboardpage";
+import AgencyDashboardPage from "./AgencyManager/Page/AgencyDashboard/AgencyDashboardpage";
 import ClassDetailInstructor from "./Instructor/Page/ClassDetailInstructor/ClassDetailInstructor";
 import QuizOfClass from "./Instructor/Page/QuizOfClass.jsx/QuizOfClass";
 import AssignmentOfClass from "./Instructor/Page/AssignmentOfClass/AssignmentOfClass";
 import ViewQuestionChapterManager from "./Manager/Page/ViewQuestionChapterManager/ViewQuestionChapterManager";
 import ViewQuestionChapterSystemInstructor from "./SystemInstructor/Page/ViewQuestionChapterSystemInstructor/ViewQuestionChapterSystemInstructor";
 import CourseDetailOfClass from "./Instructor/Page/CourseDetailOfClass.jsx/CourseDetailOfClass";
+import DocumentManagement from "./Manager/Page/DocumentManagement/DocumentManagement";
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -109,7 +110,7 @@ function App() {
               <Route element={<ProtectedRoute requiredRole="Student" />}>
                 <Route path="student" element={<TempUIStudent />}>
                   <Route path="" element={<HomeStudentNoti />} />
-                  <Route path="class/:id" element={<ClassDetailStudent/>} />
+                  <Route path="class/:id" element={<ClassDetailStudent />} />
                   <Route path="quiz" element={<QuizTest />} />
                   <Route path="quiz/:quizId" element={<QuizDescription />} />
                   <Route path="quiz/:quizId/start" element={<QuizTest />} />
@@ -121,9 +122,9 @@ function App() {
               <Route element={<ProtectedRoute requiredRole="Instructor" />}>
                 <Route path="instructor" element={<TempUIInstructor />}>
                   <Route path="class/:id" element={<ClassDetailInstructor />} />
-                  <Route path="class/:id/course-detail" element={<CourseDetailOfClass/>} />
-                  <Route path="class/:id/quiz" element={<QuizOfClass/>} />
-                  <Route path="class/:id/assignment" element={<AssignmentOfClass/>} />
+                  <Route path="class/:id/course-detail" element={<CourseDetailOfClass />} />
+                  <Route path="class/:id/quiz" element={<QuizOfClass />} />
+                  <Route path="class/:id/assignment" element={<AssignmentOfClass />} />
                   <Route path="" element={<HomeInstructor />} />
                   <Route path="schedule" element={<ScheduleTeaching />} />
                   <Route path="schedules" element={<ScheduleInstructor />} />
@@ -138,8 +139,9 @@ function App() {
                   <Route path="course-category" element={<CourseCategoryManager />} />
                   <Route path="course" element={<CourseManage />} />
                   <Route path="course-detail/:id" element={<CourseDetailManager />} />
-                  <Route path="course-detail/:id/questions" element={<ViewQuestionChapterManager/>} />
+                  <Route path="course-detail/:id/questions" element={<ViewQuestionChapterManager />} />
                   <Route path="slot" element={<SlotManager />} />
+                  <Route path="documents" element={<DocumentManagement />} />
                 </Route>
               </Route>
 
@@ -148,7 +150,7 @@ function App() {
                   <Route path="" element={<HomeSystemInstructor />} />
                   <Route path="course" element={<CourseSystemInstructor />} />
                   <Route path="course-detail/:id" element={<CourseDetailSystemInstructor />} />
-                  <Route path="course-detail/:id/questions" element={<ViewQuestionChapterSystemInstructor/>} />
+                  <Route path="course-detail/:id/questions" element={<ViewQuestionChapterSystemInstructor />} />
 
                 </Route>
               </Route>

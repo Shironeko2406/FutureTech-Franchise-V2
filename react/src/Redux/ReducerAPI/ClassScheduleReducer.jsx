@@ -25,7 +25,6 @@ export default ClassScheduleReducer.reducer;
 export const CreateClassScheduleActionAsync = (scheduleData) => {
   return async () => {
     try {
-      console.log(`CreateClassScheduleActionAsync: ${JSON.stringify(scheduleData)}`);
       const res = await httpClient.post(`/api/v1/class-schedules/date-range`, scheduleData);
       if (res.isSuccess) {
         message.success("Thời khóa biểu đã được tạo thành công!");
