@@ -218,7 +218,7 @@ export default function ViewAppointmentDetail({ visible, onClose }) {
             </Tag>
           </Space>
         }
-        width={600}
+        width={650}
       >
         <Tabs
           defaultActiveKey="1"

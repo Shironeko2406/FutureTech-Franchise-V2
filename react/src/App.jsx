@@ -58,6 +58,9 @@ import ViewQuestionChapterSystemInstructor from "./SystemInstructor/Page/ViewQue
 import CourseDetailOfClass from "./Instructor/Page/CourseDetailOfClass.jsx/CourseDetailOfClass";
 import AgencyManagement from "./Manager/Page/AgencyManagement/AgencyManagement";
 import AgencyDetail from "./Manager/Page/AgencyDetail/AgencyDetail";
+import HomeSystemTechnician from "./SystemTechnician/Page/HomeSystemTechnician/HomeSystemTechnician";
+import TemUISystemTechnician from "./SystemTechnician/TempUI/TemUISystemTechnician";
+import ListTaskSystemTechnician from "./SystemTechnician/Page/ListTask/ListTaskSystemTechnician";
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -154,6 +157,14 @@ function App() {
                   <Route path="course-detail/:id" element={<CourseDetailSystemInstructor />} />
                   <Route path="course-detail/:id/questions" element={<ViewQuestionChapterSystemInstructor/>} />
 
+                </Route>
+              </Route>
+
+              <Route element={<ProtectedRoute requiredRole="SystemTechnician" />}>
+                <Route path="system-technician" element={<TemUISystemTechnician />}>
+                  <Route path="" element={<HomeSystemTechnician />} />
+                  <Route path="list-task" element={<ListTaskSystemTechnician/>} />
+                  
                 </Route>
               </Route>
 
