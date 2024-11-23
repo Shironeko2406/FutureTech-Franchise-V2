@@ -44,6 +44,13 @@ const ManageContractPage = () => {
 
     const columns = [
         {
+            title: "STT",
+            dataIndex: "no",
+            key: "no",
+            align: "center",
+            render: (text, record, index) => index + 1 + (pageIndex - 1) * pageSize,
+        },
+        {
             title: "Tiêu đề",
             dataIndex: "title",
             key: "title",
@@ -101,11 +108,12 @@ const ManageContractPage = () => {
             <div className="card-body">
                 <h5 className="card-title mb-3">Danh Sách Hợp Đồng</h5>
                 <Space style={{ marginBottom: 16 }}>
+                    <span style={{ marginRight: 8 }}>Tìm kiếm:</span>
                     <Input.Search
                         placeholder="Tìm kiếm theo tiêu đề hoặc tên trung tâm"
                         onSearch={handleSearch}
                         enterButton
-                        style={{ width: 300 }}
+                        style={{ width: 350 }}
                     />
                     <DatePicker.RangePicker
                         onChange={handleDateChange}
