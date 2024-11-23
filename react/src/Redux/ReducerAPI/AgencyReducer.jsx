@@ -4,7 +4,8 @@ import { httpClient } from '../../Utils/Interceptors';
 const initialState = {
   agencyData: [],
   totalPagesCount: 0,
-  tasks: []
+  tasks: [],
+  agencyStatus: null
 }
 
 const AgencyReducer = createSlice({
@@ -16,7 +17,8 @@ const AgencyReducer = createSlice({
       state.totalPagesCount = action.payload.totalPagesCount;
     },
     setTaskByAgencyId: (state, action) => {
-      state.tasks = action.payload
+      state.tasks = action.payload.work
+      state.agencyStatus = action.payload.agencyStatus 
     }
   }
 });

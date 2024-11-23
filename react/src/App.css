@@ -51,6 +51,18 @@
   z-index: 1001;
 }
 
+/* Text Editor */
+
+
+.quill {
+  display: flex;
+  flex-direction: column;
+  height: 200px; /* Điều chỉnh chiều cao theo nhu cầu */
+}
+.ql-container {
+  flex: 1;
+  overflow-y: auto;
+}
 
 /* .ant-upload-wrapper {
   display: flex;

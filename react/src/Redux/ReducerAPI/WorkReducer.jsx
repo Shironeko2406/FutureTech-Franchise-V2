@@ -64,7 +64,45 @@ export const UpdateStatusTaskByIdActionAsync = (id, status, agencyId) => {
         ]);
         return true;
       } else {
+        message.error(`${res.message}`);
+        return false;
+      }
+    } catch (error) {
+      console.log(error);
+      message.error("Lỗi hệ thống");
+    }
+  };
+};
+
+export const DeleteTaskByIdActionAsync = (taskId, agencyId) => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.delete(`/api/v1/works/${taskId}`);
+      if (res.isSuccess && res.data) {
+        message.success(`${res.message}`);
+        await dispatch(GetTaskByAgencyIdActionAsync(agencyId));
+        return true;
+      } else {
         message.error(`Lỗi hệ thống`);
+        return false;
+      }
+    } catch (error) {
+      console.log(error);
+      message.error("Lỗi hệ thống");
+    }
+  };
+};
+
+export const EditTaskByIdActionAsync = (dataUpdate, taskId, agencyId) => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.put(`/api/v1/works/${taskId}`, dataUpdate);
+      if (res.isSuccess && res.data) {
+        message.success(`${res.message}`);
+        await dispatch(GetTaskByAgencyIdActionAsync(agencyId));
+        return true;
+      } else {
+        message.error(`${res.message}`);
         return false;
       }
     } catch (error) {

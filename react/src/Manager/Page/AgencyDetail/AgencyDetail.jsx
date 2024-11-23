@@ -1,10 +1,11 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Button, Card, Input, Select, List, Typography, Row, Col } from 'antd';
+import { Button, Card, Input, Select, List, Typography, Row, Col, Popconfirm } from 'antd';
 import {
   CheckCircleFilled, MinusCircleFilled, PlusOutlined,
   DeleteOutlined, SearchOutlined, FlagOutlined, TeamOutlined, FileDoneOutlined,
   AppstoreAddOutlined, AreaChartOutlined, EditOutlined, CheckCircleOutlined,
-  DollarOutlined, CloseCircleFilled, RightCircleOutlined
+  DollarOutlined, CloseCircleFilled, RightCircleOutlined,
+  CalendarOutlined
 } from '@ant-design/icons';
 import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
@@ -12,7 +13,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { GetTaskByAgencyIdActionAsync } from '../../../Redux/ReducerAPI/AgencyReducer';
 import CreateTaskBySelectedTypeModal from '../../Modal/CreateTaskBySelectedTypeModal';
 import ViewTaskDetailModal from '../../Modal/ViewTaskDetailModal';
-import { GetTaskDetailByIdActionAsync } from '../../../Redux/ReducerAPI/WorkReducer';
+import { DeleteTaskByIdActionAsync, GetTaskDetailByIdActionAsync } from '../../../Redux/ReducerAPI/WorkReducer';
+import { GetManagerUserAddAppointmentActionAsync } from '../../../Redux/ReducerAPI/UserReducer';
+import moment from 'moment';
+import { useLoading } from '../../../Utils/LoadingContext';
+import EditTaskModal from '../../Modal/EditTaskModal';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -67,11 +72,16 @@ const StatusTag = styled.span`
   color: white;
 `;
 
+const CompulsoryTask = styled(List.Item)`
+  background-color: #fff1f0 !important;
+`;
+
 // Helper functions
 const getTypeStatusColor = (status) => {
   switch (status) {
     case "Completed": return '#52c41a';
     case "In Progress": return '#faad14';
+    case "Incomplete": return '#f5222d';
     case "Pending":
     default: return '#d9d9d9';
   }
@@ -111,12 +121,32 @@ const getStatusIcon = (status) => {
 };
 
 const getTypeStatus = (type, tasks) => {
-  const statuses = tasks.filter(task => task.type === type).map(task => task.status);
-  if (statuses.every(status => status === "None")) return "Pending";
-  if (statuses.every(status => status === "Approved" || status === "Rejected")) return "Completed";
-  if (statuses.includes("None")) return "In Progress";
+  const typeTasks = tasks.filter(task => task.type === type);
+
+  // If there are no tasks, return "Pending"
+  if (typeTasks.length === 0) {
+    return "Pending";
+  }
+  const compulsoryTasks = typeTasks.filter(task => task.level === "Compulsory");
+  const optionalTasks = typeTasks.filter(task => task.level === "Optional");
+  
+  const allCompulsoryApproved = compulsoryTasks.every(task => task.status === "Approved");
+  const allTasksApprovedOrOptionalRejected = typeTasks.every(task => 
+    task.status === "Approved" || (task.level === "Optional" && task.status === "Rejected")
+  );
+  
+  if (allCompulsoryApproved && allTasksApprovedOrOptionalRejected) {
+    return "Completed";
+  }
+  if (compulsoryTasks.some(task => task.status === "Rejected")) {
+    return "Incomplete";
+  }
+  if (typeTasks.some(task => task.status === "Approved" || task.status === "Rejected")) {
+    return "In Progress";
+  }
   return "Pending";
 };
+
 
 // New translation functions
 const translateStatus = (status) => {
@@ -126,7 +156,8 @@ const translateStatus = (status) => {
     "None": "Chưa xử lý",
     "Completed": "Hoàn thành",
     "In Progress": "Đang thực hiện",
-    "Pending": "Chờ xử lý"
+    "Pending": "Chờ xử lý",
+    "Incomplete": "Không hoàn thành"
   };
   return translations[status] || status;
 };
@@ -144,19 +175,77 @@ const translateType = (type) => {
   return translations[type] || type;
 };
 
+
+// const tasks = [ // data task tôi call api
+//   {
+//     id: "3a68a519-19fe-4b95-c509-08dd097f5ef0",
+//     title: "Task 1",
+//     startDate: "2024-11-20T16:24:38.045",
+//     endDate: "2024-11-21T16:24:38.045",
+//     type: "AgreementSigned",
+//     status: "None",
+//     level: "Optional",
+//     submit: "None",
+//   },
+//   {
+//     id: "3a68a519-19fe-4b95-c509-08dd097f5ef6",
+//     title: "Task 1",
+//     startDate: "2024-11-20T16:24:38.045",
+//     endDate: "2024-11-21T16:24:38.045",
+//     type: "AgreementSigned",
+//     status: "None",
+//     level: "Optional",
+//     submit: "None",
+//   },
+//   {
+//     id: "0ccfaaed-713e-4a76-c506-08dd097f5ef0",
+//     title: "Task 1",
+//     startDate: "2024-11-20T00:00:00",
+//     endDate: "2024-11-22T00:00:00",
+//     type: "Interview",
+//     status: "Rejected",
+//     level: "Compulsory",
+//     submit: "None",
+//   },
+//   {
+//     id: "602cbb55-8732-4794-c50a-08dd097f5ef0",
+//     title: "Task 1",
+//     startDate: "2024-11-20T16:24:38.045",
+//     endDate: "2024-11-21T16:24:38.045",
+//     type: "Interview",
+//     status: "Approved",
+//     level: "Compulsory",
+//     submit: "None",
+//   },
+//   {
+//     id: "0ee259f8-9a32-421a-c50b-08dd097f5ef0",
+//     title: "Task 3",
+//     startDate: "2024-11-21T00:00:00",
+//     endDate: "2024-11-21T01:01:00",
+//     type: "Interview",
+//     status: "Approved",
+//     level: "Compulsory",
+//     submit: "None",
+//   },
+// ];
+
 // Updated component
 export default function AgencyDetail() {
-  const { tasks } = useSelector((state) => state.AgencyReducer);
+  const { tasks, agencyStatus } = useSelector((state) => state.AgencyReducer);
   const dispatch = useDispatch()
   const {id} = useParams()
+  const { setLoading } = useLoading();
   const [typeFilter, setTypeFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedType, setSelectedType] = useState(null);
+  const [selectedTask, setSelectedTask] = useState(null);
   const [modalCreateTaskVisible, setModalCreateTaskVisible] = useState(false);
   const [modalShowTaskDetailVisible, setModalShowTaskDetailVisible] = useState(false);
+  const [modalEditTaskByIdVisible, setModalEditTaskByIdVisible] = useState(false);
 
   useEffect(() => {
     dispatch(GetTaskByAgencyIdActionAsync(id))
+    dispatch(GetManagerUserAddAppointmentActionAsync())
   }, [id, dispatch])
 
   const taskDataModify = useMemo(() => {
@@ -215,6 +304,13 @@ export default function AgencyDetail() {
     );
   };
 
+  //Các hàm action
+  const handleDeleteTaskById = (taskId) => {
+    setLoading(true)
+    dispatch(DeleteTaskByIdActionAsync(taskId, id)).finally(()=>setLoading(false))
+  }
+  //--------------------------
+
   // Các hàm đóng mở state modal
   const showModalCreateTask = () => setModalCreateTaskVisible(true);
   const handleCloseModalCreateTask = () => setModalCreateTaskVisible(false);
@@ -223,9 +319,20 @@ export default function AgencyDetail() {
     setModalShowTaskDetailVisible(true)
     dispatch(GetTaskDetailByIdActionAsync(id))
   };
+
   const handleCloseModalShowTaskDetail = () => {
     setModalShowTaskDetailVisible(false)
   };
+
+  const openModalEditTask = (task) => {
+    setModalEditTaskByIdVisible(true)
+    setSelectedTask(task)
+  };
+  const handleCloseModalEditTask = () => {
+    setModalEditTaskByIdVisible(false)
+    setSelectedTask(null)
+  };
+  //-------------------------
 
   return (
     <StyledCard title={<Title level={4}><FlagOutlined /> Tiến trình nhượng quyền</Title>}>
@@ -261,40 +368,76 @@ export default function AgencyDetail() {
               title={
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
                   <span>{translateType(selectedType)}</span>
-                  <Button type="primary" icon={<PlusOutlined />} onClick={showModalCreateTask}>Thêm công việc</Button>
+                  {['Processing', 'Approved'].includes(agencyStatus) && (
+                    <Button type="primary" icon={<PlusOutlined />} onClick={showModalCreateTask}>
+                      Thêm công việc
+                    </Button>
+                  )}
                 </div>
               }
             >
               <ScrollableDiv>
-                <List
+              <List
                   dataSource={selectedTasks}
-                  renderItem={task => (
-                    <List.Item
-                      style={{backgroundColor: "#f0f5ff", marginBottom: "8px", borderRadius: "8px", padding: "12px"}}
-                      key={task.id}
-                      actions={[
-                        <Button
-                          type="link"
-                          onClick={() => {openModalShowTaskDetail(task.id)}}
-                          style={{ gap: "4px", padding: "4px 8px", fontSize: "14px"}}
-                        >
-                          <Text strong style={{ marginRight: "4px" }}>Chi tiết</Text>
-                          <RightCircleOutlined style={{ fontSize: "16px" }} />
-                        </Button>,
-                        <Button type="text" danger icon={<DeleteOutlined />} />
-                      ]}
-                    >
-                      <List.Item.Meta
-                        avatar={getStatusIcon(task.status)}
-                        title={task.title}
-                        description={
-                          <StatusTag style={{ backgroundColor: getStatusColor(task.status) }}>
-                            {translateStatus(task.status).toUpperCase()}
-                          </StatusTag>
-                        }
-                      />
-                    </List.Item>
-                  )}
+                  renderItem={task => {
+                    const isEditableAndDeletable = task?.status === "None" && ['Processing', 'Approved'].includes(agencyStatus); //Bắt ẩn hiện nút edit và del
+                    const TaskItem = task.level === "Compulsory" ? CompulsoryTask : List.Item;
+                    return (
+                      <TaskItem
+                        style={{
+                          backgroundColor: task.level === "Compulsory" ? "#fff1f0" : "#f0f5ff",
+                          marginBottom: "8px",
+                          borderRadius: "8px",
+                          padding: "12px"
+                        }}
+                        key={task.id}
+                        actions={[
+                          <Button type="text" style={{ color: '#1890ff' }} icon={<RightCircleOutlined/>} onClick={() => {openModalShowTaskDetail(task.id)}} />,
+                          isEditableAndDeletable && (
+                            <Button type="text" icon={<EditOutlined />} onClick={() => {openModalEditTask(task)}} />
+                          ),
+                          isEditableAndDeletable && (
+                            <Popconfirm
+                              title="Bạn muốn xóa công việc này?"
+                              onConfirm={() => handleDeleteTaskById(task.id)} 
+                            >
+                              <Button type="text" danger icon={<DeleteOutlined />}/>
+                            </Popconfirm>
+                          ),
+                        ].filter(Boolean)}
+                      >
+                        <List.Item.Meta
+                          avatar={getStatusIcon(task.status)}
+                          title={
+                            <span>
+                              {task.title}
+                              {task.level === "Compulsory" && (
+                                <>
+                                  <FlagOutlined style={{ color: '#ff4d4f', marginLeft: '8px' }} />
+                                  <Text type="danger" strong style={{ marginLeft: '4px' }}>
+                                    (Bắt buộc)
+                                  </Text>
+                                </>
+                              )}
+                            </span>
+                          }
+                          description={
+                            <div>
+                              <StatusTag style={{ backgroundColor: getStatusColor(task.status), marginBottom: '4px' }}>
+                                {translateStatus(task.status).toUpperCase()}
+                              </StatusTag>
+                              <div style={{ display: 'flex', alignItems: 'center', marginTop: '4px' }}>
+                                <CalendarOutlined style={{ marginRight: '4px' }} />
+                                <Text type="secondary">
+                                  {moment(task.startDate).format('DD/MM/YYYY HH:mm')} - {moment(task.endDate).format('DD/MM/YYYY HH:mm')}
+                                </Text>
+                              </div>
+                            </div>
+                          }
+                        />
+                      </TaskItem>
+                    );
+                  }}
                 />
               </ScrollableDiv>
             </StyledCard>
@@ -317,8 +460,14 @@ export default function AgencyDetail() {
 
       <ViewTaskDetailModal
         visible={modalShowTaskDetailVisible}
-        onClose={(handleCloseModalShowTaskDetail)}
+        onClose={handleCloseModalShowTaskDetail}
         setVisible={setModalShowTaskDetailVisible}
+      />
+
+      <EditTaskModal
+        visible={modalEditTaskByIdVisible}
+        onClose={handleCloseModalEditTask}
+        task={selectedTask}
       />
 
     </StyledCard>
