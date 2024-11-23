@@ -6,7 +6,8 @@ const initialState = {
   userData: [],
   userProfile: {},
   schedules: [],
-  classOfUserLogin: []
+  classOfUserLogin: [],
+  userManager: [],
 };
 
 const UserReducer = createSlice({
@@ -17,18 +18,27 @@ const UserReducer = createSlice({
       state.userData = action.payload;
     },
     setUserProfile: (state, action) => {
-      state.userProfile = action.payload
+      state.userProfile = action.payload;
     },
     setSchedules: (state, action) => {
       state.schedules = action.payload;
     },
-    setCLassOfUserLogin: (state, action)=>{
-      state.classOfUserLogin = action.payload
-    }
+    setCLassOfUserLogin: (state, action) => {
+      state.classOfUserLogin = action.payload;
+    },
+    setUserManager: (state, action) => {
+      state.userManager = action.payload;
+    },
   },
 });
 
-export const { setUserData, setUserProfile, setSchedules, setCLassOfUserLogin } = UserReducer.actions;
+export const {
+  setUserData,
+  setUserProfile,
+  setSchedules,
+  setCLassOfUserLogin,
+  setUserManager,
+} = UserReducer.actions;
 
 export default UserReducer.reducer;
 //------------API-CALL-------
@@ -76,7 +86,10 @@ export const ChangePasswordActionAsync = (passwordData) => {
     try {
       // Gọi API đổi mật khẩu
       console.log(passwordData);
-      const res = await httpClient.post(`/api/v1/users/change-password`, passwordData);
+      const res = await httpClient.post(
+        `/api/v1/users/change-password`,
+        passwordData
+      );
 
       if (res.isSuccess && res.data) {
         message.success(`${res.message}`);
@@ -100,7 +113,7 @@ export const GetUserLoginActionAsync = () => {
     try {
       const res = await httpClient.get(`/api/v1/users/mine`);
       if (res.isSuccess && res.data) {
-        dispatch(setUserProfile(res.data))
+        dispatch(setUserProfile(res.data));
       } else {
         message.error(`${res.message}`);
       }
@@ -113,17 +126,26 @@ export const GetUserLoginActionAsync = () => {
 export const GetClassSchedulesByLoginActionAsync = (startDate, endDate) => {
   return async (dispatch) => {
     try {
-      console.log("GetClassSchedulesByLoginActionAsync, startDate: ", startDate);
+      console.log(
+        "GetClassSchedulesByLoginActionAsync, startDate: ",
+        startDate
+      );
       console.log("GetClassSchedulesByLoginActionAsync, endDate: ", endDate);
-      const response = await httpClient.get(`/api/v1/users/mine/class-schedules`, {
-        params: {
-          startTime: startDate,
-          endTime: endDate,
-        },
-      });
+      const response = await httpClient.get(
+        `/api/v1/users/mine/class-schedules`,
+        {
+          params: {
+            startTime: startDate,
+            endTime: endDate,
+          },
+        }
+      );
       if (response.isSuccess) {
         dispatch(setSchedules(response.data));
-        console.log("GetClassSchedulesByLoginActionAsync, response: ", response.data);
+        console.log(
+          "GetClassSchedulesByLoginActionAsync, response: ",
+          response.data
+        );
       } else {
         throw new Error(response.message);
       }
@@ -139,7 +161,7 @@ export const GetClassOfUserLoginActionAsync = () => {
     try {
       const res = await httpClient.get(`/api/v1/users/mine/classes`);
       if (res.isSuccess && res.data) {
-        dispatch(setCLassOfUserLogin(res.data))
+        dispatch(setCLassOfUserLogin(res.data));
       } else {
         message.error(`${res.message}`);
       }
@@ -149,3 +171,16 @@ export const GetClassOfUserLoginActionAsync = () => {
   };
 };
 
+export const GetManagerUserAddAppointmentActionAsync = () => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.get(`/manager/api/v1/users`);
+      const filteredUsers = res.data.filter((user) =>
+        ["Manager", "SystemInstructor", "SystemConsultant", "SystemTechnician"].includes(user.role)
+      );
+      dispatch(setUserManager(filteredUsers));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+};
