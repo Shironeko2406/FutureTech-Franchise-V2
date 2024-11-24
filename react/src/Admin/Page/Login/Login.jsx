@@ -38,6 +38,9 @@ const Login = () => {
             case "SystemInstructor":
               navigate("/system-instructor");
               break;
+            case "SystemTechnician":
+              navigate("/system-technician");
+              break;
             default:
               navigate("/");
           }

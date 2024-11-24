@@ -3,15 +3,10 @@ import { NavLink } from 'react-router-dom';
 
 const sidebarItems = [
   { type: 'section', label: 'Trang chủ', icon: 'ti ti-dots' },
-  { type: 'link', label: 'Bảng điều khiển', path: '/manager', icon: 'solar:home-smile-bold-duotone' },
-  { type: 'section', label: 'Quản lý', icon: 'ti ti-dots' },
-  { type: 'link', label: 'Người dùng', path: '#', icon: 'solar:layers-minimalistic-bold-duotone' },
-  { type: 'link', label: 'Khóa học', path: '/manager/course', icon: 'solar:bookmark-square-minimalistic-bold-duotone' },
-  { type: 'link', label: 'Lịch học', path: '/manager/slot', icon: 'solar:file-text-bold-duotone' },
-  { type: 'section', label: 'Nhượng quyền' },
-  { type: 'link', label: 'Quản lý', path: '/manager/agency', icon: 'solar:login-3-bold-duotone' },
-  { type: 'link', label: 'Phê duyệt', path: '/manager/consult', icon: 'solar:login-3-bold-duotone' },
-  { type: 'link', label: 'Hợp đồng', path: '/manager/contracts', icon: 'clarity:contract-solid' },
+  { type: 'link', label: 'Bảng điều khiển', path: '/system-technician', icon: 'solar:home-smile-bold-duotone' },
+  { type: 'section', label: 'Công việc' },
+  { type: 'link', label: 'Danh sách', path: '/system-technician/list-task', icon: 'solar:login-3-bold-duotone' },
+  { type: 'link', label: 'Lịch làm việc', path: '#', icon: 'solar:login-3-bold-duotone' },
 ];
 
 
@@ -20,7 +15,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
     <aside className="left-sidebar">
       <div>
         <div className="brand-logo d-flex align-items-center justify-content-between">
-          <NavLink to="/manager" className="text-nowrap logo-img">
+          <NavLink to="/system-technician" className="text-nowrap logo-img">
             <img src="/assets/images/logos/FutureTechLogo.png" alt="logo" />
           </NavLink>
           <div
