@@ -1,17 +1,3 @@
-// import React from 'react';
-// import { Navigate, Outlet } from 'react-router-dom';
-// import { getDataTextStorage } from './UtilsFunction';
-// import { TOKEN_AUTHOR } from './Interceptors';
-
-// const ProtectedRoute = () => {
-//   const accessToken = getDataTextStorage(TOKEN_AUTHOR); // Lấy accessToken từ localStorage
-
-//   return accessToken ? <Outlet></Outlet> : <Navigate to="/"/>
-//   // Nếu đã đăng nhập, render các component được bảo vệ
-// };
-
-// export default ProtectedRoute;
-
 import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import { getDataTextStorage, getDataJSONStorage } from "./UtilsFunction";
@@ -20,7 +6,6 @@ import { TOKEN_AUTHOR, USER_LOGIN } from "./Interceptors";
 const ProtectedRoute = ({ requiredRole }) => {
   const accessToken = getDataTextStorage(TOKEN_AUTHOR); // Get the accessToken from localStorage
   const userLogin = getDataJSONStorage(USER_LOGIN); // Get the user data, including role
-  console.log(userLogin);
 
   if (!accessToken || !userLogin) {
     return <Navigate to="/" />; // Redirect to login if not authenticated
@@ -44,8 +29,8 @@ const ProtectedRoute = ({ requiredRole }) => {
         return <Navigate to="/manager" />;
       case "SystemInstructor":
         return <Navigate to="/system-instructor" />;
-      case "Consultant":
-        return <Navigate to="/consultant" />;
+      case "SystemConsultant":
+        return <Navigate to="/system-consultant" />;
       case "SystemTechnician":
         return <Navigate to="/system-technician" />;
       case "AgencyStaff":

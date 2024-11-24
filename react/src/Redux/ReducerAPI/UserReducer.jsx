@@ -8,6 +8,8 @@ const initialState = {
   schedules: [],
   classOfUserLogin: [],
   userManager: [],
+  taskUser:[],
+  totalPagesCount: 0,
 };
 
 const UserReducer = createSlice({
@@ -29,6 +31,10 @@ const UserReducer = createSlice({
     setUserManager: (state, action) => {
       state.userManager = action.payload;
     },
+    setTaskUser: (state, action) => {
+      state.taskUser = action.payload.items;
+      state.totalPagesCount = action.payload.totalPagesCount;
+    },
   },
 });
 
@@ -38,6 +44,7 @@ export const {
   setSchedules,
   setCLassOfUserLogin,
   setUserManager,
+  setTaskUser
 } = UserReducer.actions;
 
 export default UserReducer.reducer;
@@ -179,6 +186,19 @@ export const GetManagerUserAddAppointmentActionAsync = () => {
         ["Manager", "SystemInstructor", "SystemConsultant", "SystemTechnician"].includes(user.role)
       );
       dispatch(setUserManager(filteredUsers));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+};
+
+export const GetTaskUserByLoginActionAsync = (search, level, status, submit, pageIndex, pageSize) => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.get(`/api/v1/users/mine/works`, {
+        params: { Search: search, Level: level, Status: status, Submit: submit, PageIndex: pageIndex, PageSize: pageSize }
+      });
+      dispatch(setTaskUser(res.data));
     } catch (error) {
       console.error(error);
     }
