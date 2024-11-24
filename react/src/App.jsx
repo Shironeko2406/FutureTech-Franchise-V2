@@ -61,6 +61,10 @@ import AgencyDetail from "./Manager/Page/AgencyDetail/AgencyDetail";
 import HomeSystemTechnician from "./SystemTechnician/Page/HomeSystemTechnician/HomeSystemTechnician";
 import TemUISystemTechnician from "./SystemTechnician/TempUI/TemUISystemTechnician";
 import ListTaskSystemTechnician from "./SystemTechnician/Page/ListTask/ListTaskSystemTechnician";
+import ListTaskSystemInstructor from "./SystemInstructor/Page/ListTask/ListTaskSystemInstructor";
+import TempUISystemConsultant from "./SystemConsultant/TempUI/TempUISystemConsultant";
+import HomeSystemConsultant from "./SystemConsultant/Page/Home/HomeSystemConsultant";
+import ListTaskSystemConsultant from "./SystemConsultant/Page/ListTask/ListTaskSystemConsultant";
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -156,6 +160,7 @@ function App() {
                   <Route path="course" element={<CourseSystemInstructor />} />
                   <Route path="course-detail/:id" element={<CourseDetailSystemInstructor />} />
                   <Route path="course-detail/:id/questions" element={<ViewQuestionChapterSystemInstructor/>} />
+                  <Route path="list-task" element={<ListTaskSystemInstructor/>} />
 
                 </Route>
               </Route>
@@ -164,7 +169,13 @@ function App() {
                 <Route path="system-technician" element={<TemUISystemTechnician />}>
                   <Route path="" element={<HomeSystemTechnician />} />
                   <Route path="list-task" element={<ListTaskSystemTechnician/>} />
-                  
+                </Route>
+              </Route>
+
+              <Route element={<ProtectedRoute requiredRole="SystemConsultant" />}>
+                <Route path="system-consultant" element={<TempUISystemConsultant/>}>
+                  <Route path="" element={<HomeSystemConsultant/>} />
+                  <Route path="list-task" element={<ListTaskSystemConsultant/>} />
                 </Route>
               </Route>
 

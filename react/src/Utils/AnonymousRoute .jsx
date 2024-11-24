@@ -1,14 +1,3 @@
-// import { Outlet, Navigate } from "react-router-dom";
-// import { getDataTextStorage } from "./UtilsFunction";
-// import { TOKEN_AUTHOR } from "./Interceptors";
-
-// const AnonymousRoute = () => {
-//   const accessToken = getDataTextStorage(TOKEN_AUTHOR);
-//   return accessToken ? <Navigate to="/admin" replace /> : <Outlet />;
-// };
-
-// export default AnonymousRoute;
-
 import { Outlet, Navigate } from "react-router-dom";
 import { getDataTextStorage, getDataJSONStorage } from "./UtilsFunction"; // Assuming you have this function for localStorage
 import { TOKEN_AUTHOR, USER_LOGIN } from "./Interceptors"; // Assuming USER_LOGIN holds the user info
@@ -34,8 +23,8 @@ const AnonymousRoute = () => {
         return <Navigate to="/manager" replace />;
       case "SystemInstructor":
         return <Navigate to="/system-instructor" replace />;
-      case "Consultant":
-        return <Navigate to="/consultant" replace />;
+      case "SystemConsultant":
+        return <Navigate to="/system-consultant" replace />;
       case "SystemTechnician":
         return <Navigate to="/system-technician" replace />;
       case "AgencyStaff":

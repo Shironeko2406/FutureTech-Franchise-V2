@@ -4,10 +4,10 @@ import { Card, List, Typography, Button } from 'antd';
 import { CalendarOutlined, RightCircleOutlined, CheckCircleFilled, CloseCircleFilled, MinusCircleFilled, FlagOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import moment from 'moment';
-import DynamicFilter from '../../Component/DynamicFilter';
 import { GetTaskUserByLoginActionAsync } from '../../../Redux/ReducerAPI/UserReducer';
 import ViewTaskDetailModal from '../../../Manager/Modal/ViewTaskDetailModal';
 import { GetTaskDetailByIdActionAsync } from '../../../Redux/ReducerAPI/WorkReducer';
+import DynamicFilter from '../../Components/DynamicFilter';
 
 const { Title, Text } = Typography;
 
@@ -51,7 +51,7 @@ const translateStatus = (status) => {
   return translations[status] || status;
 };
 
-const ListTaskSystemTechnician = () => {
+const ListTaskSystemInstructor = () => {
   const { taskUser, totalPagesCount } = useSelector((state) => state.UserReducer);
   const dispatch = useDispatch();
   const [filters, setFilters] = useState({
@@ -191,6 +191,6 @@ const ListTaskSystemTechnician = () => {
   );
 };
 
-export default ListTaskSystemTechnician;
+export default ListTaskSystemInstructor;
 
 
