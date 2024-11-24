@@ -281,7 +281,6 @@ export default function AgencyDetail() {
       return acc;
     }, initialStructure);
   }, [tasks]);
-  console.log(taskDataModify)
 
   const selectedTasks = useMemo(() => {
     if (!selectedType) return [];

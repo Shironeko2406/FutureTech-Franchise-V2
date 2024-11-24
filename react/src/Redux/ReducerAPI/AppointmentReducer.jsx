@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { httpClient } from "../../Utils/Interceptors";
 import { message } from "antd";
 import { GetTaskDetailByIdActionAsync } from "./WorkReducer";
+import { CreateNotificationActionAsync } from "./NotificationReducer";
 
 const initialState = {
   appointmentDetail: {},
@@ -21,13 +22,16 @@ export const { setAppointmentDetail } = AppointmentReducer.actions;
 
 export default AppointmentReducer.reducer;
 //------------API CALL----------------
-export const CreateAppointmentActionAsync = (data) => {
+export const CreateAppointmentActionAsync = (data, notificationData) => {
   return async (dispatch) => {
     try {
       const res = await httpClient.post(`/api/v1/appointments`, data);
       if (res.isSuccess && res.data) {
         message.success(`${res.message}`);
-        await dispatch(GetTaskDetailByIdActionAsync(data.workId));
+        await Promise.all([
+          dispatch(GetTaskDetailByIdActionAsync(data.workId)),
+          dispatch(CreateNotificationActionAsync(notificationData)),
+        ]);
         return true;
       } else {
         message.error(`Lỗi hệ thống`);
@@ -52,13 +56,16 @@ export const GetAppointmentDetailByIdActionAsync = (id) => {
   };
 };
 
-export const UpdateUserListInAppointmentActionAsync = (userList, appointmentId) => {
+export const UpdateUserListInAppointmentActionAsync = (userList, appointmentId, notificationData) => {
   return async (dispatch) => {
     try {
       const res = await httpClient.post(`/api/v1/appointments/${appointmentId}/users`, userList);
       if (res.isSuccess && res.data) {
         message.success(`${res.message}`);
-        await dispatch(GetAppointmentDetailByIdActionAsync(appointmentId));
+        await Promise.all([
+          dispatch(GetAppointmentDetailByIdActionAsync(appointmentId)),
+          dispatch(CreateNotificationActionAsync(notificationData)),
+        ]);
         return true;
       } else {
         message.error(`${res.message}`);

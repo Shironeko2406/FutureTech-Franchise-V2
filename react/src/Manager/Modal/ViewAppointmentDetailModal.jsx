@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import { Modal, Typography, Space, Tag, Avatar, Card, Tabs, Tooltip, Button, Select } from 'antd'
+import { Modal, Typography, Space, Tag, Avatar, Card, Tabs, Tooltip, Button, Select, message } from 'antd'
 import { CalendarOutlined, ClockCircleOutlined, FileTextOutlined, TeamOutlined, LinkOutlined, PlusOutlined } from '@ant-design/icons'
 import styled from 'styled-components'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLoading } from '../../Utils/LoadingContext'
 import DOMPurify from 'dompurify';
 import { UpdateUserListInAppointmentActionAsync } from '../../Redux/ReducerAPI/AppointmentReducer'
+import { getDataJSONStorage } from '../../Utils/UtilsFunction'
+import { USER_LOGIN } from '../../Utils/Interceptors'
 
 const { Title, Text } = Typography
 
@@ -91,6 +93,7 @@ export default function ViewAppointmentDetailModal({ visible, onClose }) {
   const { taskDetail } = useSelector((state) => state.WorkReducer);
   const { userManager } = useSelector((state) => state.UserReducer);
   const dispatch = useDispatch()
+  const idUserCreateAppointment = getDataJSONStorage(USER_LOGIN).id
   const {setLoading} = useLoading()
   const [isSelectingUsers, setIsSelectingUsers] = useState(false)
   const [selectedUsers, setSelectedUsers] = useState([]);
@@ -123,7 +126,20 @@ export default function ViewAppointmentDetailModal({ visible, onClose }) {
   
     const handleConfirmAddUsers = () => {
       setLoading(true)
-      dispatch(UpdateUserListInAppointmentActionAsync(selectedUsers, appointmentDetail.id)).finally(() => {setLoading(false); setIsSelectingUsers(false)})
+      // Tập hợp các userId cần loại trừ
+      const existingUserIds = new Set([
+        ...appointmentDetail.user.map((user) => user.id),
+        idUserCreateAppointment,
+      ]);
+
+      // Lọc các userId mới
+      const newUserIds = selectedUsers.filter((userId) => !existingUserIds.has(userId));
+      
+      const notificationData = {
+        userIds:newUserIds, //lọc và loại ra những userId dẵ nằm trong appoinment và idUserCreateAppointment chỉ gởi thông báo người mới được thêm
+        message: appointmentDetail.title
+      }
+      dispatch(UpdateUserListInAppointmentActionAsync(selectedUsers, appointmentDetail.id, notificationData)).finally(() => {setLoading(false); setIsSelectingUsers(false)})
     }
   
     const renderUserSelection = () => (

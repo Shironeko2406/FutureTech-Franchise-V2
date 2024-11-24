@@ -24,18 +24,18 @@ const MyHeader = ({ onSidebarToggle }) => {
               <i className="ti ti-menu-2" />
             </a>
           </li>
-          <li className="nav-item">
-            <a className="nav-link nav-icon-hover">
-              <i className="ti ti-bell-ringing" />
-              <div className="notification bg-primary rounded-circle" />
-            </a>
-          </li>
         </ul>
         <div
           className="navbar-collapse justify-content-end px-0"
           id="navbarNav"
         >
           <ul className="navbar-nav flex-row ms-auto align-items-center justify-content-end">
+            <li className="nav-item">
+              <a className="nav-link nav-icon-hover">
+                <i className="ti ti-bell-ringing" />
+                <div className="notification bg-primary rounded-circle" />
+              </a>
+            </li>
             <li className="nav-item dropdown">
               <a
                 className="nav-link nav-icon-hover"
