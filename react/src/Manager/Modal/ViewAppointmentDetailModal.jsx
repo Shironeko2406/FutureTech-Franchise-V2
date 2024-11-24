@@ -85,7 +85,7 @@ const translateRole = (role) => ({
   SystemTechnician: "Kỹ thuật viên hệ thống",
 }[role] || "Không xác định");
 
-export default function ViewAppointmentDetail({ visible, onClose }) {
+export default function ViewAppointmentDetailModal({ visible, onClose }) {
   const { appointmentDetail } = useSelector((state) => state.AppointmentReducer);
   const { agencyStatus } = useSelector((state) => state.AgencyReducer);
   const { taskDetail } = useSelector((state) => state.WorkReducer);

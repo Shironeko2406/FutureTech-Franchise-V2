@@ -100,10 +100,9 @@ const AgencyManagement = () => {
       </Title>
       <Space style={{ marginBottom: 16 }}>
         <Input
-          placeholder="Search"
+          placeholder="Tìm kiếm"
           prefix={<SearchOutlined />}
           onPressEnter={(e) => handleSearch(e.target.value)}
-        //   value={search}
           style={{ width: 200 }}
           aria-label="Search agencies"
         />

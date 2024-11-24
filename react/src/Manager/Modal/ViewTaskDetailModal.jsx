@@ -307,10 +307,10 @@ import { useLoading } from "../../Utils/LoadingContext";
 import { UpdateStatusTaskByIdActionAsync } from "../../Redux/ReducerAPI/WorkReducer";
 import { useParams } from "react-router-dom";
 import CreateAppointmentModal from "./CreateAppointmentModal";
-import ViewAppointmentDetail from "./ViewAppointmentDetail";
 import { DeleteAppointmentByIdActionAsync, GetAppointmentDetailByIdActionAsync } from "../../Redux/ReducerAPI/AppointmentReducer";
 import EditAppointmentModal from "./EditAppointmentModal";
 import DOMPurify from 'dompurify';
+import ViewAppointmentDetailModal from "./ViewAppointmentDetailModal";
 
 const { Title, Text } = Typography;
 
@@ -620,7 +620,7 @@ const ViewTaskDetailModal = ({ visible, onClose, setVisible }) => {
         workId={taskDetail.id}
       />
 
-      <ViewAppointmentDetail
+      <ViewAppointmentDetailModal
         visible={isViewAppointmentModalVisible}
         onClose={handleViewAppointmentDetailCancel}
       />

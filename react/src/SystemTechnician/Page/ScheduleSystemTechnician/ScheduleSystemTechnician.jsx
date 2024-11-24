@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { GetAppointmentSchedulesActionAsync, GetAppointmentByIdActionAsync } from '../../../Redux/ReducerAPI/AppointmentReducer';
 import { useLoading } from '../../../Utils/LoadingContext';
 import './ScheduleSystemTechnician.css';
-import AppointmentDetail from './AppointmentDetail';
 import { useNavigate } from 'react-router-dom';
 
 const localizer = momentLocalizer(moment);

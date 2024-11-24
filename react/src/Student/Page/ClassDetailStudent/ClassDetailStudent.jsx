@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import "./ClassDetailStudent.css";
 import SkillRoadmap from "../../Component/SkillRoadmap";
 import DetailRoadmap from "../../Component/DetailRoadmap";
 import ViewTests from "../../Component/ViewTests";

@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 const { Option } = Select;
 
-const AppointmentDetail = () => {
+const SystemTechnicianAppointmentDetail = () => {
     const { selectedAppointment } = useSelector((state) => state.AppointmentReducer);
     const [form] = Form.useForm();
     const navigate = useNavigate();
@@ -152,5 +152,5 @@ const AppointmentDetail = () => {
     );
 };
 
-export default AppointmentDetail;
+export default SystemTechnicianAppointmentDetail;
 

@@ -51,7 +51,7 @@ const translateStatus = (status) => {
   return translations[status] || status;
 };
 
-const ListTaskSystemTechnician = () => {
+const ListTaskSystemConsultant = () => {
   const { taskUser, totalPagesCount } = useSelector((state) => state.UserReducer);
   const dispatch = useDispatch();
   const [filters, setFilters] = useState({
@@ -191,6 +191,6 @@ const ListTaskSystemTechnician = () => {
   );
 };
 
-export default ListTaskSystemTechnician;
+export default ListTaskSystemConsultant;
 
 
