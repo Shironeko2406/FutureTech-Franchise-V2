@@ -64,6 +64,8 @@ import ListTaskSystemTechnician from "./SystemTechnician/Page/ListTask/ListTaskS
 import CreateContractPage from "./Manager/Page/ManageContract/CreateContractPage";
 import ManageContractPage from "./Manager/Page/ManageContract/ManageContractPage";
 import ManageContractAdminPage from "./Admin/Page/ManageContract/ManageContractAdminPage";
+import ScheduleSystemTechnician from "./SystemTechnician/Page/ScheduleSystemTechnician/ScheduleSystemTechnician";
+import AppointmentDetail from "./SystemTechnician/Page/ScheduleSystemTechnician/AppointmentDetail";
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -170,7 +172,8 @@ function App() {
                 <Route path="system-technician" element={<TemUISystemTechnician />}>
                   <Route path="" element={<HomeSystemTechnician />} />
                   <Route path="list-task" element={<ListTaskSystemTechnician />} />
-
+                  <Route path="appointment-schedule" element={<ScheduleSystemTechnician />} />
+                  <Route path="appointment-schedule/details" element={<AppointmentDetail />} />
                 </Route>
               </Route>
 
