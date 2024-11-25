@@ -1,13 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Card, List, Typography, Button } from 'antd';
+import { Card, List, Typography, Button, Tag } from 'antd';
+import { UploadOutlined } from "@ant-design/icons";
 import { CalendarOutlined, RightCircleOutlined, CheckCircleFilled, CloseCircleFilled, MinusCircleFilled, FlagOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import moment from 'moment';
 import DynamicFilter from '../../Component/DynamicFilter';
 import { GetTaskUserByLoginActionAsync } from '../../../Redux/ReducerAPI/UserReducer';
 import ViewTaskDetailModal from '../../../Manager/Modal/ViewTaskDetailModal';
-import { GetTaskDetailByIdActionAsync } from '../../../Redux/ReducerAPI/WorkReducer';
+import { GetTaskDetailByIdActionAsync, SubmitTaskReportActionAsync, UpdateTaskStatusToSubmittedActionAsync } from '../../../Redux/ReducerAPI/WorkReducer';
+import SubmitTaskReportModal from '../../Modal/SubmitTaskReportModal';
+import { imageDB } from "../../../Firebasse/Config";
+import { useLoading } from '../../../Utils/LoadingContext';
+import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
+import jsPDF from 'jspdf';
 
 const { Title, Text } = Typography;
 
@@ -15,12 +21,8 @@ const CompulsoryTask = styled(List.Item)`
   background-color: #fff1f0 !important;
 `;
 
-const StatusTag = styled.span`
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: bold;
-  color: white;
+const StatusTag = styled(Tag)`
+  margin-right: 8px;
 `;
 
 const getStatusIcon = (status) => {
@@ -51,9 +53,18 @@ const translateStatus = (status) => {
     return translations[status] || status;
 };
 
+const translateSubmitStatus = (submit) => {
+    return submit === "Submited" ? "Đã nộp" : "Chưa nộp";
+};
+
+const getSubmitStatusColor = (submit) => {
+    return submit === "Submited" ? '#1890ff' : '#faad14';
+};
+
 const ListTaskManager = () => {
     const { taskUser, totalPagesCount } = useSelector((state) => state.UserReducer);
     const dispatch = useDispatch();
+    const { setLoading } = useLoading();
     const [filters, setFilters] = useState({
         searchText: '',
         levelFilter: '',
@@ -63,6 +74,8 @@ const ListTaskManager = () => {
     const [pageIndex, setPageIndex] = useState(1);
     const [pageSize, setPageSize] = useState(10);
     const [modalShowTaskDetailVisible, setModalShowTaskDetailVisible] = useState(false);
+    const [modalSubmitTaskReportVisible, setModalSubmitTaskReportVisible] = useState(false);
+    const [selectedTaskId, setSelectedTaskId] = useState(null);
 
     const handleFilterChange = (key, value) => {
         setFilters(prevFilters => ({ ...prevFilters, [key]: value }));
@@ -94,6 +107,82 @@ const ListTaskManager = () => {
         setModalShowTaskDetailVisible(false);
     };
 
+    const openModalSubmitTaskReport = (id) => {
+        setSelectedTaskId(id);
+        setModalSubmitTaskReportVisible(true);
+    };
+
+    const handleCloseModalSubmitTaskReport = () => {
+        setModalSubmitTaskReportVisible(false);
+        setSelectedTaskId(null);
+    };
+
+    const handleSubmitTaskReport = async (reportData) => {
+        if (selectedTaskId) {
+            setLoading(true);
+            try {
+                const pdf = new jsPDF();
+                const margin = 10;
+                let y = margin;
+
+                for (let index = 0; index < reportData.imageUrls.length; index++) {
+                    const url = reportData.imageUrls[index];
+                    const img = new Image();
+                    img.src = url;
+                    await new Promise((resolve) => {
+                        img.onload = () => {
+                            const imgWidth = img.width;
+                            const imgHeight = img.height;
+                            const pageHeight = pdf.internal.pageSize.getHeight();
+                            const pageWidth = pdf.internal.pageSize.getWidth();
+
+                            // Check if the image height exceeds the page height
+                            if (y + imgHeight > pageHeight - margin) {
+                                pdf.addPage();
+                                y = margin;
+                            }
+
+                            // Check if the image width exceeds the page width
+                            if (imgWidth > pageWidth - 2 * margin) {
+                                const ratio = (pageWidth - 2 * margin) / imgWidth;
+                                pdf.addImage(img, 'JPEG', margin, y, imgWidth * ratio, imgHeight * ratio);
+                                y += imgHeight * ratio + margin;
+                            } else {
+                                pdf.addImage(img, 'JPEG', margin, y, imgWidth, imgHeight);
+                                y += imgHeight + margin;
+                            }
+
+                            resolve();
+                        };
+                    });
+                }
+                const pdfBlob = pdf.output('blob');
+                const storageRef = ref(imageDB, `pdfs/images-${Date.now()}.pdf`);
+                await uploadBytes(storageRef, pdfBlob);
+                const pdfURL = await getDownloadURL(storageRef);
+                const formData = {
+                    ...reportData,
+                    reportImageURL: pdfURL,
+                };
+                await dispatch(SubmitTaskReportActionAsync(selectedTaskId, formData));
+                await dispatch(UpdateTaskStatusToSubmittedActionAsync(selectedTaskId));
+                handleCloseModalSubmitTaskReport();
+                dispatch(GetTaskUserByLoginActionAsync(
+                    filters.searchText,
+                    filters.levelFilter,
+                    filters.statusFilter,
+                    filters.submitFilter,
+                    pageIndex,
+                    pageSize
+                ));
+            } catch (error) {
+                console.error("Error uploading PDF: ", error);
+            } finally {
+                setLoading(false);
+            }
+        }
+    };
+
     const renderItem = (task) => {
         const TaskItem = task.level === "Compulsory" ? CompulsoryTask : List.Item;
         return (
@@ -112,6 +201,14 @@ const ListTaskManager = () => {
                         icon={<RightCircleOutlined />}
                         onClick={() => openModalShowTaskDetail(task.id)}
                     />,
+                    <Button
+                        type="primary"
+                        icon={<UploadOutlined />}
+                        disabled={task.submit === "Submited"}
+                        onClick={() => openModalSubmitTaskReport(task.id)}
+                    >
+                        Nộp công việc
+                    </Button>
                 ]}
             >
                 <List.Item.Meta
@@ -133,13 +230,11 @@ const ListTaskManager = () => {
                     }
                     description={
                         <div>
-                            <StatusTag
-                                style={{
-                                    backgroundColor: getStatusColor(task.status),
-                                    marginBottom: "4px",
-                                }}
-                            >
+                            <StatusTag color={getStatusColor(task.status)}>
                                 {translateStatus(task.status).toUpperCase()}
+                            </StatusTag>
+                            <StatusTag color={getSubmitStatusColor(task.submit)}>
+                                {translateSubmitStatus(task.submit).toUpperCase()}
                             </StatusTag>
                             <div
                                 style={{
@@ -185,8 +280,14 @@ const ListTaskManager = () => {
                 onClose={handleCloseModalShowTaskDetail}
                 setVisible={setModalShowTaskDetailVisible}
             />
+            <SubmitTaskReportModal
+                visible={modalSubmitTaskReportVisible}
+                onClose={handleCloseModalSubmitTaskReport}
+                onSubmit={handleSubmitTaskReport}
+            />
         </Card>
     );
 };
 
 export default ListTaskManager;
+
