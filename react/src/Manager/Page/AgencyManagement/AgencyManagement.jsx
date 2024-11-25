@@ -7,6 +7,66 @@ import { useNavigate } from "react-router-dom";
 
 const { Title, Text } = Typography;
 
+const statusMapping = {
+  Processing: 'Chờ duyệt',
+  Approved: 'Đã duyệt',
+  Active: 'Đang hoạt động',
+  Suspended: 'Tạm ngưng hoạt động',
+  Inactive: 'Không hoạt động',
+};
+
+const renderStatusBadge = (status) => {
+  const statusConfig = {
+    Processing: {
+      text: statusMapping[status],
+      color: 'orange',
+      backgroundColor: '#fff7e6',
+      borderColor: '#ffd591',
+    },
+    Approved: {
+      text: statusMapping[status],
+      color: 'green',
+      backgroundColor: '#f6ffed',
+      borderColor: '#b7eb8f',
+    },
+    Active: {
+      text: statusMapping[status],
+      color: '#3498db',
+      backgroundColor: '#e6f7ff',
+      borderColor: '#91d5ff',
+    },
+    Suspended: {
+      text: statusMapping[status],
+      color: 'red',
+      backgroundColor: '#fff2f0',
+      borderColor: '#ffa39e',
+    },
+    Inactive: {
+      text: statusMapping[status],
+      color: 'gray',
+      backgroundColor: '#f0f0f0',
+      borderColor: '#d9d9d9',
+    },
+  };
+
+  const config = statusConfig[status] || statusConfig.Inactive;
+
+  return (
+    <div
+      style={{
+        display: 'inline-block',
+        padding: '4px 12px',
+        borderRadius: '6px',
+        backgroundColor: config.backgroundColor,
+        border: `1px solid ${config.borderColor}`,
+      }}
+    >
+      <Text strong style={{ color: config.color }}>
+        {config.text}
+      </Text>
+    </div>
+  );
+};
 
 const AgencyManagement = () => {
   const dispatch = useDispatch()
@@ -16,16 +76,16 @@ const AgencyManagement = () => {
   const [pageSize, setPageSize] = useState(1);
   const [status, setStatus] = useState("");
   const [search, setSearch] = useState("");
-  
+
   //Function state filter and pagination
   const handleStatusChange = (value) => {
     setStatus(value);
-    setPageIndex(1); 
+    setPageIndex(1);
   };
 
   const handleSearch = (value) => {
     setSearch(value);
-    setPageIndex(1); 
+    setPageIndex(1);
   };
 
   const handlePageChange = (page, pageSize) => {
@@ -89,6 +149,7 @@ const AgencyManagement = () => {
       title: 'Trạng thái',
       dataIndex: 'status',
       key: 'status',
+      render: (text) => renderStatusBadge(text),
     },
   ];
   //----------------------------------
@@ -96,7 +157,7 @@ const AgencyManagement = () => {
   return (
     <Card>
       <Title level={4}>
-        <ShopOutlined/> Quản lý chi nhánh
+        <ShopOutlined /> Quản lý chi nhánh
       </Title>
       <Space style={{ marginBottom: 16 }}>
         <Input
@@ -112,12 +173,12 @@ const AgencyManagement = () => {
           onChange={handleStatusChange}
           value={status}
           options={[
-            {value: "", label: 'Tất cả'},
-            {value: "Processing", label: 'Chờ duyệt'},
-            {value: "Approved", label: 'Đã duyệt'},
-            {value: "Active", label: 'Đang hoạt động'},
-            {value: "Suspended", label: 'Tạm ngưng hoạt động'},
-            {value: "Inactive", label: 'Không hoạt động'},
+            { value: "", label: 'Tất cả' },
+            { value: "Processing", label: 'Chờ duyệt' },
+            { value: "Approved", label: 'Đã duyệt' },
+            { value: "Active", label: 'Đang hoạt động' },
+            { value: "Suspended", label: 'Tạm ngưng hoạt động' },
+            { value: "Inactive", label: 'Không hoạt động' },
           ]}
         />
       </Space>
@@ -127,13 +188,14 @@ const AgencyManagement = () => {
         dataSource={agencyData}
         rowKey="id"
         pagination={{
-            current: pageIndex,
-            pageSize,
-            total: totalPagesCount * pageSize,
-            onChange: handlePageChange,
-            showSizeChanger: true,
-            pageSizeOptions: ["7", "10"],
-          }}
+          current: pageIndex,
+          pageSize,
+          total: totalPagesCount * pageSize,
+          onChange: handlePageChange,
+          showSizeChanger: true,
+          pageSizeOptions: ["7", "10"],
+        }}
+        scroll={{ x: 'max-content' }} // Add this line for horizontal scroll
       />
     </Card>
   );
