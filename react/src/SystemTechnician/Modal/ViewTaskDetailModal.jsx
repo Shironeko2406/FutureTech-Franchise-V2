@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Modal, Typography, Descriptions, Tag, List, Space, Tabs } from "antd";
-import { CalendarOutlined, ClockCircleOutlined} from "@ant-design/icons";
+import { Modal, Typography, Descriptions, Tag, List, Space, Tabs, Button } from "antd";
+import { CalendarOutlined, CheckCircleOutlined, ClockCircleOutlined, FileOutlined, LinkOutlined, PlusOutlined, UndoOutlined} from "@ant-design/icons";
 import styled from "styled-components";
 import moment from 'moment';
 import { useDispatch, useSelector } from "react-redux";
@@ -8,6 +8,8 @@ import { useLoading } from "../../Utils/LoadingContext";
 import { GetAppointmentDetailByIdActionAsync } from "../../Redux/ReducerAPI/AppointmentReducer";
 import DOMPurify from 'dompurify';
 import ViewAppointmentDetailModal from "./ViewAppointmentDetailModal";
+import SubmitReportTaskModal from "./SubmitReportTaskModal";
+import { UpdateStatusSubmitByTaskByIdActionAsync } from "../../Redux/ReducerAPI/WorkReducer";
 
 const { Title, Text } = Typography;
 
@@ -61,6 +63,17 @@ const AppointmentTime = styled.div`
   font-size: 14px;
 `;
 
+const ReportSection = styled.div`
+  margin-top: 5px;
+`;
+
+const ReportHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+`;
+
 const HTMLContent = styled.div`
   h1, h2, h3, h4, h5, h6 {
     margin-top: 0.5em;
@@ -110,10 +123,17 @@ const getAppointmentStatus = (startTime, endTime) => {
   }
 };
 
-const ViewTaskDetailModal = ({ visible, onClose, setVisible }) => {
+const ViewTaskDetailModal = ({ visible, onClose, setVisible, filters, pageIndex, pageSize }) => {
   const { taskDetail } = useSelector((state) => state.WorkReducer);
   const dispatch = useDispatch();
+  const {setLoading} = useLoading()
   const [isViewAppointmentModalVisible, setIsViewAppointmentModalVisible] = useState(false);
+  const [submitReportModalVisible, setSubmitReportModalVisible] = useState(false);
+
+  const handleUpdateSubmit = (status) => {
+    setLoading(true)
+    dispatch(UpdateStatusSubmitByTaskByIdActionAsync(status, taskDetail.id, filters, pageIndex, pageSize)).finally(() => setLoading(false));
+  }
 
   //Hàm dòng mở modal
   const showViewAppointmentDetailModal = (id) => {
@@ -124,6 +144,16 @@ const ViewTaskDetailModal = ({ visible, onClose, setVisible }) => {
 
   const handleViewAppointmentDetailCancel = () => {
     setIsViewAppointmentModalVisible(false);
+    setVisible(true);
+  };
+
+  const showSubmitReportTaskModal = () => {
+    setSubmitReportModalVisible(true);
+    onClose();
+  };
+
+  const handleSubmitReportTaskModalCancel = () => {
+    setSubmitReportModalVisible(false);
     setVisible(true);
   };
 
@@ -203,6 +233,50 @@ const ViewTaskDetailModal = ({ visible, onClose, setVisible }) => {
         </div>
       ),
     },
+    {
+      key: '4',
+      label: "Báo cáo",
+      children: (
+        <ReportSection>
+          <ReportHeader>        
+            <Title level={4}>Báo cáo công việc</Title>
+            <Space>
+              {taskDetail?.status === "None" && (
+                <Button
+                  type="text"
+                  onClick={() => handleUpdateSubmit(taskDetail?.submit === "None" ? "Submited" : "None")}
+                  icon={taskDetail?.submit === "None" ? <CheckCircleOutlined /> : <UndoOutlined />}
+                  title={taskDetail?.submit === "None" ? "Đánh dấu đã nộp" : "Đánh dấu chưa nộp"}
+              />
+              )}
+              {taskDetail?.status === "None" && taskDetail?.submit === "None" && (
+                <Button type="primary" icon={<PlusOutlined />} onClick={showSubmitReportTaskModal}>Thêm báo cáo</Button>
+              )}
+            </Space>
+          </ReportHeader>
+          <Descriptions column={1} bordered>
+            <Descriptions.Item label="Báo cáo">
+              {taskDetail?.report || "Không có báo cáo"}
+            </Descriptions.Item>
+            <Descriptions.Item label="File báo cáo">
+              {taskDetail?.reportImageURL ? (
+                <a 
+                  href={taskDetail.reportImageURL} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  style={{ display: 'flex', alignItems: 'center' }}
+                >
+                  <FileOutlined style={{ marginRight: 8 }} />
+                  Xem file báo cáo
+                </a>
+              ) : (
+                "Không có file báo cáo"
+              )}
+            </Descriptions.Item>
+          </Descriptions>
+        </ReportSection>
+      ),
+    }
   ];
 
   return (
@@ -220,6 +294,11 @@ const ViewTaskDetailModal = ({ visible, onClose, setVisible }) => {
       <ViewAppointmentDetailModal
         visible={isViewAppointmentModalVisible}
         onClose={handleViewAppointmentDetailCancel}
+      />
+
+      <SubmitReportTaskModal
+        visible={submitReportModalVisible}
+        onClose={handleSubmitReportTaskModalCancel}
       />
 
     </>

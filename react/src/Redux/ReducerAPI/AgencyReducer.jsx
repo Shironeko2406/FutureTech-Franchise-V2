@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { httpClient } from '../../Utils/Interceptors';
+import { message } from 'antd';
 
 const initialState = {
   agencyData: [],
@@ -55,3 +56,45 @@ export const GetTaskByAgencyIdActionAsync = (id) => {
     }
   };
 };
+
+export const UpdateStatusAgencyActionAsync = (id, status) => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.put(`/api/v1/agencies/${id}/status`, null, {
+        params: {
+          newStatus: status
+        },
+      });
+      if (res.isSuccess && res.data) {
+        message.success(`${res.message}`);
+        await dispatch(GetTaskByAgencyIdActionAsync(id));
+        return true;
+      } else {
+        message.error(`${res.message}`);
+        return false;
+      }
+    } catch (error) {
+      console.log(error);
+      message.error("Lỗi hệ thống");
+    }
+  };
+};
+
+export const CreateAgencyActionAsync = (data) => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.post(`/api/v1/agencies`, data);
+      if (res.isSuccess && res.data) {
+        message.success(`${res.message}`);
+        return true;
+      } else {
+        message.error(`${res.message}`);
+        return false;
+      }
+    } catch (error) {
+      console.log(error);
+      message.error("Lỗi hệ thống");
+    }
+  };
+};
+

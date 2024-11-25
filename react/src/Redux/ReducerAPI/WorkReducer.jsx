@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 import { httpClient } from '../../Utils/Interceptors';
 import { message } from 'antd';
 import { GetTaskByAgencyIdActionAsync } from './AgencyReducer';
+import { GetTaskUserByLoginActionAsync } from './UserReducer';
 
 const initialState = {
   taskDetail: {}
@@ -113,6 +114,25 @@ export const EditTaskByIdActionAsync = (dataUpdate, taskId, agencyId) => {
   };
 };
 
+export const StaffSubmitReportTaskByIdActionAsync = (data, taskId) => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.put(`/staff/api/v1/works/${taskId}`, data);
+      if (res.isSuccess && res.data) {
+        message.success(`${res.message}`);
+        await dispatch(GetTaskDetailByIdActionAsync(taskId));
+        return true;
+      } else {
+        message.error(`${res.message}`);
+        return false;
+      }
+    } catch (error) {
+      console.log(error);
+      message.error("Lỗi hệ thống");
+    }
+  }
+}
+
 export const SubmitTaskReportActionAsync = (id, reportData) => {
   return async (dispatch) => {
     try {
@@ -134,6 +154,32 @@ export const SubmitTaskReportActionAsync = (id, reportData) => {
     }
   };
 };
+
+export const UpdateStatusSubmitByTaskByIdActionAsync = (status, workId, filters, pageIndex, pageSize) => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.put(`/staff/api/v1/works/${workId}/status`, null,{
+        params: {
+          workStatusSubmitEnum: status,
+        },
+      } );
+      if (res.isSuccess && res.data) {
+        message.success(`${res.message}`);
+        await Promise.all([
+          dispatch(GetTaskDetailByIdActionAsync(workId)),
+          dispatch(GetTaskUserByLoginActionAsync(filters.searchText, filters.levelFilter, filters.statusFilter, filters.submitFilter, pageIndex, pageSize))
+        ]);
+        return true;
+      } else {
+        message.error(`${res.message}`);
+        return false;
+      }
+    } catch (error) {
+      console.log(error);
+      message.error("Lỗi hệ thống");
+    }
+  }
+}
 
 export const UpdateTaskStatusToSubmittedActionAsync = (id) => {
   return async (dispatch) => {

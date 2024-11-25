@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Card, List, Typography, Button } from 'antd';
-import { CalendarOutlined, RightCircleOutlined, CheckCircleFilled, CloseCircleFilled, MinusCircleFilled, FlagOutlined } from '@ant-design/icons';
+import { CalendarOutlined, RightCircleOutlined, CheckCircleFilled, CloseCircleFilled, MinusCircleFilled, FlagOutlined, FileOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import moment from 'moment';
 import DynamicFilter from '../../Component/DynamicFilter';
 import { GetTaskUserByLoginActionAsync } from '../../../Redux/ReducerAPI/UserReducer';
-import ViewTaskDetailModal from '../../../Manager/Modal/ViewTaskDetailModal';
 import { GetTaskDetailByIdActionAsync } from '../../../Redux/ReducerAPI/WorkReducer';
+import ViewTaskDetailModal from '../../Modal/ViewTaskDetailModal';
 
 const { Title, Text } = Typography;
 
@@ -21,6 +21,7 @@ const StatusTag = styled.span`
   font-size: 12px;
   font-weight: bold;
   color: white;
+  margin-right: 8px;
 `;
 
 const getStatusIcon = (status) => {
@@ -42,6 +43,14 @@ const getStatusColor = (status) => {
   }
 };
 
+const getSubmitColor = (submit) => {
+  switch (submit) {
+    case "Submited": return '#1890ff';
+    case "None":
+    default: return '#faad14';
+  }
+};
+
 const translateStatus = (status) => {
   const translations = {
     "Approved": "Đã duyệt",
@@ -49,6 +58,14 @@ const translateStatus = (status) => {
     "None": "Chưa xử lý",
   };
   return translations[status] || status;
+};
+
+const translateSubmit = (submit) => {
+  const translations = {
+    "Submited": "Đã nộp",
+    "None": "Chưa nộp",
+  };
+  return translations[submit] || submit;
 };
 
 const ListTaskSystemTechnician = () => {
@@ -85,7 +102,6 @@ const ListTaskSystemTechnician = () => {
     ));
   }, [filters, pageIndex, pageSize, dispatch]);
 
-  //Hàm đóng mở modal
   const openModalShowTaskDetail = (id) => {
     setModalShowTaskDetailVisible(true);
     dispatch(GetTaskDetailByIdActionAsync(id));
@@ -94,7 +110,6 @@ const ListTaskSystemTechnician = () => {
   const handleCloseModalShowTaskDetail = () => {
     setModalShowTaskDetailVisible(false);
   };
-  //-------------------------------
 
   const renderItem = (task) => {
     const TaskItem = task.level === "Compulsory" ? CompulsoryTask : List.Item;
@@ -135,14 +150,23 @@ const ListTaskSystemTechnician = () => {
           }
           description={
             <div>
-              <StatusTag
-                style={{
-                  backgroundColor: getStatusColor(task.status),
-                  marginBottom: "4px",
-                }}
-              >
-                {translateStatus(task.status).toUpperCase()}
-              </StatusTag>
+              <div style={{ marginBottom: "4px" }}>
+                <StatusTag
+                  style={{
+                    backgroundColor: getStatusColor(task.status),
+                  }}
+                >
+                  {translateStatus(task.status).toUpperCase()}
+                </StatusTag>
+                <StatusTag
+                  style={{
+                    backgroundColor: getSubmitColor(task.submit),
+                  }}
+                >
+                  <FileOutlined style={{ marginRight: "4px" }} />
+                  {translateSubmit(task.submit).toUpperCase()}
+                </StatusTag>
+              </div>
               <div
                 style={{
                   display: "flex",
@@ -186,11 +210,13 @@ const ListTaskSystemTechnician = () => {
         visible={modalShowTaskDetailVisible}
         onClose={handleCloseModalShowTaskDetail}
         setVisible={setModalShowTaskDetailVisible}
+        filters={filters}
+        pageIndex={pageIndex}
+        pageSize={pageSize}
       />
     </Card>
   );
 };
 
 export default ListTaskSystemTechnician;
-
 

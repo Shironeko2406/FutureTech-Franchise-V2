@@ -430,7 +430,15 @@ const ViewTaskDetailModal = ({ visible, onClose, setVisible }) => {
   const [isEditAppointmentModalVisible, setIsEditAppointmentModalVisible] = useState(false);
 
   const handleUpdateStatusTaskById = (taskId, status) => {
-    dispatch(UpdateStatusTaskByIdActionAsync(taskId, status, agencyId));
+    Modal.confirm({
+      title: status === 'Approved' ? 'Xác nhận Duyệt' : 'Xác nhận Từ chối',
+      content: `Bạn có chắc chắn muốn ${status === 'Approved' ? 'duyệt' : 'từ chối'} nhiệm vụ này?`,
+      okText: 'Xác nhận',
+      cancelText: 'Hủy',
+      onOk: () => {
+        dispatch(UpdateStatusTaskByIdActionAsync(taskId, status, agencyId));
+      },
+    });
   };
 
   const handleDeleteAppointment = (appointmentId) => {
