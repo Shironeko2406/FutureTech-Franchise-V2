@@ -1,10 +1,12 @@
-import { Col, DatePicker, Form, Input, Modal, Row, Select, Typography } from "antd";
+import { Col, DatePicker, Form, Input, message, Modal, Row, Select, Typography } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { useLoading } from "../../Utils/LoadingContext";
 import { CreateAppointmentActionAsync } from "../../Redux/ReducerAPI/AppointmentReducer";
 import ReactQuill from "react-quill";
 import styled from "styled-components";
 import { quillFormats, quillModules } from "../../TextEditorConfig/Config";
+import { getDataJSONStorage } from "../../Utils/UtilsFunction";
+import { USER_LOGIN } from "../../Utils/Interceptors";
 
 const { RangePicker } = DatePicker;
 const { Title } = Typography;
@@ -72,6 +74,7 @@ const CreateAppointmentModal = ({ visible, onClose, workId }) => {
   const dispatch = useDispatch();
   const { userManager } = useSelector((state) => state.UserReducer);
   const { setLoading } = useLoading();
+  const idUserCreateAppointment = getDataJSONStorage(USER_LOGIN).id
 
   const handleAddAppointmentSubmit = (values) => {
     setLoading(true);
@@ -83,7 +86,12 @@ const CreateAppointmentModal = ({ visible, onClose, workId }) => {
       workId,
     };
 
-    dispatch(CreateAppointmentActionAsync(appointmentData))
+    const dataNotification = {
+      userIds: values.userId.filter(id => id !== idUserCreateAppointment), //lọc và bỏ đi id nếu đó là id của người đang login tạo appointment
+      message: values.title
+    }
+
+    dispatch(CreateAppointmentActionAsync(appointmentData, dataNotification))
       .then((res) => {
         setLoading(false);
         if (res) {

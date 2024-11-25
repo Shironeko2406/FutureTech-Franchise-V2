@@ -5,7 +5,10 @@ import {
   DeleteOutlined, SearchOutlined, FlagOutlined, TeamOutlined, FileDoneOutlined,
   AppstoreAddOutlined, AreaChartOutlined, EditOutlined, CheckCircleOutlined,
   DollarOutlined, CloseCircleFilled, RightCircleOutlined,
-  CalendarOutlined
+  CalendarOutlined,
+  BuildOutlined,
+  FileSyncOutlined,
+  SafetyCertificateOutlined
 } from '@ant-design/icons';
 import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
@@ -106,6 +109,9 @@ const getIconForTypeStatus = (status) => {
     case "Design": return <EditOutlined style={iconStyle} />;
     case "Quotation": return <DollarOutlined style={iconStyle} />;
     case "SignedContract": return <CheckCircleOutlined style={iconStyle} />;
+    case "ConstructionAndTrainning": return <BuildOutlined style={iconStyle} />;
+    case "Handover": return <FileSyncOutlined style={iconStyle} />;
+    case "EducationLicenseRegistered": return <SafetyCertificateOutlined style={iconStyle} />;
     default: return null;
   }
 };
@@ -170,7 +176,10 @@ const translateType = (type) => {
     "SiteSurvey": "Khảo sát mặt bằng",
     "Design": "Thiết kế",
     "Quotation": "Báo giá cho khách hàng",
-    "SignedContract": "Ký hợp đồng thành công"
+    "SignedContract": "Ký hợp đồng thành công",
+    "ConstructionAndTrainning": "Đào tạo và thi công",
+    "Handover": "Bàn giao",
+    "EducationLicenseRegistered": "Đăng ký giấy phép giáo dục"
   };
   return translations[type] || type;
 };
@@ -256,7 +265,10 @@ export default function AgencyDetail() {
       'SiteSurvey',
       'Design',
       'Quotation',
-      'SignedContract'
+      'SignedContract',
+      'ConstructionAndTrainning', 
+      'Handover',                 
+      'EducationLicenseRegistered'
     ];
 
     const initialStructure = allTypes.map(type => ({ type, tasks: [] }));
@@ -269,7 +281,6 @@ export default function AgencyDetail() {
       return acc;
     }, initialStructure);
   }, [tasks]);
-  console.log(taskDataModify)
 
   const selectedTasks = useMemo(() => {
     if (!selectedType) return [];
