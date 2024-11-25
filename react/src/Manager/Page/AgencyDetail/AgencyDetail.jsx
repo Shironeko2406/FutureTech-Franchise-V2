@@ -8,7 +8,8 @@ import {
   CalendarOutlined,
   BuildOutlined,
   FileSyncOutlined,
-  SafetyCertificateOutlined
+  SafetyCertificateOutlined,
+  FileOutlined
 } from '@ant-design/icons';
 import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
@@ -99,6 +100,14 @@ const getStatusColor = (status) => {
   }
 };
 
+const getSubmitColor = (submit) => {
+  switch (submit) {
+    case "Submited": return '#1890ff';
+    case "None":
+    default: return '#faad14';
+  }
+};
+
 const getIconForTypeStatus = (status) => {
   const iconStyle = { fontSize: 30, color: getTypeStatusColor(status) };
   switch (status) {
@@ -166,6 +175,14 @@ const translateStatus = (status) => {
     "Incomplete": "Không hoàn thành"
   };
   return translations[status] || status;
+};
+
+const translateSubmit = (submit) => {
+  const translations = {
+    "Submited": "Đã nộp",
+    "None": "Chưa nộp",
+  };
+  return translations[submit] || submit;
 };
 
 const translateType = (type) => {
@@ -492,9 +509,16 @@ export default function AgencyDetail() {
                           }
                           description={
                             <div>
-                              <StatusTag style={{ backgroundColor: getStatusColor(task.status), marginBottom: '4px' }}>
-                                {translateStatus(task.status).toUpperCase()}
-                              </StatusTag>
+                              <div style={{ marginBottom: "4px" }}>
+                                <StatusTag style={{ backgroundColor: getStatusColor(task.status), marginBottom: '4px' }} className='me-2'>
+                                  {translateStatus(task.status).toUpperCase()}
+                                </StatusTag>
+                                <StatusTag style={{ backgroundColor: getSubmitColor(task.submit),}}>
+                                  <FileOutlined style={{ marginRight: "4px" }} />
+                                  {translateSubmit(task.submit).toUpperCase()}
+                                </StatusTag>
+                              </div>
+                              
                               <div style={{ display: 'flex', alignItems: 'center', marginTop: '4px' }}>
                                 <CalendarOutlined style={{ marginRight: '4px' }} />
                                 <Text type="secondary">
