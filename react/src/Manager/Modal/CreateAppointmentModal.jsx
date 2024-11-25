@@ -7,6 +7,7 @@ import styled from "styled-components";
 import { quillFormats, quillModules } from "../../TextEditorConfig/Config";
 import { getDataJSONStorage } from "../../Utils/UtilsFunction";
 import { USER_LOGIN } from "../../Utils/Interceptors";
+import moment from "moment";
 
 const { RangePicker } = DatePicker;
 const { Title } = Typography;
@@ -111,7 +112,7 @@ const CreateAppointmentModal = ({ visible, onClose, workId }) => {
       open={visible}
       onCancel={onClose}
       width={600}
-      style={{top:20}}
+      style={{ top: 20 }}
       onOk={() => form.submit()}
     >
       <StyledForm
@@ -123,9 +124,9 @@ const CreateAppointmentModal = ({ visible, onClose, workId }) => {
         <Row gutter={[16, 16]}>
           <Col xs={24} sm={12}>
             <Form.Item
-            name="title"
-            label="Tiêu đề"
-            rules={[{ required: true, message: "Vui lòng nhập tiêu đề cuộc họp" }]}
+              name="title"
+              label="Tiêu đề"
+              rules={[{ required: true, message: "Vui lòng nhập tiêu đề cuộc họp" }]}
             >
               <Input />
             </Form.Item>
@@ -138,7 +139,7 @@ const CreateAppointmentModal = ({ visible, onClose, workId }) => {
             >
               <Select>
                 <Select.Option value="Internal">Nội bộ</Select.Option>
-                <Select.Option value="WithAgency">Bên ngoài</Select.Option>
+                <Select.Option value="WithAgency">Với chi nhánh</Select.Option>
               </Select>
             </Form.Item>
           </Col>
@@ -148,7 +149,12 @@ const CreateAppointmentModal = ({ visible, onClose, workId }) => {
           label="Thời gian"
           rules={[{ required: true, message: "Vui lòng chọn thời gian cuộc họp" }]}
         >
-          <RangePicker style={{width: '100%'}} showTime format="YYYY-MM-DD HH:mm:ss" />
+          <RangePicker
+            style={{ width: '100%' }}
+            showTime
+            format="YYYY-MM-DD HH:mm:ss"
+            disabledDate={(current) => current && current < moment().startOf('day')}
+          />
         </Form.Item>
         <Form.Item name="description" label="Mô tả">
           <StyledQuill
@@ -169,9 +175,9 @@ const CreateAppointmentModal = ({ visible, onClose, workId }) => {
             optionLabelProp="label"
           >
             {userManager.map((user) => (
-              <Select.Option 
-                key={user.id} 
-                value={user.id} 
+              <Select.Option
+                key={user.id}
+                value={user.id}
                 label={user.userName}
               >
                 {`${user.userName} (${translateRole(user.role)})`}

@@ -75,7 +75,7 @@ const ManageContractPage = () => {
             ),
         },
         {
-            title: "Tên trung tâm",
+            title: "Tên chi nhánh",
             dataIndex: "agencyName",
             key: "agencyName",
             align: "center",
@@ -110,7 +110,7 @@ const ManageContractPage = () => {
                 <Space style={{ marginBottom: 16 }}>
                     <span style={{ marginRight: 8 }}>Tìm kiếm:</span>
                     <Input.Search
-                        placeholder="Tìm kiếm theo tiêu đề hoặc tên trung tâm"
+                        placeholder="Tìm kiếm theo tiêu đề hoặc tên chi nhánh"
                         onSearch={handleSearch}
                         enterButton
                         style={{ width: 350 }}

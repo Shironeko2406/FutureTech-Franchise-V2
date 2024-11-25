@@ -41,16 +41,19 @@ export const CreateAppointmentActionAsync = (data, notificationData) => {
           dispatch(CreateNotificationActionAsync(notificationData)),
         ]);
         return true;
-      } else {
-        message.error(`Lỗi hệ thống`);
+      } else if (res.isSuccess && !res.data) {
+        message.error(`${res.message}`);
         return false;
+      } else {
+        throw new Error(`${res.message}`);
       }
     } catch (error) {
-      console.log(error);
-      message.error("Lỗi hệ thống");
+      console.error("CreateAppointmentActionAsync", error);
+      message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
+      return false;
     }
   };
-};
+}
 
 export const GetAppointmentDetailByIdActionAsync = (id) => {
   return async (dispatch) => {

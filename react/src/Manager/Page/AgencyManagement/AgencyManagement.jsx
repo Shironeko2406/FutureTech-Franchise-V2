@@ -157,7 +157,7 @@ const AgencyManagement = () => {
   return (
     <Card>
       <Title level={4}>
-        <ShopOutlined /> Quản lý chi nhánh
+        <ShopOutlined /> Quản lý nhượng quyền
       </Title>
       <Space style={{ marginBottom: 16 }}>
         <Input

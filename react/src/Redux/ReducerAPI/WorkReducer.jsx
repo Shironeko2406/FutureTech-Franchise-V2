@@ -114,6 +114,7 @@ export const EditTaskByIdActionAsync = (dataUpdate, taskId, agencyId) => {
 };
 
 export const SubmitTaskReportActionAsync = (id, reportData) => {
+  console.log("SubmitTaskReportActionAsync", id, reportData);
   return async (dispatch) => {
     try {
       const res = await httpClient.put(`/staff/api/v1/works/${id}`, reportData);
@@ -150,6 +151,27 @@ export const UpdateTaskStatusToSubmittedActionAsync = (id) => {
       }
     } catch (error) {
       console.error("UpdateTaskStatusToSubmittedActionAsync", error);
+      message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
+      return false;
+    }
+  };
+};
+
+export const UpdateTaskStatusActionAsync = (id, status) => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.put(`/staff/api/v1/works/${id}/status`, null, { params: { workStatusSubmitEnum: status } });
+      if (res.isSuccess && res.data) {
+        message.success(`${res.message}`);
+        return true;
+      } else if (res.isSuccess && !res.data) {
+        message.error(`${res.message}`);
+        return false;
+      } else {
+        throw new Error(`${res.message}`);
+      }
+    } catch (error) {
+      console.error("UpdateTaskStatusActionAsync", error);
       message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
       return false;
     }

@@ -135,12 +135,12 @@ const getTypeStatus = (type, tasks) => {
   }
   const compulsoryTasks = typeTasks.filter(task => task.level === "Compulsory");
   const optionalTasks = typeTasks.filter(task => task.level === "Optional");
-  
+
   const allCompulsoryApproved = compulsoryTasks.every(task => task.status === "Approved");
-  const allTasksApprovedOrOptionalRejected = typeTasks.every(task => 
+  const allTasksApprovedOrOptionalRejected = typeTasks.every(task =>
     task.status === "Approved" || (task.level === "Optional" && task.status === "Rejected")
   );
-  
+
   if (allCompulsoryApproved && allTasksApprovedOrOptionalRejected) {
     return "Completed";
   }
@@ -176,7 +176,7 @@ const translateType = (type) => {
     "SiteSurvey": "Khảo sát mặt bằng",
     "Design": "Thiết kế",
     "Quotation": "Báo giá cho khách hàng",
-    "SignedContract": "Ký hợp đồng thành công",
+    "SignedContract": "Ký hợp đồng",
     "ConstructionAndTrainning": "Đào tạo và thi công",
     "Handover": "Bàn giao",
     "EducationLicenseRegistered": "Đăng ký giấy phép giáo dục"
@@ -242,7 +242,7 @@ const translateType = (type) => {
 export default function AgencyDetail() {
   const { tasks, agencyStatus } = useSelector((state) => state.AgencyReducer);
   const dispatch = useDispatch()
-  const {id} = useParams()
+  const { id } = useParams()
   const { setLoading } = useLoading();
   const [typeFilter, setTypeFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
@@ -266,8 +266,8 @@ export default function AgencyDetail() {
       'Design',
       'Quotation',
       'SignedContract',
-      'ConstructionAndTrainning', 
-      'Handover',                 
+      'ConstructionAndTrainning',
+      'Handover',
       'EducationLicenseRegistered'
     ];
 
@@ -318,7 +318,7 @@ export default function AgencyDetail() {
   //Các hàm action
   const handleDeleteTaskById = (taskId) => {
     setLoading(true)
-    dispatch(DeleteTaskByIdActionAsync(taskId, id)).finally(()=>setLoading(false))
+    dispatch(DeleteTaskByIdActionAsync(taskId, id)).finally(() => setLoading(false))
   }
   //--------------------------
 
@@ -372,7 +372,7 @@ export default function AgencyDetail() {
             {filteredData.map((group, index) => renderMilestoneButton(group, index))}
           </ScrollableDiv>
         </Col>
-        
+
         <Col xs={24} md={16}>
           {selectedType ? (
             <StyledCard
@@ -388,7 +388,7 @@ export default function AgencyDetail() {
               }
             >
               <ScrollableDiv>
-              <List
+                <List
                   dataSource={selectedTasks}
                   renderItem={task => {
                     const isEditableAndDeletable = task?.status === "None" && ['Processing', 'Approved'].includes(agencyStatus); //Bắt ẩn hiện nút edit và del
@@ -403,16 +403,16 @@ export default function AgencyDetail() {
                         }}
                         key={task.id}
                         actions={[
-                          <Button type="text" style={{ color: '#1890ff' }} icon={<RightCircleOutlined/>} onClick={() => {openModalShowTaskDetail(task.id)}} />,
+                          <Button type="text" style={{ color: '#1890ff' }} icon={<RightCircleOutlined />} onClick={() => { openModalShowTaskDetail(task.id) }} />,
                           isEditableAndDeletable && (
-                            <Button type="text" icon={<EditOutlined />} onClick={() => {openModalEditTask(task)}} />
+                            <Button type="text" icon={<EditOutlined />} onClick={() => { openModalEditTask(task) }} />
                           ),
                           isEditableAndDeletable && (
                             <Popconfirm
                               title="Bạn muốn xóa công việc này?"
-                              onConfirm={() => handleDeleteTaskById(task.id)} 
+                              onConfirm={() => handleDeleteTaskById(task.id)}
                             >
-                              <Button type="text" danger icon={<DeleteOutlined />}/>
+                              <Button type="text" danger icon={<DeleteOutlined />} />
                             </Popconfirm>
                           ),
                         ].filter(Boolean)}
@@ -473,6 +473,7 @@ export default function AgencyDetail() {
         visible={modalShowTaskDetailVisible}
         onClose={handleCloseModalShowTaskDetail}
         setVisible={setModalShowTaskDetailVisible}
+        isFromAgencyDetail={true}
       />
 
       <EditTaskModal

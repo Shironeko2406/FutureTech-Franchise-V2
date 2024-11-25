@@ -1,22 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Card, List, Typography, Button, Tag } from 'antd';
-import { UploadOutlined } from "@ant-design/icons";
+import { Card, List, Typography, Button, Tag, Modal } from 'antd';
+import { UploadOutlined, EyeOutlined } from "@ant-design/icons";
 import { CalendarOutlined, RightCircleOutlined, CheckCircleFilled, CloseCircleFilled, MinusCircleFilled, FlagOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import moment from 'moment';
 import DynamicFilter from '../../Component/DynamicFilter';
 import { GetTaskUserByLoginActionAsync } from '../../../Redux/ReducerAPI/UserReducer';
 import ViewTaskDetailModal from '../../../Manager/Modal/ViewTaskDetailModal';
-import { GetTaskDetailByIdActionAsync, SubmitTaskReportActionAsync, UpdateTaskStatusToSubmittedActionAsync } from '../../../Redux/ReducerAPI/WorkReducer';
+import { GetTaskDetailByIdActionAsync, SubmitTaskReportActionAsync, UpdateTaskStatusToSubmittedActionAsync, UpdateTaskStatusActionAsync } from '../../../Redux/ReducerAPI/WorkReducer';
 import SubmitTaskReportModal from '../../Modal/SubmitTaskReportModal';
 import { imageDB } from "../../../Firebasse/Config";
 import { useLoading } from '../../../Utils/LoadingContext';
 import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
 import jsPDF from 'jspdf';
-import { CreateDocumentActionAsync } from '../../../Redux/ReducerAPI/DocumentReducer';
-import { CreateEquipmentActionAsync } from '../../../Redux/ReducerAPI/EquipmentReducer';
-import { CreateSignedContractActionAsync } from '../../../Redux/ReducerAPI/ContractReducer';
+import ShowReportModal from '../../Modal/ShowReportModal';
 
 const { Title, Text } = Typography;
 
@@ -80,6 +78,7 @@ const ListTaskManager = () => {
     const [modalSubmitTaskReportVisible, setModalSubmitTaskReportVisible] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
     const [taskType, setTaskType] = useState(null);
+    const [modalShowReportVisible, setModalShowReportVisible] = useState(false);
 
     const handleFilterChange = (key, value) => {
         setFilters(prevFilters => ({ ...prevFilters, [key]: value }));
@@ -115,10 +114,22 @@ const ListTaskManager = () => {
         setSelectedTask(task);
         setTaskType(task.type);
         setModalSubmitTaskReportVisible(true);
+        dispatch(GetTaskDetailByIdActionAsync(task.id)); // Fetch task details
     };
 
     const handleCloseModalSubmitTaskReport = () => {
         setModalSubmitTaskReportVisible(false);
+        setSelectedTask(null);
+    };
+
+    const openModalShowReport = (task) => {
+        setSelectedTask(task);
+        setModalShowReportVisible(true);
+        dispatch(GetTaskDetailByIdActionAsync(task.id));
+    };
+
+    const handleCloseModalShowReport = () => {
+        setModalShowReportVisible(false);
         setSelectedTask(null);
     };
 
@@ -127,35 +138,16 @@ const ListTaskManager = () => {
             setLoading(true);
             try {
                 let formData = { ...reportData };
-                if (reportData.type === "AgreementSigned" || reportData.type === "BusinessRegistered") {
-                    const storageRef = ref(imageDB, `documents/${reportData.file.name}`);
-                    await uploadBytes(storageRef, reportData.file);
-                    const fileURL = await getDownloadURL(storageRef);
-                    const documentData = {
-                        title: reportData.title,
-                        urlFile: fileURL,
-                        expirationDate: reportData.expirationDate,
-                        documentType: reportData.type === "AgreementSigned" ? "AgreementContract" : "BusinessLicense",
-                        agencyId: selectedTask.agencyId, // Use agencyId from selected task
-                    };
-                    const document = await dispatch(CreateDocumentActionAsync(documentData));
-                    if (!document) {
-                        throw new Error("Failed to create document");
-                    }
+                if (reportData.type === "Design") {
                     formData = {
                         ...reportData,
-                        reportImageURL: fileURL,
+                        reportImageURL: reportData.imageUrls[0],
                     };
-                } else if (reportData.type === "Design") {
-                    const equipmentFormData = new FormData();
-                    equipmentFormData.append('file', reportData.equipmentFile);
-                    const equipmentResponse = await dispatch(CreateEquipmentActionAsync(selectedTask.agencyId, equipmentFormData));
-                    if (!equipmentResponse) {
-                        throw new Error("Failed to create equipment");
-                    }
+                } else if (reportData.imageUrls && reportData.imageUrls.length > 0) {
                     const pdf = new jsPDF();
                     const margin = 10;
                     let y = margin;
+                    let isFirstPage = true;
 
                     for (let index = 0; index < reportData.imageUrls.length; index++) {
                         const url = reportData.imageUrls[index];
@@ -172,63 +164,7 @@ const ListTaskManager = () => {
                                 if (y + imgHeight > pageHeight - margin) {
                                     pdf.addPage();
                                     y = margin;
-                                }
-
-                                // Check if the image width exceeds the page width
-                                if (imgWidth > pageWidth - 2 * margin) {
-                                    const ratio = (pageWidth - 2 * margin) / imgWidth;
-                                    pdf.addImage(img, 'JPEG', margin, y, imgWidth * ratio, imgHeight * ratio);
-                                    y += imgHeight * ratio + margin;
-                                } else {
-                                    pdf.addImage(img, 'JPEG', margin, y, imgWidth, imgHeight);
-                                    y += imgHeight + margin;
-                                }
-
-                                resolve();
-                            };
-                        });
-                    }
-                    const pdfBlob = pdf.output('blob');
-                    const storageRef = ref(imageDB, `pdfs/images-${Date.now()}.pdf`);
-                    await uploadBytes(storageRef, pdfBlob);
-                    const pdfURL = await getDownloadURL(storageRef);
-                    formData = {
-                        ...reportData,
-                        reportImageURL: pdfURL,
-                    };
-                } else if (reportData.type === "SignedContract") {
-                    const storageRef = ref(imageDB, `documents/${reportData.file.name}`);
-                    await uploadBytes(storageRef, reportData.file);
-                    const fileURL = await getDownloadURL(storageRef);
-                    const contractData = {
-                        title: reportData.title,
-                        startTime: reportData.startTime,
-                        endTime: reportData.endTime,
-                        contractDocumentImageURL: fileURL,
-                        revenueSharePercentage: reportData.revenueSharePercentage,
-                        agencyId: selectedTask.agencyId,
-                    };
-                    await dispatch(CreateSignedContractActionAsync(contractData));
-                } else {
-                    const pdf = new jsPDF();
-                    const margin = 10;
-                    let y = margin;
-
-                    for (let index = 0; index < reportData.imageUrls.length; index++) {
-                        const url = reportData.imageUrls[index];
-                        const img = new Image();
-                        img.src = url;
-                        await new Promise((resolve) => {
-                            img.onload = () => {
-                                const imgWidth = img.width;
-                                const imgHeight = img.height;
-                                const pageHeight = pdf.internal.pageSize.getHeight();
-                                const pageWidth = pdf.internal.pageSize.getWidth();
-
-                                // Check if the image height exceeds the page height
-                                if (y + imgHeight > pageHeight - margin) {
-                                    pdf.addPage();
-                                    y = margin;
+                                    isFirstPage = false;
                                 }
 
                                 // Check if the image width exceeds the page width
@@ -254,10 +190,7 @@ const ListTaskManager = () => {
                         reportImageURL: pdfURL,
                     };
                 }
-                const submitTaskReport = await dispatch(SubmitTaskReportActionAsync(selectedTask.id, formData));
-                if (submitTaskReport) {
-                    await dispatch(UpdateTaskStatusToSubmittedActionAsync(selectedTask.id));
-                }
+                await dispatch(SubmitTaskReportActionAsync(selectedTask.id, formData));
                 handleCloseModalSubmitTaskReport();
                 await dispatch(GetTaskUserByLoginActionAsync(
                     filters.searchText,
@@ -275,8 +208,72 @@ const ListTaskManager = () => {
         }
     };
 
+    const handleUpdateTaskStatus = async (task) => {
+        const newStatus = task.submit === "Submited" ? "None" : "Submited";
+        await dispatch(UpdateTaskStatusActionAsync(task.id, newStatus));
+        await dispatch(GetTaskUserByLoginActionAsync(
+            filters.searchText,
+            filters.levelFilter,
+            filters.statusFilter,
+            filters.submitFilter,
+            pageIndex,
+            pageSize
+        ));
+    };
+
     const renderItem = (task) => {
         const TaskItem = task.level === "Compulsory" ? CompulsoryTask : List.Item;
+        const actions = [
+            <Button
+                type="text"
+                style={{ color: "#1890ff" }}
+                icon={<RightCircleOutlined />}
+                onClick={() => openModalShowTaskDetail(task.id)}
+            />
+        ];
+
+        if (task.report) {
+            actions.push(
+                <Button
+                    type="primary"
+                    icon={<EyeOutlined />}
+                    onClick={() => openModalShowReport(task)}
+                >
+                    Xem báo cáo
+                </Button>
+            );
+            if (task.submit !== "Submited") {
+                actions.push(
+                    <Button
+                        type="primary"
+                        onClick={() => handleUpdateTaskStatus(task)}
+                    >
+                        Nộp báo cáo
+                    </Button>
+                );
+            } else {
+                actions.push(
+                    <Button
+                        type="primary"
+                        danger
+                        onClick={() => handleUpdateTaskStatus(task)}
+                    >
+                        Hủy nộp
+                    </Button>
+                );
+            }
+        } else {
+            actions.push(
+                <Button
+                    type="primary"
+                    icon={<UploadOutlined />}
+                    onClick={() => openModalSubmitTaskReport(task)}
+                >
+                    Báo cáo
+                </Button>
+            );
+        }
+
         return (
             <TaskItem
                 style={{
@@ -286,23 +283,7 @@ const ListTaskManager = () => {
                     padding: "12px",
                 }}
                 key={task.id}
-                actions={[
-                    <Button
-                        type="text"
-                        style={{ color: "#1890ff" }}
-                        icon={<RightCircleOutlined />}
-                        onClick={() => openModalShowTaskDetail(task.id)}
-                    />,
-                    task.submit !== "Submited" && (
-                        <Button
-                            type="primary"
-                            icon={<UploadOutlined />}
-                            onClick={() => openModalSubmitTaskReport(task)}
-                        >
-                            Báo cáo
-                        </Button>
-                    )
-                ]}
+                actions={actions}
             >
                 <List.Item.Meta
                     avatar={getStatusIcon(task.status)}
@@ -372,12 +353,19 @@ const ListTaskManager = () => {
                 visible={modalShowTaskDetailVisible}
                 onClose={handleCloseModalShowTaskDetail}
                 setVisible={setModalShowTaskDetailVisible}
+                isFromAgencyDetail={false}
             />
             <SubmitTaskReportModal
                 visible={modalSubmitTaskReportVisible}
                 onClose={handleCloseModalSubmitTaskReport}
                 onSubmit={handleSubmitTaskReport}
                 taskType={taskType}
+                selectedTask={selectedTask}
+            />
+            <ShowReportModal
+                visible={modalShowReportVisible}
+                onClose={handleCloseModalShowReport}
+                taskId={selectedTask?.id}
             />
         </Card>
     );
