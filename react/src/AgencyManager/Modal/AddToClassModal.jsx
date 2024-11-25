@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Modal, Select, Form, Input, Spin, DatePicker } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
-import { GetAllInstructorsAvailableActionAsync, CreateClassActionAsync } from "../../Redux/ReducerAPI/ClassReducer";
+import { GetAllInstructorsAvailableActionAsync, CreateClassActionAsync, GetAvailableClassesByCourseIdActionAsync, AddStudentsToClassActionAsync } from "../../Redux/ReducerAPI/ClassReducer";
 import { CreateClassScheduleActionAsync } from "../../Redux/ReducerAPI/ClassScheduleReducer";
 import { GetSlotActionAsync } from "../../Redux/ReducerAPI/SlotReducer";
 import moment from 'moment';
@@ -11,24 +11,28 @@ const AddToClassModal = ({ visible, onClose, listStudents, courseId, onClassCrea
     const dispatch = useDispatch();
     const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
     const [selectedClass, setSelectedClass] = useState(null);
-    const [classSlots, setClassSlots] = useState([]);
-    const { instructors } = useSelector((state) => state.ClassReducer);
+    const { instructors, availableClasses } = useSelector((state) => state.ClassReducer);
     const [isLoading, setLoading] = useState(false);
     const [isScheduleModalVisible, setIsScheduleModalVisible] = useState(false);
     const { slotData } = useSelector((state) => state.SlotReducer);
     const [createdClassId, setCreatedClassId] = useState(null);
 
-    // Fetch available classes on mount
     useEffect(() => {
-        console.log("listStudents: ", listStudents);
-        if (visible) dispatch(GetSlotActionAsync());
-        // if (visible) dispatch(fetchAvailableClasses());
-    }, [visible, dispatch]);
+        if (visible) {
+            dispatch(GetSlotActionAsync());
+            dispatch(GetAvailableClassesByCourseIdActionAsync(courseId));
+        }
+    }, [visible, dispatch, courseId]);
 
-    // Handle class selection to fetch slots
     const handleClassSelect = (classId) => {
         setSelectedClass(classId);
-        // dispatch(fetchClassSlots(classId)).then((slots) => setClassSlots(slots));
+    };
+
+    const handleConfirm = () => {
+        if (selectedClass) {
+            dispatch(AddStudentsToClassActionAsync(selectedClass, listStudents));
+            onClose();
+        }
     };
 
     // Open the Create Class modal
@@ -86,6 +90,8 @@ const AddToClassModal = ({ visible, onClose, listStudents, courseId, onClassCrea
         setIsScheduleModalVisible(false);
     };
 
+    const selectedClassData = availableClasses.find(cls => cls.id === selectedClass);
+
     return (
         <>
             <Modal
@@ -96,7 +102,7 @@ const AddToClassModal = ({ visible, onClose, listStudents, courseId, onClassCrea
                     <Button key="back" onClick={onClose}>
                         Hủy
                     </Button>,
-                    <Button key="submit" type="primary" onClick={() => { /* Handle confirmation */ }}>
+                    <Button key="submit" type="primary" onClick={handleConfirm}>
                         Xác nhận
                     </Button>,
                 ]}
@@ -107,23 +113,25 @@ const AddToClassModal = ({ visible, onClose, listStudents, courseId, onClassCrea
                             onChange={handleClassSelect}
                             style={{ width: "100%" }}
                         >
-                            {/* {classes.map((cls) => (
+                            {availableClasses.map((cls) => (
                                 <Select.Option key={cls.id} value={cls.id}>
-                                    {cls.name}
+                                    {`${cls.name} - ${cls.dayOfWeek}`}
                                 </Select.Option>
-                            ))} */}
+                            ))}
                         </Select>
                     </Form.Item>
-                    {selectedClass && (
-                        <Form.Item label="Class Slots">
-                            <Select
-                                placeholder="Select a slot"
-                            // options={classSlots.map((slot) => ({
-                            //     label: `${slot.startTime} - ${slot.endTime}`,
-                            //     value: slot.id,
-                            // }))}
-                            />
-                        </Form.Item>
+                    {selectedClass && selectedClassData && (
+                        <>
+                            <Form.Item label="Giảng viên">
+                                <Input value={selectedClassData.instructorName} disabled />
+                            </Form.Item>
+                            <Form.Item label="Sức chứa">
+                                <Input value={selectedClassData.capacity} disabled />
+                            </Form.Item>
+                            <Form.Item label="Số người đang học">
+                                <Input value={selectedClassData.currentEnrollment} disabled />
+                            </Form.Item>
+                        </>
                     )}
                     <Button type="link" onClick={handleCreateClassClick}>
                         <PlusOutlined /> Tạo lớp mới

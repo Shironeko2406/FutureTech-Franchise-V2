@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 
 const LeftSidebar = ({ onSidebarToggle }) => {
 
@@ -10,6 +10,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
     { type: 'link', label: 'Người dùng', path: '#', icon: 'solar:layers-minimalistic-bold-duotone' },
     { type: 'link', label: 'Giảng viên', path: '#', icon: 'solar:layers-minimalistic-bold-duotone' },
     { type: 'link', label: 'Giao dịch', path: '#', icon: 'fluent:payment-20-filled' },
+    { type: 'link', label: 'Hợp đồng', path: '/admin/contracts', icon: 'clarity:contract-solid' },
     { type: 'section', label: 'Lớp học', icon: 'ti ti-dots' },
     { type: 'link', label: 'Ghi danh', path: '#', icon: 'solar:file-text-bold-duotone' },
     { type: 'link', label: 'Danh sách', path: '#', icon: 'ri:file-list-3-fill' },

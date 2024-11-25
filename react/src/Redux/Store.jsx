@@ -21,6 +21,8 @@ import AgencyReducer from "./ReducerAPI/AgencyReducer";
 import AppointmentReducer from "./ReducerAPI/AppointmentReducer";
 import WorkReducer from "./ReducerAPI/WorkReducer";
 import CityReducer from "./ReducerAPI/CityReducer";
+import ContractReducer from "./ReducerAPI/ContractReducer";
+import DocumentReducer from "./ReducerAPI/DocumentReducer";
 
 export const store = configureStore({
   reducer: {
@@ -47,5 +49,7 @@ export const store = configureStore({
     AppointmentReducer,
     WorkReducer,
     CityReducer,
+    ContractReducer,
+    DocumentReducer,
   },
 });
