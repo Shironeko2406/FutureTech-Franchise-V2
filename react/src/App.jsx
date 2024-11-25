@@ -76,6 +76,7 @@ import SystemInstructorAppointment from "./SystemInstructor/Page/ScheduleSystemI
 import SystemInstructorAppointmentDetail from "./SystemInstructor/Page/ScheduleSystemInstructor/SystemInstructorAppointmentDetail";
 import SystemConsultantAppointment from "./SystemConsultant/Page/ScheduleSystemConsultant/SystemConsultantAppointment";
 import SystemConsultantAppointmentDetail from "./SystemConsultant/Page/ScheduleSystemConsultant/SystemConsultantAppointmentDetail";
+import ListTaskManager from "./Manager/Page/ListTask/ListTaskManager";
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -167,6 +168,7 @@ function App() {
                   <Route path="contract/create" element={<CreateContractPage />} />
                   <Route path="appointment-schedule" element={<ManagerAppointment />} />
                   <Route path="appointment-schedule/details" element={<ManagerAppointmentDetail />} />
+                  <Route path="list-task" element={<ListTaskManager />} />
                 </Route>
               </Route>
 
@@ -195,7 +197,6 @@ function App() {
                 <Route path="system-consultant" element={<TempUISystemConsultant />}>
                   <Route path="" element={<HomeSystemConsultant />} />
                   <Route path="list-task" element={<ListTaskSystemConsultant />} />
-                  <Route path="list-task" element={<ListTaskSystemTechnician />} />
                   <Route path="appointment-schedule" element={<SystemConsultantAppointment />} />
                   <Route path="appointment-schedule/details" element={<SystemConsultantAppointmentDetail />} />
                 </Route>

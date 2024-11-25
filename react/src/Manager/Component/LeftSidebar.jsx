@@ -7,6 +7,8 @@ const sidebarItems = [
   { type: 'section', label: 'Quản lý', icon: 'ti ti-dots' },
   { type: 'link', label: 'Người dùng', path: '#', icon: 'solar:layers-minimalistic-bold-duotone' },
   { type: 'link', label: 'Khóa học', path: '/manager/course', icon: 'solar:bookmark-square-minimalistic-bold-duotone' },
+  { type: 'section', label: 'Công việc' },
+  { type: 'link', label: 'Danh sách', path: '/manager/list-task', icon: 'solar:login-3-bold-duotone' },
   { type: 'link', label: 'Lịch hẹn', path: '/manager/appointment-schedule', icon: 'solar:calendar-bold-duotone' },
   { type: 'section', label: 'Nhượng quyền' },
   { type: 'link', label: 'Quản lý', path: '/manager/agency', icon: 'solar:login-3-bold-duotone' },
