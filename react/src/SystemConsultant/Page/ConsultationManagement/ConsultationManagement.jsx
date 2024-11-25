@@ -1,14 +1,13 @@
-// 
-
-
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   GetFranchiseRegistrationConsultActionAsync,
   UpdateFranchiseRegistrationConsultActionAsync,
 } from "../../../Redux/ReducerAPI/ConsultationReducer";
-import { Table, Select, Modal, Button, Space, Card, Typography, Dropdown } from 'antd';
-import { DeleteOutlined, EditOutlined, EllipsisOutlined, ReconciliationOutlined, RocketOutlined } from "@ant-design/icons";
+import { Table, Select, Modal, Button, Space, Card, Typography, Dropdown, Tooltip } from 'antd';
+import { DeleteOutlined, EditOutlined, EllipsisOutlined, PlusOutlined, ReconciliationOutlined, RocketOutlined } from "@ant-design/icons";
+import { GetCityDataActionAsync } from "../../../Redux/ReducerAPI/CityReducer";
+import CreateAgencyModal from "../../Modal/CreateAgencyModal";
 
 const { Option } = Select;
 const { Title, Text } = Typography;
@@ -36,6 +35,8 @@ const ConsultationManagement = () => {
   });
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [selectedConsult, setSelectedConsult] = useState(null);
+  const [createAgencyModalVisible, setCreateAgencyModalVisible] = useState(false);
 
   const handleFilterChange = (key, value) => {
     setFilters(prevFilters => ({ ...prevFilters, [key]: value }));
@@ -49,6 +50,7 @@ const ConsultationManagement = () => {
 
   useEffect(() => {
     dispatch(GetFranchiseRegistrationConsultActionAsync(filters.statusFilter, pageIndex, pageSize));
+    dispatch(GetCityDataActionAsync())
   }, [filters, pageIndex, pageSize, dispatch]);
 
   const handleMenuClick = (record, key) => {
@@ -60,7 +62,6 @@ const ConsultationManagement = () => {
     }
   };
 
-
   const handleApproveFranchiseRegisById = (id) => {
     dispatch(UpdateFranchiseRegistrationConsultActionAsync(
       id,
@@ -69,6 +70,17 @@ const ConsultationManagement = () => {
       pageSize
     ));
   };
+
+  //Hàm đóng mở modal
+  const showModalCreateAgency = (consult) => {
+    setCreateAgencyModalVisible(true)
+    setSelectedConsult(consult)
+  }
+  const handleModalCreateAgencyCancel = () => {
+    setCreateAgencyModalVisible(false)
+    setSelectedConsult(null)
+  }
+  //--------------------
 
   const columns = [
     {
@@ -102,10 +114,16 @@ const ConsultationManagement = () => {
       key: 'action',
       render: (_, record) => (
         <Space size="small">
-          {/* <Button type="primary" onClick={() => handleApproveFranchiseRegisById(record.id)}>
-            Approve
-          </Button>
-          <Button danger>Reject</Button> */}
+          {record.status === 'Consulted' && (
+            <Tooltip title="Tạo đối tác">
+              <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                onClick={() => showModalCreateAgency(record)}
+                style={{ backgroundColor: "#1890ff", border: "none" }}
+              />
+            </Tooltip>
+          )}
           <Dropdown
             menu={{
               items: getActionItems(),
@@ -158,6 +176,13 @@ const ConsultationManagement = () => {
             showSizeChanger: true,
             pageSizeOptions: ["7", "10"],
           }}
+        />
+
+        {/*Modal*/}
+        <CreateAgencyModal
+          visible={createAgencyModalVisible}
+          onClose={handleModalCreateAgencyCancel}
+          consult={selectedConsult}
         />
     </Card>
   );

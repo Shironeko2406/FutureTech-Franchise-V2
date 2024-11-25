@@ -13,7 +13,7 @@ const ManagerAppointmentDetail = () => {
 
     useEffect(() => {
         if (!selectedAppointment) {
-            navigate('manager/appointment-schedule');
+            navigate('/manager/appointment-schedule');
         }
     }, [selectedAppointment, navigate]);
 

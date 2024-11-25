@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { httpClient } from "../../Utils/Interceptors";
+import axios from "axios";
 
 const initialState = {
   cityData: [],
@@ -22,11 +22,10 @@ export default CityReducer.reducer;
 export const GetCityDataActionAsync = () => {
   return async (dispatch) => {
     try {
-      const res = await httpClient.get(
+      const res = await axios.get(
         `https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json`
       );
-      const action = setCityData(res.data);
-      dispatch(action);
+      dispatch(setCityData(res.data))
     } catch (error) {
       console.error(error);
     }

@@ -1,10 +1,10 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Button, Card, Input, Select, List, Typography, Row, Col, Popconfirm } from 'antd';
+import { Button, Card, Input, Select, List, Typography, Row, Col, Popconfirm, Space, Modal } from 'antd';
 import {
   CheckCircleFilled, MinusCircleFilled, PlusOutlined,
   DeleteOutlined, SearchOutlined, FlagOutlined, TeamOutlined, FileDoneOutlined,
   AppstoreAddOutlined, AreaChartOutlined, EditOutlined, CheckCircleOutlined,
-  DollarOutlined, CloseCircleFilled, RightCircleOutlined,
+  DollarOutlined, CloseCircleFilled, RightCircleOutlined ,
   CalendarOutlined,
   BuildOutlined,
   FileSyncOutlined,
@@ -13,7 +13,7 @@ import {
 import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { GetTaskByAgencyIdActionAsync } from '../../../Redux/ReducerAPI/AgencyReducer';
+import { GetTaskByAgencyIdActionAsync, UpdateStatusAgencyActionAsync } from '../../../Redux/ReducerAPI/AgencyReducer';
 import CreateTaskBySelectedTypeModal from '../../Modal/CreateTaskBySelectedTypeModal';
 import ViewTaskDetailModal from '../../Modal/ViewTaskDetailModal';
 import { DeleteTaskByIdActionAsync, GetTaskDetailByIdActionAsync } from '../../../Redux/ReducerAPI/WorkReducer';
@@ -191,8 +191,8 @@ const translateType = (type) => {
 //     title: "Task 1",
 //     startDate: "2024-11-20T16:24:38.045",
 //     endDate: "2024-11-21T16:24:38.045",
-//     type: "AgreementSigned",
-//     status: "None",
+//     type: "Interview",
+//     status: "Approved",
 //     level: "Optional",
 //     submit: "None",
 //   },
@@ -202,7 +202,7 @@ const translateType = (type) => {
 //     startDate: "2024-11-20T16:24:38.045",
 //     endDate: "2024-11-21T16:24:38.045",
 //     type: "AgreementSigned",
-//     status: "None",
+//     status: "Rejected",
 //     level: "Optional",
 //     submit: "None",
 //   },
@@ -211,8 +211,8 @@ const translateType = (type) => {
 //     title: "Task 1",
 //     startDate: "2024-11-20T00:00:00",
 //     endDate: "2024-11-22T00:00:00",
-//     type: "Interview",
-//     status: "Rejected",
+//     type: "BusinessRegistered",
+//     status: "Approved",
 //     level: "Compulsory",
 //     submit: "None",
 //   },
@@ -221,7 +221,7 @@ const translateType = (type) => {
 //     title: "Task 1",
 //     startDate: "2024-11-20T16:24:38.045",
 //     endDate: "2024-11-21T16:24:38.045",
-//     type: "Interview",
+//     type: "SiteSurvey",
 //     status: "Approved",
 //     level: "Compulsory",
 //     submit: "None",
@@ -231,11 +231,32 @@ const translateType = (type) => {
 //     title: "Task 3",
 //     startDate: "2024-11-21T00:00:00",
 //     endDate: "2024-11-21T01:01:00",
-//     type: "Interview",
+//     type: "Design",
 //     status: "Approved",
 //     level: "Compulsory",
 //     submit: "None",
 //   },
+//   {
+//     id: "602cbb55-8732-4794-c50a-08dd097f3ef0",
+//     title: "Task 1",
+//     startDate: "2024-11-20T16:24:38.045",
+//     endDate: "2024-11-21T16:24:38.045",
+//     type: "Quotation",
+//     status: "Approved",
+//     level: "Compulsory",
+//     submit: "None",
+//   },
+//   {
+//     id: "0ee259f8-9a32-421a-c50b-08dd092f5ef0",
+//     title: "Task 3",
+//     startDate: "2024-11-21T00:00:00",
+//     endDate: "2024-11-21T01:01:00",
+//     type: "SignedContract",
+//     status: "Approved",
+//     level: "Compulsory",
+//     submit: "None",
+//   },
+  
 // ];
 
 // Updated component
@@ -320,6 +341,19 @@ export default function AgencyDetail() {
     setLoading(true)
     dispatch(DeleteTaskByIdActionAsync(taskId, id)).finally(()=>setLoading(false))
   }
+
+  const handleBecomePartner = () => {
+    Modal.confirm({
+      title: "Xác nhận trở thành đối tác",
+      content: "Bạn có chắc chắn muốn trở thành đối tác không?",
+      okText: "Xác nhận",
+      cancelText: "Hủy",
+      onOk: () => {
+        // Logic xác nhận
+        dispatch(UpdateStatusAgencyActionAsync(id, "Approved"));
+      },
+    });
+  };
   //--------------------------
 
   // Các hàm đóng mở state modal
@@ -344,6 +378,14 @@ export default function AgencyDetail() {
     setSelectedTask(null)
   };
   //-------------------------
+
+  const areAllRequiredTypesCompleted = () => {
+    const requiredTypes = ['Interview', 'AgreementSigned', 'BusinessRegistered', 'SiteSurvey', 'Design', 'Quotation', 'SignedContract'];
+    return requiredTypes.every(type => {
+      const typeGroup = taskDataModify.find(group => group.type === type);
+      return typeGroup && getTypeStatus(type, typeGroup.tasks) === 'Completed';
+    });
+  };
 
   return (
     <StyledCard title={<Title level={4}><FlagOutlined /> Tiến trình nhượng quyền</Title>}>
@@ -379,11 +421,27 @@ export default function AgencyDetail() {
               title={
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
                   <span>{translateType(selectedType)}</span>
-                  {['Processing', 'Approved'].includes(agencyStatus) && (
+                  {/* {['Processing', 'Approved'].includes(agencyStatus) && (
                     <Button type="primary" icon={<PlusOutlined />} onClick={showModalCreateTask}>
                       Thêm công việc
                     </Button>
-                  )}
+                  )} */}
+                  <Space>
+                    {selectedType === 'SignedContract' && areAllRequiredTypesCompleted() && ['Processing'].includes(agencyStatus) && (
+                      <Button 
+                        type="primary" 
+                        icon={<TeamOutlined />}
+                        onClick={handleBecomePartner}
+                      >
+                        Trở thành đối tác
+                      </Button>
+                    )}
+                    {['Processing', 'Approved'].includes(agencyStatus) && (
+                      <Button type="primary" icon={<PlusOutlined />} onClick={showModalCreateTask}>
+                        Thêm công việc
+                      </Button>
+                    )}
+                  </Space>
                 </div>
               }
             >
@@ -391,7 +449,7 @@ export default function AgencyDetail() {
               <List
                   dataSource={selectedTasks}
                   renderItem={task => {
-                    const isEditableAndDeletable = task?.status === "None" && ['Processing', 'Approved'].includes(agencyStatus); //Bắt ẩn hiện nút edit và del
+                    const isEditableAndDeletable = task?.status === "None" && ['Processing','Approved'].includes(agencyStatus); //Bắt ẩn hiện nút edit và del
                     const TaskItem = task.level === "Compulsory" ? CompulsoryTask : List.Item;
                     return (
                       <TaskItem
