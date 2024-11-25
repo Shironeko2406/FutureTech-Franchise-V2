@@ -45,7 +45,7 @@ export const GetTaskDetailByIdActionAsync = (id) => {
     try {
       const res = await httpClient.get(`/api/v1/works/${id}`);
       console.log("GetTaskDetailByIdActionAsync", res.data);
-      dispatch(setTaskDetail(res.data))
+      dispatch(setTaskDetail(res.data));
     } catch (error) {
       console.log(error);
       message.error("Lỗi hệ thống");
@@ -120,14 +120,17 @@ export const SubmitTaskReportActionAsync = (id, reportData) => {
       if (res.isSuccess && res.data) {
         message.success(`${res.message}`);
         await dispatch(GetTaskDetailByIdActionAsync(id));
+        return true;
       } else if (res.isSuccess && !res.data) {
         message.error(`${res.message}`);
+        return false;
       } else {
         throw new Error(`${res.message}`);
       }
     } catch (error) {
       console.error(error);
       message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
+      return false;
     }
   };
 };
@@ -138,14 +141,17 @@ export const UpdateTaskStatusToSubmittedActionAsync = (id) => {
       const res = await httpClient.put(`/staff/api/v1/works/${id}/status`, null, { params: { workStatusSubmitEnum: 'Submited' } });
       if (res.isSuccess && res.data) {
         // message.success(`${res.message}`);
+        return true;
       } else if (res.isSuccess && !res.data) {
         message.error(`${res.message}`);
+        return false;
       } else {
         throw new Error(`${res.message}`);
       }
     } catch (error) {
       console.error("UpdateTaskStatusToSubmittedActionAsync", error);
       message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
+      return false;
     }
   };
 };

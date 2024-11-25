@@ -42,3 +42,25 @@ export const GetContractsActionAsync = (pageIndex, pageSize, startTime, endTime,
         }
     };
 };
+
+export const CreateSignedContractActionAsync = (contractData) => {
+    return async (dispatch) => {
+        console.log("CreateSignedContractActionAsync", contractData);
+        try {
+            const res = await httpClient.put(`/api/v1/contracts`, contractData);
+            if (res.isSuccess && res.data) {
+                // message.success(`${res.message}`);
+                return true;
+            } else if (res.isSuccess && !res.data) {
+                message.error(`${res.message}`);
+                return false;
+            } else {
+                throw new Error(`${res.message}`);
+            }
+        } catch (error) {
+            console.error("CreateSignedContractActionAsync", error);
+            message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
+            return false;
+        }
+    };
+};

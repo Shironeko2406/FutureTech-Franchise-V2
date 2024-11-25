@@ -61,3 +61,23 @@ export const DeleteDocumentActionAsync = (documentId) => {
         }
     };
 };
+
+export const CreateDocumentActionAsync = (data) => {
+    console.log("CreateDocumentActionAsync data: ", data);
+    return async (dispatch) => {
+        try {
+            const res = await httpClient.post(`/api/v1/documents`, data);
+            if (res.isSuccess && res.data) {
+                message.success(`${res.message}`);
+                return res.data;
+            } else {
+                message.error(`${res.message}`);
+                return null;
+            }
+        } catch (error) {
+            console.error(error);
+            message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
+            return null;
+        }
+    };
+};
