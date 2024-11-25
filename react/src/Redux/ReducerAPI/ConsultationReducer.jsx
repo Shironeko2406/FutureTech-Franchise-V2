@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { httpClient } from "../../Utils/Interceptors";
+import { message } from "antd";
 
 const initialState = {
   franchiseConsult: [
@@ -52,9 +53,17 @@ export const UpdateFranchiseRegistrationConsultActionAsync = (id, status, pageIn
       const res = await httpClient.put(
         `/api/v1/consultations/${id}`
       );
-      dispatch(GetFranchiseRegistrationConsultActionAsync(status, pageIndex, pageSize))
+      if (res.isSuccess && res.data) {
+        message.success(`${res.message}`);
+        await dispatch(GetFranchiseRegistrationConsultActionAsync(status, pageIndex, pageSize));
+        return true;
+      } else {
+        message.error(`${res.message}`);
+        return false;
+      }
     } catch (error) {
-      console.error(error);
+      console.error(error);      
+      return false;
     }
   };
 };

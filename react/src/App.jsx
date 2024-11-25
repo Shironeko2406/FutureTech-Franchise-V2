@@ -13,7 +13,6 @@ import ForgotPassword from "./Admin/Page/ForgotPassword/ForgotPassword";
 import ResetPassword from "./Admin/Page/ForgotPassword/ResetPassword";
 import TempUIManager from "./Manager/TempUI/TempUIManager";
 import HomeManager from "./Manager/Page/Home/HomeManager";
-import ConsultationManagement from "./Manager/Page/ConsultationManagement/ConsultationManagement";
 import TempUIStudent from "./Student/TempUI/TempUIStudent";
 import HomeStudent from "./Student/Page/HomeStudent/HomeStudent";
 import ClassDetailStudent from "./Student/Page/ClassDetailStudent/ClassDetailStudent";
@@ -65,6 +64,7 @@ import ListTaskSystemInstructor from "./SystemInstructor/Page/ListTask/ListTaskS
 import TempUISystemConsultant from "./SystemConsultant/TempUI/TempUISystemConsultant";
 import HomeSystemConsultant from "./SystemConsultant/Page/Home/HomeSystemConsultant";
 import ListTaskSystemConsultant from "./SystemConsultant/Page/ListTask/ListTaskSystemConsultant";
+import ConsultationManagement from "./SystemConsultant/Page/ConsultationManagement/ConsultationManagement";
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -143,7 +143,6 @@ function App() {
               <Route element={<ProtectedRoute requiredRole="Manager" />}>
                 <Route path="manager" element={<TempUIManager />}>
                   <Route path="" element={<HomeManager />} />
-                  <Route path="consult" element={<ConsultationManagement />} />
                   <Route path="course-category" element={<CourseCategoryManager />} />
                   <Route path="course" element={<CourseManage />} />
                   <Route path="course-detail/:id" element={<CourseDetailManager />} />
@@ -176,6 +175,7 @@ function App() {
                 <Route path="system-consultant" element={<TempUISystemConsultant/>}>
                   <Route path="" element={<HomeSystemConsultant/>} />
                   <Route path="list-task" element={<ListTaskSystemConsultant/>} />
+                  <Route path="consult" element={<ConsultationManagement />} />
                 </Route>
               </Route>
 

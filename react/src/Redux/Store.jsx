@@ -20,6 +20,7 @@ import QuestionReducer from "./ReducerAPI/QuestionReducer";
 import AgencyReducer from "./ReducerAPI/AgencyReducer";
 import AppointmentReducer from "./ReducerAPI/AppointmentReducer";
 import WorkReducer from "./ReducerAPI/WorkReducer";
+import CityReducer from "./ReducerAPI/CityReducer";
 
 export const store = configureStore({
   reducer: {
@@ -45,5 +46,6 @@ export const store = configureStore({
     AgencyReducer,
     AppointmentReducer,
     WorkReducer,
+    CityReducer,
   },
 });
