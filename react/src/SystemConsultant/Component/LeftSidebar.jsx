@@ -6,7 +6,7 @@ const sidebarItems = [
   { type: 'link', label: 'Bảng điều khiển', path: '/system-consultant', icon: 'solar:home-smile-bold-duotone' },
   { type: 'section', label: 'Công việc' },
   { type: 'link', label: 'Danh sách', path: '/system-consultant/list-task', icon: 'solar:login-3-bold-duotone' },
-  { type: 'link', label: 'Lịch làm việc', path: '#', icon: 'solar:login-3-bold-duotone' },
+  { type: 'link', label: 'Lịch hẹn', path: '/system-consultant/appointment-schedule', icon: 'solar:calendar-bold-duotone' }
 ];
 
 

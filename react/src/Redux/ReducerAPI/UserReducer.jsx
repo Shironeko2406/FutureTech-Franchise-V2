@@ -8,7 +8,7 @@ const initialState = {
   schedules: [],
   classOfUserLogin: [],
   userManager: [],
-  taskUser:[],
+  taskUser: [],
   totalPagesCount: 0,
 };
 
@@ -198,6 +198,7 @@ export const GetTaskUserByLoginActionAsync = (search, level, status, submit, pag
       const res = await httpClient.get(`/api/v1/users/mine/works`, {
         params: { Search: search, Level: level, Status: status, Submit: submit, PageIndex: pageIndex, PageSize: pageSize }
       });
+      console.log("GetTaskUserByLoginActionAsync, response: ", res.data);
       dispatch(setTaskUser(res.data));
     } catch (error) {
       console.error(error);

@@ -12,7 +12,7 @@ const sidebarItems = [
   { type: 'link', label: 'Lịch học', path: '#', icon: 'solar:file-text-bold-duotone' },
   { type: 'section', label: 'Công việc', icon: 'ti ti-dots' },
   { type: 'link', label: 'Danh sách', path: '/system-instructor/list-task', icon: 'solar:login-3-bold-duotone' },
-  { type: 'link', label: 'Lịch làm việc', path: '#', icon: 'solar:login-3-bold-duotone' },
+  { type: 'link', label: 'Lịch hẹn', path: '/system-instructor/appointment-schedule', icon: 'solar:calendar-bold-duotone' },
 ];
 
 const LeftSidebar = ({ onSidebarToggle }) => {

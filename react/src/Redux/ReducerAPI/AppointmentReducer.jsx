@@ -6,6 +6,8 @@ import { CreateNotificationActionAsync } from "./NotificationReducer";
 
 const initialState = {
   appointmentDetail: {},
+  appointmentSchedules: [],
+  selectedAppointment: null,
 };
 
 const AppointmentReducer = createSlice({
@@ -15,10 +17,16 @@ const AppointmentReducer = createSlice({
     setAppointmentDetail: (state, action) => {
       state.appointmentDetail = action.payload;
     },
+    setAppointmentSchedules: (state, action) => {
+      state.appointmentSchedules = action.payload;
+    },
+    setSelectedAppointment: (state, action) => {
+      state.selectedAppointment = action.payload;
+    },
   },
 });
 
-export const { setAppointmentDetail } = AppointmentReducer.actions;
+export const { setAppointmentDetail, setAppointmentSchedules, setSelectedAppointment } = AppointmentReducer.actions;
 
 export default AppointmentReducer.reducer;
 //------------API CALL----------------
@@ -112,6 +120,48 @@ export const EditAppointmentByIdActionAsync = (appointmentId, dataEdit, workId) 
     } catch (error) {
       console.log(error);
       message.error("Lỗi hệ thống");
+    }
+  };
+};
+
+export const GetAppointmentSchedulesActionAsync = (startDate, endDate) => {
+  console.log("GetAppointmentSchedulesActionAsync, startDate: ", startDate);
+  console.log("GetAppointmentSchedulesActionAsync, endDate: ", endDate);
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.get(`/staff/api/v1/appointments`, {
+        params: {
+          StartTime: startDate,
+          EndTime: endDate,
+        },
+      });
+      if (res.isSuccess) {
+        dispatch(setAppointmentSchedules(res.data));
+        console.log("GetAppointmentSchedulesActionAsync, response: ", res.data);
+      } else {
+        throw new Error(`${res.message}`);
+      }
+    } catch (error) {
+      console.error(error);
+      // Hiển thị thông báo lỗi nếu không kết nối được tới server
+      message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
+    }
+  };
+};
+
+export const GetAppointmentByIdActionAsync = (id) => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.get(`/api/v1/appointments/${id}`);
+      if (res.isSuccess) {
+        dispatch(setSelectedAppointment(res.data));
+        console.log("GetAppointmentByIdActionAsync, response: ", res.data);
+      } else {
+        throw new Error(res.message);
+      }
+    } catch (error) {
+      console.error(error);
+      message.error("Không thể lấy chi tiết lịch hẹn, vui lòng thử lại sau.");
     }
   };
 };
