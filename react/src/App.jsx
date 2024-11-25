@@ -56,6 +56,7 @@ import AssignmentOfClass from "./Instructor/Page/AssignmentOfClass/AssignmentOfC
 import ViewQuestionChapterManager from "./Manager/Page/ViewQuestionChapterManager/ViewQuestionChapterManager";
 import ViewQuestionChapterSystemInstructor from "./SystemInstructor/Page/ViewQuestionChapterSystemInstructor/ViewQuestionChapterSystemInstructor";
 import CourseDetailOfClass from "./Instructor/Page/CourseDetailOfClass.jsx/CourseDetailOfClass";
+import DocumentManagement from "./Manager/Page/DocumentManagement/DocumentManagement";
 import AgencyManagement from "./Manager/Page/AgencyManagement/AgencyManagement";
 import AgencyDetail from "./Manager/Page/AgencyDetail/AgencyDetail";
 import HomeSystemTechnician from "./SystemTechnician/Page/HomeSystemTechnician/HomeSystemTechnician";
@@ -162,6 +163,7 @@ function App() {
                   <Route path="course-detail/:id" element={<CourseDetailManager />} />
                   <Route path="course-detail/:id/questions" element={<ViewQuestionChapterManager />} />
                   <Route path="slot" element={<SlotManager />} />
+                  <Route path="documents" element={<DocumentManagement />} />
                   <Route path="agency/:id/task-detail" element={<AgencyDetail />} />
                   <Route path="agency" element={<AgencyManagement />} />
                   <Route path="contracts" element={<ManageContractPage />} />
