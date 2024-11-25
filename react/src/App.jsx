@@ -68,8 +68,14 @@ import ListTaskSystemConsultant from "./SystemConsultant/Page/ListTask/ListTaskS
 import CreateContractPage from "./Manager/Page/ManageContract/CreateContractPage";
 import ManageContractPage from "./Manager/Page/ManageContract/ManageContractPage";
 import ManageContractAdminPage from "./Admin/Page/ManageContract/ManageContractAdminPage";
-import ScheduleSystemTechnician from "./SystemTechnician/Page/ScheduleSystemTechnician/ScheduleSystemTechnician";
+import SystemTechnicianAppointment from "./SystemTechnician/Page/ScheduleSystemTechnician/SystemTechnicianAppointment";
 import SystemTechnicianAppointmentDetail from "./SystemTechnician/Page/ScheduleSystemTechnician/SystemTechnicianAppointmentDetail";
+import ManagerAppointment from "./Manager/Page/ScheduleManager/ManagerAppointment";
+import ManagerAppointmentDetail from "./Manager/Page/ScheduleManager/ManagerAppointmentDetail";
+import SystemInstructorAppointment from "./SystemInstructor/Page/ScheduleSystemInstructor/SystemInstructorAppointment";
+import SystemInstructorAppointmentDetail from "./SystemInstructor/Page/ScheduleSystemInstructor/SystemInstructorAppointmentDetail";
+import SystemConsultantAppointment from "./SystemConsultant/Page/ScheduleSystemConsultant/SystemConsultantAppointment";
+import SystemConsultantAppointmentDetail from "./SystemConsultant/Page/ScheduleSystemConsultant/SystemConsultantAppointmentDetail";
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -159,6 +165,8 @@ function App() {
                   <Route path="agency" element={<AgencyManagement />} />
                   <Route path="contracts" element={<ManageContractPage />} />
                   <Route path="contract/create" element={<CreateContractPage />} />
+                  <Route path="appointment-schedule" element={<ManagerAppointment />} />
+                  <Route path="appointment-schedule/details" element={<ManagerAppointmentDetail />} />
                 </Route>
               </Route>
 
@@ -169,7 +177,8 @@ function App() {
                   <Route path="course-detail/:id" element={<CourseDetailSystemInstructor />} />
                   <Route path="course-detail/:id/questions" element={<ViewQuestionChapterSystemInstructor />} />
                   <Route path="list-task" element={<ListTaskSystemInstructor />} />
-
+                  <Route path="appointment-schedule" element={<SystemInstructorAppointment />} />
+                  <Route path="appointment-schedule/details" element={<SystemInstructorAppointmentDetail />} />
                 </Route>
               </Route>
 
@@ -177,7 +186,7 @@ function App() {
                 <Route path="system-technician" element={<TemUISystemTechnician />}>
                   <Route path="" element={<HomeSystemTechnician />} />
                   <Route path="list-task" element={<ListTaskSystemTechnician />} />
-                  <Route path="appointment-schedule" element={<ScheduleSystemTechnician />} />
+                  <Route path="appointment-schedule" element={<SystemTechnicianAppointment />} />
                   <Route path="appointment-schedule/details" element={<SystemTechnicianAppointmentDetail />} />
                 </Route>
               </Route>
@@ -187,6 +196,8 @@ function App() {
                   <Route path="" element={<HomeSystemConsultant />} />
                   <Route path="list-task" element={<ListTaskSystemConsultant />} />
                   <Route path="list-task" element={<ListTaskSystemTechnician />} />
+                  <Route path="appointment-schedule" element={<SystemConsultantAppointment />} />
+                  <Route path="appointment-schedule/details" element={<SystemConsultantAppointmentDetail />} />
                 </Route>
               </Route>
 

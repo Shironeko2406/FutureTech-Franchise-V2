@@ -4,13 +4,13 @@ import { Card, Descriptions, Tag, List, Avatar } from 'antd';
 import { UserOutlined, ClockCircleOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 
-const SystemTechnicianAppointmentDetail = () => {
+const SystemConsultantAppointmentDetail = () => {
     const { selectedAppointment } = useSelector((state) => state.AppointmentReducer);
     const navigate = useNavigate();
 
     useEffect(() => {
         if (!selectedAppointment) {
-            navigate('/system-technician/appointment-schedule');
+            navigate('/system-consultant/appointment-schedule');
         }
     }, [selectedAppointment, navigate]);
 
@@ -67,5 +67,4 @@ const SystemTechnicianAppointmentDetail = () => {
     );
 };
 
-export default SystemTechnicianAppointmentDetail;
-
+export default SystemConsultantAppointmentDetail;

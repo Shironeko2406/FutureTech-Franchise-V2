@@ -1,16 +1,18 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
+import "moment/locale/vi"; // Import Vietnamese locale
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useDispatch, useSelector } from 'react-redux';
 import { GetAppointmentSchedulesActionAsync, GetAppointmentByIdActionAsync } from '../../../Redux/ReducerAPI/AppointmentReducer';
 import { useLoading } from '../../../Utils/LoadingContext';
-import './ScheduleSystemTechnician.css';
+import './SystemTechnicianAppointment.css';
 import { useNavigate } from 'react-router-dom';
 
+moment.locale('vi'); // Set moment locale to Vietnamese
 const localizer = momentLocalizer(moment);
 
-const ScheduleSystemTechnician = () => {
+const SystemTechnicianAppointment = () => {
     const dispatch = useDispatch();
     const { appointmentSchedules } = useSelector((state) => state.AppointmentReducer);
     const [currentView, setCurrentView] = useState(Views.WEEK);
@@ -75,15 +77,9 @@ const ScheduleSystemTechnician = () => {
 
     const eventStyleGetter = (event) => {
         const currentDate = new Date();
-        let backgroundColor = '#3174ad'; // Default color
+        let backgroundColor = '#f0ad4e'; // Default color
         if (moment(event.start).isSameOrBefore(currentDate, 'day')) {
-            if (event.status === 'Completed') {
-                backgroundColor = '#28a745'; // Green for completed
-            } else if (event.status === 'Cancelled') {
-                backgroundColor = '#dc3545'; // Red for cancelled
-            } else {
-                backgroundColor = '#f0ad4e'; // Yellow for none
-            }
+            backgroundColor = '#3174ad';
         }
         return {
             style: {
@@ -96,20 +92,27 @@ const ScheduleSystemTechnician = () => {
     };
 
     const EventComponent = ({ event }) => {
-        const currentDate = new Date();
-        let statusText = "(Chưa tới ngày)";
-        if (moment(event.start).isSameOrBefore(currentDate, 'day')) {
-            statusText = event.status === 'Completed' ? "(Đã báo cáo)" : event.status === 'Cancelled' ? "(Đã hủy)" : "(Chưa báo cáo)";
-        }
         return (
             <div className="event-container">
                 <span className="event-title">{event.title}</span>
-                <br />
-                <span className="event-status">
-                    {statusText}
-                </span>
             </div>
         );
+    };
+
+    const messages = {
+        allDay: 'Cả ngày',
+        previous: 'Trước',
+        next: 'Tiếp',
+        today: 'Hôm nay',
+        month: 'Tháng',
+        week: 'Tuần',
+        day: 'Ngày',
+        agenda: 'Lịch trình',
+        date: 'Ngày',
+        time: 'Thời gian',
+        event: 'Sự kiện',
+        noEventsInRange: 'Không có sự kiện nào trong khoảng thời gian này.',
+        showMore: total => `+ Xem thêm (${total})`
     };
 
     return (
@@ -136,9 +139,10 @@ const ScheduleSystemTechnician = () => {
                 components={{
                     event: EventComponent,
                 }}
+                messages={messages} // Add messages prop for localization
             />
         </div>
     );
 };
 
-export default ScheduleSystemTechnician;
+export default SystemTechnicianAppointment;
