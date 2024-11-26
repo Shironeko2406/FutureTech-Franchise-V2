@@ -1,9 +1,11 @@
 import { Table, Button, Typography, Spin, Input, DatePicker, Space } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { RightCircleOutlined } from "@ant-design/icons";
 import { GetContractsActionAsync } from "../../../Redux/ReducerAPI/ContractReducer";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
+import ContractDetailModal from "../../Modal/ContractDetailModal"; // Import the modal
 
 const { Text } = Typography;
 
@@ -15,6 +17,8 @@ const ManageContractPage = () => {
     const [loading, setLoading] = useState(false);
     const [searchInput, setSearchInput] = useState(""); // Add search input state
     const [dateRange, setDateRange] = useState([null, null]); // Add date range state
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [selectedContract, setSelectedContract] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -42,6 +46,16 @@ const ManageContractPage = () => {
         setPageIndex(1); // Reset to first page on date change
     };
 
+    const handleBranchClick = (contract) => {
+        setSelectedContract(contract);
+        setIsModalVisible(true);
+    };
+
+    const handleModalClose = () => {
+        setIsModalVisible(false);
+        setSelectedContract(null);
+    };
+
     const columns = [
         {
             title: "STT",
@@ -58,7 +72,7 @@ const ManageContractPage = () => {
             render: (text, record) => (
                 <Button
                     type="link"
-                    onClick={() => handleRowClick(record.id)}
+                    onClick={() => handleBranchClick(record)}
                     style={{
                         display: 'flex',
                         alignItems: 'center',
@@ -71,6 +85,7 @@ const ManageContractPage = () => {
                     className="hover:bg-blue-50"
                 >
                     <Text strong style={{ marginRight: '4px' }}>{text}</Text>
+                    <RightCircleOutlined style={{ fontSize: '16px' }} />
                 </Button>
             ),
         },
@@ -146,6 +161,11 @@ const ManageContractPage = () => {
                         }}
                     />
                 )}
+                <ContractDetailModal
+                    visible={isModalVisible}
+                    onClose={handleModalClose}
+                    contractDetail={selectedContract}
+                />
             </div>
         </div>
     );
