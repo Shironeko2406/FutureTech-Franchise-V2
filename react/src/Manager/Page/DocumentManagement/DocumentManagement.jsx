@@ -159,6 +159,13 @@ const DocumentManagement = () => {
 
     const columns = [
         {
+            title: "STT",
+            dataIndex: "no",
+            key: "no",
+            align: "center",
+            render: (text, record, index) => index + 1 + (pageIndex - 1) * pageSize,
+        },
+        {
             title: "Tên tài liệu",
             dataIndex: "title",
             key: "title",
