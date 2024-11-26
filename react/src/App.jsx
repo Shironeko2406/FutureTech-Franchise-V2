@@ -78,6 +78,8 @@ import SystemInstructorAppointmentDetail from "./SystemInstructor/Page/ScheduleS
 import SystemConsultantAppointment from "./SystemConsultant/Page/ScheduleSystemConsultant/SystemConsultantAppointment";
 import SystemConsultantAppointmentDetail from "./SystemConsultant/Page/ScheduleSystemConsultant/SystemConsultantAppointmentDetail";
 import ListTaskManager from "./Manager/Page/ListTask/ListTaskManager";
+import AgencyManagerAppointment from "./AgencyManager/ScheduleAgencyManager/AgencyManagerAppointment";
+import AgencyManagerAppointmentDetail from "./AgencyManager/ScheduleAgencyManager/AgencyManagerAppointmentDetail";
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -126,6 +128,8 @@ function App() {
                   <Route path="classes/:id" element={<ClassDetail />} />
                   <Route path="schedules" element={<ScheduleAgencyManager />} />
                   <Route path="" element={<AgencyDashboardPage />} />
+                  <Route path="appointment-schedule" element={<AgencyManagerAppointment />} />
+                  <Route path="appointment-schedule/details" element={<AgencyManagerAppointmentDetail />} />
                 </Route>
               </Route>
 

@@ -6,6 +6,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
   const sidebarItems = [
     { type: 'section', label: 'Trang chủ', icon: 'ti ti-dots' },
     { type: 'link', label: 'Doanh thu', path: '', icon: 'solar:home-smile-bold-duotone' },
+    { type: 'link', label: 'Lịch hẹn', path: '/agency-manager/appointment-schedule', icon: 'solar:calendar-bold-duotone' },
     { type: 'section', label: 'Quản lý', icon: 'ti ti-dots' },
     // { type: 'link', label: 'Người dùng', path: '#', icon: 'solar:layers-minimalistic-bold-duotone' },
     // { type: 'link', label: 'Giảng viên', path: '#', icon: 'solar:layers-minimalistic-bold-duotone' },
@@ -16,7 +17,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
     { type: 'link', label: 'Lịch học', path: '/agency-manager/schedules', icon: 'mdi:clock' },
     { type: 'link', label: 'Slot', path: '/agency-manager/slots', icon: 'solar:file-text-bold-duotone' },
   ];
-  
+
 
   return (
     <aside className="left-sidebar">

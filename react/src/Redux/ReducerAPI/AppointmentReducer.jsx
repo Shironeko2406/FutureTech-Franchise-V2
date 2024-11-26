@@ -128,8 +128,6 @@ export const EditAppointmentByIdActionAsync = (appointmentId, dataEdit, workId) 
 };
 
 export const GetAppointmentSchedulesActionAsync = (startDate, endDate) => {
-  console.log("GetAppointmentSchedulesActionAsync, startDate: ", startDate);
-  console.log("GetAppointmentSchedulesActionAsync, endDate: ", endDate);
   return async (dispatch) => {
     try {
       const res = await httpClient.get(`/staff/api/v1/appointments`, {
@@ -140,7 +138,6 @@ export const GetAppointmentSchedulesActionAsync = (startDate, endDate) => {
       });
       if (res.isSuccess) {
         dispatch(setAppointmentSchedules(res.data));
-        console.log("GetAppointmentSchedulesActionAsync, response: ", res.data);
       } else {
         throw new Error(`${res.message}`);
       }
@@ -165,6 +162,31 @@ export const GetAppointmentByIdActionAsync = (id) => {
     } catch (error) {
       console.error(error);
       message.error("Không thể lấy chi tiết lịch hẹn, vui lòng thử lại sau.");
+    }
+  };
+};
+
+export const GetAppointmentSchedulesAgencyActionAsync = (startDate, endDate) => {
+  console.log("GetAppointmentSchedulesAgencyActionAsync, startDate: ", startDate);
+  console.log("GetAppointmentSchedulesAgencyActionAsync, endDate: ", endDate);
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.get(`/agency/api/v1/appointments`, {
+        params: {
+          StartTime: startDate,
+          EndTime: endDate,
+        },
+      });
+      if (res.isSuccess) {
+        dispatch(setAppointmentSchedules(res.data));
+        console.log("GetAppointmentSchedulesAgencyActionAsync, response: ", res.data);
+      } else {
+        throw new Error(`${res.message}`);
+      }
+    } catch (error) {
+      console.error(error);
+      // Hiển thị thông báo lỗi nếu không kết nối được tới server
+      message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
     }
   };
 };
