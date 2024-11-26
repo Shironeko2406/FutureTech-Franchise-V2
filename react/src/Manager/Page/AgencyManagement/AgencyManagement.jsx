@@ -73,7 +73,7 @@ const AgencyManagement = () => {
   const navigate = useNavigate()
   const { agencyData, totalPagesCount } = useSelector((state) => state.AgencyReducer);
   const [pageIndex, setPageIndex] = useState(1);
-  const [pageSize, setPageSize] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [status, setStatus] = useState("");
   const [search, setSearch] = useState("");
 
@@ -193,7 +193,7 @@ const AgencyManagement = () => {
           total: totalPagesCount * pageSize,
           onChange: handlePageChange,
           showSizeChanger: true,
-          pageSizeOptions: ["7", "10"],
+          pageSizeOptions: ["5", "10"],
         }}
         scroll={{ x: 'max-content' }} // Add this line for horizontal scroll
       />

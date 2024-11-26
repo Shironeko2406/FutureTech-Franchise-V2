@@ -297,7 +297,36 @@ const ViewTaskDetailModal = ({ visible, onClose, setVisible, isFromAgencyDetail 
         </div>
       ),
     },
+    {
+      key: '4',
+      label: "Báo cáo",
+      children: (
+        <div>
+          {taskDetail?.report ? (
+            <HTMLContent dangerouslySetInnerHTML={sanitizeHTML(taskDetail.report)} />
+          ) : (
+            <Text type="secondary">Không có báo cáo</Text>
+          )}
+          {taskDetail?.reportImageURL && (
+            <Button
+              type="primary"
+              icon={<FileTextOutlined />}
+              href={taskDetail.reportImageURL}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ marginTop: '16px' }}
+            >
+              Xem tài liệu đính kèm
+            </Button>
+          )}
+        </div>
+      ),
+    },
   ];
+
+  const filteredTabItems = isFromAgencyDetail && taskDetail?.submit === "Submited"
+    ? tabItems
+    : tabItems.filter(item => item.key !== '4');
 
   return (
     <>
@@ -320,7 +349,7 @@ const ViewTaskDetailModal = ({ visible, onClose, setVisible, isFromAgencyDetail 
         }
         width={700}
       >
-        <Tabs items={tabItems} />
+        <Tabs items={filteredTabItems} />
       </StyledModal>
 
       <CreateAppointmentModal

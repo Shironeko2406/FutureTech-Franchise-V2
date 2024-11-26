@@ -4,7 +4,7 @@ import {
   CheckCircleFilled, MinusCircleFilled, PlusOutlined,
   DeleteOutlined, SearchOutlined, FlagOutlined, TeamOutlined, FileDoneOutlined,
   AppstoreAddOutlined, AreaChartOutlined, EditOutlined, CheckCircleOutlined,
-  DollarOutlined, CloseCircleFilled, RightCircleOutlined ,
+  DollarOutlined, CloseCircleFilled, RightCircleOutlined,
   CalendarOutlined,
   BuildOutlined,
   FileSyncOutlined,
@@ -22,6 +22,9 @@ import { GetManagerUserAddAppointmentActionAsync } from '../../../Redux/ReducerA
 import moment from 'moment';
 import { useLoading } from '../../../Utils/LoadingContext';
 import EditTaskModal from '../../Modal/EditTaskModal';
+import ContractDetailModal from "../../Modal/ContractDetailModal";
+import { GetContractDetailByAgencyIdActionAsync } from '../../../Redux/ReducerAPI/ContractReducer';
+import { DownloadEquipmentFileActionAsync } from '../../../Redux/ReducerAPI/EquipmentReducer';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -273,7 +276,7 @@ const translateType = (type) => {
 //     level: "Compulsory",
 //     submit: "None",
 //   },
-  
+
 // ];
 
 // Updated component
@@ -289,6 +292,8 @@ export default function AgencyDetail() {
   const [modalCreateTaskVisible, setModalCreateTaskVisible] = useState(false);
   const [modalShowTaskDetailVisible, setModalShowTaskDetailVisible] = useState(false);
   const [modalEditTaskByIdVisible, setModalEditTaskByIdVisible] = useState(false);
+  const [modalContractDetailVisible, setModalContractDetailVisible] = useState(false);
+  const contractDetail = useSelector((state) => state.ContractReducer.contractDetail);
 
   useEffect(() => {
     dispatch(GetTaskByAgencyIdActionAsync(id))
@@ -371,6 +376,36 @@ export default function AgencyDetail() {
       },
     });
   };
+
+  const openModalContractDetail = async (agencyId) => {
+    setLoading(true);
+    await dispatch(GetContractDetailByAgencyIdActionAsync(agencyId));
+    setLoading(false);
+    setModalContractDetailVisible(true);
+  };
+
+  const handleCloseModalContractDetail = () => {
+    setModalContractDetailVisible(false);
+  };
+
+  const hasSubmittedCompulsorySignedContractTask = selectedTasks.some(task =>
+    task.type === 'SignedContract' &&
+    task.level === 'Compulsory' &&
+    task.submit === 'Submited'
+  );
+
+  const hasSubmittedCompulsoryDesignTask = selectedTasks.some(task =>
+    task.type === 'Design' &&
+    task.level === 'Compulsory' &&
+    task.submit === 'Submited'
+  );
+
+  const openModalEquipmentFile = async (agencyId) => {
+    setLoading(true);
+    await dispatch(DownloadEquipmentFileActionAsync(agencyId));
+    setLoading(false);
+  };
+
   //--------------------------
 
   // Các hàm đóng mở state modal
@@ -438,19 +473,32 @@ export default function AgencyDetail() {
               title={
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
                   <span>{translateType(selectedType)}</span>
-                  {/* {['Processing', 'Approved'].includes(agencyStatus) && (
-                    <Button type="primary" icon={<PlusOutlined />} onClick={showModalCreateTask}>
-                      Thêm công việc
-                    </Button>
-                  )} */}
                   <Space>
                     {selectedType === 'SignedContract' && areAllRequiredTypesCompleted() && ['Processing'].includes(agencyStatus) && (
-                      <Button 
-                        type="primary" 
+                      <Button
+                        type="primary"
                         icon={<TeamOutlined />}
                         onClick={handleBecomePartner}
                       >
                         Trở thành đối tác
+                      </Button>
+                    )}
+                    {hasSubmittedCompulsorySignedContractTask && (
+                      <Button
+                        type="primary"
+                        icon={<FileOutlined />}
+                        onClick={() => openModalContractDetail(tasks[0].agencyId)}
+                      >
+                        Xem hợp đồng
+                      </Button>
+                    )}
+                    {hasSubmittedCompulsoryDesignTask && (
+                      <Button
+                        type="primary"
+                        icon={<FileOutlined />}
+                        onClick={() => openModalEquipmentFile(tasks[0].agencyId)}
+                      >
+                        Xuất file trang thiết bị
                       </Button>
                     )}
                     {['Processing', 'Approved'].includes(agencyStatus) && (
@@ -466,7 +514,7 @@ export default function AgencyDetail() {
                 <List
                   dataSource={selectedTasks}
                   renderItem={task => {
-                    const isEditableAndDeletable = task?.status === "None" && ['Processing','Approved'].includes(agencyStatus); //Bắt ẩn hiện nút edit và del
+                    const isEditableAndDeletable = task?.status === "None" && ['Processing', 'Approved'].includes(agencyStatus); //Bắt ẩn hiện nút edit và del
                     const TaskItem = task.level === "Compulsory" ? CompulsoryTask : List.Item;
                     return (
                       <TaskItem
@@ -513,12 +561,12 @@ export default function AgencyDetail() {
                                 <StatusTag style={{ backgroundColor: getStatusColor(task.status), marginBottom: '4px' }} className='me-2'>
                                   {translateStatus(task.status).toUpperCase()}
                                 </StatusTag>
-                                <StatusTag style={{ backgroundColor: getSubmitColor(task.submit),}}>
+                                <StatusTag style={{ backgroundColor: getSubmitColor(task.submit), }}>
                                   <FileOutlined style={{ marginRight: "4px" }} />
                                   {translateSubmit(task.submit).toUpperCase()}
                                 </StatusTag>
                               </div>
-                              
+
                               <div style={{ display: 'flex', alignItems: 'center', marginTop: '4px' }}>
                                 <CalendarOutlined style={{ marginRight: '4px' }} />
                                 <Text type="secondary">
@@ -562,6 +610,12 @@ export default function AgencyDetail() {
         visible={modalEditTaskByIdVisible}
         onClose={handleCloseModalEditTask}
         task={selectedTask}
+      />
+
+      <ContractDetailModal
+        visible={modalContractDetailVisible}
+        onClose={handleCloseModalContractDetail}
+        contractDetail={contractDetail}
       />
 
     </StyledCard>

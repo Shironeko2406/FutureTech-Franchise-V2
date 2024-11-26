@@ -1,4 +1,3 @@
-
 import { createSlice } from "@reduxjs/toolkit";
 import { httpClient } from "../../Utils/Interceptors";
 import { message } from "antd";
@@ -55,6 +54,28 @@ export const CreateEquipmentActionAsync = (agencyId, equipmentFormData) => {
         } catch (error) {
             message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
             return false;
+        }
+    };
+};
+
+export const DownloadEquipmentFileActionAsync = (agencyId) => {
+    return async () => {
+        try {
+            const res = await httpClient.get(`/api/v1/equipments/agency/${agencyId}`);
+            if (res.isSuccess && res.data != null) {
+                const link = document.createElement('a');
+                const fileExtension = res.data.split('.').pop();
+                link.href = res.data;
+                link.setAttribute('download', `EquipmentFile.${fileExtension}`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } else {
+                throw new Error(res.message);
+            }
+        } catch (error) {
+            console.error("DownloadEquipmentFileActionAsync", error);
+            message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
         }
     };
 };

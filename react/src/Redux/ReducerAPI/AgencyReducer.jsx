@@ -19,12 +19,12 @@ const AgencyReducer = createSlice({
     },
     setTaskByAgencyId: (state, action) => {
       state.tasks = action.payload.work
-      state.agencyStatus = action.payload.agencyStatus 
+      state.agencyStatus = action.payload.agencyStatus
     }
   }
 });
 
-export const {setAgencyData, setTaskByAgencyId} = AgencyReducer.actions
+export const { setAgencyData, setTaskByAgencyId } = AgencyReducer.actions
 
 export default AgencyReducer.reducer
 //------------API CALL----------------
@@ -50,6 +50,7 @@ export const GetTaskByAgencyIdActionAsync = (id) => {
   return async (dispatch) => {
     try {
       const res = await httpClient.get(`/api/v1/agencies/${id}/works`);
+      console.log("GetTaskByAgencyIdActionAsync", res.data);
       dispatch(setTaskByAgencyId(res.data));
     } catch (error) {
       console.error(error);

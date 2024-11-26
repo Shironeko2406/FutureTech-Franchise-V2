@@ -5,6 +5,7 @@ import { message } from "antd";
 const initialState = {
     contracts: [],
     totalPagesCount: 1,
+    contractDetail: null,
 };
 
 const ContractReducer = createSlice({
@@ -14,11 +15,14 @@ const ContractReducer = createSlice({
         setContracts: (state, action) => {
             state.contracts = action.payload.items;
             state.totalPagesCount = action.payload.totalPagesCount;
+        },
+        setContractDetail: (state, action) => {
+            state.contractDetail = action.payload;
         }
     },
 });
 
-export const { setContracts } = ContractReducer.actions;
+export const { setContracts, setContractDetail } = ContractReducer.actions;
 
 export default ContractReducer.reducer;
 
@@ -69,38 +73,40 @@ export const DownloadSampleContractActionAsync = (agencyId) => {
     console.log("DownloadSampleContractActionAsync", agencyId);
     return async () => {
         try {
-            const res = await httpClient.get(`/api/v1/contracts/download/agency/${agencyId}`, {
-                responseType: 'blob',
-                headers: {
-                    'Accept': '*/*'
-                }
-            });
+            const res = await httpClient.get(`/api/v1/contracts/download/agency/${agencyId}`);
             console.log("DownloadSampleContractActionAsync", res);
-
-            // Create a URL for the blob
-            const url = window.URL.createObjectURL(new Blob([res.data]));
-            const link = document.createElement('a');
-            link.href = url;
-
-            // Extract filename from content-disposition header
-            const contentDisposition = res.headers['content-disposition'];
-            const filename = contentDisposition
-                ? decodeURIComponent(
-                    contentDisposition
-                        .split("filename*=UTF-8''")[1] || // If UTF-8 format
-                    contentDisposition.split('filename=')[1].split(';')[0] // If not
-                ).replace(/"/g, '')
-                : 'SampleContract.pdf'; // Default filename
-
-            link.setAttribute('download', filename); // Set the filename
-            document.body.appendChild(link);
-            link.click();
-
-            // Clean up the URL object
-            window.URL.revokeObjectURL(url);
+            if (res.isSuccess && res.data != null) {
+                const link = document.createElement('a');
+                link.href = res.data;
+                link.setAttribute('download', 'SampleContract.pdf');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } else {
+                throw new Error(res.message);
+            }
         } catch (error) {
             console.error("DownloadSampleContractActionAsync", error);
             message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
+        }
+    };
+};
+
+export const GetContractDetailByAgencyIdActionAsync = (agencyId) => {
+    return async (dispatch) => {
+        try {
+            const res = await httpClient.get(`/api/v1/contracts/agency/${agencyId}`);
+            if (res.isSuccess && res.data != null) {
+                dispatch(setContractDetail(res.data));
+            } else if (res.isSuccess && res.data == null) {
+                message.error(`${res.message}`);
+            } else {
+                throw new Error(res.message);
+            }
+        } catch (error) {
+            console.error("GetContractDetailByAgencyIdActionAsync", error);
+            message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
+            return null;
         }
     };
 };
