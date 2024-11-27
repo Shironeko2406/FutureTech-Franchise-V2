@@ -133,7 +133,7 @@
 
 
 
-import React from 'react'
+import React, { useRef } from 'react'
 import { Button, DatePicker, Input, Modal, Form, Select, Typography, Space, Row, Col } from 'antd';
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
@@ -143,6 +143,7 @@ import { CreateTaskActionAsync } from '../../Redux/ReducerAPI/WorkReducer';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { quillFormats, quillModules } from '../../TextEditorConfig/Config';
+import { checkCharacterCount } from '../../Utils/Validator/EditorValid';
 
 const { Title } = Typography;
 const { RangePicker } = DatePicker;
@@ -201,8 +202,13 @@ const StyledQuill = styled(ReactQuill)`
 const CreateTaskBySelectedTypeModal = ({ visible, onClose, selectedType }) => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
+  const reactQuillRef = useRef(null);
   const { id } = useParams();
   const { setLoading } = useLoading();
+
+  const handleKeyDown = (event) => {
+    checkCharacterCount(reactQuillRef, 2000, event);
+  };
 
   const handleSubmit = (values) => {
     setLoading(true);
@@ -255,7 +261,7 @@ const CreateTaskBySelectedTypeModal = ({ visible, onClose, selectedType }) => {
               label="Tên công việc"
               rules={[{ required: true, message: 'Vui lòng nhập tên công việc!' }]}
             >
-              <Input placeholder="Nhập tên công việc" />
+              <Input maxLength={50} placeholder="Nhập tên công việc" />
             </Form.Item>
           </Col>
           <Col xs={24} sm={12}>
@@ -277,6 +283,8 @@ const CreateTaskBySelectedTypeModal = ({ visible, onClose, selectedType }) => {
           rules={[{ required: true, message: 'Vui lòng nhập mô tả!' }]}
         >
           <StyledQuill
+            ref={reactQuillRef}
+            onKeyDown={handleKeyDown}
             modules={quillModules}
             formats={quillFormats}
             placeholder="Nhập mô tả công việc"

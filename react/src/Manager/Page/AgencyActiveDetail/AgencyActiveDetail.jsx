@@ -1,4 +1,4 @@
-import { Button, List, Select, Typography } from 'antd';
+import { Button, Card, List, Select, Typography } from 'antd';
 import React from 'react'
 import styled from 'styled-components';
 
