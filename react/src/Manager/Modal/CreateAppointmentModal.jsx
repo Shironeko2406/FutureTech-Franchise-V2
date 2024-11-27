@@ -129,7 +129,7 @@ const CreateAppointmentModal = ({ visible, onClose, workId }) => {
               label="Tiêu đề"
               rules={[{ required: true, message: "Vui lòng nhập tiêu đề cuộc họp" }]}
             >
-              <Input />
+              <Input maxLength={150} />
             </Form.Item>
           </Col>
           <Col xs={24} sm={12}>
