@@ -101,6 +101,7 @@ import ReactQuill from 'react-quill';
 import { quillFormats, quillModules } from '../../TextEditorConfig/Config';
 import { EditTaskByIdActionAsync } from '../../Redux/ReducerAPI/WorkReducer';
 import { useParams } from 'react-router-dom';
+import moment from "moment";
 
 const { RangePicker } = DatePicker
 const { Title } = Typography;
@@ -230,11 +231,12 @@ const EditTaskModal = ({ visible, onClose, task }) => {
           name="dateRange"
           label="Thời gian"
           rules={[{ required: true, message: 'Vui lòng chọn thời gian' }]}
-        >
+          >
           <RangePicker
             showTime
             format="DD/MM/YYYY, HH:mm"
             style={{ width: '100%' }}
+            disabledDate={(current) => current && current < moment().startOf('day')}
           />
         </Form.Item>
       </StyledForm>

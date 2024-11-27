@@ -151,6 +151,9 @@ const ViewTaskDetailModal = ({ visible, onClose, setVisible }) => {
               {(statusTaskTranslations[taskDetail?.status] || taskDetail?.status || "Không xác định").toUpperCase()}
             </StatusTag>
           </Descriptions.Item>
+          <Descriptions.Item label="Người duyệt">
+            {taskDetail?.approvedBy?.username || "Không có"}
+          </Descriptions.Item>
           <Descriptions.Item label="Thời gian">
             <CalendarOutlined /> {taskDetail?.startDate ? moment(taskDetail.startDate).format('DD/MM/YYYY HH:mm') : "N/A"} -{" "}
             {taskDetail?.endDate ? moment(taskDetail.endDate).format('DD/MM/YYYY HH:mm') : "N/A"}

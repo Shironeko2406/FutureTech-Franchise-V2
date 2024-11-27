@@ -80,6 +80,7 @@ import SystemConsultantAppointmentDetail from "./SystemConsultant/Page/ScheduleS
 import ListTaskManager from "./Manager/Page/ListTask/ListTaskManager";
 import AgencyManagerAppointment from "./AgencyManager/ScheduleAgencyManager/AgencyManagerAppointment";
 import AgencyManagerAppointmentDetail from "./AgencyManager/ScheduleAgencyManager/AgencyManagerAppointmentDetail";
+import AgencyActiveManagement from "./Manager/Page/AgencyActiveManagement/AgencyActiveManagement";
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -169,6 +170,7 @@ function App() {
                   <Route path="documents" element={<DocumentManagement />} />
                   <Route path="agency/:id/task-detail" element={<AgencyDetail />} />
                   <Route path="agency" element={<AgencyManagement />} />
+                  <Route path="agency-active" element={<AgencyActiveManagement/>} />
                   <Route path="contracts" element={<ManageContractPage />} />
                   <Route path="contract/create" element={<CreateContractPage />} />
                   <Route path="appointment-schedule" element={<ManagerAppointment />} />
