@@ -8,6 +8,8 @@ import { quillFormats, quillModules } from "../../TextEditorConfig/Config";
 import { getDataJSONStorage } from "../../Utils/UtilsFunction";
 import { USER_LOGIN } from "../../Utils/Interceptors";
 import moment from "moment";
+import { useRef } from "react";
+import { checkCharacterCount } from "../../Utils/Validator/EditorValid";
 
 const { RangePicker } = DatePicker;
 const { Title } = Typography;
@@ -71,11 +73,16 @@ const translateRole = (role) => ({
 }[role] || "Không xác định");
 
 const CreateAppointmentModal = ({ visible, onClose, workId }) => {
+  const reactQuillRef = useRef(null);
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const { userManager } = useSelector((state) => state.UserReducer);
   const { setLoading } = useLoading();
   const idUserCreateAppointment = getDataJSONStorage(USER_LOGIN).id
+
+  const handleKeyDown = (event) => {
+    checkCharacterCount(reactQuillRef, 2000, event);
+  };
 
   const handleAddAppointmentSubmit = (values) => {
     setLoading(true);
@@ -87,10 +94,11 @@ const CreateAppointmentModal = ({ visible, onClose, workId }) => {
       workId,
     };
 
+    const userIds = values.userId || []; // Nếu values.userId undefined, gán giá trị mặc định là mảng rỗng
     const dataNotification = {
-      userIds: values.userId.filter(id => id !== idUserCreateAppointment), //lọc và bỏ đi id nếu đó là id của người đang login tạo appointment
+      userIds: userIds.filter(id => id !== idUserCreateAppointment), // Lọc và bỏ đi id của người đang tạo appointment
       message: values.title
-    }
+    };
 
     dispatch(CreateAppointmentActionAsync(appointmentData, dataNotification))
       .then((res) => {
@@ -128,7 +136,7 @@ const CreateAppointmentModal = ({ visible, onClose, workId }) => {
               label="Tiêu đề"
               rules={[{ required: true, message: "Vui lòng nhập tiêu đề cuộc họp" }]}
             >
-              <Input />
+              <Input maxLength={150} />
             </Form.Item>
           </Col>
           <Col xs={24} sm={12}>
@@ -158,6 +166,8 @@ const CreateAppointmentModal = ({ visible, onClose, workId }) => {
         </Form.Item>
         <Form.Item name="description" label="Mô tả">
           <StyledQuill
+            ref={reactQuillRef}
+            onKeyDown={handleKeyDown}
             modules={quillModules}
             formats={quillFormats}
             placeholder="Nhập mô tả công việc"

@@ -81,6 +81,7 @@ import ListTaskManager from "./Manager/Page/ListTask/ListTaskManager";
 import AgencyManagerAppointment from "./AgencyManager/ScheduleAgencyManager/AgencyManagerAppointment";
 import AgencyManagerAppointmentDetail from "./AgencyManager/ScheduleAgencyManager/AgencyManagerAppointmentDetail";
 import AgencyActiveManagement from "./Manager/Page/AgencyActiveManagement/AgencyActiveManagement";
+import AgencyActiveDetail from "./Manager/Page/AgencyActiveDetail/AgencyActiveDetail";
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -169,6 +170,7 @@ function App() {
                   <Route path="slot" element={<SlotManager />} />
                   <Route path="documents" element={<DocumentManagement />} />
                   <Route path="agency/:id/task-detail" element={<AgencyDetail />} />
+                  <Route path="agency-active/:id/task-detail" element={<AgencyActiveDetail/>} />
                   <Route path="agency" element={<AgencyManagement />} />
                   <Route path="agency-active" element={<AgencyActiveManagement/>} />
                   <Route path="contracts" element={<ManageContractPage />} />
