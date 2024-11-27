@@ -31,7 +31,7 @@ export const CreateTaskActionAsync = (data) => {
         await dispatch(GetTaskByAgencyIdActionAsync(data.agencyId));
         return true;
       } else {
-        message.error(`Lỗi hệ thống`);
+        message.error(`${res.message}`);
         return false;
       }
     } catch (error) {

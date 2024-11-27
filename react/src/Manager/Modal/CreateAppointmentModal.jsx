@@ -78,7 +78,7 @@ const CreateAppointmentModal = ({ visible, onClose, workId }) => {
   const idUserCreateAppointment = getDataJSONStorage(USER_LOGIN).id
 
   const handleAddAppointmentSubmit = (values) => {
-    setLoading(true);
+    // setLoading(true);
     const { timeRange, ...data } = values;
     const appointmentData = {
       ...data,
@@ -87,10 +87,11 @@ const CreateAppointmentModal = ({ visible, onClose, workId }) => {
       workId,
     };
 
+    const userIds = values.userId || []; // Nếu values.userId undefined, gán giá trị mặc định là mảng rỗng
     const dataNotification = {
-      userIds: values.userId.filter(id => id !== idUserCreateAppointment), //lọc và bỏ đi id nếu đó là id của người đang login tạo appointment
+      userIds: userIds.filter(id => id !== idUserCreateAppointment), // Lọc và bỏ đi id của người đang tạo appointment
       message: values.title
-    }
+    };
 
     dispatch(CreateAppointmentActionAsync(appointmentData, dataNotification))
       .then((res) => {
