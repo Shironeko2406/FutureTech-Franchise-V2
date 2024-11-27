@@ -364,43 +364,29 @@ export default function AgencyDetail() {
     dispatch(DeleteTaskByIdActionAsync(taskId, id)).finally(() => setLoading(false))
   }
 
-  const handleBecomePartner = () => {
+  const handleChangeStatusAgency = (status) => {
     Modal.confirm({
-      title: "Xác nhận trở thành đối tác",
-      content: "Bạn có chắc chắn muốn trở thành đối tác không?",
+      title: status === "Approved" ? "Xác nhận trở thành đối tác" : "Xác nhận hoạt động chi nhánh",
+      content: status === "Approved" ? "Bạn có chắc chắn muốn trở thành đối tác không?" : "Bạn muốn xác nhận hoạt động chi nhánh này không?",
       okText: "Xác nhận",
       cancelText: "Hủy",
       onOk: () => {
-        // Logic xác nhận
-        dispatch(UpdateStatusAgencyActionAsync(id, "Approved"));
+        dispatch(UpdateStatusAgencyActionAsync(id, status));
       },
     });
   };
-
-  const openModalContractDetail = async (agencyId) => {
-    setLoading(true);
-    await dispatch(GetContractDetailByAgencyIdActionAsync(agencyId));
-    setLoading(false);
-    setModalContractDetailVisible(true);
-  };
-
-  const handleCloseModalContractDetail = () => {
-    setModalContractDetailVisible(false);
-  };
-
+  
   const hasSubmittedCompulsorySignedContractTask = selectedTasks.some(task =>
     task.type === 'SignedContract' &&
-    task.level === 'Compulsory' &&
     task.submit === 'Submited'
   );
 
   const hasSubmittedCompulsoryDesignTask = selectedTasks.some(task =>
     task.type === 'Design' &&
-    task.level === 'Compulsory' &&
     task.submit === 'Submited'
   );
 
-  const openModalEquipmentFile = async (agencyId) => {
+  const downloadEquipmentFile = async (agencyId) => {
     setLoading(true);
     await dispatch(DownloadEquipmentFileActionAsync(agencyId));
     setLoading(false);
@@ -429,10 +415,29 @@ export default function AgencyDetail() {
     setModalEditTaskByIdVisible(false)
     setSelectedTask(null)
   };
+
+  const openModalContractDetail = async (agencyId) => {
+    setLoading(true);
+    await dispatch(GetContractDetailByAgencyIdActionAsync(agencyId));
+    setLoading(false);
+    setModalContractDetailVisible(true);
+  };
+
+  const handleCloseModalContractDetail = () => {
+    setModalContractDetailVisible(false);
+  };
   //-------------------------
 
   const areAllRequiredTypesCompleted = () => {
     const requiredTypes = ['Interview', 'AgreementSigned', 'BusinessRegistered', 'SiteSurvey', 'Design', 'Quotation', 'SignedContract'];
+    return requiredTypes.every(type => {
+      const typeGroup = taskDataModify.find(group => group.type === type);
+      return typeGroup && getTypeStatus(type, typeGroup.tasks) === 'Completed';
+    });
+  };
+
+  const areAllTypesCompletedUpToEducationLicense  = () => {
+    const requiredTypes = ['Interview', 'AgreementSigned', 'BusinessRegistered', 'SiteSurvey', 'Design', 'Quotation', 'SignedContract','ConstructionAndTrainning', 'Handover','EducationLicenseRegistered'];
     return requiredTypes.every(type => {
       const typeGroup = taskDataModify.find(group => group.type === type);
       return typeGroup && getTypeStatus(type, typeGroup.tasks) === 'Completed';
@@ -474,11 +479,11 @@ export default function AgencyDetail() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
                   <span>{translateType(selectedType)}</span>
                   <Space>
-                    {selectedType === 'SignedContract' && areAllRequiredTypesCompleted() && ['Processing'].includes(agencyStatus) && (
+                    {selectedType === 'SignedContract' && areAllRequiredTypesCompleted() && agencyStatus === 'Processing' && (
                       <Button
                         type="primary"
                         icon={<TeamOutlined />}
-                        onClick={handleBecomePartner}
+                        onClick={() => handleChangeStatusAgency("Approved")}
                       >
                         Trở thành đối tác
                       </Button>
@@ -496,9 +501,18 @@ export default function AgencyDetail() {
                       <Button
                         type="primary"
                         icon={<FileOutlined />}
-                        onClick={() => openModalEquipmentFile(tasks[0].agencyId)}
+                        onClick={() => downloadEquipmentFile(tasks[0].agencyId)}
                       >
                         Xuất file trang thiết bị
+                      </Button>
+                    )}
+                    {selectedType === 'EducationLicenseRegistered' && areAllTypesCompletedUpToEducationLicense() && agencyStatus === 'Approved' && (
+                      <Button
+                        type="primary"
+                        icon={<TeamOutlined />}
+                        onClick={() => handleChangeStatusAgency("Active")}
+                      >
+                        Hoạt động chi nhánh
                       </Button>
                     )}
                     {['Processing', 'Approved'].includes(agencyStatus) && (

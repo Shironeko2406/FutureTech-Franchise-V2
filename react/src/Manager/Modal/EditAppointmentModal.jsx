@@ -10,6 +10,7 @@ import { EditAppointmentByIdActionAsync } from '../../Redux/ReducerAPI/Appointme
 import ReactQuill from 'react-quill';
 import styled from 'styled-components';
 import { quillFormats, quillModules } from '../../TextEditorConfig/Config';
+import moment from "moment";
 
 const { RangePicker } = DatePicker;
 const { TextArea } = Input;
@@ -175,7 +176,8 @@ const CompactAppointmentModal = ({ visible, onClose, workId }) => {
         </Row>
 
         <Form.Item name="timeRange" label="Thời gian bắt đầu và kết thúc" rules={[{ required: true }]}>
-          <RangePicker showTime format="YYYY-MM-DD HH:mm:ss" style={{ width: '100%' }} />
+          <RangePicker showTime format="YYYY-MM-DD HH:mm:ss" style={{ width: '100%' }}
+        disabledDate={(current) => current && current < moment().startOf('day')} />
         </Form.Item>
 
         <Form.Item name="description" label="Mô tả">
