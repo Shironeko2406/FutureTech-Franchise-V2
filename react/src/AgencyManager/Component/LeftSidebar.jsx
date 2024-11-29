@@ -7,6 +7,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
     { type: 'section', label: 'Trang chủ', icon: 'ti ti-dots' },
     { type: 'link', label: 'Doanh thu', path: '', icon: 'solar:home-smile-bold-duotone' },
     { type: 'link', label: 'Lịch hẹn', path: '/agency-manager/appointment-schedule', icon: 'solar:calendar-bold-duotone' },
+    { type: 'link', label: 'Khóa học', path: '/agency-manager/course', icon: 'mdi:book-open-page-variant' },
     { type: 'section', label: 'Quản lý', icon: 'ti ti-dots' },
     // { type: 'link', label: 'Người dùng', path: '#', icon: 'solar:layers-minimalistic-bold-duotone' },
     // { type: 'link', label: 'Giảng viên', path: '#', icon: 'solar:layers-minimalistic-bold-duotone' },
