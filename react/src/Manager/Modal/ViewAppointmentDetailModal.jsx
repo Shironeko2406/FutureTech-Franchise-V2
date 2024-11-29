@@ -87,7 +87,7 @@ const translateRole = (role) => ({
   SystemTechnician: "Kỹ thuật viên hệ thống",
 }[role] || "Không xác định");
 
-export default function ViewAppointmentDetailModal({ visible, onClose }) {
+export default function ViewAppointmentDetailModal({ visible, onClose, selectedType }) {
   const { appointmentDetail } = useSelector((state) => state.AppointmentReducer);
   const { agencyStatus } = useSelector((state) => state.AgencyReducer);
   const { taskDetail } = useSelector((state) => state.WorkReducer);
@@ -97,6 +97,20 @@ export default function ViewAppointmentDetailModal({ visible, onClose }) {
   const { setLoading } = useLoading()
   const [isSelectingUsers, setIsSelectingUsers] = useState(false)
   const [selectedUsers, setSelectedUsers] = useState([]);
+
+  const filterUsersByRole = (user, type) => {
+    const rolePermissions = {
+      Manager: [
+        'Interview', 'AgreementSigned', 'BusinessRegistered', 'SiteSurvey',
+        'Design', 'Quotation', 'SignedContract', 'ConstructionAndTrainning',
+        'Handover', 'EducationLicenseRegistered',
+      ],
+      SystemTechnician: ['Design', 'Quotation', 'SiteSurvey', 'ConstructionAndTrainning'],
+      SystemInstructor: ['ConstructionAndTrainning', 'EducationLicenseRegistered'],
+    };
+  
+    return rolePermissions[user.role]?.includes(type);
+  };
 
   useEffect(() => {
     if (appointmentDetail.user) {
@@ -157,9 +171,17 @@ export default function ViewAppointmentDetailModal({ visible, onClose }) {
           }
           optionLabelProp="label"
         >
-          {userManager.map(user => (
-            <Select.Option key={user.id} value={user.id} label={user.userName}>{`${user.userName} (${translateRole(user.role)})`}</Select.Option>
-          ))}
+          {userManager
+            .filter((user) => filterUsersByRole(user, selectedType))
+            .map((user) => (
+              <Select.Option
+                key={user.id}
+                value={user.id}
+                label={user.userName}
+              >
+                {`${user.userName} (${translateRole(user.role)})`}
+              </Select.Option>
+            ))}
         </Select>
       </div>
 

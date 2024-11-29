@@ -70,6 +70,7 @@ const StyledQuill = styled(ReactQuill)`
 const CompactAppointmentModal = ({ visible, onClose, workId }) => {
   const [form] = Form.useForm();
   const { appointmentDetail } = useSelector((state) => state.AppointmentReducer);
+  const { taskDetail } = useSelector((state) => state.WorkReducer);
   const dispatch = useDispatch()
   const {setLoading} = useLoading()
   const [fileReportUrl, setFileReportUrl] = useState("");
@@ -176,8 +177,22 @@ const CompactAppointmentModal = ({ visible, onClose, workId }) => {
         </Row>
 
         <Form.Item name="timeRange" label="Thời gian bắt đầu và kết thúc" rules={[{ required: true }]}>
-          <RangePicker showTime format="YYYY-MM-DD HH:mm:ss" style={{ width: '100%' }}
-        disabledDate={(current) => current && current < moment().startOf('day')} />
+          <RangePicker
+            style={{ width: '100%' }}
+            showTime
+            format="YYYY-MM-DD HH:mm"
+            disabledDate={(current) => {
+              const startDate = moment(taskDetail.startDate).add(1, 'day');
+              const endDate = moment(taskDetail.endDate);
+              
+              // Disable dates before today, after endDate, and before startDate + 1 day
+              return (
+                current < moment().startOf('day') ||
+                current > endDate ||
+                current < startDate
+              );
+            }}
+          />
         </Form.Item>
 
         <Form.Item name="description" label="Mô tả">

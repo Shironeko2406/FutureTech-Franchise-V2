@@ -72,13 +72,29 @@ const translateRole = (role) => ({
   SystemTechnician: "Kỹ thuật viên hệ thống",
 }[role] || "Không xác định");
 
-const CreateAppointmentModal = ({ visible, onClose, workId }) => {
+const CreateAppointmentModal = ({ visible, onClose, workId, selectedType}) => {
   const reactQuillRef = useRef(null);
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const { userManager } = useSelector((state) => state.UserReducer);
+  const { taskDetail } = useSelector((state) => state.WorkReducer);
   const { setLoading } = useLoading();
   const idUserCreateAppointment = getDataJSONStorage(USER_LOGIN).id
+
+  const filterUsersByRole = (user, type) => {
+    const rolePermissions = {
+      Manager: [
+        'Interview', 'AgreementSigned', 'BusinessRegistered', 'SiteSurvey',
+        'Design', 'Quotation', 'SignedContract', 'ConstructionAndTrainning',
+        'Handover', 'EducationLicenseRegistered',
+      ],
+      SystemTechnician: ['Design', 'Quotation', 'SiteSurvey', 'ConstructionAndTrainning'],
+      SystemInstructor: ['ConstructionAndTrainning', 'EducationLicenseRegistered'],
+    };
+  
+    return rolePermissions[user.role]?.includes(type);
+  };
+  
 
   const handleKeyDown = (event) => {
     checkCharacterCount(reactQuillRef, 2000, event);
@@ -160,8 +176,18 @@ const CreateAppointmentModal = ({ visible, onClose, workId }) => {
           <RangePicker
             style={{ width: '100%' }}
             showTime
-            format="YYYY-MM-DD HH:mm:ss"
-            disabledDate={(current) => current && current < moment().startOf('day')}
+            format="YYYY-MM-DD HH:mm"
+            disabledDate={(current) => {
+              const startDate = moment(taskDetail.startDate).add(1, 'day');
+              const endDate = moment(taskDetail.endDate);
+              
+              // Disable dates before today, after endDate, and before startDate + 1 day
+              return (
+                current < moment().startOf('day') ||
+                current > endDate ||
+                current < startDate
+              );
+            }}
           />
         </Form.Item>
         <Form.Item name="description" label="Mô tả">
@@ -184,7 +210,9 @@ const CreateAppointmentModal = ({ visible, onClose, workId }) => {
             }
             optionLabelProp="label"
           >
-            {userManager.map((user) => (
+            {userManager
+            .filter((user) => filterUsersByRole(user, selectedType))
+            .map((user) => (
               <Select.Option
                 key={user.id}
                 value={user.id}

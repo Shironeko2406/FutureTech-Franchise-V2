@@ -5,7 +5,9 @@ import { GetTaskByAgencyIdActionAsync } from './AgencyReducer';
 import { GetTaskUserByLoginActionAsync } from './UserReducer';
 
 const initialState = {
-  taskDetail: {}
+  taskDetail: {},
+  tasksAgencyActive: [],
+  totalPagesCount: 0,
 }
 
 const WorkReducer = createSlice({
@@ -14,11 +16,15 @@ const WorkReducer = createSlice({
   reducers: {
     setTaskDetail: (state, action) => {
       state.taskDetail = action.payload
+    },
+    setTaskAgencyActive: (state, action) => {
+      state.tasksAgencyActive = action.payload.items;
+      state.totalPagesCount = action.payload.totalPagesCount
     }
   }
 });
 
-export const { setTaskDetail } = WorkReducer.actions
+export const { setTaskDetail, setTaskAgencyActive } = WorkReducer.actions
 
 export default WorkReducer.reducer
 //------------API CALL----------------
@@ -29,6 +35,25 @@ export const CreateTaskActionAsync = (data) => {
       if (res.isSuccess && res.data) {
         message.success(`${res.message}`);
         await dispatch(GetTaskByAgencyIdActionAsync(data.agencyId));
+        return true;
+      } else {
+        message.error(`${res.message}`);
+        return false;
+      }
+    } catch (error) {
+      console.log(error);
+      message.error("Lỗi hệ thống");
+    }
+  };
+};
+
+export const CreateTaskAfterFranchiseActionAsync = (data, filter, pageIndex, pageSize) => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.post(`/api/v1/works`, data);
+      if (res.isSuccess && res.data) {
+        message.success(`${res.message}`);
+        await dispatch(GetTaskAgencyActiveByIdActionAsync(filter.searchText, filter.levelFilter, filter.statusFilter, filter.submitFilter, filter.typeFilter, data.agencyId, pageIndex, pageSize  ));
         return true;
       } else {
         message.error(`${res.message}`);
@@ -76,6 +101,28 @@ export const UpdateStatusTaskByIdActionAsync = (id, status, agencyId) => {
   };
 };
 
+export const UpdateStatusTaskByIdForAfterFranchiseActionAsync = (id, status, agencyId, filter, pageIndex, pageSize) => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.put(`/manager/api/v1/works/${id}`, null, { params: { status: status } });
+      if (res.isSuccess && res.data) {
+        message.success(`${res.message}`);
+        await Promise.all([
+          dispatch(GetTaskDetailByIdActionAsync(id)),
+          dispatch(GetTaskAgencyActiveByIdActionAsync(filter.searchText, filter.levelFilter, filter.statusFilter, filter.submitFilter, filter.typeFilter, agencyId, pageIndex, pageSize))
+        ]);
+        return true;
+      } else {
+        message.error(`${res.message}`);
+        return false;
+      }
+    } catch (error) {
+      console.log(error);
+      message.error("Lỗi hệ thống");
+    }
+  };
+};
+
 export const DeleteTaskByIdActionAsync = (taskId, agencyId) => {
   return async (dispatch) => {
     try {
@@ -95,6 +142,25 @@ export const DeleteTaskByIdActionAsync = (taskId, agencyId) => {
   };
 };
 
+export const DeleteTaskByIdForAfterFranchiseActionAsync = (taskId, agencyId, filter, pageIndex, pageSize) => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.delete(`/api/v1/works/${taskId}`);
+      if (res.isSuccess && res.data) {
+        message.success(`${res.message}`);
+        await dispatch(GetTaskAgencyActiveByIdActionAsync(filter.searchText, filter.levelFilter, filter.statusFilter, filter.submitFilter, filter.typeFilter, agencyId, pageIndex, pageSize));
+        return true;
+      } else {
+        message.error(`Lỗi hệ thống`);
+        return false;
+      }
+    } catch (error) {
+      console.log(error);
+      message.error("Lỗi hệ thống");
+    }
+  };
+};
+
 export const EditTaskByIdActionAsync = (dataUpdate, taskId, agencyId) => {
   return async (dispatch) => {
     try {
@@ -102,6 +168,25 @@ export const EditTaskByIdActionAsync = (dataUpdate, taskId, agencyId) => {
       if (res.isSuccess && res.data) {
         message.success(`${res.message}`);
         await dispatch(GetTaskByAgencyIdActionAsync(agencyId));
+        return true;
+      } else {
+        message.error(`${res.message}`);
+        return false;
+      }
+    } catch (error) {
+      console.log(error);
+      message.error("Lỗi hệ thống");
+    }
+  };
+};
+
+export const EditTaskByIdForAfterFranchiseActionAsync = (dataUpdate, taskId, agencyId, filter, pageIndex, pageSize) => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.put(`/api/v1/works/${taskId}`, dataUpdate);
+      if (res.isSuccess && res.data) {
+        message.success(`${res.message}`);
+        await dispatch(GetTaskAgencyActiveByIdActionAsync(filter.searchText, filter.levelFilter, filter.statusFilter, filter.submitFilter, filter.typeFilter, agencyId, pageIndex, pageSize));
         return true;
       } else {
         message.error(`${res.message}`);
@@ -220,6 +305,28 @@ export const UpdateTaskStatusActionAsync = (id, status) => {
       console.error("UpdateTaskStatusActionAsync", error);
       message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
       return false;
+    }
+  };
+};
+
+export const GetTaskAgencyActiveByIdActionAsync = (search, level, status, submit, type, agencyId, pageIndex, pageSize) => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.get(`/api/v1/works`, {
+        params: {
+          Search: search,
+          Level: level,
+          Status: status,
+          Submit: submit,
+          Type: type,
+          AgencyId: agencyId,
+          PageIndex: pageIndex,
+          PageSize: pageSize
+        },
+      });
+      dispatch(setTaskAgencyActive(res.data));
+    } catch (error) {
+      console.error(error);
     }
   };
 };

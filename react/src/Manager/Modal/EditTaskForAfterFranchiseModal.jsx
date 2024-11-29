@@ -6,7 +6,7 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import ReactQuill from 'react-quill';
 import { quillFormats, quillModules } from '../../TextEditorConfig/Config';
-import { EditTaskByIdActionAsync } from '../../Redux/ReducerAPI/WorkReducer';
+import { EditTaskByIdActionAsync, EditTaskByIdForAfterFranchiseActionAsync } from '../../Redux/ReducerAPI/WorkReducer';
 import { useParams } from 'react-router-dom';
 import moment from "moment";
 
@@ -64,7 +64,7 @@ const StyledQuill = styled(ReactQuill)`
   }
 `;
 
-const EditTaskModal = ({ visible, onClose, task }) => {
+const EditTaskForAfterFranchiseModal = ({ visible, onClose, task, filter, pageIndex, pageSize }) => {
   const [form] = Form.useForm();
   const {setLoading} = useLoading()
   const dispatch = useDispatch()
@@ -94,7 +94,7 @@ const EditTaskModal = ({ visible, onClose, task }) => {
     };
     delete taskUpdate.dateRange;
 
-    dispatch(EditTaskByIdActionAsync(taskUpdate, task.id, id)).then((res) => {
+    dispatch(EditTaskByIdForAfterFranchiseActionAsync(taskUpdate, task.id, id, filter, pageIndex, pageSize)).then((res) => {
         setLoading(false)
         if (res) {
             onClose()
@@ -151,4 +151,4 @@ const EditTaskModal = ({ visible, onClose, task }) => {
   )
 }
 
-export default EditTaskModal
+export default EditTaskForAfterFranchiseModal
