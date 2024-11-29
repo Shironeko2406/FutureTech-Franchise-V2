@@ -5,7 +5,7 @@ import styled from "styled-components";
 import moment from 'moment';
 import { useDispatch, useSelector } from "react-redux";
 import { useLoading } from "../../Utils/LoadingContext";
-import { UpdateStatusTaskByIdActionAsync } from "../../Redux/ReducerAPI/WorkReducer";
+import { UpdateStatusTaskByIdActionAsync, UpdateStatusTaskByIdForAfterFranchiseActionAsync } from "../../Redux/ReducerAPI/WorkReducer";
 import { useParams } from "react-router-dom";
 import CreateAppointmentModal from "./CreateAppointmentModal";
 import { DeleteAppointmentByIdActionAsync, GetAppointmentDetailByIdActionAsync } from "../../Redux/ReducerAPI/AppointmentReducer";
@@ -82,16 +82,11 @@ const HTMLContent = styled.div`
 `;
 
 const taskTypeTranslations = {
-  Interview: "Phỏng vấn",
-  AgreementSigned: "Ký thỏa thuận 2 bên",
-  BusinessRegistered: "Đăng ký doanh nghiệp",
-  SiteSurvey: "Khảo sát mặt bằng",
-  Design: "Thiết kế",
-  Quotation: "Báo giá cho khách hàng",
-  SignedContract: "Ký hợp đồng thành công",
-  ConstructionAndTrainning: "Đào tạo và thi công",
-  Handover: "Bàn giao",
-  EducationLicenseRegistered: "Đăng ký giấy phép giáo dục"
+  TrainningInternal: "Đào tạo định kỳ",
+  RepairingEquipment: "Sửa chữa thiết bị",
+  EducationalSupervision: "Giám sát hoạt động giáo dục",
+  RenewContract: "Gia hạn hợp đồng",
+  Other: "Khác"
 };
 
 const statusTaskTranslations = {
@@ -123,9 +118,8 @@ const getAppointmentStatus = (startTime, endTime) => {
   }
 };
 
-const ViewTaskDetailModal = ({ visible, onClose, setVisible, isFromAgencyDetail, selectedType }) => {
+const ViewTaskDetailForAfterFranchiseModal = ({ visible, onClose, setVisible, isFromAgencyDetail,filter, pageIndex, pageSize }) => {
   const { taskDetail } = useSelector((state) => state.WorkReducer);
-  const { agencyStatus } = useSelector((state) => state.AgencyReducer);
   const dispatch = useDispatch();
   const { setLoading } = useLoading();
   const { id: agencyId } = useParams();
@@ -140,7 +134,7 @@ const ViewTaskDetailModal = ({ visible, onClose, setVisible, isFromAgencyDetail,
       okText: 'Xác nhận',
       cancelText: 'Hủy',
       onOk: () => {
-        dispatch(UpdateStatusTaskByIdActionAsync(taskId, status, agencyId));
+        dispatch(UpdateStatusTaskByIdForAfterFranchiseActionAsync(taskId, status, agencyId, filter, pageIndex, pageSize));
       },
     });
   };
@@ -236,12 +230,11 @@ const ViewTaskDetailModal = ({ visible, onClose, setVisible, isFromAgencyDetail,
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
             <Title level={5} style={{ margin: 0 }}>Danh sách lịch hẹn</Title>
-            {isFromAgencyDetail && taskDetail?.status === "None" &&
-              ['Processing', 'Approved'].includes(agencyStatus) && (
-                <Button type="primary" icon={<PlusOutlined />} onClick={showAddAppointmentModal}>
+            {isFromAgencyDetail && taskDetail?.status === "None" &&(
+              <Button type="primary" icon={<PlusOutlined />} onClick={showAddAppointmentModal}>
                   Thêm cuộc họp
-                </Button>
-              )}
+              </Button>
+            )}
           </div>
           <List
             dataSource={taskDetail?.appointments || []}
@@ -257,8 +250,7 @@ const ViewTaskDetailModal = ({ visible, onClose, setVisible, isFromAgencyDetail,
                           {status}
                         </StyledTag>
                       </AppointmentTitle>
-                      {isFromAgencyDetail && taskDetail?.status === "None" &&
-                        ['Processing', 'Approved'].includes(agencyStatus) && (
+                      {isFromAgencyDetail && taskDetail?.status === "None" && (
                           <Space>
                             <Tooltip title="Sửa">
                               <Button
@@ -341,8 +333,7 @@ const ViewTaskDetailModal = ({ visible, onClose, setVisible, isFromAgencyDetail,
         open={visible}
         onCancel={onClose}
         footer={
-          isFromAgencyDetail && taskDetail?.status === "None" &&
-          ['Processing', 'Approved'].includes(agencyStatus) && (
+          isFromAgencyDetail && taskDetail?.status === "None" && (
             <ModalFooter>
               <Button onClick={() => handleUpdateStatusTaskById(taskDetail?.id, 'Rejected')}>
                 Từ chối
@@ -362,13 +353,11 @@ const ViewTaskDetailModal = ({ visible, onClose, setVisible, isFromAgencyDetail,
         visible={isAddAppointmentModalVisible}
         onClose={handleAddAppointmentCancel}
         workId={taskDetail.id}
-        selectedType={selectedType}
       />
 
       <ViewAppointmentDetailModal
         visible={isViewAppointmentModalVisible}
         onClose={handleViewAppointmentDetailCancel}
-        selectedType={selectedType}
       />
 
       <EditAppointmentModal
@@ -380,7 +369,7 @@ const ViewTaskDetailModal = ({ visible, onClose, setVisible, isFromAgencyDetail,
   );
 };
 
-export default ViewTaskDetailModal;
+export default ViewTaskDetailForAfterFranchiseModal;
 
 
 

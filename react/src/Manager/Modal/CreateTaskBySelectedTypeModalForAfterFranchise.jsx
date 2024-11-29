@@ -1,10 +1,10 @@
 import React, { useRef } from 'react'
-import { Button, DatePicker, Input, Modal, Form, Select, Typography, Space, Row, Col } from 'antd';
+import { Button, DatePicker, Input, Modal, Form, Select, Typography, Row, Col } from 'antd';
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { useLoading } from '../../Utils/LoadingContext';
 import styled from 'styled-components';
-import { CreateTaskActionAsync } from '../../Redux/ReducerAPI/WorkReducer';
+import { CreateTaskAfterFranchiseActionAsync } from '../../Redux/ReducerAPI/WorkReducer';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { quillFormats, quillModules } from '../../TextEditorConfig/Config';
@@ -65,11 +65,11 @@ const StyledQuill = styled(ReactQuill)`
   }
 `;
 
-const CreateTaskBySelectedTypeModal = ({ visible, onClose, selectedType }) => {
+const CreateTaskBySelectedTypeModalForAfterFranchise = ({ visible, onClose, selectedType, filter, pageIndex, pageSize }) => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const reactQuillRef = useRef(null);
-  const { id } = useParams();
+  const {id} = useParams()
   const { setLoading } = useLoading();
 
   const handleKeyDown = (event) => {
@@ -87,7 +87,7 @@ const CreateTaskBySelectedTypeModal = ({ visible, onClose, selectedType }) => {
 
     delete data.dateRange;
 
-    dispatch(CreateTaskActionAsync(data))
+    dispatch(CreateTaskAfterFranchiseActionAsync(data, filter, pageIndex, pageSize))
       .then((response) => {
         setLoading(false);
         if (response) {
@@ -169,4 +169,4 @@ const CreateTaskBySelectedTypeModal = ({ visible, onClose, selectedType }) => {
   )
 }
 
-export default CreateTaskBySelectedTypeModal
+export default CreateTaskBySelectedTypeModalForAfterFranchise
