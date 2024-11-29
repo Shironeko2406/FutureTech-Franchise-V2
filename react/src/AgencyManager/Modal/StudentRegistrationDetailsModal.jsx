@@ -179,8 +179,8 @@ export default function StudentRegistrationDetailsModal({
                             <Descriptions.Item label={<Space><UserOutlined /> Người tư vấn</Space>}>
                                 {studentDetails.consultantName || "Chưa có"}
                             </Descriptions.Item>
-                            <Descriptions.Item label={<Space><ClockCircleOutlined /> Thời gian tư vấn</Space>}>
-                                {studentDetails.consultantTime ? moment(studentDetails.consultantTime).format('DD/MM/YYYY HH:mm') : "Chưa có"}
+                            <Descriptions.Item label={<Space><ClockCircleOutlined /> Thời gian cập nhật</Space>}>
+                                {studentDetails.modificationDate ? moment(studentDetails.modificationDate).format('DD/MM/YYYY HH:mm') : "Chưa có"}
                             </Descriptions.Item>
                         </Descriptions>
                     )}
