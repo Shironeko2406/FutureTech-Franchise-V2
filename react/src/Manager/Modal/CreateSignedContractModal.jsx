@@ -11,12 +11,11 @@ const CreateSignedContractModal = ({ visible, onClose, agencyId }) => {
     const [form] = Form.useForm();
     const dispatch = useDispatch();
     const [file, setFile] = useState(null);
-    const { setLoading } = useLoading();
+    const { setLoading, loading } = useLoading();
     const [downloadLoading, setDownloadLoading] = useState(false);
-    const [uploadLoading, setUploadLoading] = useState(false);
 
     const handleOk = async () => {
-        setUploadLoading(true);
+        setLoading(true);
         try {
             const values = await form.validateFields();
             const storageRef = ref(imageDB, `documents/${file.name}`);
@@ -35,7 +34,7 @@ const CreateSignedContractModal = ({ visible, onClose, agencyId }) => {
         } catch (error) {
             console.error("Error creating signed contract: ", error);
         } finally {
-            setUploadLoading(false);
+            setLoading(false);
         }
     };
 
@@ -63,10 +62,10 @@ const CreateSignedContractModal = ({ visible, onClose, agencyId }) => {
                 <Button key="downloadSample" icon={<DownloadOutlined />} onClick={downloadSampleContract} loading={downloadLoading}>
                     Tải file mẫu
                 </Button>,
-                <Button key="back" onClick={onClose}>
+                <Button key="back" onClick={onClose} disabled={loading}>
                     Hủy
                 </Button>,
-                <Button key="submit" type="primary" onClick={handleOk} loading={uploadLoading}>
+                <Button key="submit" type="primary" onClick={handleOk} loading={loading}>
                     Thêm mới
                 </Button>,
             ]}

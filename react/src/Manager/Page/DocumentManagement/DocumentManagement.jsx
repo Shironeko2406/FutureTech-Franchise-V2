@@ -129,6 +129,12 @@ const DocumentManagement = () => {
             align: "center",
         },
         {
+            title: "Tên chi nhánh",
+            dataIndex: "agencyName",
+            key: "agencyName",
+            align: "center",
+        },
+        {
             title: "Loại tài liệu",
             dataIndex: "type",
             key: "type",
