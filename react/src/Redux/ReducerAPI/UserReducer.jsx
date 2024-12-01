@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { httpClient } from "../../Utils/Interceptors";
 import { message } from "antd";
+import { GetAssignmentDetailByIdActionAsync, GetAssignmentsByClassIdActionAsync } from "./AssignmentReducer";
 
 const initialState = {
   userData: [],
@@ -205,3 +206,56 @@ export const GetTaskUserByLoginActionAsync = (search, level, status, submit, pag
     }
   };
 };
+
+export const StudentSubmitAssignmentActionAsync = (data) => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.post(
+        `/api/v1/users/mine/assignments`,
+        null, {params: { assignmentId: data.assignmentId, fileSubmitUrl: data.fileUrl, fileSubmitName: data.fileName}});
+      if (res.isSuccess && res.data) {
+        message.success(`${res.message}`);
+        await dispatch(GetAssignmentDetailByIdActionAsync(data.assignmentId))
+        return true;
+      } else {
+        message.error(`${res.message}`);
+        return false;
+      }
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  };
+}
+
+export const InstructorGradeForAssignmentActionAsync = (usersScores, classId) => {
+  return async (dispatch) => {
+    try {
+      // Create an array of POST request promises for each score
+      const promises = usersScores.map((dataScore) =>
+        httpClient.post(`/instructor/api/v1/scores`, dataScore)
+      );
+
+      // Wait for all requests to complete using Promise.all
+      const responses = await Promise.all(promises);
+
+      // Check if all responses are successful
+      const allSuccessful = responses.every(res => res.isSuccess && res.data);
+
+      if (allSuccessful) {
+        message.success('Chấm điểm thành công!');
+        await dispatch(GetAssignmentsByClassIdActionAsync(classId)); // Dispatch the action after successful submission
+        return true;
+      } else {
+        message.error('There was an issue with one or more submissions');
+        return false;
+      }
+    } catch (error) {
+      console.error(error);
+      message.error('An error occurred while submitting scores');
+      return false;
+    }
+  };
+};
+
+

@@ -376,7 +376,8 @@ export default function AgencyDetail() {
       okText: "Xác nhận",
       cancelText: "Hủy",
       onOk: () => {
-        dispatch(UpdateStatusAgencyActionAsync(id, status));
+        setLoading(true)
+        dispatch(UpdateStatusAgencyActionAsync(id, status)).finally(() => setLoading(false))
       },
     });
   };

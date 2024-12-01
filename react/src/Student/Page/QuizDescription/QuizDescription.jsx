@@ -75,7 +75,7 @@ const QuizDescription = ()  => {
                 : 'Không xác định'}
             </Descriptions.Item>
             <Descriptions.Item label="Số lần làm">1</Descriptions.Item>
-            <Descriptions.Item label="Mã lớp">{quizReview?.classId || 'N/A'}</Descriptions.Item>
+            {/* <Descriptions.Item label="Mã lớp">{quizReview?.classId || 'N/A'}</Descriptions.Item> */}
           </Descriptions>
         </Card>
 
