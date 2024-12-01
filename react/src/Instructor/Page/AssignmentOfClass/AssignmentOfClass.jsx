@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { DeleteAssignmentActionAsync, GetAssignmentsByClassIdActionAsync } from '../../../Redux/ReducerAPI/AssignmentReducer';
 import { useParams } from 'react-router-dom';
 import EditAssignmentModal from '../../Modal/EditAssignmentModal';
+import moment from 'moment';
 
 const { Title , Text} = Typography;
 
@@ -57,16 +58,36 @@ const AssignmentOfClass = () => {
     }
   };
 
-  const renderStatusBadge = (status) => {
+  const renderStatusBadge = (startTime, endTime) => {
+    const now = moment();
+    const quizStartTime = moment(startTime);
+    const quizEndTime = moment(endTime);
+  
+    // Determine the status
+    let status;
+    if (now.isBefore(quizStartTime)) {
+      status = "NotOpen"; // Chưa mở
+    } else if (now.isBetween(quizStartTime, quizEndTime, "seconds", "[)")) {
+      status = "Open"; // Đang mở
+    } else {
+      status = "Closed"; // Đã đóng
+    }
+  
     // Define configuration for each status
     const statusConfig = {
+      NotOpen: {
+        text: "Chưa mở",
+        color: "gray",
+        backgroundColor: "#f0f0f0",
+        borderColor: "#d9d9d9",
+      },
       Open: {
         text: "Đang mở",
         color: "green",
         backgroundColor: "#f6ffed",
         borderColor: "#b7eb8f",
       },
-      Close: {
+      Closed: {
         text: "Đã đóng",
         color: "red",
         backgroundColor: "#fff2f0",
@@ -74,12 +95,7 @@ const AssignmentOfClass = () => {
       },
     };
   
-    const config = statusConfig[status] || {
-      text: "Không xác định",
-      color: "gray",
-      backgroundColor: "#f0f0f0",
-      borderColor: "#d9d9d9",
-    };
+    const config = statusConfig[status];
   
     return (
       <div
@@ -97,6 +113,7 @@ const AssignmentOfClass = () => {
       </div>
     );
   };
+  
   
 
   // const assignments = [
@@ -123,7 +140,6 @@ const AssignmentOfClass = () => {
       title: 'Tiêu đề',
       dataIndex: 'title',
       key: 'title',
-      sorter: (a, b) => a.title.localeCompare(b.title),
       render: (text, record) => (
         <Button
           type="link"
@@ -155,7 +171,6 @@ const AssignmentOfClass = () => {
           <span>{new Date(text).toLocaleDateString('vi-VN')}</span>
         </Tooltip>
       ),
-      sorter: (a, b) => new Date(a.startTime) - new Date(b.startTime),
     },
     {
       title: 'Thời gian kết thúc',
@@ -166,19 +181,33 @@ const AssignmentOfClass = () => {
           <span>{new Date(text).toLocaleDateString('vi-VN')}</span>
         </Tooltip>
       ),
-      sorter: (a, b) => new Date(a.endTime) - new Date(b.endTime),
     },
     {
       title: 'Trạng thái',
-      dataIndex: 'status',
       key: 'status',
-      render: (status) => renderStatusBadge(status),
+      render: (_, record) => renderStatusBadge(record.startTime, record.endTime),
       filters: [
+        { text: 'Chưa mở', value: 'NotOpen' },
         { text: 'Đang mở', value: 'Open' },
-        { text: 'Đã đóng', value: 'Close' },
+        { text: 'Đã đóng', value: 'Closed' },
       ],
-      onFilter: (value, record) => record.status.includes(value),
-    },
+      onFilter: (value, record) => {
+        const now = moment();
+        const quizStartTime = moment(record.startTime);
+        const quizEndTime = moment(record.endTime);
+    
+        let status;
+        if (now.isBefore(quizStartTime)) {
+          status = "NotOpen";
+        } else if (now.isBetween(quizStartTime, quizEndTime, "seconds", "[)")) {
+          status = "Open";
+        } else {
+          status = "Closed";
+        }
+    
+        return status === value;
+      },
+    },    
     {
       title: 'Hành động',
       key: 'action',
@@ -191,8 +220,6 @@ const AssignmentOfClass = () => {
             <Popconfirm
               title="Bạn muốn xóa bài tập này?"
               onConfirm={() => handleDelete(record.id)}
-              // okText="Đồng ý"
-              // cancelText="Hủy"
             >
               <Button type="primary" danger icon={<DeleteOutlined />} size="small" />
             </Popconfirm>
