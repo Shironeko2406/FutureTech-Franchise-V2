@@ -29,7 +29,7 @@ const ContractDetailModal = ({ visible, onClose, contractDetail }) => {
             onCancel={onClose}
             footer={null}
             width={700}
-            styles={{ body: { overflowY: 'auto', maxHeight: 'calc(100vh - 200px)' }}}
+            styles={{ body: { overflowY: 'auto', maxHeight: 'calc(100vh - 200px)' } }}
         >
             {contractDetail && (
                 <Card>

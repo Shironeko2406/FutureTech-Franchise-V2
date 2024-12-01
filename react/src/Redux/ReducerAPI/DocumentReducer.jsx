@@ -14,11 +14,11 @@ const DocumentReducer = createSlice({
         setDocuments: (state, action) => {
             state.documents = action.payload.items;
             state.totalPagesCount = action.payload.totalPagesCount;
-        },
+        }
     },
 });
 
-export const { setDocuments } = DocumentReducer.actions;
+export const { setDocuments, setDocumentDetail } = DocumentReducer.actions;
 
 export default DocumentReducer.reducer;
 
@@ -76,6 +76,26 @@ export const CreateDocumentActionAsync = (data) => {
             }
         } catch (error) {
             console.error(error);
+            message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
+            return null;
+        }
+    };
+};
+
+export const GetDocumentByAgencyIdActionAsync = (agencyId, typeDocument) => {
+    console.log("GetDocumentByAgencyIdActionAsync", agencyId, typeDocument);
+    return async (dispatch) => {
+        try {
+            const res = await httpClient.get(`api/v1/documents/agency/${agencyId}?type=${typeDocument}`);
+            if (res.isSuccess && res.data != null) {
+                return res.data;
+            } else if (res.isSuccess && res.data == null) {
+                message.error(`${res.message}`);
+            } else {
+                throw new Error(res.message);
+            }
+        } catch (error) {
+            console.error("GetDocumentByAgencyIdActionAsync", error);
             message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
             return null;
         }
