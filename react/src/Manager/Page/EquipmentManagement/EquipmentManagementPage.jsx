@@ -1,12 +1,49 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { GetEquipmentActionAsync } from '../../../Redux/ReducerAPI/EquipmentReducer';
-import { Table, Button, Space, Typography, Input, Modal, Tooltip, Dropdown } from 'antd';
-import { EditOutlined, DeleteOutlined, SearchOutlined, EllipsisOutlined, DownloadOutlined } from '@ant-design/icons';
+import { GetEquipmentActionAsync, UpdateEquipmentActionAsync, GetEquipmentDetailsActionAsync } from '../../../Redux/ReducerAPI/EquipmentReducer';
+import { Table, Button, Space, Typography, Input } from 'antd';
+import { EditOutlined, SearchOutlined } from '@ant-design/icons';
 import { useParams } from 'react-router-dom';
-import { useLoading } from '../../../Utils/LoadingContext'; // Import useLoading
+import { useLoading } from '../../../Utils/LoadingContext';
+import EquipmentEditModal from '../../Modal/EquipmentEditModal';
+import moment from 'moment';
 
 const { Text } = Typography;
+
+const ExpandedRow = ({ record }) => {
+    const dispatch = useDispatch();
+    const details = useSelector(state => {
+        const equipment = state.EquipmentReducer.equipmentData.find(e => e.id === record.id);
+        return equipment ? equipment.details : [];
+    });
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchDetails = async () => {
+            await dispatch(GetEquipmentDetailsActionAsync(record.id));
+            setLoading(false);
+        };
+        fetchDetails();
+    }, [dispatch, record.id]);
+
+    const columns = [
+        { title: 'Số seri', dataIndex: 'serialNumber', key: 'serialNumber' },
+        {
+            title: 'Ngày bắt đầu sử dụng',
+            dataIndex: 'startDate',
+            key: 'startDate',
+            render: (text) => moment(text).format('DD/MM/YYYY')
+        },
+        {
+            title: 'Ngày kết thúc sử dụng',
+            dataIndex: 'endDate',
+            key: 'endDate',
+            render: (text) => text ? moment(text).format('DD/MM/YYYY') : ''
+        },
+    ];
+
+    return <Table columns={columns} dataSource={details} pagination={false} rowKey="id" loading={loading} />;
+};
 
 const EquipmentManagementPage = () => {
     const dispatch = useDispatch();
@@ -16,7 +53,9 @@ const EquipmentManagementPage = () => {
     const [search, setSearch] = useState('');
     const [pageIndex, setPageIndex] = useState(1);
     const [pageSize, setPageSize] = useState(10);
-    const { setLoading } = useLoading(); // Use global loading
+    const { setLoading } = useLoading();
+    const [editModalVisible, setEditModalVisible] = useState(false);
+    const [selectedEquipment, setSelectedEquipment] = useState(null);
 
     useEffect(() => {
         setLoading(true);
@@ -48,12 +87,12 @@ const EquipmentManagementPage = () => {
                 backgroundColor: '#fff7e6',
                 borderColor: '#ffd591'
             },
-            none: {
-                text: 'Không có',
-                color: 'gray',
-                backgroundColor: '#f0f0f0',
-                borderColor: '#d9d9d9'
-            }
+            // none: {
+            //     text: 'Chưa sử dụng',
+            //     color: 'gray',
+            //     backgroundColor: '#f0f0f0',
+            //     borderColor: '#d9d9d9'
+            // }
         };
 
         const config = statusConfig[status] || statusConfig.none;
@@ -75,34 +114,15 @@ const EquipmentManagementPage = () => {
         );
     };
 
-    const getActionItems = () => [
-        {
-            label: "Sửa",
-            key: "edit",
-            icon: <EditOutlined style={{ color: "#faad14" }} />,
-        },
-        {
-            label: "Xóa",
-            key: "delete",
-            icon: <DeleteOutlined style={{ color: "red" }} />,
-        },
-    ];
+    const handleEditClick = (record) => {
+        setSelectedEquipment(record);
+        setEditModalVisible(true);
+    };
 
-    const handleMenuClick = async (record, key) => {
-        if (key === "edit") {
-            // Handle edit action
-        } else if (key === "delete") {
-            Modal.confirm({
-                title: "Bạn có chắc chắn muốn xóa thiết bị này?",
-                content: "Hành động này không thể hoàn tác.",
-                okText: "Xóa",
-                okType: "danger",
-                cancelText: "Hủy",
-                onOk: async () => {
-                    // Handle delete action
-                },
-            });
-        }
+    const handleEditSave = async (values) => {
+        await dispatch(UpdateEquipmentActionAsync(selectedEquipment.id, values));
+        await dispatch(GetEquipmentActionAsync(id, status, pageIndex, pageSize));
+        await dispatch(GetEquipmentDetailsActionAsync(selectedEquipment.id)); // Refetch details after edit
     };
 
     const columns = [
@@ -131,9 +151,9 @@ const EquipmentManagementPage = () => {
             key: 'status',
             align: 'center',
             filters: [
-                { text: 'Sẵn có', value: 'Available' },
+                { text: 'Đang sử dụng', value: 'Available' },
                 { text: 'Đang sửa chữa', value: 'Repair' },
-                { text: 'Không có', value: 'none' },
+                // { text: 'Chưa sử dụng', value: 'none' },
             ],
             filterMultiple: false,
             render: (text) => renderStatusBadge(text),
@@ -154,20 +174,15 @@ const EquipmentManagementPage = () => {
             title: "Hành động",
             key: "action",
             align: "center",
+            width: 140,
             render: (_, record) => (
                 <Space>
-                    <Dropdown
-                        menu={{
-                            items: getActionItems(),
-                            onClick: ({ key }) => handleMenuClick(record, key),
-                        }}
-                    >
-                        <Button
-                            type="primary"
-                            icon={<EllipsisOutlined />}
-                            style={{ backgroundColor: "#50e3c2", color: "#0A5A5A" }}
-                        />
-                    </Dropdown>
+                    <Button
+                        type="primary"
+                        icon={<EditOutlined />}
+                        style={{ backgroundColor: "#faad14", color: "#fff" }}
+                        onClick={() => handleEditClick(record)}
+                    />
                 </Space>
             ),
         },
@@ -177,15 +192,15 @@ const EquipmentManagementPage = () => {
         <div className="card">
             <div className="card-body">
                 <h5 className="card-title mb-3">Danh sách thiết bị</h5>
-                {/* <Space style={{ marginBottom: 16 }}>
-                    <span style={{ marginRight: 8 }}>Tìm kiếm:</span>
+                {/* <Space style={{ marginBottom: 16 }}> */}
+                {/* <span style={{ marginRight: 8 }}>Tìm kiếm:</span>
                     <Input.Search
                         placeholder="Tìm kiếm theo tên thiết bị hoặc số seri"
                         onSearch={handleSearch}
                         enterButton
                         style={{ width: 350 }}
-                    />
-                </Space> */}
+                    /> */}
+                {/* </Space> */}
                 <Table
                     bordered
                     columns={columns}
@@ -200,6 +215,13 @@ const EquipmentManagementPage = () => {
                         pageSizeOptions: ["10", "20", "50"],
                     }}
                     onChange={handleTableChange}
+                    expandable={{ expandedRowRender: (record) => <ExpandedRow record={record} /> }}
+                />
+                <EquipmentEditModal
+                    visible={editModalVisible}
+                    onCancel={() => setEditModalVisible(false)}
+                    equipmentData={selectedEquipment}
+                    onSave={handleEditSave}
                 />
             </div>
         </div>

@@ -17,10 +17,16 @@ const EquipmentReducer = createSlice({
             state.totalItemsCount = action.payload.totalItemsCount;
             state.totalPagesCount = action.payload.totalPagesCount;
         },
+        setEquipmentDetails: (state, action) => {
+            const index = state.equipmentData.findIndex(e => e.id === action.payload.id);
+            if (index !== -1) {
+                state.equipmentData[index].details = action.payload.details;
+            }
+        },
     },
 });
 
-export const { setEquipmentData } = EquipmentReducer.actions;
+export const { setEquipmentData, setEquipmentDetails } = EquipmentReducer.actions;
 
 export default EquipmentReducer.reducer;
 
@@ -92,6 +98,46 @@ export const GetEquipmentActionAsync = (id, status, pageIndex, pageSize) => {
         } catch (error) {
             console.error(error);
             message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
+        }
+    };
+};
+
+export const UpdateEquipmentActionAsync = (id, equipmentFormData) => {
+    return async (dispatch) => {
+        try {
+            const res = await httpClient.put(`/api/v1/equipments/${id}`, equipmentFormData);
+            if (res.isSuccess && res.data) {
+                message.success(`Cập nhật trang thiết bị thành công`);
+                return true;
+            } else if (res.isSuccess && !res.data) {
+                message.error(`${res.message}`);
+                return false;
+            } else {
+                throw new Error(`${res.message}`);
+            }
+        } catch (error) {
+            message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
+            return false;
+        }
+    };
+};
+
+export const GetEquipmentDetailsActionAsync = (id) => {
+    return async (dispatch) => {
+        try {
+            const res = await httpClient.get(`/api/v1/agency/equipments/${id}`);
+            if (res.isSuccess && res.data) {
+                dispatch(setEquipmentDetails({ id, details: res.data }));
+                return res.data;
+            } else if (res.isSuccess && !res.data) {
+                message.error(`${res.message}`);
+            } else {
+                throw new Error(`${res.message}`);
+            }
+        } catch (error) {
+            console.error(error);
+            message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
+            return [];
         }
     };
 };
