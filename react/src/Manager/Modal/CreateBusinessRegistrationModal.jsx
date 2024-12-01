@@ -6,13 +6,16 @@ import { imageDB } from "../../Firebasse/Config";
 import { useDispatch } from 'react-redux';
 import { CreateDocumentActionAsync } from '../../Redux/ReducerAPI/DocumentReducer';
 import moment from 'moment';
+import { useLoading } from '../../Utils/LoadingContext';
 
 const CreateBusinessRegistrationModal = ({ visible, onClose, agencyId }) => {
     const [form] = Form.useForm();
     const dispatch = useDispatch();
     const [file, setFile] = useState(null);
+    const { setLoading, loading } = useLoading();
 
     const handleOk = async () => {
+        setLoading(true);
         try {
             const values = await form.validateFields();
             const storageRef = ref(imageDB, `documents/${file.name}`);
@@ -29,6 +32,8 @@ const CreateBusinessRegistrationModal = ({ visible, onClose, agencyId }) => {
             onClose();
         } catch (error) {
             console.error("Error creating business registration: ", error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -47,10 +52,10 @@ const CreateBusinessRegistrationModal = ({ visible, onClose, agencyId }) => {
             visible={visible}
             onCancel={onClose}
             footer={[
-                <Button key="back" onClick={onClose}>
+                <Button key="back" onClick={onClose} disabled={loading}>
                     Hủy
                 </Button>,
-                <Button key="submit" type="primary" onClick={handleOk}>
+                <Button key="submit" type="primary" onClick={handleOk} loading={loading}>
                     Thêm mới
                 </Button>,
             ]}
