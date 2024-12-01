@@ -4,6 +4,8 @@ import { message } from "antd";
 
 const initialState = {
     equipmentData: [],
+    totalItemsCount: 0,
+    totalPagesCount: 0,
 };
 
 const EquipmentReducer = createSlice({
@@ -11,26 +13,24 @@ const EquipmentReducer = createSlice({
     initialState,
     reducers: {
         setEquipmentData: (state, action) => {
-            state.equipmentData = action.payload;
+            state.equipmentData = action.payload.items;
+            state.totalItemsCount = action.payload.totalItemsCount;
+            state.totalPagesCount = action.payload.totalPagesCount;
+        },
+        setEquipmentDetails: (state, action) => {
+            const index = state.equipmentData.findIndex(e => e.id === action.payload.id);
+            if (index !== -1) {
+                state.equipmentData[index].details = action.payload.details;
+            }
         },
     },
 });
 
-export const { setEquipmentData } = EquipmentReducer.actions;
+export const { setEquipmentData, setEquipmentDetails } = EquipmentReducer.actions;
 
 export default EquipmentReducer.reducer;
 
 //----------API CALL--------------
-export const GetEquipmentActionAsync = (agencyId) => {
-    return async (dispatch) => {
-        try {
-            const res = await httpClient.get(`/api/v1/equipments/agency/${agencyId}`);
-            dispatch(setEquipmentData(res.data));
-        } catch (error) {
-            console.error(error);
-        }
-    };
-};
 
 export const CreateEquipmentActionAsync = (agencyId, equipmentFormData) => {
     return async (dispatch) => {
@@ -76,6 +76,68 @@ export const DownloadEquipmentFileActionAsync = (agencyId) => {
         } catch (error) {
             console.error("DownloadEquipmentFileActionAsync", error);
             message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
+        }
+    };
+};
+
+export const GetEquipmentActionAsync = (id, status, pageIndex, pageSize) => {
+    return async (dispatch) => {
+        console.log("GetEquipmentActionAsync req, agencyId:", id);
+        console.log("GetEquipmentActionAsync req, status:", status);
+        try {
+            const res = await httpClient.get(`/api/v1/agency/equipments`, {
+                params: {
+                    AgencyId: id,
+                    Status: status,
+                    PageIndex: pageIndex,
+                    PageSize: pageSize,
+                },
+            });
+            console.log("GetEquipmentActionAsync res:", res);
+            dispatch(setEquipmentData(res.data));
+        } catch (error) {
+            console.error(error);
+            message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
+        }
+    };
+};
+
+export const UpdateEquipmentActionAsync = (id, equipmentFormData) => {
+    return async (dispatch) => {
+        try {
+            const res = await httpClient.put(`/api/v1/equipments/${id}`, equipmentFormData);
+            if (res.isSuccess && res.data) {
+                message.success(`Cập nhật trang thiết bị thành công`);
+                return true;
+            } else if (res.isSuccess && !res.data) {
+                message.error(`${res.message}`);
+                return false;
+            } else {
+                throw new Error(`${res.message}`);
+            }
+        } catch (error) {
+            message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
+            return false;
+        }
+    };
+};
+
+export const GetEquipmentDetailsActionAsync = (id) => {
+    return async (dispatch) => {
+        try {
+            const res = await httpClient.get(`/api/v1/agency/equipments/${id}`);
+            if (res.isSuccess && res.data) {
+                dispatch(setEquipmentDetails({ id, details: res.data }));
+                return res.data;
+            } else if (res.isSuccess && !res.data) {
+                message.error(`${res.message}`);
+            } else {
+                throw new Error(`${res.message}`);
+            }
+        } catch (error) {
+            console.error(error);
+            message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
+            return [];
         }
     };
 };

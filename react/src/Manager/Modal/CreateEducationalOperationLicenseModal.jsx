@@ -6,13 +6,12 @@ import { imageDB } from "../../Firebasse/Config";
 import { useDispatch } from 'react-redux';
 import { CreateDocumentActionAsync } from '../../Redux/ReducerAPI/DocumentReducer';
 import moment from 'moment';
-import { useLoading } from '../../Utils/LoadingContext';
 
-const CreateBusinessRegistrationModal = ({ visible, onClose, agencyId }) => {
+const CreateEducationalOperationLicenseModal = ({ visible, onClose, agencyId }) => {
     const [form] = Form.useForm();
     const dispatch = useDispatch();
     const [file, setFile] = useState(null);
-    const { setLoading, loading } = useLoading();
+    const [loading, setLoading] = useState(false);
 
     const handleOk = async () => {
         setLoading(true);
@@ -25,13 +24,13 @@ const CreateBusinessRegistrationModal = ({ visible, onClose, agencyId }) => {
                 title: values.title,
                 urlFile: fileURL,
                 expirationDate: values.expirationDate.format('YYYY-MM-DD'),
-                documentType: "BusinessLicense",
+                documentType: "EducationalOperationLicense",
                 agencyId: agencyId, // Use the passed agencyId
             };
             await dispatch(CreateDocumentActionAsync(documentData));
             onClose();
         } catch (error) {
-            console.error("Error creating business registration: ", error);
+            console.error("Error creating agreement: ", error);
         } finally {
             setLoading(false);
         }
@@ -48,8 +47,8 @@ const CreateBusinessRegistrationModal = ({ visible, onClose, agencyId }) => {
 
     return (
         <Modal
-            title="Thêm mới Giấy Đăng Ký Doanh Nghiệp"
-            visible={visible}
+            title="Thêm mới Giấy Đăng Ký Giấy Phép Kinh Doanh"
+            open={visible}
             onCancel={onClose}
             footer={[
                 <Button key="back" onClick={onClose} disabled={loading}>
@@ -71,7 +70,6 @@ const CreateBusinessRegistrationModal = ({ visible, onClose, agencyId }) => {
                 <Form.Item
                     name="expirationDate"
                     label="Ngày hết hạn"
-                    rules={[{ required: true, message: 'Vui lòng chọn ngày hết hạn' }]}
                 >
                     <DatePicker
                         style={{ width: '100%' }}
@@ -97,4 +95,4 @@ const CreateBusinessRegistrationModal = ({ visible, onClose, agencyId }) => {
     );
 };
 
-export default CreateBusinessRegistrationModal;
+export default CreateEducationalOperationLicenseModal;

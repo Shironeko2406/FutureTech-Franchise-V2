@@ -37,6 +37,8 @@ import TempUIInstructor from "./Instructor/TempUIInstructor/TempUIInstructor";
 import ScheduleTeaching from "./Instructor/Page/ScheduleTeaching/ScheduleTeaching";
 import HomeInstructor from "./Instructor/Page/HomeInstructor/HomeInstructor";
 import CourseDetailManager from "./Manager/Page/CourseDetailManager/CourseDetailManager";
+import CourseViewAgencyManager from "./AgencyManager/Page/CourseViewAgencyManager/CourseViewAgencyManager";
+import CourseDetailAgencyManager from "./AgencyManager/Page/CourseViewAgencyManager/CourseDetailAgencyManager";
 import { LoadingProvider, useLoading } from "./Utils/LoadingContext";
 import { Spin } from "antd";
 import { ConfigProvider } from 'antd';
@@ -84,6 +86,7 @@ import AgencyActiveManagement from "./Manager/Page/AgencyActiveManagement/Agency
 import AgencyActiveDetail from "./Manager/Page/AgencyActiveDetail/AgencyActiveDetail";
 import ViewAssignment from "./Student/Page/ViewAssignment/ViewAssignment";
 import AssignmentDetail from "./Student/Page/AssignmentDetail/AssignmentDetail";
+import EquipmentManagementPage from './Manager/Page/EquipmentManagement/EquipmentManagementPage';
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -134,6 +137,8 @@ function App() {
                   <Route path="" element={<AgencyDashboardPage />} />
                   <Route path="appointment-schedule" element={<AgencyManagerAppointment />} />
                   <Route path="appointment-schedule/details" element={<AgencyManagerAppointmentDetail />} />
+                  <Route path="course" element={<CourseViewAgencyManager />} />
+                  <Route path="course-detail/:id" element={<CourseDetailAgencyManager />} />
                 </Route>
               </Route>
 
@@ -174,14 +179,15 @@ function App() {
                   <Route path="slot" element={<SlotManager />} />
                   <Route path="documents" element={<DocumentManagement />} />
                   <Route path="agency/:id/task-detail" element={<AgencyDetail />} />
-                  <Route path="agency-active/:id/task-detail" element={<AgencyActiveDetail/>} />
+                  <Route path="agency-active/:id/task-detail" element={<AgencyActiveDetail />} />
                   <Route path="agency" element={<AgencyManagement />} />
-                  <Route path="agency-active" element={<AgencyActiveManagement/>} />
+                  <Route path="agency-active" element={<AgencyActiveManagement />} />
                   <Route path="contracts" element={<ManageContractPage />} />
                   <Route path="contract/create" element={<CreateContractPage />} />
                   <Route path="appointment-schedule" element={<ManagerAppointment />} />
                   <Route path="appointment-schedule/details" element={<ManagerAppointmentDetail />} />
                   <Route path="list-task" element={<ListTaskManager />} />
+                  <Route path="agency-active/:id/equipments" element={<EquipmentManagementPage />} />
                 </Route>
               </Route>
 
