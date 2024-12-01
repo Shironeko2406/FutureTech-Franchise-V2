@@ -156,13 +156,6 @@ const ConsultationManagement = () => {
           <Option value="Consulted">Đã tư vấn</Option>
           <Option value="NotConsulted">Chưa tư vấn</Option>
         </Select>
-        <Button
-            type="primary"
-            icon={<RocketOutlined />}
-            // onClick={showModalCreateQuiz}
-          >
-            Tạo quản lý nhượng quyền
-          </Button>
       </Space>
       <Table
           columns={columns}

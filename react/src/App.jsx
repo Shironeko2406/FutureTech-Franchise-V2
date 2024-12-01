@@ -82,6 +82,8 @@ import AgencyManagerAppointment from "./AgencyManager/ScheduleAgencyManager/Agen
 import AgencyManagerAppointmentDetail from "./AgencyManager/ScheduleAgencyManager/AgencyManagerAppointmentDetail";
 import AgencyActiveManagement from "./Manager/Page/AgencyActiveManagement/AgencyActiveManagement";
 import AgencyActiveDetail from "./Manager/Page/AgencyActiveDetail/AgencyActiveDetail";
+import ViewAssignment from "./Student/Page/ViewAssignment/ViewAssignment";
+import AssignmentDetail from "./Student/Page/AssignmentDetail/AssignmentDetail";
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -139,7 +141,9 @@ function App() {
                 <Route path="student" element={<TempUIStudent />}>
                   <Route path="" element={<HomeStudentNoti />} />
                   <Route path="class/:id" element={<ClassDetailStudent />} />
+                  <Route path="class/:id/assignment" element={<ViewAssignment/>} />
                   <Route path="quiz" element={<QuizTest />} />
+                  <Route path="assignment/:assignmentId" element={<AssignmentDetail/>} />
                   <Route path="quiz/:quizId" element={<QuizDescription />} />
                   <Route path="quiz/:quizId/start" element={<QuizTest />} />
                   <Route path="schedules" element={<ScheduleStudent />} />

@@ -1,14 +1,15 @@
-import React from 'react'
-import { Button, DatePicker, Input, Modal, Form, Select, Typography, Space } from 'antd';
-import { useDispatch } from 'react-redux';
-import { useParams } from 'react-router-dom';
-import { useLoading } from '../../Utils/LoadingContext';
-import styled from 'styled-components';
-import { CreateAssignmentActionAsync } from '../../Redux/ReducerAPI/AssignmentReducer';
+import React, { useEffect } from 'react'
+import { Button, DatePicker, Input, Modal, Form, Select, Typography, Space } from 'antd'
+import { useDispatch } from 'react-redux'
+import { useParams } from 'react-router-dom'
+import { useLoading } from '../../Utils/LoadingContext'
+import styled from 'styled-components'
+import dayjs from 'dayjs'
+import { UpdateAssignmentActionAsync } from '../../Redux/ReducerAPI/AssignmentReducer'
 
-const { TextArea } = Input;
-const { Title } = Typography;
-const { RangePicker } = DatePicker;
+const { TextArea } = Input
+const { Title } = Typography
+const { RangePicker } = DatePicker
 
 const StyledModal = styled(Modal)`
   .ant-modal-content {
@@ -25,7 +26,7 @@ const StyledModal = styled(Modal)`
   .ant-form-item-label > label {
     font-weight: 600;
   }
-`;
+`
 
 const StyledForm = styled(Form)`
   .ant-input,
@@ -34,38 +35,50 @@ const StyledForm = styled(Form)`
   .ant-select-selector {
     border-radius: 6px;
   }
-`;
+`
 
-const CreateAssignmentModal = ({ visible, onClose }) => {
-  const [form] = Form.useForm();
-  const dispatch = useDispatch();
-  const { id: classId } = useParams();
-  const { setLoading } = useLoading();
+const EditAssignmentModal = ({ visible, onClose, assignment }) => {
+  const [form] = Form.useForm()
+  const dispatch = useDispatch()
+  const { id: classId } = useParams()
+  const { setLoading } = useLoading()
+
+  useEffect(() => {
+    if (assignment) {
+      form.setFieldsValue({
+        title: assignment.title,
+        description: assignment.description,
+        dateRange: [
+          dayjs(assignment.startTime),
+          dayjs(assignment.endTime)
+        ],
+        status: assignment.status
+      })
+    }
+  }, [assignment, form])
 
   const handleSubmit = (values) => {
-    setLoading(true);
+    setLoading(true)
     const data = {
-        ...values,
-        startTime: values.dateRange[0].format('YYYY-MM-DDTHH:mm:ss[Z]'),
-        endTime: values.dateRange[1].format('YYYY-MM-DDTHH:mm:ss[Z]'),
-        classId,
-    };
+      ...values,
+      startTime: values.dateRange[0].format('YYYY-MM-DDTHH:mm:ss[Z]'),
+      endTime: values.dateRange[1].format('YYYY-MM-DDTHH:mm:ss[Z]'),
+      classId,
+      id: assignment.id // Include the assignment ID for updating
+    }
 
-    delete data.dateRange;
+    delete data.dateRange
 
-    dispatch(CreateAssignmentActionAsync(data))
-      .then((response) => {
-        setLoading(false);
-        if (response) {
-          form.resetFields();
-          onClose();
-        }
+    dispatch(UpdateAssignmentActionAsync(data, assignment.id))
+      .then(() => {
+        setLoading(false)
+        onClose()
       })
-      .catch((err) => {
-        setLoading(false);
-        console.error('Error creating assignment:', err);
-      });
-  };
+      .catch((error) => {
+        console.error('Error updating assignment:', error)
+        setLoading(false)
+      })
+  }
 
   const formItems = [
     {
@@ -101,11 +114,11 @@ const CreateAssignmentModal = ({ visible, onClose }) => {
         />
       ),
     },
-  ];
+  ]
 
   return (
     <StyledModal
-      title={<Title level={3}>Tạo Bài Tập</Title>}
+      title={<Title level={3}>Chỉnh sửa bài Tập</Title>}
       style={{top:20}}
       open={visible}
       onCancel={onClose}
@@ -113,7 +126,7 @@ const CreateAssignmentModal = ({ visible, onClose }) => {
         <Space>
           <Button onClick={onClose}>Hủy</Button>
           <Button onClick={() => form.submit()} type="primary">
-            Tạo
+            Cập nhật
           </Button>
         </Space>
       }
@@ -130,4 +143,5 @@ const CreateAssignmentModal = ({ visible, onClose }) => {
   )
 }
 
-export default CreateAssignmentModal
+export default EditAssignmentModal
+

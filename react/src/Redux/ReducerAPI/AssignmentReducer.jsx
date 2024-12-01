@@ -3,7 +3,9 @@ import { message } from 'antd';
 import { httpClient } from '../../Utils/Interceptors';
 
 const initialState = {
-  assignments: []
+  assignments: [],
+  studentAssignmentOfClass: [],
+  assignmentDetail: {}
 }
 
 const AssignmentReducer = createSlice({
@@ -12,11 +14,17 @@ const AssignmentReducer = createSlice({
   reducers: {
     setAssignments: (state, action) => {
       state.assignments = action.payload
-    }
+    },
+    setStudentAssignmentOfClass: (state, action) => {
+      state.studentAssignmentOfClass = action.payload
+    },
+    setAssignmentDetail: (state, action) => {
+      state.assignmentDetail = action.payload
+    },
   }
 });
 
-export const {setAssignments} = AssignmentReducer.actions
+export const {setAssignments, setStudentAssignmentOfClass, setAssignmentDetail} = AssignmentReducer.actions
 
 export default AssignmentReducer.reducer
 //--------API CALL--------------
@@ -26,10 +34,48 @@ export const CreateAssignmentActionAsync = (data) => {
         const res = await httpClient.post(`/api/v1/assignments`, data);
         if (res.isSuccess && res.data) {
           message.success(`${res.message}`);
-        //   await dispatch(GetQuizDataAndScoreByClassIdActionAsync(data.classId));
+          await dispatch(GetAssignmentsByClassIdActionAsync(data.classId));
           return true;
         } else {
-          message.error(`Lỗi hệ thống`);
+          message.error(`${res.message}`);
+          return false;
+        }
+      } catch (error) {
+        console.log(error);
+        message.error("Lỗi hệ thống");
+      }
+    };
+  };
+
+  export const UpdateAssignmentActionAsync = (dataUpdate, id) => {
+    return async (dispatch) => {
+      try {
+        const res = await httpClient.put(`/api/v1/assignments/${id}`, dataUpdate);
+        if (res.isSuccess && res.data) {
+          message.success(`${res.message}`);
+          await dispatch(GetAssignmentsByClassIdActionAsync(dataUpdate.classId));
+          return true;
+        } else {
+          message.error(`${res.message}`);
+          return false;
+        }
+      } catch (error) {
+        console.log(error);
+        message.error("Lỗi hệ thống");
+      }
+    };
+  };
+
+  export const DeleteAssignmentActionAsync = (assId, classId) => {
+    return async (dispatch) => {
+      try {
+        const res = await httpClient.delete(`/api/v1/assignments/${assId}`);
+        if (res.isSuccess && res.data) {
+          message.success(`${res.message}`);
+          await dispatch(GetAssignmentsByClassIdActionAsync(classId));
+          return true;
+        } else {
+          message.error(`${res.message}`);
           return false;
         }
       } catch (error) {
@@ -50,3 +96,28 @@ export const CreateAssignmentActionAsync = (data) => {
       }
     };
   };
+
+  export const GetStudentAssignmentsByClassIdActionAsync = (classId) => {
+    return async (dispatch) => {
+      try {
+        const res = await httpClient.get(`/student/api/v1/assignments/classes/${classId}`);
+        dispatch(setStudentAssignmentOfClass(res.data))
+      } catch (error) {
+        console.log(error);
+        message.error("Lỗi hệ thống");
+      }
+    };
+  };
+
+  export const GetAssignmentDetailByIdActionAsync = (assId) => {
+    return async (dispatch) => {
+      try {
+        const res = await httpClient.get(`/student/api/v1/assignment/${assId}`);
+        dispatch(setAssignmentDetail(res.data))
+      } catch (error) {
+        console.log(error);
+        message.error("Lỗi hệ thống");
+      }
+    };
+  };
+

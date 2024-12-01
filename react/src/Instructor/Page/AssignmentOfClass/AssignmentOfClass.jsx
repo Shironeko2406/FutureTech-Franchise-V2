@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Space, Table, Tag, Card, Typography, Tooltip } from 'antd';
+import { Button, Space, Table, Tag, Card, Typography, Tooltip, Popconfirm } from 'antd';
 import { RocketOutlined, EditOutlined, DeleteOutlined, CalendarOutlined, RightCircleOutlined } from '@ant-design/icons';
 import CreateAssignmentModal from '../../Modal/CreateAssignmentModal';
 import ShowListSubmitAssignmentAndScores from '../../Modal/ShowListSubmitAssignmentAndScores';
 import { useLoading } from '../../../Utils/LoadingContext';
 import { useDispatch, useSelector } from 'react-redux';
-import { GetAssignmentsByClassIdActionAsync } from '../../../Redux/ReducerAPI/AssignmentReducer';
+import { DeleteAssignmentActionAsync, GetAssignmentsByClassIdActionAsync } from '../../../Redux/ReducerAPI/AssignmentReducer';
 import { useParams } from 'react-router-dom';
+import EditAssignmentModal from '../../Modal/EditAssignmentModal';
 
 const { Title , Text} = Typography;
 
@@ -16,7 +17,9 @@ const AssignmentOfClass = () => {
   const {id} = useParams()
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isViewDetailSubmitAssignmentModalVisible, setIsViewDetailSubmitAssignmentModalModalVisible] = useState(false);
-  const [assignmentSelected, setAssignmentSelected] = useState([]);
+  const [isModalEditVisible, setIsModalEditVisible] = useState(false);
+  const [assignmentSelected, setAssignmentSelected] = useState({});
+  const [selectedAssignmentEdit, setSelectedAssignmentEdit] = useState(null);
   const {setLoading} = useLoading()
 
   useEffect(() => {
@@ -27,14 +30,32 @@ const AssignmentOfClass = () => {
   const showModalCreateAssignment = () => setIsModalVisible(true);
   const handleCloseModalCreateAssignment = () => setIsModalVisible(false);
 
-  const showModalViewDetailSubmitAssignment = (scores) => {
+  const showModalViewDetailSubmitAssignment = (ass) => {
     setIsViewDetailSubmitAssignmentModalModalVisible(true);
-    setAssignmentSelected(scores)
+    setAssignmentSelected(ass)
   }
   const handleCloseModalViewDetailSubmitAssignment = () => {
     setIsViewDetailSubmitAssignmentModalModalVisible(false);
-    setAssignmentSelected([]);
   }
+
+  const showModalEditAssignment = (assignment) => {
+    setIsModalEditVisible(true);
+    setSelectedAssignmentEdit(assignment)
+  };
+
+  const handleCloseModalEditAssignment = () => {
+    setIsModalEditVisible(false);
+    setSelectedAssignmentEdit(null)
+  };
+
+  const handleDelete = async (assId) => {
+    setLoading(true);
+    try {
+      await dispatch(DeleteAssignmentActionAsync(assId, id));
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const renderStatusBadge = (status) => {
     // Define configuration for each status
@@ -45,7 +66,7 @@ const AssignmentOfClass = () => {
         backgroundColor: "#f6ffed",
         borderColor: "#b7eb8f",
       },
-      Closed: {
+      Close: {
         text: "Đã đóng",
         color: "red",
         backgroundColor: "#fff2f0",
@@ -106,7 +127,7 @@ const AssignmentOfClass = () => {
       render: (text, record) => (
         <Button
           type="link"
-          onClick={() => showModalViewDetailSubmitAssignment(record.userScores)}
+          onClick={() => showModalViewDetailSubmitAssignment(record)}
           style={{
             display: "flex",
             alignItems: "center",
@@ -154,20 +175,27 @@ const AssignmentOfClass = () => {
       render: (status) => renderStatusBadge(status),
       filters: [
         { text: 'Đang mở', value: 'Open' },
-        { text: 'Đã đóng', value: 'Closed' },
+        { text: 'Đã đóng', value: 'Close' },
       ],
       onFilter: (value, record) => record.status.includes(value),
     },
     {
       title: 'Hành động',
       key: 'action',
-      render: () => (
+      render: (_, record) => (
         <Space size="middle">
           <Tooltip title="Chỉnh sửa">
-            <Button type="primary" icon={<EditOutlined />} size="small" />
+            <Button type="primary" icon={<EditOutlined />} size="small" onClick={() => showModalEditAssignment(record)}/>
           </Tooltip>
           <Tooltip title="Xóa">
-            <Button type="primary" danger icon={<DeleteOutlined />} size="small" />
+            <Popconfirm
+              title="Bạn muốn xóa bài tập này?"
+              onConfirm={() => handleDelete(record.id)}
+              // okText="Đồng ý"
+              // cancelText="Hủy"
+            >
+              <Button type="primary" danger icon={<DeleteOutlined />} size="small" />
+            </Popconfirm>
           </Tooltip>
         </Space>
       ),
@@ -208,8 +236,14 @@ const AssignmentOfClass = () => {
       <ShowListSubmitAssignmentAndScores
         visible={isViewDetailSubmitAssignmentModalVisible}
         onClose={handleCloseModalViewDetailSubmitAssignment}
-        scores={assignmentSelected}
+        assignment={assignmentSelected}
       />
+
+      <EditAssignmentModal
+          visible={isModalEditVisible}
+          onClose={handleCloseModalEditAssignment}
+          assignment={selectedAssignmentEdit}
+        />
     </Card>
   );
 };

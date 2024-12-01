@@ -30,7 +30,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
       icon: "mdi:school",
       subItems: [
         { label: "Bài kiểm tra", path: `/student/class/${classItem.classId}` },
-        { label: "Bài tập nộp", path: `/student/class/${classItem.classId}` },
+        { label: "Bài tập nộp", path: `/student/class/${classItem.classId}/assignment` },
       ],
     })),
     { type: "section", label: "Lịch học", icon: "ti ti-dots" },

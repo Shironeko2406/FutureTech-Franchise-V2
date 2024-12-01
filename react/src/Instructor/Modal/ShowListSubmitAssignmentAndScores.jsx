@@ -2,14 +2,21 @@ import React, { useState } from 'react';
 import { Modal, Space, Table, Typography, Button, Upload, message } from 'antd';
 import { DownloadOutlined, UploadOutlined, InboxOutlined } from '@ant-design/icons';
 import * as XLSX from 'xlsx';
+import { useLoading } from '../../Utils/LoadingContext';
+import { useDispatch } from 'react-redux';
+import { InstructorGradeForAssignmentActionAsync } from '../../Redux/ReducerAPI/UserReducer';
+import { useParams } from 'react-router-dom';
 
 const { Title, Text, Link } = Typography;
 const { Dragger } = Upload;
 
-const ShowListSubmitAssignmentAndScores = ({ visible, onClose, scores }) => {
+const ShowListSubmitAssignmentAndScores = ({ visible, onClose, assignment }) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [isUploadModalVisible, setIsUploadModalVisible] = useState(false);
   const [fileList, setFileList] = useState([]);
+  const {setLoading} = useLoading()
+  const {id} = useParams()
+  const dispatch = useDispatch()
 
   const columns = [
     {
@@ -66,7 +73,10 @@ const ShowListSubmitAssignmentAndScores = ({ visible, onClose, scores }) => {
     },
   ];
 
-  const sortedScores = [...scores].sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
+  const sortedScores = Array.isArray(assignment.userScores) 
+  ? [...assignment.userScores].sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
+  : [];  
+
 
   const rowSelection = {
     selectedRowKeys,
@@ -89,7 +99,7 @@ const ShowListSubmitAssignmentAndScores = ({ visible, onClose, scores }) => {
     const ws = XLSX.utils.json_to_sheet(data);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Users');
-    XLSX.writeFile(wb, 'user_scores.xlsx');
+    XLSX.writeFile(wb, `user_scores_${assignment.title}.xlsx`);
   };
 
   const handleUpload = () => {
@@ -105,20 +115,27 @@ const ShowListSubmitAssignmentAndScores = ({ visible, onClose, scores }) => {
   const processUploadedFile = (file) => {
     const reader = new FileReader();
     reader.onload = (e) => {
+      setLoading(true)
       const data = new Uint8Array(e.target.result);
       const workbook = XLSX.read(data, { type: 'array' });
       const sheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[sheetName];
       const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
-      const processedData = jsonData.map(row => ({
+      const usersScores = jsonData.map(row => ({
         scoreNumber: parseFloat(row['Điểm']) || 0,
         userId: row['Mã người dùng'] || '',
+        assignmentId: assignment.id,
       }));
 
-      console.log(processedData);
-      message.success('File processed successfully');
-      handleUploadModalClose();
+      dispatch(InstructorGradeForAssignmentActionAsync(usersScores, id)).then((res)=>{
+        setLoading(false)
+        if (res) {
+          handleUploadModalClose();    
+        }
+      }).catch((err)=>{
+        setLoading(false)
+      })
     };
     reader.readAsArrayBuffer(file);
   };
