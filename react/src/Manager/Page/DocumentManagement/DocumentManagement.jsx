@@ -39,49 +39,6 @@ const DocumentManagement = () => {
         }
     };
 
-    const getColumnSearchProps = (dataIndex) => ({
-        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
-            <div style={{ padding: 8 }}>
-                <Input
-                    placeholder={`Tìm kiếm ${dataIndex}`}
-                    value={selectedKeys[0]}
-                    onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-                    onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
-                    style={{ marginBottom: 8, display: "block" }}
-                />
-                <Button
-                    type="primary"
-                    onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
-                    icon={<SearchOutlined />}
-                    size="small"
-                    style={{ width: 90, marginRight: 8 }}
-                >
-                    Tìm kiếm
-                </Button>
-                <Button onClick={() => handleReset(clearFilters)} size="small" style={{ width: 90 }}>
-                    Xóa lọc
-                </Button>
-            </div>
-        ),
-        filterIcon: (filtered) => <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />,
-        onFilter: (value, record) => record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
-    });
-
-    const handleSearch = (selectedKeys, confirm, dataIndex) => {
-        confirm();
-        if (dataIndex === "type") {
-            setType(selectedKeys[0]);
-        } else if (dataIndex === "status") {
-            setStatus(selectedKeys[0]);
-        }
-    };
-
-    const handleReset = (clearFilters) => {
-        clearFilters();
-        setType(null);
-        setStatus(null);
-    };
-
     const renderStatusBadge = (status) => {
         const statusConfig = {
             Active: {
@@ -170,7 +127,6 @@ const DocumentManagement = () => {
             dataIndex: "title",
             key: "title",
             align: "center",
-            ...getColumnSearchProps("title"),
         },
         {
             title: "Loại tài liệu",

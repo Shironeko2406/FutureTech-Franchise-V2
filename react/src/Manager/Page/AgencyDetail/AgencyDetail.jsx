@@ -25,6 +25,9 @@ import EditTaskModal from '../../Modal/EditTaskModal';
 import ContractDetailModal from "../../Modal/ContractDetailModal";
 import { GetContractDetailByAgencyIdActionAsync } from '../../../Redux/ReducerAPI/ContractReducer';
 import { DownloadEquipmentFileActionAsync } from '../../../Redux/ReducerAPI/EquipmentReducer';
+import { GetDocumentByAgencyIdActionAsync } from '../../../Redux/ReducerAPI/DocumentReducer';
+import DocumentDetailModal from '../../Modal/DocumentDetailModal';
+import { message } from "antd";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -293,6 +296,8 @@ export default function AgencyDetail() {
   const [modalShowTaskDetailVisible, setModalShowTaskDetailVisible] = useState(false);
   const [modalEditTaskByIdVisible, setModalEditTaskByIdVisible] = useState(false);
   const [modalContractDetailVisible, setModalContractDetailVisible] = useState(false);
+  const [modalDocumentDetailVisible, setModalDocumentDetailVisible] = useState(false);
+  const [documentDetail, setDocumentDetail] = useState(null);
   const contractDetail = useSelector((state) => state.ContractReducer.contractDetail);
 
   useEffect(() => {
@@ -375,7 +380,7 @@ export default function AgencyDetail() {
       },
     });
   };
-  
+
   const hasSubmittedCompulsorySignedContractTask = selectedTasks.some(task =>
     task.type === 'SignedContract' &&
     task.submit === 'Submited'
@@ -386,10 +391,68 @@ export default function AgencyDetail() {
     task.submit === 'Submited'
   );
 
+  const hasSubmittedCompulsoryAgreementSignedTask = selectedTasks.some(task =>
+    task.type === 'AgreementSigned' &&
+    task.submit === 'Submited'
+  );
+
+  const hasSubmittedCompulsoryBusinessRegisteredTask = selectedTasks.some(task =>
+    task.type === 'BusinessRegistered' &&
+    task.submit === 'Submited'
+  );
+
+  const hasSubmittedCompulsoryEducationLicenseRegisteredTask = selectedTasks.some(task =>
+    task.type === 'EducationLicenseRegistered' &&
+    task.submit === 'Submited'
+  );
+
   const downloadEquipmentFile = async (agencyId) => {
     setLoading(true);
     await dispatch(DownloadEquipmentFileActionAsync(agencyId));
     setLoading(false);
+  };
+
+  const openModalDocumentDetail = async (agencyId) => {
+    setLoading(true);
+    const documentData = await dispatch(GetDocumentByAgencyIdActionAsync(agencyId, 'AgreementContract'));
+    setLoading(false);
+    if (documentData) {
+      setDocumentDetail(documentData);
+      console.log("setDocumentDetail: ", documentData);
+      setModalDocumentDetailVisible(true);
+    }
+    else {
+      message.error("Không tìm thấy tài liệu");
+    }
+  };
+
+  const openModalBusinessLicenseDocumentDetail = async (agencyId) => {
+    setLoading(true);
+    const documentData = await dispatch(GetDocumentByAgencyIdActionAsync(agencyId, 'BusinessLicense'));
+    setLoading(false);
+    if (documentData) {
+      setDocumentDetail(documentData);
+      setModalDocumentDetailVisible(true);
+    } else {
+      message.error("Không tìm thấy tài liệu");
+    }
+  };
+
+  const openModalEducationalOperationLicenseDocumentDetail = async (agencyId) => {
+    setLoading(true);
+    const documentData = await dispatch(GetDocumentByAgencyIdActionAsync(agencyId, 'EducationalOperationLicense'));
+    setLoading(false);
+    if (documentData) {
+      setDocumentDetail(documentData);
+      setModalDocumentDetailVisible(true);
+    } else {
+      message.error("Không tìm thấy tài liệu");
+    }
+  };
+
+  const handleCloseModalDocumentDetail = () => {
+    setModalDocumentDetailVisible(false);
+    setDocumentDetail(null);
   };
 
   //--------------------------
@@ -436,8 +499,8 @@ export default function AgencyDetail() {
     });
   };
 
-  const areAllTypesCompletedUpToEducationLicense  = () => {
-    const requiredTypes = ['Interview', 'AgreementSigned', 'BusinessRegistered', 'SiteSurvey', 'Design', 'Quotation', 'SignedContract','ConstructionAndTrainning', 'Handover','EducationLicenseRegistered'];
+  const areAllTypesCompletedUpToEducationLicense = () => {
+    const requiredTypes = ['Interview', 'AgreementSigned', 'BusinessRegistered', 'SiteSurvey', 'Design', 'Quotation', 'SignedContract', 'ConstructionAndTrainning', 'Handover', 'EducationLicenseRegistered'];
     return requiredTypes.every(type => {
       const typeGroup = taskDataModify.find(group => group.type === type);
       return typeGroup && getTypeStatus(type, typeGroup.tasks) === 'Completed';
@@ -504,6 +567,33 @@ export default function AgencyDetail() {
                         onClick={() => downloadEquipmentFile(tasks[0].agencyId)}
                       >
                         Xuất file trang thiết bị
+                      </Button>
+                    )}
+                    {hasSubmittedCompulsoryAgreementSignedTask && (
+                      <Button
+                        type="primary"
+                        icon={<FileOutlined />}
+                        onClick={() => openModalDocumentDetail(tasks[0].agencyId)}
+                      >
+                        Xem tài liệu
+                      </Button>
+                    )}
+                    {hasSubmittedCompulsoryBusinessRegisteredTask && (
+                      <Button
+                        type="primary"
+                        icon={<FileOutlined />}
+                        onClick={() => openModalBusinessLicenseDocumentDetail(tasks[0].agencyId)}
+                      >
+                        Xem tài liệu
+                      </Button>
+                    )}
+                    {hasSubmittedCompulsoryEducationLicenseRegisteredTask && (
+                      <Button
+                        type="primary"
+                        icon={<FileOutlined />}
+                        onClick={() => openModalEducationalOperationLicenseDocumentDetail(tasks[0].agencyId)}
+                      >
+                        Xem tài liệu
                       </Button>
                     )}
                     {selectedType === 'EducationLicenseRegistered' && areAllTypesCompletedUpToEducationLicense() && agencyStatus === 'Approved' && (
@@ -631,6 +721,12 @@ export default function AgencyDetail() {
         visible={modalContractDetailVisible}
         onClose={handleCloseModalContractDetail}
         contractDetail={contractDetail}
+      />
+
+      <DocumentDetailModal
+        visible={modalDocumentDetailVisible}
+        onClose={handleCloseModalDocumentDetail}
+        documentDetail={documentDetail}
       />
 
     </StyledCard>

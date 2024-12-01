@@ -11,6 +11,7 @@ import CreateAgreementModal from './CreateAgreementModal';
 import CreateBusinessRegistrationModal from './CreateBusinessRegistrationModal';
 import CreateSignedContractModal from './CreateSignedContractModal';
 import UploadEquipmentFileModal from './UploadEquipmentFileModal';
+import CreateEducationalOperationLicenseModal from './CreateEducationalOperationLicenseModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { GetTaskDetailByIdActionAsync } from '../../Redux/ReducerAPI/WorkReducer';
 import { useLoading } from '../../Utils/LoadingContext';
@@ -48,6 +49,7 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
     const [modalCreateBusinessRegistrationVisible, setModalCreateBusinessRegistrationVisible] = useState(false);
     const [modalCreateSignedContractVisible, setModalCreateSignedContractVisible] = useState(false);
     const [modalUploadEquipmentFileVisible, setModalUploadEquipmentFileVisible] = useState(false);
+    const [modalCreateEducationalOperationLicenseVisible, setModalCreateEducationalOperationLicenseVisible] = useState(false);
     const dispatch = useDispatch();
     const { taskDetail } = useSelector((state) => state.WorkReducer);
     const { setLoading } = useLoading();
@@ -119,6 +121,11 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
                             Tải file trang thiết bị
                         </Button>
                     )}
+                    {taskType === "EducationLicenseRegistered" && (
+                        <Button key="createEducationalOperationLicense" type="primary" onClick={() => setModalCreateEducationalOperationLicenseVisible(true)}>
+                            Thêm mới giấy phép đăng ký giáo dục
+                        </Button>
+                    )}
                 </div>,
                 <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                     <Button key="back" onClick={onClose}>
@@ -175,6 +182,12 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
             <UploadEquipmentFileModal
                 visible={modalUploadEquipmentFileVisible}
                 onClose={() => setModalUploadEquipmentFileVisible(false)}
+                agencyId={taskDetail?.agencyId}
+            />
+
+            <CreateEducationalOperationLicenseModal
+                visible={modalCreateEducationalOperationLicenseVisible}
+                onClose={() => setModalCreateEducationalOperationLicenseVisible(false)}
                 agencyId={taskDetail?.agencyId}
             />
         </Modal>

@@ -176,6 +176,12 @@ export default function StudentRegistrationDetailsModal({
                             <Descriptions.Item label={<Space><ScheduleOutlined /> Lịch học mong muốn</Space>}>
                                 {studentDetails.dateTime || "Chưa có"}
                             </Descriptions.Item>
+                            <Descriptions.Item label={<Space><UserOutlined /> Người tư vấn</Space>}>
+                                {studentDetails.consultantName || "Chưa có"}
+                            </Descriptions.Item>
+                            <Descriptions.Item label={<Space><ClockCircleOutlined /> Thời gian cập nhật</Space>}>
+                                {studentDetails.modificationDate ? moment(studentDetails.modificationDate).format('DD/MM/YYYY HH:mm') : "Chưa có"}
+                            </Descriptions.Item>
                         </Descriptions>
                     )}
                 </Spin>
