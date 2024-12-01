@@ -618,6 +618,7 @@ export default function AgencyDetail() {
         onClose={handleCloseModalShowTaskDetail}
         setVisible={setModalShowTaskDetailVisible}
         isFromAgencyDetail={true}
+        selectedType={selectedType}
       />
 
       <EditTaskModal
