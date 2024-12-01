@@ -23,6 +23,7 @@ import WorkReducer from "./ReducerAPI/WorkReducer";
 import CityReducer from "./ReducerAPI/CityReducer";
 import ContractReducer from "./ReducerAPI/ContractReducer";
 import DocumentReducer from "./ReducerAPI/DocumentReducer";
+import EquipmentReducer from "./ReducerAPI/EquipmentReducer";
 
 export const store = configureStore({
   reducer: {
@@ -51,5 +52,6 @@ export const store = configureStore({
     CityReducer,
     ContractReducer,
     DocumentReducer,
+    EquipmentReducer
   },
 });

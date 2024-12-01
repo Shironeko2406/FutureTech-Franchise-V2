@@ -74,26 +74,21 @@ export const DownloadEquipmentFileActionAsync = (agencyId) => {
     };
 };
 
-export const GetEquipmentActionAsync = (agencyId, status, pageIndex, pageSize) => {
+export const GetEquipmentActionAsync = (id, status, pageIndex, pageSize) => {
     return async (dispatch) => {
+        console.log("GetEquipmentActionAsync req, agencyId:", id);
+        console.log("GetEquipmentActionAsync req, status:", status);
         try {
             const res = await httpClient.get(`/api/v1/agency/equipments`, {
                 params: {
-                    AgencyId: agencyId,
+                    AgencyId: id,
                     Status: status,
                     PageIndex: pageIndex,
                     PageSize: pageSize,
                 },
             });
-            if (res.isSuccess && res.data) {
-                dispatch(setEquipmentData({
-                    items: res.data.items,
-                    totalItemsCount: res.data.totalItemsCount,
-                    totalPagesCount: res.data.totalPagesCount,
-                }));
-            } else {
-                message.error(`${res.message}`);
-            }
+            console.log("GetEquipmentActionAsync res:", res);
+            dispatch(setEquipmentData(res.data));
         } catch (error) {
             console.error(error);
             message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
