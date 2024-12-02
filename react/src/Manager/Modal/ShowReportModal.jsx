@@ -61,61 +61,61 @@ const LoadingWrapper = styled.div`
 `;
 
 const ShowReportModal = ({ visible, onClose, taskId }) => {
-    const dispatch = useDispatch();
-    const { taskDetail, loading } = useSelector((state) => state.WorkReducer);
+  const dispatch = useDispatch();
+  const { taskDetail, loading } = useSelector((state) => state.WorkReducer);
 
-    useEffect(() => {
-        if (visible && taskId) {
-            dispatch(GetTaskDetailByIdActionAsync(taskId));
-        }
-    }, [visible, taskId, dispatch]);
+  useEffect(() => {
+    if (visible && taskId) {
+      dispatch(GetTaskDetailByIdActionAsync(taskId));
+    }
+  }, [visible, taskId, dispatch]);
 
-    const renderContent = () => {
-        if (loading) {
-            return (
-                <LoadingWrapper>
-                    <Spin size="large" />
-                </LoadingWrapper>
-            );
-        }
+  const renderContent = () => {
+    if (loading) {
+      return (
+        <LoadingWrapper>
+          <Spin size="large" />
+        </LoadingWrapper>
+      );
+    }
 
-        if (!taskDetail?.report) {
-            return <Empty description="Không có nội dung báo cáo" />;
-        }
-
-        return (
-            <>
-                <HTMLContent dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(taskDetail.report) }} />
-                {taskDetail.reportImageURL && (
-                    <ReportLink
-                        type="primary"
-                        icon={<FilePdfOutlined />}
-                        href={taskDetail.reportImageURL}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        Xem tài liệu đính kèm
-                    </ReportLink>
-                )}
-            </>
-        );
-    };
+    if (!taskDetail?.report) {
+      return <Empty description="Không có nội dung báo cáo" />;
+    }
 
     return (
-        <StyledModal
-            title={<Title level={3}>Nội dung báo cáo</Title>}
-            open={visible}
-            onCancel={onClose}
-            footer={[
-                <Button key="back" onClick={onClose} size="large">
-                    Đóng
-                </Button>
-            ]}
-            width={800}
-        >
-            {renderContent()}
-        </StyledModal>
+      <>
+        <HTMLContent dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(taskDetail.report) }} />
+        {taskDetail.reportImageURL && (
+          <ReportLink
+            type="primary"
+            icon={<FilePdfOutlined />}
+            href={taskDetail.reportImageURL}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Xem tài liệu đính kèm
+          </ReportLink>
+        )}
+      </>
     );
+  };
+
+  return (
+    <StyledModal
+      title={<Title level={3}>Nội dung báo cáo</Title>}
+      open={visible}
+      onCancel={onClose}
+      footer={[
+        <Button key="back" onClick={onClose} size="large">
+          Đóng
+        </Button>
+      ]}
+      width={800}
+    >
+      {renderContent()}
+    </StyledModal>
+  );
 };
 
 export default ShowReportModal;
