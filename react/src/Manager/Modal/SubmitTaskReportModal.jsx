@@ -68,8 +68,7 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
                 startTime: values.startTime ? values.startTime.format('YYYY-MM-DD') : null,
                 endTime: values.endTime ? values.endTime.format('YYYY-MM-DD') : null,
                 revenueSharePercentage: parseFloat(values.revenueSharePercentage),
-                imageUrls: imageUrls.length > 0 ? imageUrls : null,
-                file: file || null,
+                fileUrl: file ? file.url : null, // Use fileUrl to store the URL
                 type: taskType
             };
             onSubmit(formattedValues);
@@ -77,21 +76,16 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
     };
 
     const handleUpload = async ({ file, onSuccess, onError }) => {
-        if (taskType !== "Design" && !file.type.startsWith('image/')) {
-            onError(new Error('Only image files are allowed!'));
-            return;
-        }
-        const storageRef = ref(imageDB, `images/${file.name}`);
+        const storageRef = ref(imageDB, `files/${file.name}`);
         try {
             await uploadBytes(storageRef, file);
             const url = await getDownloadURL(storageRef);
-            setImageUrls((prev) => [...prev, url]);
+            setFile({ url, name: file.name }); // Store file name and URL
             onSuccess(null, file);
         } catch (error) {
             console.error("Upload error: ", error);
             onError(error);
         }
-        setFile(file);
     };
 
     return (
@@ -141,7 +135,10 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
                 <Form.Item
                     name="report"
                     label="Báo cáo"
-                    rules={[{ required: true, message: 'Vui lòng nhập báo cáo' }]}
+                    rules={[
+                        { required: true, message: 'Vui lòng nhập báo cáo' },
+                        { max: 10000, message: 'Báo cáo không được vượt quá 10000 chữ' }
+                    ]}
                 >
                     <StyledQuill
                         modules={quillModules}
@@ -151,16 +148,16 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
                     />
                 </Form.Item>
                 <Form.Item
-                    name="reportImageURL"
-                    label={taskType === "Design" ? "File đính kèm" : "File ảnh"}
+                    name="reportFileURL"
+                    label="File đính kèm"
                 >
                     <Upload
-                        name="reportImage"
-                        listType="picture"
+                        name="reportFile"
                         customRequest={handleUpload}
-                        accept={taskType === "Design" ? "*" : "image/*"}
+                        accept="*"
+                        maxCount={1}
                     >
-                        <Button icon={<UploadOutlined />}>{taskType === "Design" ? "Tải file" : "Tải hình ảnh"}</Button>
+                        <Button icon={<UploadOutlined />}>Tải file</Button>
                     </Upload>
                 </Form.Item>
             </Form>

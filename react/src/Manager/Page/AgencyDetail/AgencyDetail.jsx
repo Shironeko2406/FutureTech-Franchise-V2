@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Button, Card, Input, Select, List, Typography, Row, Col, Popconfirm, Space, Modal } from 'antd';
+import { Button, Card, Input, Select, List, Typography, Row, Col, Popconfirm, Space, Modal, Spin } from 'antd';
 import {
   CheckCircleFilled, MinusCircleFilled, PlusOutlined,
   DeleteOutlined, SearchOutlined, FlagOutlined, TeamOutlined, FileDoneOutlined,
@@ -185,8 +185,8 @@ const translateStatus = (status) => {
 
 const translateSubmit = (submit) => {
   const translations = {
-    "Submited": "Đã nộp",
-    "None": "Chưa nộp",
+    "Submited": "Đã báo cáo",
+    "None": "Chưa báo cáo",
   };
   return translations[submit] || submit;
 };
@@ -299,11 +299,13 @@ export default function AgencyDetail() {
   const [modalDocumentDetailVisible, setModalDocumentDetailVisible] = useState(false);
   const [documentDetail, setDocumentDetail] = useState(null);
   const contractDetail = useSelector((state) => state.ContractReducer.contractDetail);
+  const [loadingTasks, setLoadingTasks] = useState(true);
 
   useEffect(() => {
-    dispatch(GetTaskByAgencyIdActionAsync(id))
-    dispatch(GetManagerUserAddAppointmentActionAsync())
-  }, [id, dispatch])
+    setLoadingTasks(true);
+    dispatch(GetTaskByAgencyIdActionAsync(id)).finally(() => setLoadingTasks(false));
+    dispatch(GetManagerUserAddAppointmentActionAsync());
+  }, [id, dispatch]);
 
   const taskDataModify = useMemo(() => {
     const allTypes = [
@@ -532,7 +534,13 @@ export default function AgencyDetail() {
             </Select>
           </div>
           <ScrollableDiv>
-            {filteredData.map((group, index) => renderMilestoneButton(group, index))}
+            {loadingTasks ? (
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+                <Spin size="large" />
+              </div>
+            ) : (
+              filteredData.map((group, index) => renderMilestoneButton(group, index))
+            )}
           </ScrollableDiv>
         </Col>
 
