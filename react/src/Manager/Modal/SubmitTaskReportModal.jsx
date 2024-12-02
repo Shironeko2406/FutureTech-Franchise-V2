@@ -3,14 +3,13 @@ import { Modal, Form, Upload, Button, DatePicker, Input, InputNumber } from 'ant
 import ReactQuill from 'react-quill';
 import styled from 'styled-components';
 import { quillFormats, quillModules } from '../../TextEditorConfig/Config';
-import { UploadOutlined } from "@ant-design/icons";
+import { UploadOutlined, DownloadOutlined } from "@ant-design/icons";
 import { imageDB } from "../../Firebasse/Config";
 import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
 import moment from 'moment';
 import CreateAgreementModal from './CreateAgreementModal';
 import CreateBusinessRegistrationModal from './CreateBusinessRegistrationModal';
 import CreateSignedContractModal from './CreateSignedContractModal';
-import UploadEquipmentFileModal from './UploadEquipmentFileModal';
 import CreateEducationalOperationLicenseModal from './CreateEducationalOperationLicenseModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { GetTaskDetailByIdActionAsync } from '../../Redux/ReducerAPI/WorkReducer';
@@ -43,12 +42,11 @@ const StyledQuill = styled(ReactQuill)`
 
 const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedTask }) => {
     const [form] = Form.useForm();
-    const [imageUrls, setImageUrls] = useState([]);
+    const [fileEquipment, setFileEquipment] = useState([]);
     const [file, setFile] = useState(null);
     const [modalCreateAgreementVisible, setModalCreateAgreementVisible] = useState(false);
     const [modalCreateBusinessRegistrationVisible, setModalCreateBusinessRegistrationVisible] = useState(false);
     const [modalCreateSignedContractVisible, setModalCreateSignedContractVisible] = useState(false);
-    const [modalUploadEquipmentFileVisible, setModalUploadEquipmentFileVisible] = useState(false);
     const [modalCreateEducationalOperationLicenseVisible, setModalCreateEducationalOperationLicenseVisible] = useState(false);
     const dispatch = useDispatch();
     const { taskDetail } = useSelector((state) => state.WorkReducer);
@@ -60,19 +58,27 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
         }
     }, [selectedTask, dispatch]);
 
-    const handleOk = () => {
-        form.validateFields().then(values => {
-            const formattedValues = {
+    const handleOk = async () => {
+        try {
+            const values = await form.validateFields();
+            let formattedValues = {
                 ...values,
                 expirationDate: values.expirationDate ? values.expirationDate.format('YYYY-MM-DD') : null,
                 startTime: values.startTime ? values.startTime.format('YYYY-MM-DD') : null,
                 endTime: values.endTime ? values.endTime.format('YYYY-MM-DD') : null,
                 revenueSharePercentage: parseFloat(values.revenueSharePercentage),
-                fileUrl: file ? file.url : null, // Use fileUrl to store the URL
+                reportImageURL: file ? file.url : null, // Use fileUrl to store the URL
                 type: taskType
             };
+
+            if (taskType === "Design" && file) {
+                formattedValues.equipmentFile = fileEquipment; // Pass the equipment file separately
+            }
+
             onSubmit(formattedValues);
-        });
+        } catch (error) {
+            console.error("Error submitting task report: ", error);
+        }
     };
 
     const handleUpload = async ({ file, onSuccess, onError }) => {
@@ -88,46 +94,40 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
         }
     };
 
+    const handleUploadFileEquipment = async ({ file, onSuccess, onError }) => {
+        setFileEquipment(file);
+        onSuccess(null, file);
+    };
+
+    const downloadSampleFile = () => {
+        const link = document.createElement('a');
+        link.href = '/Equipment.xlsx';
+        link.download = 'Equipment.xlsx';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
     return (
         <Modal
             title="Nộp báo cáo công việc"
             open={visible}
             onCancel={onClose}
             footer={[
-                <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-start' }}>
-                    {taskType === "AgreementSigned" && (
-                        <Button key="createAgreement" type="primary" onClick={() => setModalCreateAgreementVisible(true)}>
-                            Thêm mới Thỏa Thuận Nguyên Tắc
-                        </Button>
-                    )}
-                    {taskType === "BusinessRegistered" && (
-                        <Button key="createBusinessRegistration" type="primary" onClick={() => setModalCreateBusinessRegistrationVisible(true)}>
-                            Thêm mới Giấy Đăng Ký Doanh Nghiệp
-                        </Button>
-                    )}
-                    {taskType === "SignedContract" && (
-                        <Button key="createSignedContract" type="primary" onClick={() => setModalCreateSignedContractVisible(true)}>
-                            Thêm mới Hợp đồng Chuyển nhượng
-                        </Button>
-                    )}
+                <div style={{ display: 'flex', justifyContent: taskType === "Design" ? 'space-between' : 'flex-end', width: '100%' }}>
                     {taskType === "Design" && (
-                        <Button key="uploadEquipmentFile" type="primary" onClick={() => setModalUploadEquipmentFileVisible(true)}>
-                            Tải file trang thiết bị
+                        <Button key="downloadSample" icon={<DownloadOutlined />} onClick={downloadSampleFile} type="primary">
+                            Tải file mẫu
                         </Button>
                     )}
-                    {taskType === "EducationLicenseRegistered" && (
-                        <Button key="createEducationalOperationLicense" type="primary" onClick={() => setModalCreateEducationalOperationLicenseVisible(true)}>
-                            Thêm mới giấy phép đăng ký giáo dục
-                        </Button>
-                    )}
-                </div>,
-                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                    <Button key="back" onClick={onClose}>
-                        Hủy
-                    </Button>,
-                    <Button key="submit" type="primary" onClick={handleOk}>
-                        Thêm báo cáo
-                    </Button>,
+                    <div>
+                        <Button key="back" onClick={onClose}>
+                            Hủy
+                        </Button>,
+                        <Button key="submit" type="primary" onClick={handleOk}>
+                            Thêm báo cáo
+                        </Button>,
+                    </div>
                 </div>
             ]}
         >
@@ -149,7 +149,7 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
                 </Form.Item>
                 <Form.Item
                     name="reportFileURL"
-                    label="File đính kèm"
+                    label={taskType === "Design" ? "File thiết kế" : "File đính kèm"}
                 >
                     <Upload
                         name="reportFile"
@@ -157,9 +157,24 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
                         accept="*"
                         maxCount={1}
                     >
-                        <Button icon={<UploadOutlined />}>Tải file</Button>
+                        <Button icon={<UploadOutlined />}>{taskType === "Design" ? "Tải file thiết kế" : "Tải file"}</Button>
                     </Upload>
                 </Form.Item>
+                {taskType === "Design" && (
+                    <Form.Item
+                        name="equipmentFile"
+                        label="File trang thiết bị"
+                    >
+                        <Upload
+                            name="equipmentFile"
+                            customRequest={handleUploadFileEquipment}
+                            accept=".xls,.xlsx"
+                            maxCount={1}
+                        >
+                            <Button icon={<UploadOutlined />}>Tải file trang thiết bị</Button>
+                        </Upload>
+                    </Form.Item>
+                )}
             </Form>
             <CreateAgreementModal
                 visible={modalCreateAgreementVisible}
@@ -174,11 +189,6 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
             <CreateSignedContractModal
                 visible={modalCreateSignedContractVisible}
                 onClose={() => setModalCreateSignedContractVisible(false)}
-                agencyId={taskDetail?.agencyId}
-            />
-            <UploadEquipmentFileModal
-                visible={modalUploadEquipmentFileVisible}
-                onClose={() => setModalUploadEquipmentFileVisible(false)}
                 agencyId={taskDetail?.agencyId}
             />
 

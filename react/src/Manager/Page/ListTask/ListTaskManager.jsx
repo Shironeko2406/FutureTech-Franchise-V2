@@ -15,6 +15,7 @@ import { useLoading } from '../../../Utils/LoadingContext';
 import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
 import jsPDF from 'jspdf';
 import ShowReportModal from '../../Modal/ShowReportModal';
+import { CreateEquipmentActionAsync } from '../../../Redux/ReducerAPI/EquipmentReducer';
 
 const { Title, Text } = Typography;
 
@@ -138,16 +139,13 @@ const ListTaskManager = () => {
             setLoading(true);
             try {
                 let formData = { ...reportData };
-                if (reportData.type === "Design") {
-                    formData = {
-                        ...reportData,
-                        reportImageURL: reportData.fileUrl,
-                    };
-                } else if (reportData.fileUrl) {
-                    formData = {
-                        ...reportData,
-                        reportImageURL: reportData.fileUrl,
-                    };
+                if (reportData.type === "Design" && reportData.equipmentFile) {
+                    const equipmentFormData = new FormData();
+                    equipmentFormData.append('file', reportData.equipmentFile);
+                    const equipmentResponse = await dispatch(CreateEquipmentActionAsync(selectedTask.agencyId, equipmentFormData));
+                    if (!equipmentResponse) {
+                        throw new Error("Error creating equipment");
+                    }
                 }
                 await dispatch(SubmitTaskReportActionAsync(selectedTask.id, formData));
                 handleCloseModalSubmitTaskReport();
