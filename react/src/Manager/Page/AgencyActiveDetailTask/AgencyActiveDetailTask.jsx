@@ -139,7 +139,7 @@ const translateType = (type) => {
 
 const allTypes = ['TrainningInternal','RepairingEquipment','EducationalSupervision','RenewContract','Other',];
 
-const AgencyActiveDetail = () => {
+const AgencyActiveDetailTask = () => {
   const { tasksAgencyActive, totalPagesCount } = useSelector((state) => state.WorkReducer);
   const dispatch = useDispatch()
   const { id } = useParams()
@@ -441,4 +441,4 @@ const AgencyActiveDetail = () => {
   )
 }
 
-export default AgencyActiveDetail
+export default AgencyActiveDetailTask

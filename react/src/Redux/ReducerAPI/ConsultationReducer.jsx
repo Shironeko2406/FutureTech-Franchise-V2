@@ -33,11 +33,11 @@ export const { setFranchiseConsult } =
 export default ConsultationReducer.reducer;
 //------------API CALL------------
 
-export const GetFranchiseRegistrationConsultActionAsync = (status, pageIndex, pageSize) => {
+export const GetFranchiseRegistrationConsultActionAsync = (searchInput, status, customerStatus,  pageIndex, pageSize) => {
   return async (dispatch) => {
     try {
       const res = await httpClient.get(`/api/v1/consultations`, {
-        params: { Status: status, PageIndex: pageIndex, PageSize: pageSize }
+        params: {SearchInput: searchInput, Status: status, CustomerStatus: customerStatus, PageIndex: pageIndex, PageSize: pageSize }
       });
       console.log(res.data);
       dispatch(setFranchiseConsult(res.data));
@@ -47,15 +47,14 @@ export const GetFranchiseRegistrationConsultActionAsync = (status, pageIndex, pa
   };
 };
 
-export const UpdateFranchiseRegistrationConsultActionAsync = (id, status, pageIndex, pageSize) => {
+export const UpdateFranchiseRegistrationConsultActionAsync = (id, statusUpdate, searchInput, status, customerStatus, pageIndex, pageSize) => {
   return async (dispatch) => {
     try {
       const res = await httpClient.put(
-        `/api/v1/consultations/${id}`
-      );
+        `/api/v1/consultations/${id}`, null, {params: {CustomerStatus: statusUpdate}});
       if (res.isSuccess && res.data) {
         message.success(`${res.message}`);
-        await dispatch(GetFranchiseRegistrationConsultActionAsync(status, pageIndex, pageSize));
+        await dispatch(GetFranchiseRegistrationConsultActionAsync(searchInput, status,customerStatus, pageIndex, pageSize));
         return true;
       } else {
         message.error(`${res.message}`);
