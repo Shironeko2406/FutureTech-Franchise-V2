@@ -1,12 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { httpClient } from '../../Utils/Interceptors';
 import { message } from 'antd';
+import { GetFranchiseRegistrationConsultActionAsync } from './ConsultationReducer';
 
 const initialState = {
   agencyData: [],
   totalPagesCount: 0,
   tasks: [],
-  agencyStatus: null
+  agencyStatus: null,
+  agencyDetail: {}
 }
 
 const AgencyReducer = createSlice({
@@ -20,11 +22,14 @@ const AgencyReducer = createSlice({
     setTaskByAgencyId: (state, action) => {
       state.tasks = action.payload.work
       state.agencyStatus = action.payload.agencyStatus
+    },
+    setAgencyDetail: (state, action) => {
+      state.agencyDetail = action.payload
     }
   }
 });
 
-export const { setAgencyData, setTaskByAgencyId } = AgencyReducer.actions
+export const { setAgencyData, setTaskByAgencyId, setAgencyDetail } = AgencyReducer.actions
 
 export default AgencyReducer.reducer
 //------------API CALL----------------
@@ -50,7 +55,6 @@ export const GetTaskByAgencyIdActionAsync = (id) => {
   return async (dispatch) => {
     try {
       const res = await httpClient.get(`/api/v1/agencies/${id}/works`);
-      console.log("GetTaskByAgencyIdActionAsync", res.data);
       dispatch(setTaskByAgencyId(res.data));
     } catch (error) {
       console.error(error);
@@ -81,12 +85,13 @@ export const UpdateStatusAgencyActionAsync = (id, status) => {
   };
 };
 
-export const CreateAgencyActionAsync = (data) => {
+export const CreateAgencyActionAsync = (data, search, statusFilter, customerStatusFilter, pageIndex, pageSize) => {
   return async (dispatch) => {
     try {
       const res = await httpClient.post(`/api/v1/agencies`, data);
       if (res.isSuccess && res.data) {
         message.success(`${res.message}`);
+        await dispatch(GetFranchiseRegistrationConsultActionAsync(search, statusFilter, customerStatusFilter, pageIndex, pageSize));
         return true;
       } else {
         message.error(`${res.message}`);
@@ -95,6 +100,17 @@ export const CreateAgencyActionAsync = (data) => {
     } catch (error) {
       console.log(error);
       message.error("Lỗi hệ thống");
+    }
+  };
+};
+
+export const GetAgencyDetailByIdActionAsync = (id) => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.get(`/api/v1/agencies/${id}`);
+      dispatch(setAgencyDetail(res.data));
+    } catch (error) {
+      console.error(error);
     }
   };
 };

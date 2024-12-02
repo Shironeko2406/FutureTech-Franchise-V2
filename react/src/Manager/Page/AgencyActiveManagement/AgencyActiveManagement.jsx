@@ -102,7 +102,7 @@ const AgencyActiveManagement = () => {
         render: (text, record) => (
           <Button
             type="link"
-            onClick={() => navigate(`/manager/agency-active/${record.id}/task-detail`)}
+            onClick={() => navigate(`/manager/agency-active/${record.id}`)}
             style={{
               display: "flex",
               alignItems: "center",

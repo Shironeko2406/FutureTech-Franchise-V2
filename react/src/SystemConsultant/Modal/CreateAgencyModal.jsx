@@ -34,7 +34,7 @@ const StyledForm = styled(Form)`
   }
 `;
 
-const CreateAgencyModal = ({ visible, onClose, consult }) => {
+const CreateAgencyModal = ({ visible, onClose, consult, searchTerm, statusFilter, customerStatusFilter, pageIndex, pageSize}) => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const { setLoading } = useLoading();
@@ -90,9 +90,10 @@ const CreateAgencyModal = ({ visible, onClose, consult }) => {
       city: cityName,
       district: districtName,
       ward: wardName,
+      registerFormId: consult.id
     };
 
-    dispatch(CreateAgencyActionAsync(submittedData)).then((res)=>{
+    dispatch(CreateAgencyActionAsync(submittedData, searchTerm, statusFilter, customerStatusFilter, pageIndex, pageSize)).then((res)=>{
       setLoading(false)
       if (res) {
         onClose()
