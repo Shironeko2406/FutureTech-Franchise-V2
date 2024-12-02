@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { Card, Descriptions, Tag, List, Avatar, Form, Input, Select, Button } from 'antd';
 import { UserOutlined, ClockCircleOutlined, FilePdfOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import DOMPurify from 'dompurify';
 
 const { Option } = Select;
 
@@ -80,7 +81,9 @@ const ManagerAppointmentDetail = () => {
                 <Descriptions.Item label="Thời gian kết thúc">
                     <ClockCircleOutlined /> {new Date(endTime).toLocaleString()}
                 </Descriptions.Item>
-                <Descriptions.Item label="Mô tả">{description}</Descriptions.Item>
+                <Descriptions.Item label="Mô tả">
+                    <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(description) }} />
+                </Descriptions.Item>
                 <Descriptions.Item label="Loại">{typeText}</Descriptions.Item>
             </Descriptions>
 
@@ -111,7 +114,9 @@ const ManagerAppointmentDetail = () => {
                     title="Báo cáo"
                 >
                     <Descriptions bordered column={1}>
-                        <Descriptions.Item label="Nội dung báo cáo">{report}</Descriptions.Item>
+                        <Descriptions.Item label="Nội dung báo cáo">
+                            <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(report) }} />
+                        </Descriptions.Item>
                         <Descriptions.Item label="URL báo cáo">
                             <a href={reportImageURL} target="_blank" rel="noopener noreferrer">
                                 <FilePdfOutlined /> {reportImageURL}

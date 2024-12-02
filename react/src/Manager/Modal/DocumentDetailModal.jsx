@@ -70,7 +70,7 @@ const DocumentDetailModal = ({ visible, onClose, documentDetail }) => {
                         <Space>
                             <FileOutlined style={{ fontSize: '24px', color: '#1890ff' }} />
                             <a href={documentDetail.urlFile} target="_blank" rel="noopener noreferrer">
-                                Xem tài liệu hợp đồng
+                                Tải xuống file tài liệu
                             </a>
                         </Space>
                     </Space>

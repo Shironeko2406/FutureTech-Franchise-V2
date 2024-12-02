@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Card, List, Typography, Button, Tag, Modal } from 'antd';
+import { Card, List, Typography, Button, Tag, Modal, message } from 'antd';
 import { UploadOutlined, EyeOutlined } from "@ant-design/icons";
 import { CalendarOutlined, RightCircleOutlined, CheckCircleFilled, CloseCircleFilled, MinusCircleFilled, FlagOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
@@ -15,6 +15,7 @@ import { useLoading } from '../../../Utils/LoadingContext';
 import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
 import jsPDF from 'jspdf';
 import ShowReportModal from '../../Modal/ShowReportModal';
+import { CreateEquipmentActionAsync } from '../../../Redux/ReducerAPI/EquipmentReducer';
 
 const { Title, Text } = Typography;
 
@@ -138,57 +139,13 @@ const ListTaskManager = () => {
             setLoading(true);
             try {
                 let formData = { ...reportData };
-                if (reportData.type === "Design") {
-                    formData = {
-                        ...reportData,
-                        reportImageURL: reportData.imageUrls[0],
-                    };
-                } else if (reportData.imageUrls && reportData.imageUrls.length > 0) {
-                    const pdf = new jsPDF();
-                    const margin = 10;
-                    let y = margin;
-                    let isFirstPage = true;
-
-                    for (let index = 0; index < reportData.imageUrls.length; index++) {
-                        const url = reportData.imageUrls[index];
-                        const img = new Image();
-                        img.src = url;
-                        await new Promise((resolve) => {
-                            img.onload = () => {
-                                const imgWidth = img.width;
-                                const imgHeight = img.height;
-                                const pageHeight = pdf.internal.pageSize.getHeight();
-                                const pageWidth = pdf.internal.pageSize.getWidth();
-
-                                // Check if the image height exceeds the page height
-                                if (y + imgHeight > pageHeight - margin) {
-                                    pdf.addPage();
-                                    y = margin;
-                                    isFirstPage = false;
-                                }
-
-                                // Check if the image width exceeds the page width
-                                if (imgWidth > pageWidth - 2 * margin) {
-                                    const ratio = (pageWidth - 2 * margin) / imgWidth;
-                                    pdf.addImage(img, 'JPEG', margin, y, imgWidth * ratio, imgHeight * ratio);
-                                    y += imgHeight * ratio + margin;
-                                } else {
-                                    pdf.addImage(img, 'JPEG', margin, y, imgWidth, imgHeight);
-                                    y += imgHeight + margin;
-                                }
-
-                                resolve();
-                            };
-                        });
+                if (reportData.type === "Design" && reportData.equipmentFile) {
+                    const equipmentFormData = new FormData();
+                    equipmentFormData.append('file', reportData.equipmentFile);
+                    const equipmentResponse = await dispatch(CreateEquipmentActionAsync(selectedTask.agencyId, equipmentFormData));
+                    if (!equipmentResponse) {
+                        throw new Error("Error creating equipment");
                     }
-                    const pdfBlob = pdf.output('blob');
-                    const storageRef = ref(imageDB, `pdfs/images-${Date.now()}.pdf`);
-                    await uploadBytes(storageRef, pdfBlob);
-                    const pdfURL = await getDownloadURL(storageRef);
-                    formData = {
-                        ...reportData,
-                        reportImageURL: pdfURL,
-                    };
                 }
                 await dispatch(SubmitTaskReportActionAsync(selectedTask.id, formData));
                 handleCloseModalSubmitTaskReport();
@@ -201,7 +158,8 @@ const ListTaskManager = () => {
                     pageSize
                 ));
             } catch (error) {
-                console.error("Error uploading PDF: ", error);
+                message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
+                console.error("Error uploading file: ", error);
             } finally {
                 setLoading(false);
             }
