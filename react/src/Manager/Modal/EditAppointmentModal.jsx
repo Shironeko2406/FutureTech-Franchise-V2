@@ -67,7 +67,7 @@ const StyledQuill = styled(ReactQuill)`
   }
 `;
 
-const CompactAppointmentModal = ({ visible, onClose, workId }) => {
+const EditAppointmentModal = ({ visible, onClose, workId }) => {
   const [form] = Form.useForm();
   const { appointmentDetail } = useSelector((state) => state.AppointmentReducer);
   const { taskDetail } = useSelector((state) => state.WorkReducer);
@@ -233,5 +233,5 @@ const CompactAppointmentModal = ({ visible, onClose, workId }) => {
   );
 };
 
-export default CompactAppointmentModal;
+export default EditAppointmentModal;
 

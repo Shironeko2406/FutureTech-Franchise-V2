@@ -2,15 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import { GetUserLoginActionAsync } from "../../../Redux/ReducerAPI/UserReducer";
+import dayjs from "dayjs";
+import "dayjs/locale/vi";
 
-const user = {
-  id: "bd8cdbbf-a88d-4a60-b273-883444cc93c4",
-  role: "Administrator",
-  userName: "Administrator",
-  email: "nthieu24062002@gmail.com",
-  fullName: "Nguyễn Trung Hiếu",
-  about: "This is my bio.",
-};
+dayjs.locale("vi");
 
 const Profile = () => {
   const dispatch = useDispatch();
@@ -19,14 +14,20 @@ const Profile = () => {
 
   useEffect(() => {
     dispatch(GetUserLoginActionAsync());
-  }, []);
+  }, [dispatch]);
+
+  const formatDate = (date) => {
+    return date ? dayjs(date).format("DD/MM/YYYY") : "";
+  };
 
   const userUpdate = useFormik({
     initialValues: {
       userName: userProfile.userName || "",
       email: userProfile.email || "",
       fullName: userProfile.fullName || "",
-      about: "",
+      phoneNumber: userProfile.phoneNumber || "",
+      dateOfBirth: userProfile.dateOfBirth ? dayjs(userProfile.dateOfBirth).format("YYYY-MM-DD") : "",
+      gender: userProfile.gender || "",
     },
     enableReinitialize: true,
     onSubmit: (values) => {
@@ -47,11 +48,12 @@ const Profile = () => {
                   style={{ height: 140, backgroundColor: "rgb(233, 236, 239)" }}
                 >
                   <img
-                    src={userProfile?.urlImage}
-                    alt="Description of image"
+                    src={userProfile?.urlImage || "/assets/images/profile/user-1.jpg"}
+                    alt="Profile"
                     style={{
                       width: "140px",
                       height: "140px",
+                      objectFit: "cover",
                     }}
                   />
                 </div>
@@ -66,12 +68,6 @@ const Profile = () => {
                 <div className="text-muted">
                   <small>Last seen 2 hours ago</small>
                 </div>
-                <div className="mt-2">
-                  <button className="btn btn-primary" type="button">
-                    <i className="fa fa-fw fa-camera" />
-                    <span>Change Photo</span>
-                  </button>
-                </div>
               </div>
               <div className="text-center text-sm-end">
                 <span className="badge bg-secondary">{userProfile?.role}</span>
@@ -85,9 +81,9 @@ const Profile = () => {
           <div className="tab-content pt-3">
             <form className="form" onSubmit={userUpdate.handleSubmit}>
               <div className="row">
-                <div className="col-12 col-md-6">
+                <div className="col-12 col-md-6 mb-3">
                   <div className="form-group">
-                    <label>Full Name</label>
+                    <label>Họ và Tên</label>
                     <input
                       className="form-control"
                       type="text"
@@ -98,9 +94,9 @@ const Profile = () => {
                     />
                   </div>
                 </div>
-                <div className="col-12 col-md-6">
+                <div className="col-12 col-md-6 mb-3">
                   <div className="form-group">
-                    <label>Username</label>
+                    <label>Tên đăng nhập</label>
                     <input
                       className="form-control"
                       type="text"
@@ -113,12 +109,12 @@ const Profile = () => {
                 </div>
               </div>
               <div className="row">
-                <div className="col-12">
+                <div className="col-12 col-md-6 mb-3">
                   <div className="form-group">
                     <label>Email</label>
                     <input
                       className="form-control"
-                      type="text"
+                      type="email"
                       name="email"
                       readOnly={!isEditing}
                       value={userUpdate.values.email}
@@ -126,19 +122,49 @@ const Profile = () => {
                     />
                   </div>
                 </div>
-              </div>
-              <div className="row">
-                <div className="col mb-3">
+                <div className="col-12 col-md-6 mb-3">
                   <div className="form-group">
-                    <label>About</label>
-                    <textarea
+                    <label>Số điện thoại</label>
+                    <input
                       className="form-control"
-                      name="about"
-                      rows={5}
+                      type="tel"
+                      name="phoneNumber"
                       readOnly={!isEditing}
-                      value={userUpdate.values.about}
+                      value={userUpdate.values.phoneNumber}
                       onChange={userUpdate.handleChange}
                     />
+                  </div>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-12 col-md-6 mb-3">
+                  <div className="form-group">
+                    <label>Ngày sinh</label>
+                    <input
+                      className="form-control"
+                      type="date"
+                      name="dateOfBirth"
+                      readOnly={!isEditing}
+                      value={userUpdate.values.dateOfBirth}
+                      onChange={userUpdate.handleChange}
+                    />
+                  </div>
+                </div>
+                <div className="col-12 col-md-6 mb-3">
+                  <div className="form-group">
+                    <label>Giới tính</label>
+                    <select
+                      className="form-control"
+                      name="gender"
+                      disabled={!isEditing}
+                      value={userUpdate.values.gender}
+                      onChange={userUpdate.handleChange}
+                    >
+                      <option value="">Chọn giới tính</option>
+                      <option value="Male">Nam</option>
+                      <option value="Female">Nữ</option>
+                      <option value="Other">Khác</option>
+                    </select>
                   </div>
                 </div>
               </div>
@@ -155,10 +181,10 @@ const Profile = () => {
                           userUpdate.resetForm();
                         }}
                       >
-                        Cancel
+                        Hủy
                       </button>
                       <button className="btn btn-primary" type="submit">
-                        Save
+                        Lưu
                       </button>
                     </>
                   ) : (
@@ -167,7 +193,7 @@ const Profile = () => {
                       type="button"
                       onClick={() => setIsEditing(true)}
                     >
-                      Update
+                      Cập nhật
                     </button>
                   )}
                 </div>

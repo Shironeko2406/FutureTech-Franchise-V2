@@ -5,6 +5,7 @@ import { message } from "antd";
 
 const initialState = {
   userLogin: getDataJSONStorage(USER_LOGIN),
+  statusAgency: getDataJSONStorage(USER_LOGIN)?.status || null
 };
 
 const AuthenticationReducer = createSlice({
@@ -12,7 +13,8 @@ const AuthenticationReducer = createSlice({
   initialState,
   reducers: {
     setUserLogin: (state, action) => {
-      state.userLogin = action.payload
+      state.userLogin = action.payload,
+      state.statusAgency = action.payload.status
     }
   },
 });

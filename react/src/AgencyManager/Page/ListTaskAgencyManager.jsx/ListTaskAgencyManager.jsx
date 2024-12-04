@@ -7,15 +7,15 @@ import styled from 'styled-components';
 import moment from 'moment';
 import DynamicFilter from '../../Component/DynamicFilter';
 import { GetTaskUserByLoginActionAsync } from '../../../Redux/ReducerAPI/UserReducer';
-import ViewTaskDetailModal from '../../../Manager/Modal/ViewTaskDetailModal';
-import { GetTaskDetailByIdActionAsync, SubmitTaskReportActionAsync, UpdateTaskStatusToSubmittedActionAsync, UpdateTaskStatusActionAsync } from '../../../Redux/ReducerAPI/WorkReducer';
-import SubmitTaskReportModal from '../../Modal/SubmitTaskReportModal';
+import { GetTaskDetailByIdActionAsync, SubmitTaskReportActionAsync, UpdateTaskStatusToSubmittedActionAsync, UpdateTaskStatusActionAsync, GetTaskForAgencyActionAsync } from '../../../Redux/ReducerAPI/WorkReducer';
 import { imageDB } from "../../../Firebasse/Config";
 import { useLoading } from '../../../Utils/LoadingContext';
 import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
 import jsPDF from 'jspdf';
-import ShowReportModal from '../../Modal/ShowReportModal';
 import { CreateEquipmentActionAsync } from '../../../Redux/ReducerAPI/EquipmentReducer';
+import SubmitTaskReportModal from '../../Modal/SubmitTaskReportModal';
+import ShowReportModal from '../../Modal/ShowReportModal';
+import ViewTaskDetailModal from '../../Modal/ViewTaskDetailModal';
 
 const { Title, Text } = Typography;
 
@@ -63,7 +63,7 @@ const getSubmitStatusColor = (submit) => {
     return submit === "Submited" ? '#1890ff' : '#faad14';
 };
 
-const ListTaskManager = () => {
+const ListTaskAgencyManager = () => {
     const { taskUser, totalPagesCount } = useSelector((state) => state.UserReducer);
     const dispatch = useDispatch();
     const { setLoading } = useLoading();
@@ -92,7 +92,7 @@ const ListTaskManager = () => {
     };
 
     useEffect(() => {
-        dispatch(GetTaskUserByLoginActionAsync(
+        dispatch(GetTaskForAgencyActionAsync(
             filters.searchText,
             filters.levelFilter,
             filters.statusFilter,
@@ -355,4 +355,4 @@ const ListTaskManager = () => {
     );
 };
 
-export default ListTaskManager;
+export default ListTaskAgencyManager;

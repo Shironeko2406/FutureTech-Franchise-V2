@@ -184,7 +184,7 @@ export const GetManagerUserAddAppointmentActionAsync = () => {
     try {
       const res = await httpClient.get(`/manager/api/v1/users`);
       const filteredUsers = res.data.filter((user) =>
-        ["Manager", "SystemInstructor", "SystemTechnician"].includes(user.role)
+        ["Manager", "SystemInstructor", "SystemTechnician", "AgencyManager"].includes(user.role)
       );
       dispatch(setUserManager(filteredUsers));
     } catch (error) {

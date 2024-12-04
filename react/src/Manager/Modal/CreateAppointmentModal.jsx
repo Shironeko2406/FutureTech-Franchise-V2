@@ -70,6 +70,7 @@ const translateRole = (role) => ({
   SystemInstructor: "Giảng viên hệ thống",
   SystemConsultant: "Tư vấn viên hệ thống",
   SystemTechnician: "Kỹ thuật viên hệ thống",
+  AgencyManager: "Đối tác chi nhánh",
 }[role] || "Không xác định");
 
 const CreateAppointmentModal = ({ visible, onClose, workId, selectedType}) => {
@@ -90,6 +91,7 @@ const CreateAppointmentModal = ({ visible, onClose, workId, selectedType}) => {
       ],
       SystemTechnician: ['Design', 'Quotation', 'SiteSurvey', 'ConstructionAndTrainning'],
       SystemInstructor: ['ConstructionAndTrainning', 'EducationLicenseRegistered'],
+      AgencyManager: ['AgreementSigned', 'BusinessRegistered', 'SignedContract', 'EducationLicenseRegistered'],
     };
   
     return rolePermissions[user.role]?.includes(type);
