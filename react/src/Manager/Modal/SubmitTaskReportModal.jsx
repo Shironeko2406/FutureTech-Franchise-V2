@@ -175,6 +175,26 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
                         </Upload>
                     </Form.Item>
                 )}
+                {taskType === "AgreementSigned" && (
+                    <Button key="createAgreement" type="primary" onClick={() => setModalCreateAgreementVisible(true)}>
+                        Thêm mới Thỏa Thuận Nguyên Tắc
+                    </Button>
+                )}
+                {taskType === "BusinessRegistered" && (
+                    <Button key="createBusinessRegistration" type="primary" onClick={() => setModalCreateBusinessRegistrationVisible(true)}>
+                        Thêm mới Giấy Đăng Ký Doanh Nghiệp
+                    </Button>
+                )}
+                {taskType === "SignedContract" && (
+                    <Button key="createSignedContract" type="primary" onClick={() => setModalCreateSignedContractVisible(true)}>
+                        Thêm mới Hợp đồng Chuyển nhượng
+                    </Button>
+                )}
+                {taskType === "EducationLicenseRegistered" && (
+                    <Button key="createEducationalOperationLicense" type="primary" onClick={() => setModalCreateEducationalOperationLicenseVisible(true)}>
+                        Thêm mới giấy phép đăng ký giáo dục
+                    </Button>
+                )}
             </Form>
             <CreateAgreementModal
                 visible={modalCreateAgreementVisible}
