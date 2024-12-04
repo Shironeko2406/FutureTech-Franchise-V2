@@ -48,7 +48,7 @@ const CreateEducationalOperationLicenseModal = ({ visible, onClose, agencyId }) 
 
     return (
         <Modal
-            title="Thêm mới Giấy Đăng Ký Giấy Phép Kinh Doanh"
+            title="Thêm mới Giấy Chứng Nhận Đăng Ký Hoạt Động Giáo Dục"
             open={visible}
             onCancel={onClose}
             footer={[
@@ -80,8 +80,8 @@ const CreateEducationalOperationLicenseModal = ({ visible, onClose, agencyId }) 
                     </Form.Item>
                     <Form.Item
                         name="file"
-                        label="File hợp đồng"
-                        rules={[{ required: true, message: 'Vui lòng upload file' }]}
+                        label="File giấy chứng nhận đăng ký hoạt động giáo dục"
+                        rules={[{ required: true, message: 'Vui lòng tải file' }]}
                     >
                         <Upload
                             name="file"
@@ -89,7 +89,7 @@ const CreateEducationalOperationLicenseModal = ({ visible, onClose, agencyId }) 
                             accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                             maxCount={1}
                         >
-                            <Button icon={<UploadOutlined />}>Tải tài liệu</Button>
+                            <Button icon={<UploadOutlined />}>Tải file</Button>
                         </Upload>
                     </Form.Item>
                 </Form>
