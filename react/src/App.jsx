@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Provider } from "react-redux";
+import { Provider, useSelector } from "react-redux";
 import "./App.css";
 import Home from "./Admin/Page/Home/Home";
 import { store } from "./Redux/Store";
@@ -88,6 +88,8 @@ import AssignmentDetail from "./Student/Page/AssignmentDetail/AssignmentDetail";
 import EquipmentManagementPage from './Manager/Page/EquipmentManagement/EquipmentManagementPage';
 import AgencyActiveDetailTask from "./Manager/Page/AgencyActiveDetailTask/AgencyActiveDetailTask";
 import AgencyActiveInfo from "./Manager/Page/AgencyActiveInfo/AgencyActiveInfo";
+import AgencyProgressFranchise from "./AgencyManager/Page/AgencyProgressFranchise/AgencyProgressFranchise";
+import ListTaskAgencyManager from "./AgencyManager/Page/ListTaskAgencyManager.jsx/ListTaskAgencyManager";
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -99,10 +101,11 @@ const LoadingOverlay = () => {
 };
 
 function App() {
+  const { statusAgency } = useSelector((state) => state.AuthenticationReducer);
+
   return (
     <ConfigProvider locale={vi_VN}>
       <BrowserRouter>
-        <Provider store={store}>
           <LoadingProvider>
             <LoadingOverlay />
             <Routes>
@@ -128,18 +131,19 @@ function App() {
 
               <Route element={<ProtectedRoute requiredRole="AgencyManager" />}>
                 <Route path="agency-manager" element={<TempUIAgencyManager />} >
-                  {/* <Route path="" element={<HomeAgencyManager />} /> */}
                   <Route path="student-consultation-registration" element={<StudentConsultationRegistration />} />
                   <Route path="student-payment" element={<StudentPaymentManagement />} />
                   <Route path="slots" element={<SlotManager />} />
                   <Route path="classes" element={<ClassManagement />} />
                   <Route path="classes/:id" element={<ClassDetail />} />
                   <Route path="schedules" element={<ScheduleAgencyManager />} />
-                  <Route path="" element={<AgencyDashboardPage />} />
+                  <Route path="task-list" element={<ListTaskAgencyManager/>} />
+                  <Route path="" element={statusAgency === "active" ? (<AgencyDashboardPage />) : (<AgencyProgressFranchise />)} />
                   <Route path="appointment-schedule" element={<AgencyManagerAppointment />} />
                   <Route path="appointment-schedule/details" element={<AgencyManagerAppointmentDetail />} />
                   <Route path="course" element={<CourseViewAgencyManager />} />
                   <Route path="course-detail/:id" element={<CourseDetailAgencyManager />} />
+                  <Route path="profile" element={<Profile />} />
                 </Route>
               </Route>
 
@@ -154,6 +158,7 @@ function App() {
                   <Route path="quiz/:quizId/start" element={<QuizTest />} />
                   <Route path="schedules" element={<ScheduleStudent />} />
                   <Route path="change-password" element={<ChangePassword />} />
+                  <Route path="profile" element={<Profile />} />
                 </Route>
               </Route>
 
@@ -167,6 +172,7 @@ function App() {
                   <Route path="schedule" element={<ScheduleTeaching />} />
                   <Route path="schedules" element={<ScheduleInstructor />} />
                   <Route path="schedules/attendances" element={<AttendancePage />} />
+                  <Route path="profile" element={<Profile />} />
                 </Route>
               </Route>
 
@@ -190,6 +196,7 @@ function App() {
                   <Route path="appointment-schedule/details" element={<ManagerAppointmentDetail />} />
                   <Route path="list-task" element={<ListTaskManager />} />
                   <Route path="agency-active/:id/equipments" element={<EquipmentManagementPage />} />
+                  <Route path="profile" element={<Profile />} />
                 </Route>
               </Route>
 
@@ -202,6 +209,7 @@ function App() {
                   <Route path="list-task" element={<ListTaskSystemInstructor />} />
                   <Route path="appointment-schedule" element={<SystemInstructorAppointment />} />
                   <Route path="appointment-schedule/details" element={<SystemInstructorAppointmentDetail />} />
+                  <Route path="profile" element={<Profile />} />
                 </Route>
               </Route>
 
@@ -211,6 +219,7 @@ function App() {
                   <Route path="list-task" element={<ListTaskSystemTechnician />} />
                   <Route path="appointment-schedule" element={<SystemTechnicianAppointment />} />
                   <Route path="appointment-schedule/details" element={<SystemTechnicianAppointmentDetail />} />
+                  <Route path="profile" element={<Profile />} />
                 </Route>
               </Route>
 
@@ -221,6 +230,7 @@ function App() {
                   <Route path="appointment-schedule" element={<SystemConsultantAppointment />} />
                   <Route path="appointment-schedule/details" element={<SystemConsultantAppointmentDetail />} />
                   <Route path="consult" element={<ConsultationManagement />} />
+                  <Route path="profile" element={<Profile />} />
                 </Route>
               </Route>
 
@@ -231,7 +241,6 @@ function App() {
               </Route>
             </Routes >
           </LoadingProvider >
-        </Provider >
       </BrowserRouter >
     </ConfigProvider >
   );
