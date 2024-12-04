@@ -200,7 +200,7 @@ const ListTaskManager = () => {
                     Xem báo cáo
                 </Button>
             );
-            if (task.submit !== "Submited") {
+            if (task.submit !== "Submited" && task.status === "None") {
                 actions.push(
                     <Button
                         type="primary"
@@ -209,7 +209,7 @@ const ListTaskManager = () => {
                         Nộp báo cáo
                     </Button>
                 );
-            } else {
+            } else if (task.submit === "Submited" && task.status === "None") {
                 actions.push(
                     <Button
                         type="primary"

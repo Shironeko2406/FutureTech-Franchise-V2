@@ -50,7 +50,6 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
     const [modalCreateEducationalOperationLicenseVisible, setModalCreateEducationalOperationLicenseVisible] = useState(false);
     const dispatch = useDispatch();
     const { taskDetail } = useSelector((state) => state.WorkReducer);
-    const { setLoading } = useLoading();
 
     useEffect(() => {
         if (selectedTask) {
@@ -71,7 +70,7 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
                 type: taskType
             };
 
-            if (taskType === "Design" && file) {
+            if (taskType === "Design" && fileEquipment.length > 0) {
                 formattedValues.equipmentFile = fileEquipment; // Pass the equipment file separately
             }
 
@@ -114,8 +113,8 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
             open={visible}
             onCancel={onClose}
             footer={[
-                <div style={{ display: 'flex', justifyContent: taskType === "Design" ? 'space-between' : 'flex-end', width: '100%' }}>
-                    {taskType === "Design" && (
+                <div style={{ display: 'flex', justifyContent: taskType === "Design" && taskDetail.level === "Compulsory" ? 'space-between' : 'flex-end', width: '100%' }}>
+                    {taskType === "Design" && taskDetail?.level === "Compulsory" && (
                         <Button key="downloadSample" icon={<DownloadOutlined />} onClick={downloadSampleFile} type="primary">
                             Tải file mẫu
                         </Button>
@@ -149,7 +148,7 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
                 </Form.Item>
                 <Form.Item
                     name="reportFileURL"
-                    label={taskType === "Design" ? "File thiết kế" : "File đính kèm"}
+                    label={taskType === "Design" && taskDetail.level === "Compulsory" ? "File thiết kế" : "File đính kèm"}
                 >
                     <Upload
                         name="reportFile"
@@ -157,10 +156,10 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
                         accept="*"
                         maxCount={1}
                     >
-                        <Button icon={<UploadOutlined />}>{taskType === "Design" ? "Tải file thiết kế" : "Tải file"}</Button>
+                        <Button icon={<UploadOutlined />}>Tải file</Button>
                     </Upload>
                 </Form.Item>
-                {taskType === "Design" && (
+                {taskType === "Design" && taskDetail.level === "Compulsory" && (
                     <Form.Item
                         name="equipmentFile"
                         label="File trang thiết bị"
@@ -175,22 +174,22 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
                         </Upload>
                     </Form.Item>
                 )}
-                {taskType === "AgreementSigned" && (
+                {taskType === "AgreementSigned" && taskDetail.level === "Compulsory" && (
                     <Button key="createAgreement" type="primary" onClick={() => setModalCreateAgreementVisible(true)}>
                         Thêm mới Thỏa Thuận Nguyên Tắc
                     </Button>
                 )}
-                {taskType === "BusinessRegistered" && (
+                {taskType === "BusinessRegistered" && taskDetail.level === "Compulsory" && (
                     <Button key="createBusinessRegistration" type="primary" onClick={() => setModalCreateBusinessRegistrationVisible(true)}>
                         Thêm mới Giấy Đăng Ký Doanh Nghiệp
                     </Button>
                 )}
-                {taskType === "SignedContract" && (
+                {taskType === "SignedContract" && taskDetail.level === "Compulsory" && (
                     <Button key="createSignedContract" type="primary" onClick={() => setModalCreateSignedContractVisible(true)}>
                         Thêm mới Hợp đồng Chuyển nhượng
                     </Button>
                 )}
-                {taskType === "EducationLicenseRegistered" && (
+                {taskType === "EducationLicenseRegistered" && taskDetail.level === "Compulsory" && (
                     <Button key="createEducationalOperationLicense" type="primary" onClick={() => setModalCreateEducationalOperationLicenseVisible(true)}>
                         Thêm mới giấy phép đăng ký giáo dục
                     </Button>

@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { Card, Descriptions, Tag, List, Avatar } from 'antd';
 import { UserOutlined, ClockCircleOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import DOMPurify from 'dompurify';
 
 const SystemConsultantAppointmentDetail = () => {
     const { selectedAppointment } = useSelector((state) => state.AppointmentReducer);
@@ -40,7 +41,9 @@ const SystemConsultantAppointmentDetail = () => {
                 <Descriptions.Item label="Thời gian kết thúc">
                     <ClockCircleOutlined /> {new Date(endTime).toLocaleString()}
                 </Descriptions.Item>
-                <Descriptions.Item label="Mô tả">{description}</Descriptions.Item>
+                <Descriptions.Item label="Mô tả">
+                    <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(description) }} />
+                </Descriptions.Item>
                 <Descriptions.Item label="Loại">{typeText}</Descriptions.Item>
             </Descriptions>
 
