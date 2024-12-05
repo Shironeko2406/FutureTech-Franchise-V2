@@ -43,6 +43,26 @@ export const LoginActionAsync = (dataLogin) => {
   };
 };
 
+export const RefreshTokenActionAsync = (refreshToken, accessToken) => {
+  return async (dispatch) => {
+    try {
+
+      const res = await httpClient.put(`/api/v1/auth/new-token`, {refreshToken: refreshToken, accessToken: accessToken});
+      if (res.isSuccess && res.data) {
+        setDataTextStorage(TOKEN_AUTHOR, res.data.accessToken);
+        setDataTextStorage(REFRESH_TOKEN, res.data.refreshToken);
+        return true;
+      } else {
+        message.error(`${res.message}`);
+        return false;
+      }
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  };
+};
+
 export const OtpEmailActionAsync = (username) => {
   return async () => {
     try {
