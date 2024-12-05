@@ -98,6 +98,7 @@ export const GetContractDetailByAgencyIdActionAsync = (agencyId) => {
             const res = await httpClient.get(`/api/v1/contracts/agency/${agencyId}`);
             if (res.isSuccess && res.data != null) {
                 dispatch(setContractDetail(res.data));
+                return res.data;
             } else if (res.isSuccess && res.data == null) {
                 message.error(`${res.message}`);
             } else {
@@ -107,6 +108,27 @@ export const GetContractDetailByAgencyIdActionAsync = (agencyId) => {
             console.error("GetContractDetailByAgencyIdActionAsync", error);
             message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
             return null;
+        }
+    };
+};
+
+export const UpdateContractActionAsync = (contractId, contractData) => {
+    return async (dispatch) => {
+        try {
+            const res = await httpClient.put(`/api/v1/contracts/${contractId}`, contractData);
+            if (res.isSuccess && res.data) {
+                message.success(`${res.message}`);
+                return true;
+            } else if (res.isSuccess && !res.data) {
+                message.error(`${res.message}`);
+                return false;
+            } else {
+                throw new Error(`${res.message}`);
+            }
+        } catch (error) {
+            console.error("UpdateContractActionAsync", error);
+            message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
+            return false;
         }
     };
 };

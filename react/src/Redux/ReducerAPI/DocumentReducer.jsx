@@ -101,3 +101,23 @@ export const GetDocumentByAgencyIdActionAsync = (agencyId, typeDocument) => {
         }
     };
 };
+
+export const UpdateDocumentActionAsync = (documentId, data) => {
+    return async (dispatch) => {
+        try {
+            const res = await httpClient.put(`/api/v1/documents/${documentId}`, data);
+            if (res.isSuccess && res.data) {
+                message.success(`${res.message}`);
+                return res.data;
+            } else if (res.isSuccess && !res.data) {
+                message.error(`${res.message}`);
+            } else {
+                throw new Error(res.message);
+            }
+        } catch (error) {
+            console.error("UpdateDocumentActionAsync", error);
+            message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
+            return null;
+        }
+    };
+};

@@ -119,13 +119,13 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
                             Tải file mẫu
                         </Button>
                     )}
-                    <div>
+                    <div style={{ display: 'flex', gap: '7px' }}>
                         <Button key="back" onClick={onClose}>
                             Hủy
-                        </Button>,
+                        </Button>
                         <Button key="submit" type="primary" onClick={handleOk}>
                             Thêm báo cáo
-                        </Button>,
+                        </Button>
                     </div>
                 </div>
             ]}

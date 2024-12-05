@@ -9,7 +9,7 @@ const UploadEquipmentFileModal = ({ visible, onClose, agencyId }) => {
     const [form] = Form.useForm();
     const [file, setFile] = useState(null);
     const dispatch = useDispatch();
-    const { setLoading } = useLoading();
+    const { setLoading, loading } = useLoading();
 
     const handleOk = async () => {
         setLoading(true);
@@ -59,7 +59,7 @@ const UploadEquipmentFileModal = ({ visible, onClose, agencyId }) => {
                 <Button key="back" onClick={onClose}>
                     Hủy
                 </Button>,
-                <Button key="submit" type="primary" onClick={handleOk}>
+                <Button key="submit" type="primary" onClick={handleOk} loading={loading}>
                     Tải lên
                 </Button>,
             ]}

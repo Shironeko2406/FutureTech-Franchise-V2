@@ -53,7 +53,7 @@ export const CreateTaskAfterFranchiseActionAsync = (data, filter, pageIndex, pag
       const res = await httpClient.post(`/api/v1/works`, data);
       if (res.isSuccess && res.data) {
         message.success(`${res.message}`);
-        await dispatch(GetTaskAgencyActiveByIdActionAsync(filter.searchText, filter.levelFilter, filter.statusFilter, filter.submitFilter, filter.typeFilter, data.agencyId, pageIndex, pageSize  ));
+        await dispatch(GetTaskAgencyActiveByIdActionAsync(filter.searchText, filter.levelFilter, filter.statusFilter, filter.submitFilter, filter.typeFilter, data.agencyId, pageIndex, pageSize));
         return true;
       } else {
         message.error(`${res.message}`);
@@ -71,7 +71,7 @@ export const GetTaskDetailByIdActionAsync = (id) => {
     try {
       const res = await httpClient.get(`/api/v1/works/${id}`);
       console.log("GetTaskDetailByIdActionAsync", res.data);
-      dispatch(setTaskDetail(res.data));
+      await dispatch(setTaskDetail(res.data));
     } catch (error) {
       console.log(error);
       message.error("Lỗi hệ thống");
@@ -244,11 +244,11 @@ export const SubmitTaskReportActionAsync = (id, reportData) => {
 export const UpdateStatusSubmitByTaskByIdActionAsync = (status, workId, filters, pageIndex, pageSize) => {
   return async (dispatch) => {
     try {
-      const res = await httpClient.put(`/staff/api/v1/works/${workId}/status`, null,{
+      const res = await httpClient.put(`/staff/api/v1/works/${workId}/status`, null, {
         params: {
           workStatusSubmitEnum: status,
         },
-      } );
+      });
       if (res.isSuccess && res.data) {
         message.success(`${res.message}`);
         await Promise.all([
