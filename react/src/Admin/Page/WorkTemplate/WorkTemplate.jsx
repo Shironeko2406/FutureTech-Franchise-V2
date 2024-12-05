@@ -1,7 +1,13 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Button, Card, Col, List, Popconfirm, Row, Select, Spin, Typography } from "antd";
 import { AppstoreAddOutlined, AreaChartOutlined, BuildOutlined, CalendarOutlined, CheckCircleOutlined, ClockCircleOutlined, DeleteOutlined, DollarOutlined, EditOutlined, FileDoneOutlined, FileSyncOutlined, FlagOutlined, PlusOutlined, RightCircleOutlined, SafetyCertificateOutlined, TeamOutlined,} from "@ant-design/icons";
 import styled from "styled-components";
+import { useLoading } from "../../../Utils/LoadingContext";
+import { useDispatch, useSelector } from "react-redux";
+import { DeleteTaskTemplateByIdActionAsync, GetTasksDetailByIdTemplateActionAsync, GetTasksTemplateActionAsync } from "../../../Redux/ReducerAPI/WorkTemplateReducer";
+import ViewTaskDetailByIdModal from "../../Modal/ViewTaskDetalByIdModal";
+import CreateTaskTemplateBySelectedTypeModal from "../../Modal/CreateTaskTemplateBySelectedTypeModal";
+import EditTaskTemplateModal from "../../Modal/EditTaskTemplateModal";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -106,22 +112,24 @@ const translateType = (type) => {
   return translations[type] || type;
 };
 
-const tasksTemplate = [
-  {
-    id: "7cc745a9-e95b-43bb-92e4-f5e15b7b65bd",
-    title: "Thi công trung tâm - ",
-    description: "<p>Tiến hành thi công.</p>\r\n<ul>\r\n    <li><strong>Thi công cơ sở:</strong> Lắp đặt và bố trí nội thất, trang thiết bị.</li>\r\n",
-    startDaysOffset: 5,
-    durationDays: 15,
-    level: "Compulsory",
-    type: "ConstructionAndTrainning",
-  },
-];
 
 const WorkTemplate = () => {
+  const { tasksTemplate } = useSelector((state) => state.WorkTemplateReducer);
+  const dispatch = useDispatch()
+  const { setLoading } = useLoading();
   const [selectedType, setSelectedType] = useState(null);
+  const [selectedTask, setSelectedTask] = useState(null);
   const [typeFilter, setTypeFilter] = useState(null);
   const [loadingTasks, setLoadingTasks] = useState(false);
+  const [modalShowTaskDetailVisible, setModalShowTaskDetailVisible] = useState(false);
+  const [modalCreateTaskVisible, setModalCreateTaskVisible] = useState(false);
+  const [modalEditTaskByIdVisible, setModalEditTaskByIdVisible] = useState(false);
+
+
+  useEffect(() => {
+    setLoadingTasks(true);
+    dispatch(GetTasksTemplateActionAsync()).finally(() => setLoadingTasks(false));
+  }, []);
 
   const taskDataModify = useMemo(() => {
     const allTypes = [
@@ -159,6 +167,36 @@ const WorkTemplate = () => {
       return !typeFilter || group.type === typeFilter;
     });
   }, [taskDataModify, typeFilter]);
+
+  //Hàm đóng mở modal
+  const showModalCreateTask = () => setModalCreateTaskVisible(true);
+  const handleCloseModalCreateTask = () => setModalCreateTaskVisible(false);
+
+  const openModalShowTaskDetail = (id) => {
+    setModalShowTaskDetailVisible(true)
+    dispatch(GetTasksDetailByIdTemplateActionAsync(id))
+  };
+
+  const handleCloseModalShowTaskDetail = () => {
+    setModalShowTaskDetailVisible(false)
+  };
+
+  const openModalEditTask = (task) => {
+    setModalEditTaskByIdVisible(true)
+    setSelectedTask(task)
+  };
+  const handleCloseModalEditTask = () => {
+    setModalEditTaskByIdVisible(false)
+    setSelectedTask(null)
+  };
+  //-------------------
+  //Hàm Action
+  const handleDeleteTaskById = (id) => {
+    setLoading(true)
+    dispatch(DeleteTaskTemplateByIdActionAsync(id)).finally(() => setLoading(false))
+  }
+
+  //-----------------------------
 
   const renderMilestoneButton = (group, index) => {
     const icon = getIconForType(group.type);
@@ -216,7 +254,7 @@ const WorkTemplate = () => {
               title={
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
                   <span>{translateType(selectedType)}</span>
-                  <Button type="primary" icon={<PlusOutlined />} onClick={() => {}}>
+                  <Button type="primary" icon={<PlusOutlined />} onClick={showModalCreateTask}>
                     Thêm công việc
                   </Button>
                 </div>
@@ -299,6 +337,26 @@ const WorkTemplate = () => {
           )}
         </Col>
       </Row>
+
+      <CreateTaskTemplateBySelectedTypeModal
+        visible={modalCreateTaskVisible}
+        onClose={handleCloseModalCreateTask}
+        selectedType={selectedType}
+      />
+
+      <ViewTaskDetailByIdModal
+        visible={modalShowTaskDetailVisible}
+        onClose={handleCloseModalShowTaskDetail}
+        setVisible={setModalShowTaskDetailVisible}
+      />
+
+      <EditTaskTemplateModal
+        visible={modalEditTaskByIdVisible}
+        onClose={handleCloseModalEditTask}
+        task={selectedTask}
+        selectedType={selectedType}
+      />
+
     </StyledCard>
   );
 };
