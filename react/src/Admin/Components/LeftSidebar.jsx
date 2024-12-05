@@ -16,6 +16,10 @@ const LeftSidebar = ({ onSidebarToggle }) => {
     { type: 'link', label: 'Danh sách', path: '#', icon: 'ri:file-list-3-fill' },
     { type: 'link', label: 'Lịch học', path: '#', icon: 'mdi:clock' },
     { type: 'link', label: 'Slot', path: '#', icon: 'solar:file-text-bold-duotone' },
+    { type: 'section', label: 'Mẫu công việc', icon: 'ti ti-dots' },
+    { type: 'link', label: 'Chi tiết', path: '/admin/work-template', icon: 'solar:file-text-bold-duotone' },
+
+
   ];
   
   return (

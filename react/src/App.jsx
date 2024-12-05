@@ -90,6 +90,7 @@ import AgencyActiveDetailTask from "./Manager/Page/AgencyActiveDetailTask/Agency
 import AgencyActiveInfo from "./Manager/Page/AgencyActiveInfo/AgencyActiveInfo";
 import AgencyProgressFranchise from "./AgencyManager/Page/AgencyProgressFranchise/AgencyProgressFranchise";
 import ListTaskAgencyManager from "./AgencyManager/Page/ListTaskAgencyManager.jsx/ListTaskAgencyManager";
+import WorkTemplate from "./Admin/Page/WorkTemplate/WorkTemplate";
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -126,6 +127,7 @@ function App() {
                   <Route path="course" element={<CourseManageAdmin />} />
                   <Route path="profile" element={<Profile />} />
                   <Route path="contracts" element={<ManageContractAdminPage />} />
+                  <Route path="work-template" element={<WorkTemplate/>} />
                 </Route>
               </Route>
 
