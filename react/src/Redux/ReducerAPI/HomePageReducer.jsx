@@ -26,7 +26,7 @@ export const GetHomePageActionAsync = () => {
         try {
             const res = await httpClient.get(`/api/v1/home-pages`);
             if (res.isSuccess && res.data != null) {
-                dispatch(setHomePageData(res.data.data));
+                dispatch(setHomePageData(res.data));
                 return res.data;
             } else if (res.isSuccess && res.data == null) {
                 message.error(`${res.message}`);
@@ -46,11 +46,13 @@ export const UpdateHomePageActionAsync = (id, homePageData) => {
         try {
             const res = await httpClient.put(`/api/v1/home-pages/${id}`, homePageData);
 
-            if (res.data.isSuccess) {
-                message.success(`${res.data.message}`);
+            if (res.isSuccess && res.data) {
+                message.success(`Cập nhật trang chủ thành công!`);
                 dispatch(GetHomePageActionAsync());
+            } else if (res.isSuccess && !res.data) {
+                message.error(`${res.message}`);
             } else {
-                throw new Error(`${res.data.message}`);
+                throw new Error(`${res.message}`);
             }
         } catch (error) {
             console.error(error);
