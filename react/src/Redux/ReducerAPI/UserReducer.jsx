@@ -179,13 +179,14 @@ export const GetAccountsActionAsync = (search, isActive, role, pageIndex, pageSi
   };
 };
 
-export const GetAdminAccountsActionAsync = (search, isActive, role, pageIndex, pageSize) => {
+export const GetAdminAccountsActionAsync = (search, isActive, agencyId, role, pageIndex, pageSize) => {
   return async (dispatch) => {
     try {
       const res = await httpClient.get(`/admin/api/v1/users`, {
         params: {
           Search: search,
           IsActive: isActive,
+          AgencyId: agencyId,
           Role: role,
           PageIndex: pageIndex,
           PageSize: pageSize,

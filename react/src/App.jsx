@@ -87,7 +87,8 @@ function App() {
                   <Route path="course-category" element={<CourseCategoryAdmin />} />
                   <Route path="course" element={<CourseManageAdmin />} />
                   <Route path="profile" element={<Profile />} />
-                  <Route path="accounts" element={<AccountManagement />} />
+                  <Route path="system-accounts" element={<AccountManagement />} />
+                  <Route path="agency-accounts" element={<AgencyAccountManagement />} />
                 </Route>
               </Route>
 

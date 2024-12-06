@@ -7,7 +7,8 @@ const LeftSidebar = ({ onSidebarToggle }) => {
     { type: 'section', label: 'Trang chủ', icon: 'ti ti-dots' },
     { type: 'link', label: 'Doanh thu', path: '#', icon: 'solar:home-smile-bold-duotone' },
     { type: 'section', label: 'Quản lý', icon: 'ti ti-dots' },
-    { type: 'link', label: 'Tài khoản', path: '/admin/accounts', icon: 'mdi:account-group' },
+    { type: 'link', label: 'Tài khoản hệ thống', path: '/admin/system-accounts', icon: 'mdi:account-group' },
+    { type: 'link', label: 'Tài khoản chi nhánh', path: '/admin/agency-accounts', icon: 'mdi:account-group' },
     { type: 'link', label: 'Hợp đồng', path: '/admin/contracts', icon: 'clarity:contract-solid' },
   ];
 

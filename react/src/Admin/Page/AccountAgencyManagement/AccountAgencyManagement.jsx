@@ -9,7 +9,7 @@ import EditUserModal from "../../Modal/EditUserModal";
 
 const { Text } = Typography;
 
-const AccountManagement = () => {
+const AccountAgencyManagement = () => {
     const { accounts, totalPagesCount, totalItemsCount } = useSelector((state) => state.UserReducer);
     const dispatch = useDispatch();
     const [pageIndex, setPageIndex] = useState(1);
@@ -277,7 +277,7 @@ const AccountManagement = () => {
     return (
         <div className="card">
             <div className="card-body">
-                <h5 className="card-title mb-3">Quản Lý Tài Khoản</h5>
+                <h5 className="card-title mb-3">Quản Lý Tài Khoản Chi Nhánh</h5>
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
                     <Space>
                         <span style={{ marginRight: 8 }}>Tìm kiếm:</span>
@@ -324,4 +324,4 @@ const AccountManagement = () => {
     );
 };
 
-export default AccountManagement;
+export default AccountAgencyManagement;
