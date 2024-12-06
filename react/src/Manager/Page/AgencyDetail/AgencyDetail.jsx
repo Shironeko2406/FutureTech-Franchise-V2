@@ -464,9 +464,9 @@ export default function AgencyDetail() {
   const showModalCreateTask = () => setModalCreateTaskVisible(true);
   const handleCloseModalCreateTask = () => setModalCreateTaskVisible(false);
 
-  const openModalShowTaskDetail = (id) => {
-    setModalShowTaskDetailVisible(true)
-    dispatch(GetTaskDetailByIdActionAsync(id))
+  const openModalShowTaskDetail = async (id) => {
+    await dispatch(GetTaskDetailByIdActionAsync(id));
+    setModalShowTaskDetailVisible(true);
   };
 
   const handleCloseModalShowTaskDetail = () => {

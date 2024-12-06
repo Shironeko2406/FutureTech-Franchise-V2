@@ -1,19 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Form, Upload, Button, DatePicker, Input, InputNumber } from 'antd';
+import { Modal, Form, Upload, Button } from 'antd';
 import ReactQuill from 'react-quill';
 import styled from 'styled-components';
 import { quillFormats, quillModules } from '../../TextEditorConfig/Config';
 import { UploadOutlined, DownloadOutlined } from "@ant-design/icons";
 import { imageDB } from "../../Firebasse/Config";
 import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
-import moment from 'moment';
-import CreateAgreementModal from './CreateAgreementModal';
-import CreateBusinessRegistrationModal from './CreateBusinessRegistrationModal';
-import CreateSignedContractModal from './CreateSignedContractModal';
-import CreateEducationalOperationLicenseModal from './CreateEducationalOperationLicenseModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { GetTaskDetailByIdActionAsync } from '../../Redux/ReducerAPI/WorkReducer';
-import { useLoading } from '../../Utils/LoadingContext';
 
 const StyledQuill = styled(ReactQuill)`
   .ql-container {
@@ -44,10 +38,6 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
     const [form] = Form.useForm();
     const [fileEquipment, setFileEquipment] = useState([]);
     const [file, setFile] = useState(null);
-    const [modalCreateAgreementVisible, setModalCreateAgreementVisible] = useState(false);
-    const [modalCreateBusinessRegistrationVisible, setModalCreateBusinessRegistrationVisible] = useState(false);
-    const [modalCreateSignedContractVisible, setModalCreateSignedContractVisible] = useState(false);
-    const [modalCreateEducationalOperationLicenseVisible, setModalCreateEducationalOperationLicenseVisible] = useState(false);
     const dispatch = useDispatch();
     const { taskDetail } = useSelector((state) => state.WorkReducer);
 
@@ -174,48 +164,7 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
                         </Upload>
                     </Form.Item>
                 )}
-                {taskType === "AgreementSigned" && (
-                    <Button key="createAgreement" type="primary" onClick={() => setModalCreateAgreementVisible(true)}>
-                        Thêm mới Thỏa Thuận Nguyên Tắc
-                    </Button>
-                )}
-                {taskType === "BusinessRegistered" && (
-                    <Button key="createBusinessRegistration" type="primary" onClick={() => setModalCreateBusinessRegistrationVisible(true)}>
-                        Thêm mới Giấy Đăng Ký Doanh Nghiệp
-                    </Button>
-                )}
-                {taskType === "SignedContract" && (
-                    <Button key="createSignedContract" type="primary" onClick={() => setModalCreateSignedContractVisible(true)}>
-                        Thêm mới Hợp đồng Chuyển nhượng
-                    </Button>
-                )}
-                {taskType === "EducationLicenseRegistered" && (
-                    <Button key="createEducationalOperationLicense" type="primary" onClick={() => setModalCreateEducationalOperationLicenseVisible(true)}>
-                        Thêm mới giấy phép đăng ký giáo dục
-                    </Button>
-                )}
             </Form>
-            <CreateAgreementModal
-                visible={modalCreateAgreementVisible}
-                onClose={() => setModalCreateAgreementVisible(false)}
-                agencyId={taskDetail?.agencyId}
-            />
-            <CreateBusinessRegistrationModal
-                visible={modalCreateBusinessRegistrationVisible}
-                onClose={() => setModalCreateBusinessRegistrationVisible(false)}
-                agencyId={taskDetail?.agencyId}
-            />
-            <CreateSignedContractModal
-                visible={modalCreateSignedContractVisible}
-                onClose={() => setModalCreateSignedContractVisible(false)}
-                agencyId={taskDetail?.agencyId}
-            />
-
-            <CreateEducationalOperationLicenseModal
-                visible={modalCreateEducationalOperationLicenseVisible}
-                onClose={() => setModalCreateEducationalOperationLicenseVisible(false)}
-                agencyId={taskDetail?.agencyId}
-            />
         </Modal>
     );
 };

@@ -3,16 +3,7 @@ import { httpClient } from "../../Utils/Interceptors";
 import { message } from "antd";
 
 const initialState = {
-    paymentInfo: [
-        {
-            id: "example-id",
-            userId: "user123",
-            title: "Course Payment",
-            description: "Payment for programming course",
-            amount: 1000,
-            paymentStatus: "Pending",
-        },
-    ],
+    paymentInfo: [],
     totalPagesCount: 0,
 };
 

@@ -5,6 +5,7 @@ import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
 import { imageDB } from "../../Firebasse/Config";
 import { useDispatch } from 'react-redux';
 import { CreateSignedContractActionAsync, DownloadSampleContractActionAsync } from '../../Redux/ReducerAPI/ContractReducer';
+import moment from 'moment'; // Import moment
 
 const CreateSignedContractModal = ({ visible, onClose, agencyId }) => {
     const [form] = Form.useForm();
@@ -59,15 +60,19 @@ const CreateSignedContractModal = ({ visible, onClose, agencyId }) => {
             open={visible}
             onCancel={onClose}
             footer={[
-                <Button key="downloadSample" icon={<DownloadOutlined />} onClick={downloadSampleContract} loading={downloadLoading}>
-                    Tải file mẫu
-                </Button>,
-                <Button key="back" onClick={onClose} disabled={loading}>
-                    Hủy
-                </Button>,
-                <Button key="submit" type="primary" onClick={handleOk} disabled={loading}>
-                    Thêm mới
-                </Button>,
+                <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                    <Button key="downloadSample" icon={<DownloadOutlined />} onClick={downloadSampleContract} loading={downloadLoading} disabled={loading}>
+                        Tải file mẫu
+                    </Button>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                        <Button key="back" onClick={onClose} disabled={loading}>
+                            Hủy
+                        </Button>
+                        <Button key="submit" type="primary" onClick={handleOk} disabled={loading}>
+                            Thêm mới
+                        </Button>
+                    </div>
+                </div>
             ]}
         >
             <Spin spinning={loading}>
@@ -82,21 +87,27 @@ const CreateSignedContractModal = ({ visible, onClose, agencyId }) => {
                     <Form.Item
                         name="startTime"
                         label="Thời gian bắt đầu"
-                        rules={[{ required: true, message: 'Vui lòng chọn thời gian bắt đầu' }]}
+                        rules={[
+                            { required: true, message: 'Vui lòng chọn thời gian bắt đầu' },
+                        ]}
                     >
                         <DatePicker
                             style={{ width: '100%' }}
                             format="YYYY-MM-DD"
+                            disabledDate={(current) => current && current < moment().startOf('day')}
                         />
                     </Form.Item>
                     <Form.Item
                         name="endTime"
                         label="Thời gian kết thúc"
-                        rules={[{ required: true, message: 'Vui lòng chọn thời gian kết thúc' }]}
+                        rules={[
+                            { required: true, message: 'Vui lòng chọn thời gian kết thúc' },
+                        ]}
                     >
                         <DatePicker
                             style={{ width: '100%' }}
                             format="YYYY-MM-DD"
+                            disabledDate={(current) => current && current <= form.getFieldValue('startTime')}
                         />
                     </Form.Item>
                     <Form.Item

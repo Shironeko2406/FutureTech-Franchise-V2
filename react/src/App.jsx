@@ -85,7 +85,10 @@ import AgencyManagerAppointmentDetail from "./AgencyManager/ScheduleAgencyManage
 import AgencyActiveManagement from "./Manager/Page/AgencyActiveManagement/AgencyActiveManagement";
 import ViewAssignment from "./Student/Page/ViewAssignment/ViewAssignment";
 import AssignmentDetail from "./Student/Page/AssignmentDetail/AssignmentDetail";
-import EquipmentManagementPage from './Manager/Page/EquipmentManagement/EquipmentManagementPage';
+import EquipmentManagementPage from './Manager/Page/EquipmentManagement/EquipmentManagementPage'; 
+import AgencyAccountManagement from "./AgencyManager/Page/AgencyAccountManagement/AgencyAccountManagement";
+import AccountManagement from "./Admin/Page/AccountManagement/AccountManagement";
+import AccountAgencyManagement from "./Admin/Page/AccountAgencyManagement/AccountAgencyManagement";
 import AgencyActiveDetailTask from "./Manager/Page/AgencyActiveDetailTask/AgencyActiveDetailTask";
 import AgencyActiveInfo from "./Manager/Page/AgencyActiveInfo/AgencyActiveInfo";
 import AgencyProgressFranchise from "./AgencyManager/Page/AgencyProgressFranchise/AgencyProgressFranchise";
@@ -127,6 +130,8 @@ function App() {
                   <Route path="course" element={<CourseManageAdmin />} />
                   <Route path="profile" element={<Profile />} />
                   <Route path="contracts" element={<ManageContractAdminPage />} />
+                  <Route path="system-accounts" element={<AccountManagement />} />
+                  <Route path="agency-accounts" element={<AccountAgencyManagement />} />
                   <Route path="work-template" element={<WorkTemplate/>} />
                 </Route>
               </Route>
@@ -145,6 +150,7 @@ function App() {
                   <Route path="appointment-schedule/details" element={<AgencyManagerAppointmentDetail />} />
                   <Route path="course" element={<CourseViewAgencyManager />} />
                   <Route path="course-detail/:id" element={<CourseDetailAgencyManager />} />
+                  <Route path="accounts" element={<AgencyAccountManagement />} />
                   <Route path="profile" element={<Profile />} />
                 </Route>
               </Route>
@@ -153,9 +159,9 @@ function App() {
                 <Route path="student" element={<TempUIStudent />}>
                   <Route path="" element={<HomeStudentNoti />} />
                   <Route path="class/:id" element={<ClassDetailStudent />} />
-                  <Route path="class/:id/assignment" element={<ViewAssignment/>} />
+                  <Route path="class/:id/assignment" element={<ViewAssignment />} />
                   <Route path="quiz" element={<QuizTest />} />
-                  <Route path="assignment/:assignmentId" element={<AssignmentDetail/>} />
+                  <Route path="assignment/:assignmentId" element={<AssignmentDetail />} />
                   <Route path="quiz/:quizId" element={<QuizDescription />} />
                   <Route path="quiz/:quizId/start" element={<QuizTest />} />
                   <Route path="schedules" element={<ScheduleStudent />} />

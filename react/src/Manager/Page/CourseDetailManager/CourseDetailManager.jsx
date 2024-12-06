@@ -14,7 +14,7 @@ const CourseDetailManager = () => {
   const dispatch = useDispatch();
   const params = useParams();
   const { id } = params;
-  const {setLoading} = useLoading()
+  const { setLoading } = useLoading()
 
   useEffect(() => {
     setLoading(true);
@@ -23,11 +23,11 @@ const CourseDetailManager = () => {
 
   return (
     <div>
-      <ViewSyllabus/>
+      <ViewSyllabus />
       {/*Thêm các card component khác*/}
-      <ViewChapter/>
-      <ViewSession/>
-      <ViewAssessment/>
+      <ViewChapter />
+      <ViewSession />
+      <ViewAssessment />
       {/* <ViewMaterialCourse/> */}
     </div>
   );

@@ -8,12 +8,9 @@ import moment from 'moment';
 import DynamicFilter from '../../Component/DynamicFilter';
 import { GetTaskUserByLoginActionAsync } from '../../../Redux/ReducerAPI/UserReducer';
 import ViewTaskDetailModal from '../../../Manager/Modal/ViewTaskDetailModal';
-import { GetTaskDetailByIdActionAsync, SubmitTaskReportActionAsync, UpdateTaskStatusToSubmittedActionAsync, UpdateTaskStatusActionAsync } from '../../../Redux/ReducerAPI/WorkReducer';
+import { GetTaskDetailByIdActionAsync, SubmitTaskReportActionAsync, UpdateTaskStatusActionAsync } from '../../../Redux/ReducerAPI/WorkReducer';
 import SubmitTaskReportModal from '../../Modal/SubmitTaskReportModal';
-import { imageDB } from "../../../Firebasse/Config";
 import { useLoading } from '../../../Utils/LoadingContext';
-import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
-import jsPDF from 'jspdf';
 import ShowReportModal from '../../Modal/ShowReportModal';
 import { CreateEquipmentActionAsync } from '../../../Redux/ReducerAPI/EquipmentReducer';
 
@@ -123,10 +120,10 @@ const ListTaskManager = () => {
         setSelectedTask(null);
     };
 
-    const openModalShowReport = (task) => {
+    const openModalShowReport = async (task) => {
         setSelectedTask(task);
+        await dispatch(GetTaskDetailByIdActionAsync(task.id));
         setModalShowReportVisible(true);
-        dispatch(GetTaskDetailByIdActionAsync(task.id));
     };
 
     const handleCloseModalShowReport = () => {
@@ -144,6 +141,7 @@ const ListTaskManager = () => {
                     equipmentFormData.append('file', reportData.equipmentFile);
                     const equipmentResponse = await dispatch(CreateEquipmentActionAsync(selectedTask.agencyId, equipmentFormData));
                     if (!equipmentResponse) {
+                        CreateEquipmentActionAsync
                         throw new Error("Error creating equipment");
                     }
                 }
@@ -208,7 +206,7 @@ const ListTaskManager = () => {
                     Xem báo cáo
                 </Button>
             );
-            if (task.submit !== "Submited") {
+            if (task.submit !== "Submited" && task.status === "None") {
                 actions.push(
                     <Button
                         type="primary"
@@ -217,7 +215,7 @@ const ListTaskManager = () => {
                         Nộp báo cáo
                     </Button>
                 );
-            } else {
+            } else if (task.submit === "Submited" && task.status === "None") {
                 actions.push(
                     <Button
                         type="primary"
@@ -350,6 +348,7 @@ const ListTaskManager = () => {
                 visible={modalShowReportVisible}
                 onClose={handleCloseModalShowReport}
                 taskId={selectedTask?.id}
+                taskType={selectedTask?.type} // Pass taskType here
             />
         </Card>
     );
