@@ -71,7 +71,7 @@ export const GetTaskDetailByIdActionAsync = (id) => {
     try {
       const res = await httpClient.get(`/api/v1/works/${id}`);
       console.log("GetTaskDetailByIdActionAsync", res.data);
-      await dispatch(setTaskDetail(res.data));
+      dispatch(setTaskDetail(res.data));
     } catch (error) {
       console.log(error);
       message.error("Lỗi hệ thống");

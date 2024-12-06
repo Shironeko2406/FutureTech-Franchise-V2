@@ -1,10 +1,10 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { Modal, Button, Typography, Spin, Empty, Descriptions, Space, Divider, Card, Form, Upload, Input, DatePicker } from 'antd';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
+import { Modal, Button, Typography, Spin, Descriptions, Space, Card, Form, Upload, Input, DatePicker } from 'antd';
 import styled from 'styled-components';
 import { EyeOutlined, FilePdfOutlined, DownloadOutlined, EditOutlined, FileTextOutlined, UploadOutlined } from '@ant-design/icons';
 import DOMPurify from 'dompurify';
 import { useDispatch, useSelector } from 'react-redux';
-import { GetTaskDetailByIdActionAsync, SubmitTaskReportActionAsync } from '../../Redux/ReducerAPI/WorkReducer';
+import { SubmitTaskReportActionAsync } from '../../Redux/ReducerAPI/WorkReducer';
 import { GetDocumentByAgencyIdActionAsync, UpdateDocumentActionAsync } from '../../Redux/ReducerAPI/DocumentReducer';
 import { GetContractDetailByAgencyIdActionAsync, UpdateContractActionAsync } from '../../Redux/ReducerAPI/ContractReducer';
 import { CreateEquipmentActionAsync, DownloadEquipmentFileActionAsync } from '../../Redux/ReducerAPI/EquipmentReducer';
@@ -115,7 +115,7 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType }) => {
   const [form] = Form.useForm();
   const [uploadedFileURL, setUploadedFileURL] = useState(null);
   const [uploadedEquipmentFileURL, setUploadedEquipmentFileURL] = useState(null);
-  const [uploadedDocumentFileURL, setUploadedDocumentFileURL] = useState(null);
+  const uploadedDocumentFileURLRef = useRef(null);
 
   useEffect(() => {
     if (visible && taskId) {
@@ -222,11 +222,11 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType }) => {
     setLoading(true);
     try {
       const values = await form.validateFields();
-      console.log("handleSaveDocument", uploadedDocumentFileURL);
+      console.log("handleSaveDocument - Latest Document File URL:", uploadedDocumentFileURLRef.current);
       const formattedValues = {
         ...values,
-        urlFile: uploadedDocumentFileURL || (values.urlFile && values.urlFile[0] ? values.urlFile[0].url : additionalInfo.urlFile),
-        contractDocumentImageURL: uploadedDocumentFileURL || (values.contractDocumentImageURL && values.contractDocumentImageURL[0] ? values.contractDocumentImageURL[0].url : additionalInfo.contractDocumentImageURL),
+        urlFile: uploadedDocumentFileURLRef.current || (values.urlFile && values.urlFile[0] ? values.urlFile[0].url : additionalInfo.urlFile),
+        contractDocumentImageURL: uploadedDocumentFileURLRef.current || (values.contractDocumentImageURL && values.contractDocumentImageURL[0] ? values.contractDocumentImageURL[0].url : additionalInfo.contractDocumentImageURL),
       };
       console.log("handleSaveDocument, formattedValues:", formattedValues);
       if (taskType === 'AgreementSigned' || taskType === 'BusinessRegistered' || taskType === 'EducationLicenseRegistered') {
@@ -265,7 +265,8 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType }) => {
       await uploadBytes(storageRef, file);
       const url = await getDownloadURL(storageRef);
       console.log("handleUploadDocumentFile", url);
-      setUploadedDocumentFileURL(url);
+      uploadedDocumentFileURLRef.current = url;
+      console.log("handleUploadDocumentFile - Latest URL:", uploadedDocumentFileURLRef.current);
       onSuccess({ url }, file);
     } catch (error) {
       console.error("Upload error: ", error);
@@ -454,83 +455,83 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType }) => {
 
     return (
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
-        {isEditing ? (
-          <Form form={form} layout="vertical">
-            <Form.Item
-              name="report"
-              label="Báo cáo"
-              rules={[
-                { required: true, message: 'Vui lòng nhập báo cáo' },
-                { max: 10000, message: 'Báo cáo không được vượt quá 10000 chữ' }
-              ]}
-            >
-              <ReactQuill
-                modules={quillModules}
-                formats={quillFormats}
-                placeholder="Nhập báo cáo công việc"
-                style={{ minHeight: '200px' }}
-              />
-            </Form.Item>
-            <Form.Item
-              name="reportImageURL"
-              label={taskType === "Design" && taskDetail.level === "Compulsory" ? "File thiết kế" : "File đính kèm"}
-            >
-              <Upload
-                name="reportFile"
-                customRequest={handleUpload}
-                accept="*"
-                maxCount={1}
-                defaultFileList={taskDetail.reportImageURL ? [{
-                  uid: '-1',
-                  name: 'Tệp đính kèm hiện tại',
-                  status: 'done',
-                  url: taskDetail.reportImageURL,
-                }] : []}
-              >
-                <Button icon={<UploadOutlined />}>
-                  {taskDetail.reportImageURL ? "Tải file khác" : "Tải file"}
-                </Button>
-              </Upload>
-            </Form.Item>
-            {taskType === "Design" && (
+        <StyledCard
+          title="Nội dung báo cáo"
+          extra={
+            taskDetail.status === "None" && (
+              <Button type="primary" icon={<EditOutlined />} onClick={handleEditReport}>
+                Chỉnh sửa
+              </Button>
+            )
+          }
+        >
+          {isEditing ? (
+            <Form form={form} layout="vertical">
               <Form.Item
-                name="equipmentFileURL"
-                label="File trang thiết bị"
+                name="report"
+                label="Báo cáo"
+                rules={[
+                  { required: true, message: 'Vui lòng nhập báo cáo' },
+                  { max: 10000, message: 'Báo cáo không được vượt quá 10000 chữ' }
+                ]}
+              >
+                <ReactQuill
+                  modules={quillModules}
+                  formats={quillFormats}
+                  placeholder="Nhập báo cáo công việc"
+                  style={{ minHeight: '200px' }}
+                />
+              </Form.Item>
+              <Form.Item
+                name="reportImageURL"
+                label={taskType === "Design" && taskDetail.level === "Compulsory" ? "File thiết kế" : "File đính kèm"}
               >
                 <Upload
-                  name="equipmentFile"
-                  customRequest={handleUploadEquipmentFile}
-                  accept=".xls,.xlsx"
+                  name="reportFile"
+                  customRequest={handleUpload}
+                  accept="*"
                   maxCount={1}
-                  defaultFileList={taskDetail.equipmentFileURL ? [{
+                  defaultFileList={taskDetail.reportImageURL ? [{
                     uid: '-1',
-                    name: 'Tệp trang thiết bị hiện tại',
+                    name: 'Tệp đính kèm hiện tại',
                     status: 'done',
-                    url: taskDetail.equipmentFileURL,
+                    url: taskDetail.reportImageURL,
                   }] : []}
                 >
                   <Button icon={<UploadOutlined />}>
-                    {taskDetail.equipmentFileURL ? "Tải file khác" : "Tải file"}
+                    {taskDetail.reportImageURL ? "Tải file khác" : "Tải file"}
                   </Button>
                 </Upload>
               </Form.Item>
-            )}
-            <ButtonGroup>
-              <Button onClick={() => setIsEditing(false)}>Hủy</Button>
-              <Button type="primary" onClick={handleSaveReport}>Lưu</Button>
-            </ButtonGroup>
-          </Form>
-        ) : (
-          <StyledCard
-            title="Nội dung báo cáo"
-            extra={
-              taskDetail.status === "None" && (
-                <Button type="primary" icon={<EditOutlined />} onClick={handleEditReport}>
-                  Chỉnh sửa
-                </Button>
-              )
-            }
-          >
+              {taskType === "Design" && (
+                <Form.Item
+                  name="equipmentFileURL"
+                  label="File trang thiết bị"
+                >
+                  <Upload
+                    name="equipmentFile"
+                    customRequest={handleUploadEquipmentFile}
+                    accept=".xls,.xlsx"
+                    maxCount={1}
+                    defaultFileList={taskDetail.equipmentFileURL ? [{
+                      uid: '-1',
+                      name: 'Tệp trang thiết bị hiện tại',
+                      status: 'done',
+                      url: taskDetail.equipmentFileURL,
+                    }] : []}
+                  >
+                    <Button icon={<UploadOutlined />}>
+                      {taskDetail.equipmentFileURL ? "Tải file khác" : "Tải file"}
+                    </Button>
+                  </Upload>
+                </Form.Item>
+              )}
+              <ButtonGroup>
+                <Button onClick={() => setIsEditing(false)}>Hủy</Button>
+                <Button type="primary" onClick={handleSaveReport}>Lưu</Button>
+              </ButtonGroup>
+            </Form>
+          ) : (
             <Space direction="vertical" size="middle" style={{ width: '100%' }}>
               <HTMLContent dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(taskDetail.report) }} />
               {taskDetail.reportImageURL && (
@@ -554,8 +555,8 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType }) => {
                 </Button>
               )}
             </Space>
-          </StyledCard>
-        )}
+          )}
+        </StyledCard>
 
         {renderAdditionalInfo && (
           <StyledCard
