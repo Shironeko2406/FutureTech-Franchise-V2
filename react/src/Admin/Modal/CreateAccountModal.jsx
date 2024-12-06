@@ -8,7 +8,7 @@ import axios from "axios";
 const { Option } = Select;
 const { TextArea } = Input;
 
-const CreateAccountModal = ({ visible, onClose, onSubmit }) => {
+const CreateAccountModal = ({ visible, onClose, onSubmit, agencyId, isAgencyManagement }) => {
     const [form] = Form.useForm();
     const [fileList, setFileList] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -68,6 +68,7 @@ const CreateAccountModal = ({ visible, onClose, onSubmit }) => {
             ...values,
             urlImage: fileList[0]?.url || "",
             address: `${values.streetAddress}, ${wardName}, ${districtName}, ${provinceName}`,
+            agencyId: isAgencyManagement ? agencyId : undefined
         };
         try {
             const success = await onSubmit(accountData);
@@ -112,6 +113,21 @@ const CreateAccountModal = ({ visible, onClose, onSubmit }) => {
     const handleRemove = () => {
         setFileList([]);
     };
+
+    const roleOptions = isAgencyManagement
+        ? [
+            { value: "Student", label: "Học sinh" },
+            { value: "Instructor", label: "Giảng viên chi nhánh" },
+            { value: "AgencyStaff", label: "Nhân viên chi nhánh" },
+            { value: "AgencyManager", label: "Quản lý chi nhánh" }
+        ]
+        : [
+            { value: "SystemInstructor", label: "Giảng viên trung tâm" },
+            { value: "SystemConsultant", label: "Tư vấn viên" },
+            { value: "SystemTechician", label: "Kỹ thuật viên" },
+            { value: "Manager", label: "Quản lý hệ thống" },
+            { value: "Administrator", label: "Quản trị viên" }
+        ];
 
     return (
         <Modal
@@ -159,15 +175,11 @@ const CreateAccountModal = ({ visible, onClose, onSubmit }) => {
                         </Form.Item>
                         <Form.Item name="role" label="Vai trò" rules={[{ required: true, message: "Vui lòng chọn vai trò!" }]}>
                             <Select placeholder="Chọn vai trò">
-                                <Option value="Student">Học sinh</Option>
-                                <Option value="Instructor">Giảng viên chi nhánh</Option>
-                                <Option value="SystemInstructor">Giảng viên trung tâm</Option>
-                                <Option value="SystemConsultant">Tư vấn viên</Option>
-                                <Option value="SystemTechician">Kỹ thuật viên</Option>
-                                <Option value="AgencyStaff">Nhân viên chi nhánh</Option>
-                                <Option value="Administrator">Quản trị viên</Option>
-                                <Option value="Manager">Quản lý hệ thống</Option>
-                                <Option value="AgencyManager">Quản lý chi nhánh</Option>
+                                {roleOptions.map((role) => (
+                                    <Option key={role.value} value={role.value}>
+                                        {role.label}
+                                    </Option>
+                                ))}
                             </Select>
                         </Form.Item>
                     </Card>

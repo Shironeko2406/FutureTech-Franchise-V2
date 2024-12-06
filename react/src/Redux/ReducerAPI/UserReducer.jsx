@@ -377,6 +377,48 @@ export const ToggleAccountStatusByAdminActionAsync = (id) => {
   };
 };
 
+export const UpdateUserByAdminActionAsync = (id, userData) => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.put(`/admin/api/v1/users?id=${id}`, userData);
+      if (res.isSuccess && res.data) {
+        message.success(`${res.message}`);
+        return true;
+      } else if (res.isSuccess && !res.data) {
+        message.error(`${res.message}`);
+        return false;
+      } else {
+        throw new Error(`${res.message}`);
+      }
+    } catch (error) {
+      console.error(error);
+      message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
+      return false;
+    }
+  };
+};
+
+export const CreateAccountByAdminActionAsync = (accountData) => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.post(`/admin/api/v1/users`, accountData);
+      if (res.isSuccess && res.data) {
+        message.success(`${res.message}`);
+        return true;
+      } else if (res.isSuccess && !res.data) {
+        message.error(`${res.message}`);
+        return false;
+      } else {
+        throw new Error(`${res.message}`);
+      }
+    } catch (error) {
+      console.error(error);
+      message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
+      return false;
+    }
+  };
+};
+
 export const UpdateUserByAgencyManagerActionAsync = (id, userData) => {
   return async (dispatch) => {
     try {

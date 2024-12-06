@@ -267,7 +267,7 @@ const AccountManagement = () => {
     };
 
     const handleCreateAccount = async (accountData) => {
-        const success = await dispatch(CreateAccountByAgencyManagerActionAsync(accountData));
+        const success = await dispatch(CreateAccountByAdminActionAsync(accountData));
         if (success) {
             dispatch(GetAdminAccountsActionAsync(search, isActive, agencyId, role, pageIndex, pageSize));
         }
@@ -312,7 +312,7 @@ const AccountManagement = () => {
                     visible={isModalVisible}
                     onClose={() => setIsModalVisible(false)}
                     onSubmit={handleCreateAccount}
-                    role={role}
+                    isAgencyManagement={false}
                 />
                 <EditUserModal
                     visible={editModalVisible}

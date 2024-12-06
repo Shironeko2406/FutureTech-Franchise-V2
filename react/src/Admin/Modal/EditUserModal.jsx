@@ -4,12 +4,12 @@ import { UploadOutlined, UserOutlined, PhoneOutlined, MailOutlined } from "@ant-
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { imageDB } from "../../Firebasse/Config";
 import { useDispatch } from "react-redux";
-import { UpdateUserByAgencyManagerActionAsync } from "../../Redux/ReducerAPI/UserReducer";
+import { UpdateUserByAdminActionAsync } from "../../Redux/ReducerAPI/UserReducer";
 import dayjs from "dayjs";
 
 const { Option } = Select;
 
-const EditUserModal = ({ visible, onClose, user }) => {
+const EditUserModal = ({ visible, onClose, user, agencyId }) => {
     const [form] = Form.useForm();
     const [fileList, setFileList] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -18,6 +18,7 @@ const EditUserModal = ({ visible, onClose, user }) => {
     useEffect(() => {
         if (user) {
             form.setFieldsValue({
+                userName: user.userName,
                 fullName: user.fullName,
                 email: user.email,
                 phoneNumber: user.phoneNumber,
@@ -33,9 +34,10 @@ const EditUserModal = ({ visible, onClose, user }) => {
         const userData = {
             ...values,
             urlImage: fileList[0]?.url || "",
+            agencyId: agencyId
         };
         try {
-            const success = await dispatch(UpdateUserByAgencyManagerActionAsync(user.id, userData));
+            const success = await dispatch(UpdateUserByAdminActionAsync(user.id, userData));
             if (success) {
                 form.resetFields();
                 setFileList([]);
@@ -91,17 +93,22 @@ const EditUserModal = ({ visible, onClose, user }) => {
                 <Form form={form} layout="vertical" onFinish={handleUpdateUser}>
                     <Card title="Thông tin cá nhân" className="mb-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <Form.Item name="userName" label="Tên đăng nhập" rules={[{ required: true, message: "Vui lòng nhập tên đăng nhập!" }]}>
+                                <Input prefix={<UserOutlined />} placeholder="Nhập tên đăng nhập" />
+                            </Form.Item>
                             <Form.Item name="fullName" label="Tên đầy đủ" rules={[{ required: true, message: "Vui lòng nhập tên đầy đủ!" }]}>
                                 <Input prefix={<UserOutlined />} placeholder="Nhập tên đầy đủ" />
                             </Form.Item>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <Form.Item name="email" label="Email" rules={[{ required: true, type: "email", message: "Vui lòng nhập email hợp lệ!" }]}>
                                 <Input prefix={<MailOutlined />} placeholder="Nhập email" />
                             </Form.Item>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <Form.Item name="phoneNumber" label="Số điện thoại" rules={[{ required: true, pattern: /^[0-9]{10}$/, message: "Vui lòng nhập số điện thoại hợp lệ!" }]}>
                                 <Input prefix={<PhoneOutlined />} placeholder="Nhập số điện thoại 10 số" />
                             </Form.Item>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <Form.Item name="dateOfBirth" label="Ngày sinh">
                                 <DatePicker
                                     style={{ width: '100%' }}
@@ -110,14 +117,14 @@ const EditUserModal = ({ visible, onClose, user }) => {
                                     disabledDate={(current) => current && current > dayjs().endOf('day')}
                                 />
                             </Form.Item>
+                            <Form.Item name="gender" label="Giới tính">
+                                <Select placeholder="Chọn giới tính">
+                                    <Option value="Male">Nam</Option>
+                                    <Option value="Female">Nữ</Option>
+                                    <Option value="Other">Khác</Option>
+                                </Select>
+                            </Form.Item>
                         </div>
-                        <Form.Item name="gender" label="Giới tính">
-                            <Select placeholder="Chọn giới tính">
-                                <Option value="Male">Nam</Option>
-                                <Option value="Female">Nữ</Option>
-                                <Option value="Other">Khác</Option>
-                            </Select>
-                        </Form.Item>
                     </Card>
 
                     <Divider />

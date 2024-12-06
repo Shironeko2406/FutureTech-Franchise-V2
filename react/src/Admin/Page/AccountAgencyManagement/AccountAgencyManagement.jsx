@@ -1,33 +1,41 @@
-import { Table, Input, Space, Typography, Button, Tooltip, Tag } from "antd";
+import { Table, Input, Space, Typography, Button, Tooltip, Tag, Select } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { GetAccountsActionAsync, GetAdminAccountsActionAsync, ToggleAccountStatusByAdminActionAsync, CreateAccountByAgencyManagerActionAsync } from "../../../Redux/ReducerAPI/UserReducer";
+import { GetAdminAccountsActionAsync, ToggleAccountStatusByAdminActionAsync, CreateAccountByAdminActionAsync } from "../../../Redux/ReducerAPI/UserReducer";
 import { SearchOutlined, PlusOutlined, EditOutlined, LockOutlined, UnlockOutlined } from "@ant-design/icons";
 import { useLoading } from "../../../Utils/LoadingContext";
 import CreateAccountModal from "../../Modal/CreateAccountModal";
 import EditUserModal from "../../Modal/EditUserModal";
+import { GetAgencyActionAsync } from "../../../Redux/ReducerAPI/AgencyReducer";
 
 const { Text } = Typography;
 
 const AccountAgencyManagement = () => {
     const { accounts, totalPagesCount, totalItemsCount } = useSelector((state) => state.UserReducer);
+    const { agencyData } = useSelector((state) => state.AgencyReducer);
     const dispatch = useDispatch();
     const [pageIndex, setPageIndex] = useState(1);
     const [pageSize, setPageSize] = useState(10);
     const [search, setSearch] = useState("");
     const [isActive, setIsActive] = useState(null);
     const [role, setRole] = useState(null);
+    const [selectedAgency, setSelectedAgency] = useState(null);
     const { setLoading } = useLoading();
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [editModalVisible, setEditModalVisible] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
-    const agencyId = null; // Example AgencyId
 
     useEffect(() => {
-        setLoading(true);
-        dispatch(GetAdminAccountsActionAsync(search, isActive, agencyId, role, pageIndex, pageSize))
-            .finally(() => setLoading(false));
-    }, [dispatch, search, isActive, role, pageIndex, pageSize, setLoading]);
+        dispatch(GetAgencyActionAsync(1, 1000));
+    }, [dispatch]);
+
+    useEffect(() => {
+        if (selectedAgency) {
+            setLoading(true);
+            dispatch(GetAdminAccountsActionAsync(search, isActive, selectedAgency, role, pageIndex, pageSize))
+                .finally(() => setLoading(false));
+        }
+    }, [dispatch, search, isActive, role, pageIndex, pageSize, selectedAgency, setLoading]);
 
     const handleTableChange = (pagination, filters) => {
         setPageIndex(pagination.current);
@@ -40,7 +48,7 @@ const AccountAgencyManagement = () => {
         setLoading(true);
         const success = await dispatch(ToggleAccountStatusByAdminActionAsync(id));
         if (success) {
-            dispatch(GetAdminAccountsActionAsync(search, isActive, agencyId, role, pageIndex, pageSize));
+            dispatch(GetAdminAccountsActionAsync(search, isActive, selectedAgency, role, pageIndex, pageSize));
         }
         setLoading(false);
     };
@@ -54,7 +62,7 @@ const AccountAgencyManagement = () => {
         setEditModalVisible(false);
         setSelectedUser(null);
         if (updated) {
-            dispatch(GetAdminAccountsActionAsync(search, isActive, agencyId, role, pageIndex, pageSize));
+            dispatch(GetAdminAccountsActionAsync(search, isActive, selectedAgency, role, pageIndex, pageSize));
         }
     };
 
@@ -102,50 +110,20 @@ const AccountAgencyManagement = () => {
                 backgroundColor: "#e6f7ff",
                 borderColor: "#91d5ff",
             },
-            Instructor: {
-                text: "Giảng viên chi nhánh",
-                color: "purple",
-                backgroundColor: "#f9f0ff",
-                borderColor: "#d3adf7",
-            },
-            SystemInstructor: {
-                text: "Giảng viên trung tâm",
-                color: "purple",
-                backgroundColor: "#f9f0ff",
-                borderColor: "#d3adf7",
-            },
-            SystemConsultant: {
-                text: "Tư vấn viên",
-                color: "cyan",
-                backgroundColor: "#e6fffb",
-                borderColor: "#87e8de",
-            },
-            SystemTechician: {
-                text: "Kỹ thuật viên",
-                color: "geekblue",
-                backgroundColor: "#f0f5ff",
-                borderColor: "#adc6ff",
-            },
             AgencyStaff: {
-                text: "Nhân viên chi nhánh",
+                text: "Nhân viên",
                 color: "orange",
                 backgroundColor: "#fff7e6",
                 borderColor: "#ffd591",
             },
-            Administrator: {
-                text: "Quản trị viên",
-                color: "red",
-                backgroundColor: "#fff1f0",
-                borderColor: "#ffa39e",
-            },
-            Manager: {
-                text: "Quản lý hệ thống",
-                color: "green",
-                backgroundColor: "#f6ffed",
-                borderColor: "#b7eb8f",
+            Instructor: {
+                text: "Giảng viên",
+                color: "purple",
+                backgroundColor: "#f9f0ff",
+                borderColor: "#d3adf7",
             },
             AgencyManager: {
-                text: "Quản lý chi nhánh",
+                text: "Quản lý",
                 color: "gold",
                 backgroundColor: "#fffbe6",
                 borderColor: "#ffe58f",
@@ -201,14 +179,9 @@ const AccountAgencyManagement = () => {
             align: "center",
             filters: [
                 { text: 'Học sinh', value: 'Student' },
-                { text: 'Giảng viên chi nhánh', value: 'Instructor' },
-                { text: 'Giảng viên trung tâm', value: 'SystemInstructor' },
-                { text: 'Tư vấn viên', value: 'SystemConsultant' },
-                { text: 'Kỹ thuật viên', value: 'SystemTechician' },
-                { text: 'Nhân viên chi nhánh', value: 'AgencyStaff' },
-                { text: 'Quản trị viên', value: 'Administrator' },
-                { text: 'Quản lý hệ thống', value: 'Manager' },
-                { text: 'Quản lý chi nhánh', value: 'AgencyManager' },
+                { text: 'Giảng viên', value: 'Instructor' },
+                { text: 'Nhân viên', value: 'AgencyStaff' },
+                { text: 'Quản lý', value: 'AgencyManager' },
             ],
             filterMultiple: false,
             render: (text) => renderRoleBadge(text),
@@ -267,9 +240,9 @@ const AccountAgencyManagement = () => {
     };
 
     const handleCreateAccount = async (accountData) => {
-        const success = await dispatch(CreateAccountByAgencyManagerActionAsync(accountData));
+        const success = await dispatch(CreateAccountByAdminActionAsync(accountData));
         if (success) {
-            dispatch(GetAdminAccountsActionAsync(search, isActive, agencyId, role, pageIndex, pageSize));
+            dispatch(GetAdminAccountsActionAsync(search, isActive, selectedAgency, role, pageIndex, pageSize));
         }
         return success;
     };
@@ -280,6 +253,18 @@ const AccountAgencyManagement = () => {
                 <h5 className="card-title mb-3">Quản Lý Tài Khoản Chi Nhánh</h5>
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
                     <Space>
+                        <span style={{ marginRight: 8 }}>Chọn chi nhánh:</span>
+                        <Select
+                            placeholder="Chọn chi nhánh"
+                            style={{ width: 200 }}
+                            onChange={(value) => setSelectedAgency(value)}
+                        >
+                            {agencyData.map((agency) => (
+                                <Select.Option key={agency.id} value={agency.id}>
+                                    {agency.name}
+                                </Select.Option>
+                            ))}
+                        </Select>
                         <span style={{ marginRight: 8 }}>Tìm kiếm:</span>
                         <Input.Search
                             placeholder="Nhập tên đăng nhập, số điện thoại hoặc email"
@@ -312,12 +297,14 @@ const AccountAgencyManagement = () => {
                     visible={isModalVisible}
                     onClose={() => setIsModalVisible(false)}
                     onSubmit={handleCreateAccount}
-                    role={role}
+                    agencyId={selectedAgency}
+                    isAgencyManagement={true}
                 />
                 <EditUserModal
                     visible={editModalVisible}
                     onClose={handleEditModalClose}
                     user={selectedUser}
+                    agencyId={selectedAgency}
                 />
             </div>
         </div>

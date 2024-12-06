@@ -88,6 +88,7 @@ import ViewAssignment from "./Student/Page/ViewAssignment/ViewAssignment";
 import AssignmentDetail from "./Student/Page/AssignmentDetail/AssignmentDetail";
 import EquipmentManagementPage from './Manager/Page/EquipmentManagement/EquipmentManagementPage'; import AgencyAccountManagement from "./AgencyManager/Page/AgencyAccountManagement/AgencyAccountManagement";
 import AccountManagement from "./Admin/Page/AccountManagement/AccountManagement";
+import AccountAgencyManagement from "./Admin/Page/AccountAgencyManagement/AccountAgencyManagement";
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -124,7 +125,7 @@ function App() {
                   <Route path="profile" element={<Profile />} />
                   <Route path="contracts" element={<ManageContractAdminPage />} />
                   <Route path="system-accounts" element={<AccountManagement />} />
-                  <Route path="agency-accounts" element={<AgencyAccountManagement />} />
+                  <Route path="agency-accounts" element={<AccountAgencyManagement />} />
                 </Route>
               </Route>
 
