@@ -7,17 +7,11 @@ const LeftSidebar = ({ onSidebarToggle }) => {
     { type: 'section', label: 'Trang chủ', icon: 'ti ti-dots' },
     { type: 'link', label: 'Doanh thu', path: '#', icon: 'solar:home-smile-bold-duotone' },
     { type: 'section', label: 'Quản lý', icon: 'ti ti-dots' },
-    { type: 'link', label: 'Người dùng', path: '#', icon: 'solar:layers-minimalistic-bold-duotone' },
-    { type: 'link', label: 'Giảng viên', path: '#', icon: 'solar:layers-minimalistic-bold-duotone' },
-    { type: 'link', label: 'Giao dịch', path: '#', icon: 'fluent:payment-20-filled' },
+    { type: 'link', label: 'Tài khoản hệ thống', path: '/admin/system-accounts', icon: 'mdi:account-group' },
+    { type: 'link', label: 'Tài khoản chi nhánh', path: '/admin/agency-accounts', icon: 'mdi:account-group' },
     { type: 'link', label: 'Hợp đồng', path: '/admin/contracts', icon: 'clarity:contract-solid' },
-    { type: 'section', label: 'Lớp học', icon: 'ti ti-dots' },
-    { type: 'link', label: 'Ghi danh', path: '#', icon: 'solar:file-text-bold-duotone' },
-    { type: 'link', label: 'Danh sách', path: '#', icon: 'ri:file-list-3-fill' },
-    { type: 'link', label: 'Lịch học', path: '#', icon: 'mdi:clock' },
-    { type: 'link', label: 'Slot', path: '#', icon: 'solar:file-text-bold-duotone' },
   ];
-  
+
   return (
     <aside className="left-sidebar">
       <div>
