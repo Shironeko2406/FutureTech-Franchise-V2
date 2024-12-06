@@ -160,8 +160,14 @@ const CreateAccountModal = ({ visible, onClose, onSubmit }) => {
                         <Form.Item name="role" label="Vai trò" rules={[{ required: true, message: "Vui lòng chọn vai trò!" }]}>
                             <Select placeholder="Chọn vai trò">
                                 <Option value="Student">Học sinh</Option>
-                                <Option value="Instructor">Giảng viên</Option>
-                                <Option value="AgencyStaff">Nhân viên</Option>
+                                <Option value="Instructor">Giảng viên chi nhánh</Option>
+                                <Option value="SystemInstructor">Giảng viên trung tâm</Option>
+                                <Option value="SystemConsultant">Tư vấn viên</Option>
+                                <Option value="SystemTechician">Kỹ thuật viên</Option>
+                                <Option value="AgencyStaff">Nhân viên chi nhánh</Option>
+                                <Option value="Administrator">Quản trị viên</Option>
+                                <Option value="Manager">Quản lý hệ thống</Option>
+                                <Option value="AgencyManager">Quản lý chi nhánh</Option>
                             </Select>
                         </Form.Item>
                     </Card>

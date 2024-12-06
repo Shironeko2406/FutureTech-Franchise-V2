@@ -49,9 +49,8 @@ import CourseDetailSystemInstructor from "./SystemInstructor/Page/CourseDetailSy
 import QuizTest from "./Student/Page/QuizTest/QuizTest";
 import QuizDescription from "./Student/Page/QuizDescription/QuizDescription";
 import AttendancePage from "./Instructor/Page/AttendancePage/AttendancePage";
-import StudentAccountManagement from "./AgencyManager/Page/StudentAccountManagement/StudentAccountManagement";
-import InstructorAccountManagement from "./AgencyManager/Page/InstructorAccountManagement/InstructorAccountManagement";
-import AgencyStaffAccountManagement from "./AgencyManager/Page/AgencyStaffAccountManagement/AgencyStaffAccountManagement";
+import AgencyAccountManagement from "./AgencyManager/Page/AgencyAccountManagement/AgencyAccountManagement";
+import AccountManagement from "./Admin/Page/AccountManagement/AccountManagement";
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -88,6 +87,7 @@ function App() {
                   <Route path="course-category" element={<CourseCategoryAdmin />} />
                   <Route path="course" element={<CourseManageAdmin />} />
                   <Route path="profile" element={<Profile />} />
+                  <Route path="accounts" element={<AccountManagement />} />
                 </Route>
               </Route>
 
@@ -100,9 +100,7 @@ function App() {
                   <Route path="classes" element={<ClassManagement />} />
                   <Route path="classes/:id" element={<ClassDetail />} />
                   <Route path="schedules" element={<ScheduleAgencyManager />} />
-                  <Route path="student-accounts" element={<StudentAccountManagement />} />
-                  <Route path="instructor-accounts" element={<InstructorAccountManagement />} />
-                  <Route path="agency-staff-accounts" element={<AgencyStaffAccountManagement />} />
+                  <Route path="accounts" element={<AgencyAccountManagement />} />
                 </Route>
               </Route>
 

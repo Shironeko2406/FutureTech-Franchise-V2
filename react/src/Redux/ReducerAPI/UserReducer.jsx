@@ -179,10 +179,97 @@ export const GetAccountsActionAsync = (search, isActive, role, pageIndex, pageSi
   };
 };
 
-export const CreateAccountActionAsync = (accountData) => {
+export const GetAdminAccountsActionAsync = (search, isActive, role, pageIndex, pageSize) => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.get(`/admin/api/v1/users`, {
+        params: {
+          Search: search,
+          IsActive: isActive,
+          Role: role,
+          PageIndex: pageIndex,
+          PageSize: pageSize,
+        },
+      });
+      if (res.isSuccess && res.data) {
+        dispatch(setAccounts(res.data));
+      } else {
+        message.error(`${res.message}`);
+      }
+    } catch (error) {
+      console.error(error);
+      message.error("Không thể lấy danh sách tài khoản, vui lòng thử lại sau.");
+    }
+  };
+};
+
+export const CreateAccountByAgencyManagerActionAsync = (accountData) => {
   return async (dispatch) => {
     try {
       const res = await httpClient.post(`/agency-manager/api/v1/users`, accountData);
+      if (res.isSuccess && res.data) {
+        message.success(`${res.message}`);
+        return true;
+      } else if (res.isSuccess && !res.data) {
+        message.error(`${res.message}`);
+        return false;
+      } else {
+        throw new Error(`${res.message}`);
+      }
+    } catch (error) {
+      console.error(error);
+      message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
+      return false;
+    }
+  };
+};
+
+export const ToggleAccountStatusByAgencyManagerActionAsync = (id) => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.put(`/agency-manager/api/v1/users/${id}/status`);
+      if (res.isSuccess && res.data) {
+        message.success(`${res.message}`);
+        return true;
+      } else if (res.isSuccess && !res.data) {
+        message.error(`${res.message}`);
+        return false;
+      } else {
+        throw new Error(`${res.message}`);
+      }
+    } catch (error) {
+      console.error(error);
+      message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
+      return false;
+    }
+  };
+};
+
+export const ToggleAccountStatusByAdminActionAsync = (id) => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.put(`/admin/api/v1/users/${id}/status`);
+      if (res.isSuccess && res.data) {
+        message.success(`${res.message}`);
+        return true;
+      } else if (res.isSuccess && !res.data) {
+        message.error(`${res.message}`);
+        return false;
+      } else {
+        throw new Error(`${res.message}`);
+      }
+    } catch (error) {
+      console.error(error);
+      message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
+      return false;
+    }
+  };
+};
+
+export const UpdateUserByAgencyManagerActionAsync = (id, userData) => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.put(`/agency-manager/api/v1/users?id=${id}`, userData);
       if (res.isSuccess && res.data) {
         message.success(`${res.message}`);
         return true;
