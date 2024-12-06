@@ -1,9 +1,12 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
 
 const LeftSidebar = ({ onSidebarToggle }) => {
+  const { statusAgency } = useSelector((state) => state.AuthenticationReducer);
 
-  const sidebarItems = [
+  // Menu cho trạng thái "active"
+  const activeMenu = [
     { type: 'section', label: 'Trang chủ', icon: 'ti ti-dots' },
     { type: 'link', label: 'Doanh thu', path: '', icon: 'solar:home-smile-bold-duotone' },
     { type: 'link', label: 'Lịch hẹn', path: '/agency-manager/appointment-schedule', icon: 'solar:calendar-bold-duotone' },
@@ -17,6 +20,17 @@ const LeftSidebar = ({ onSidebarToggle }) => {
     { type: 'link', label: 'Lịch học', path: '/agency-manager/schedules', icon: 'mdi:clock' },
     { type: 'link', label: 'Slot', path: '/agency-manager/slots', icon: 'solar:file-text-bold-duotone' },
   ];
+
+  // Menu cho trạng thái "inactive"
+  const inactiveMenu = [
+    { type: 'section', label: 'Quá trình nhượng quyền', icon: 'ti ti-dots' },
+    { type: 'link', label: 'Chi tiết', path: '#', icon: 'solar:file-text-bold-duotone' },
+    { type: 'section', label: 'Công việc bàn giao', icon: 'ti ti-dots' },
+    { type: 'link', label: 'Quản lý', path: '/agency-manager/task-list', icon: 'solar:file-text-bold-duotone' },
+  ];
+
+  // Lựa chọn menu dựa trên trạng thái người dùng
+  const sidebarItems = statusAgency === "active" ? activeMenu : inactiveMenu;
 
 
   return (
