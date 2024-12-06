@@ -80,8 +80,8 @@ import SystemInstructorAppointmentDetail from "./SystemInstructor/Page/ScheduleS
 import SystemConsultantAppointment from "./SystemConsultant/Page/ScheduleSystemConsultant/SystemConsultantAppointment";
 import SystemConsultantAppointmentDetail from "./SystemConsultant/Page/ScheduleSystemConsultant/SystemConsultantAppointmentDetail";
 import ListTaskManager from "./Manager/Page/ListTask/ListTaskManager";
-import AgencyManagerAppointment from "./AgencyManager/ScheduleAgencyManager/AgencyManagerAppointment";
-import AgencyManagerAppointmentDetail from "./AgencyManager/ScheduleAgencyManager/AgencyManagerAppointmentDetail";
+import AgencyManagerAppointment from "./AgencyManager/Page/ScheduleAgencyManager/AgencyManagerAppointment";
+import AgencyManagerAppointmentDetail from "./AgencyManager/Page/ScheduleAgencyManager/AgencyManagerAppointmentDetail";
 import AgencyActiveManagement from "./Manager/Page/AgencyActiveManagement/AgencyActiveManagement";
 import AgencyActiveDetail from "./Manager/Page/AgencyActiveDetail/AgencyActiveDetail";
 import ViewAssignment from "./Student/Page/ViewAssignment/ViewAssignment";
@@ -89,6 +89,7 @@ import AssignmentDetail from "./Student/Page/AssignmentDetail/AssignmentDetail";
 import EquipmentManagementPage from './Manager/Page/EquipmentManagement/EquipmentManagementPage'; import AgencyAccountManagement from "./AgencyManager/Page/AgencyAccountManagement/AgencyAccountManagement";
 import AccountManagement from "./Admin/Page/AccountManagement/AccountManagement";
 import AccountAgencyManagement from "./Admin/Page/AccountAgencyManagement/AccountAgencyManagement";
+import HomePageManagement from "./Admin/Page/HomePageManagement/HomePageManagement";
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -126,6 +127,7 @@ function App() {
                   <Route path="contracts" element={<ManageContractAdminPage />} />
                   <Route path="system-accounts" element={<AccountManagement />} />
                   <Route path="agency-accounts" element={<AccountAgencyManagement />} />
+                  <Route path="home-page-management" element={<HomePageManagement />} />
                 </Route>
               </Route>
 
