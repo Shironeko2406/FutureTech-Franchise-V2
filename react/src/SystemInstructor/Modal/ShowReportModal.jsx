@@ -6,8 +6,6 @@ import DOMPurify from 'dompurify';
 import { useDispatch, useSelector } from 'react-redux';
 import { SubmitTaskReportActionAsync } from '../../Redux/ReducerAPI/WorkReducer';
 import { GetDocumentByAgencyIdActionAsync, UpdateDocumentActionAsync } from '../../Redux/ReducerAPI/DocumentReducer';
-import { GetContractDetailByAgencyIdActionAsync, UpdateContractActionAsync } from '../../Redux/ReducerAPI/ContractReducer';
-import { CreateEquipmentActionAsync, DownloadEquipmentFileActionAsync } from '../../Redux/ReducerAPI/EquipmentReducer';
 import dayjs from 'dayjs';
 import ReactQuill from 'react-quill';
 import { quillFormats, quillModules } from '../../TextEditorConfig/Config';
@@ -120,24 +118,9 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType }) => {
   useEffect(() => {
     if (visible && taskId) {
       console.log("taskDetail", taskDetail);
-      let documentType = '';
-      if (taskType === 'AgreementSigned') {
-        documentType = 'AgreementContract';
-      } else if (taskType === 'BusinessRegistered') {
-        documentType = 'BusinessLicense';
-      } else if (taskType === 'EducationLicenseRegistered') {
-        documentType = 'EducationalOperationLicense';
-      }
-
-      if (documentType) {
+      if (taskType === 'EducationLicenseRegistered') {
         setAdditionalLoading(true);
-        dispatch(GetDocumentByAgencyIdActionAsync(taskDetail.agencyId, documentType)).then((res) => {
-          setAdditionalInfo(res);
-          setAdditionalLoading(false);
-        });
-      } else if (taskType === 'SignedContract') {
-        setAdditionalLoading(true);
-        dispatch(GetContractDetailByAgencyIdActionAsync(taskDetail.agencyId)).then((res) => {
+        dispatch(GetDocumentByAgencyIdActionAsync(taskDetail.agencyId, 'EducationalOperationLicense')).then((res) => {
           setAdditionalInfo(res);
           setAdditionalLoading(false);
         });
@@ -175,16 +158,6 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType }) => {
         ...values,
         reportImageURL: uploadedFileURLRef.current || (values.reportImageURL && values.reportImageURL[0] ? values.reportImageURL[0].url : null),
       };
-
-      if (taskType === "Design" && uploadedEquipmentFileURL) {
-        const equipmentFormData = new FormData();
-        equipmentFormData.append('file', uploadedEquipmentFileURL);
-        const equipmentResponse = await dispatch(CreateEquipmentActionAsync(taskDetail.agencyId, equipmentFormData));
-        if (!equipmentResponse) {
-          throw new Error("Error creating equipment");
-        }
-      }
-
       await dispatch(SubmitTaskReportActionAsync(taskId, formattedValues));
       setIsEditing(false);
     } catch (error) {
@@ -207,17 +180,6 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType }) => {
     }
   };
 
-  const handleUploadEquipmentFile = async ({ file, onSuccess, onError }) => {
-    setUploadedEquipmentFileURL(file);
-    onSuccess(null, file);
-  };
-
-  const handleDownloadEquipmentFile = async () => {
-    setLoading(true);
-    await dispatch(DownloadEquipmentFileActionAsync(taskDetail.agencyId));
-    setLoading(false);
-  };
-
   const handleSaveDocument = async () => {
     setLoading(true);
     try {
@@ -229,28 +191,14 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType }) => {
         contractDocumentImageURL: uploadedDocumentFileURLRef.current || (values.contractDocumentImageURL && values.contractDocumentImageURL[0] ? values.contractDocumentImageURL[0].url : additionalInfo.contractDocumentImageURL),
       };
       console.log("handleSaveDocument, formattedValues:", formattedValues);
-      if (taskType === 'AgreementSigned' || taskType === 'BusinessRegistered' || taskType === 'EducationLicenseRegistered') {
-        const documentData = {
-          title: values.title,
-          expirationDate: values.expirationDate ? values.expirationDate.format('YYYY-MM-DD') : null,
-          urlFile: formattedValues.urlFile,
-          type: taskType === 'AgreementSigned' ? 'AgreementContract' : taskType === 'BusinessRegistered' ? 'BusinessLicense' : 'EducationalOperationLicense',
-        };
-
-        await dispatch(UpdateDocumentActionAsync(additionalInfo.id, documentData));
-        setAdditionalInfo({ ...additionalInfo, ...documentData });
-      } else if (taskType === 'SignedContract') {
-        const contractData = {
-          title: values.title,
-          startTime: values.startTime.format('YYYY-MM-DD'),
-          endTime: values.endTime.format('YYYY-MM-DD'),
-          contractDocumentImageURL: formattedValues.contractDocumentImageURL,
-          revenueSharePercentage: parseFloat(values.revenueSharePercentage),
-        };
-        await dispatch(UpdateContractActionAsync(additionalInfo.id, contractData));
-        setAdditionalInfo({ ...additionalInfo, ...contractData });
-      }
-
+      const documentData = {
+        title: values.title,
+        expirationDate: values.expirationDate ? values.expirationDate.format('YYYY-MM-DD') : null,
+        urlFile: formattedValues.urlFile,
+        type: 'EducationalOperationLicense',
+      };
+      await dispatch(UpdateDocumentActionAsync(additionalInfo.id, documentData));
+      setAdditionalInfo({ ...additionalInfo, ...documentData });
       setIsEditingDocument(false);
     } catch (error) {
       console.error("Error saving document: ", error);
@@ -310,97 +258,33 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType }) => {
           >
             <Input placeholder="Nhập tiêu đề" />
           </Form.Item>
-          {taskType === 'AgreementSigned' || taskType === 'BusinessRegistered' || taskType === 'EducationLicenseRegistered' ? (
-            <Form.Item
-              name="expirationDate"
-              label="Ngày hết hạn"
-              rules={[{ required: true, message: 'Vui lòng chọn ngày hết hạn' }]}
+          <Form.Item
+            name="expirationDate"
+            label="Ngày hết hạn"
+            rules={[{ required: true, message: 'Vui lòng chọn ngày hết hạn' }]}
+          >
+            <DatePicker style={{ width: '100%' }} format="YYYY-MM-DD" disabledDate={(current) => current && current < moment().startOf('day')} />
+          </Form.Item>
+          <Form.Item
+            name="urlFile"
+            label="Tài liệu"
+            rules={[{ required: true, message: 'Vui lòng upload tài liệu' }]}
+          >
+            <Upload
+              name="documentFile"
+              customRequest={handleUploadDocumentFile}
+              accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+              maxCount={1}
+              defaultFileList={additionalInfo.urlFile ? [{
+                uid: '-1',
+                name: 'Tệp tài liệu hiện tại',
+                status: 'done',
+                url: additionalInfo.urlFile,
+              }] : []}
             >
-              <DatePicker style={{ width: '100%' }} format="YYYY-MM-DD" disabledDate={(current) => current && current < moment().startOf('day')} />
-            </Form.Item>
-          ) : (
-            <>
-              <Form.Item
-                name="startTime"
-                label="Ngày bắt đầu"
-                rules={[{ required: true, message: 'Vui lòng chọn ngày bắt đầu' }]}
-              >
-                <DatePicker style={{ width: '100%' }} format="YYYY-MM-DD" disabledDate={(current) => current && current < moment().startOf('day')} />
-              </Form.Item>
-              <Form.Item
-                name="endTime"
-                label="Ngày kết thúc"
-                rules={[{ required: true, message: 'Vui lòng chọn ngày kết thúc' }]}
-              >
-                <DatePicker style={{ width: '100%' }} format="YYYY-MM-DD" disabledDate={(current) => current && current <= form.getFieldValue('startTime')} />
-              </Form.Item>
-              <Form.Item
-                name="revenueSharePercentage"
-                label="Tỉ lệ phần trăm ăn chia nhượng quyền"
-                rules={[
-                  { required: true, message: 'Vui lòng nhập tỉ lệ phần trăm' },
-                  {
-                    pattern: /^[0-9]+(\.[0-9]{1,2})?$/,
-                    message: "Vui lòng nhập số thực hợp lệ (VD: 10.5).",
-                  },
-                  {
-                    validator: (_, value) => {
-                      if (!value || (parseFloat(value) >= 0 && parseFloat(value) <= 100)) {
-                        return Promise.resolve();
-                      }
-                      return Promise.reject(new Error("Phần trăm phải nằm trong khoảng 0 đến 100!"));
-                    },
-                  },
-                ]}
-              >
-                <Input min={0} max={100} placeholder="Nhập tỉ lệ phần trăm. VD: 10.5)" addonAfter="%" style={{ width: '100%' }} />
-              </Form.Item>
-            </>
-          )}
-          {taskType !== 'SignedContract' && (
-            <Form.Item
-              name="urlFile"
-              label="Tài liệu"
-              rules={[{ required: true, message: 'Vui lòng upload tài liệu' }]}
-            >
-              <Upload
-                name="documentFile"
-                customRequest={handleUploadDocumentFile}
-                accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                maxCount={1}
-                defaultFileList={additionalInfo.urlFile ? [{
-                  uid: '-1',
-                  name: 'Tệp tài liệu hiện tại',
-                  status: 'done',
-                  url: additionalInfo.urlFile,
-                }] : []}
-              >
-                <Button icon={<UploadOutlined />}>Tải tài liệu</Button>
-              </Upload>
-            </Form.Item>
-          )}
-          {taskType === 'SignedContract' && (
-            <Form.Item
-              name="contractDocumentImageURL"
-              label="File hợp đồng"
-              rules={[{ required: true, message: 'Vui lòng upload file hợp đồng' }]}
-            >
-              <Upload
-                name="contractFile"
-                customRequest={handleUploadDocumentFile}
-                accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                maxCount={1}
-                defaultFileList={additionalInfo.contractDocumentImageURL ? [{
-                  uid: '-1',
-                  name: 'Tệp hợp đồng hiện tại',
-                  status: 'done',
-                  url: additionalInfo.contractDocumentImageURL,
-                }] : []}
-              >
-                <Button icon={<UploadOutlined />}>Tải hợp đồng</Button>
-              </Upload>
-            </Form.Item>
-          )}
+              <Button icon={<UploadOutlined />}>Tải tài liệu</Button>
+            </Upload>
+          </Form.Item>
           <ButtonGroup>
             <Button onClick={() => setIsEditingDocument(false)}>Hủy</Button>
             <Button type="primary" onClick={handleSaveDocument}>Lưu</Button>
@@ -409,39 +293,17 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType }) => {
       );
     }
 
-    if (taskType === 'AgreementSigned' || taskType === 'BusinessRegistered' || taskType === 'EducationLicenseRegistered') {
-      return (
-        <StyledDescriptions bordered column={1}>
-          <Descriptions.Item label="Tiêu đề">{additionalInfo.title}</Descriptions.Item>
-          <Descriptions.Item label="Ngày hết hạn">{dayjs(additionalInfo.expirationDate).format('DD/MM/YYYY')}</Descriptions.Item>
-          <Descriptions.Item label="Tài liệu">
-            <Button type="link" icon={<DownloadOutlined />} href={additionalInfo.urlFile} target="_blank" rel="noopener noreferrer">
-              Tải xuống file tài liệu
-            </Button>
-          </Descriptions.Item>
-        </StyledDescriptions>
-      );
-    } else if (taskType === 'SignedContract') {
-      return (
-        <StyledDescriptions bordered column={1}>
-          <Descriptions.Item label="Tiêu đề">{additionalInfo.title}</Descriptions.Item>
-          <Descriptions.Item label="Ngày bắt đầu">{dayjs(additionalInfo.startTime).format('DD/MM/YYYY')}</Descriptions.Item>
-          <Descriptions.Item label="Ngày kết thúc">{dayjs(additionalInfo.endTime).format('DD/MM/YYYY')}</Descriptions.Item>
-          <Descriptions.Item label="Tổng số tiền">
-            <Text strong>{Number(additionalInfo.total).toLocaleString('vi-VN')} VND</Text>
-          </Descriptions.Item>
-          <Descriptions.Item label="Tỷ lệ chia sẻ doanh thu">
-            <Text strong>{additionalInfo.revenueSharePercentage}%</Text>
-          </Descriptions.Item>
-          <Descriptions.Item label="Tài liệu">
-            <Button type="link" icon={<EyeOutlined />} href={additionalInfo.contractDocumentImageURL} target="_blank" rel="noopener noreferrer">
-              Xem tài liệu hợp đồng
-            </Button>
-          </Descriptions.Item>
-        </StyledDescriptions>
-      );
-    }
-    return null;
+    return (
+      <StyledDescriptions bordered column={1}>
+        <Descriptions.Item label="Tiêu đề">{additionalInfo.title}</Descriptions.Item>
+        <Descriptions.Item label="Ngày hết hạn">{dayjs(additionalInfo.expirationDate).format('DD/MM/YYYY')}</Descriptions.Item>
+        <Descriptions.Item label="Tài liệu">
+          <Button type="link" icon={<DownloadOutlined />} href={additionalInfo.urlFile} target="_blank" rel="noopener noreferrer">
+            Tải xuống file tài liệu
+          </Button>
+        </Descriptions.Item>
+      </StyledDescriptions>
+    );
   }, [additionalInfo, taskType, isEditingDocument]);
 
   const renderContent = () => {
@@ -484,7 +346,7 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType }) => {
               </Form.Item>
               <Form.Item
                 name="reportImageURL"
-                label={taskType === "Design" ? "File thiết kế" : "File đính kèm"}
+                label="File đính kèm"
               >
                 <Upload
                   name="reportFile"
@@ -503,29 +365,6 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType }) => {
                   </Button>
                 </Upload>
               </Form.Item>
-              {taskType === "Design" && (
-                <Form.Item
-                  name="equipmentFileURL"
-                  label="File trang thiết bị"
-                >
-                  <Upload
-                    name="equipmentFile"
-                    customRequest={handleUploadEquipmentFile}
-                    accept=".xls,.xlsx"
-                    maxCount={1}
-                    defaultFileList={taskDetail.equipmentFileURL ? [{
-                      uid: '-1',
-                      name: 'Tệp trang thiết bị hiện tại',
-                      status: 'done',
-                      url: taskDetail.equipmentFileURL,
-                    }] : []}
-                  >
-                    <Button icon={<UploadOutlined />}>
-                      {taskDetail.equipmentFileURL ? "Tải file khác" : "Tải file"}
-                    </Button>
-                  </Upload>
-                </Form.Item>
-              )}
               <ButtonGroup>
                 <Button onClick={() => setIsEditing(false)}>Hủy</Button>
                 <Button type="primary" onClick={handleSaveReport}>Lưu</Button>
@@ -545,30 +384,13 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType }) => {
                   Xem tài liệu đính kèm
                 </Button>
               )}
-              {taskType === "Design" && (
-                <Button
-                  type="primary"
-                  icon={<FilePdfOutlined />}
-                  onClick={handleDownloadEquipmentFile}
-                >
-                  Xuất file trang thiết bị
-                </Button>
-              )}
             </Space>
           )}
         </StyledCard>
 
         {renderAdditionalInfo && (
           <StyledCard
-            title={
-              taskType === 'AgreementSigned'
-                ? 'Thông tin giấy thỏa thuận nguyên tắc'
-                : taskType === 'BusinessRegistered'
-                  ? 'Thông tin Giấy Đăng Ký Doanh Nghiệp'
-                  : taskType === 'EducationLicenseRegistered'
-                    ? 'Thông tin Giấy chứng nhận đăng ký hoạt động giáo dục'
-                    : 'Thông tin hợp đồng'
-            }
+            title="Thông tin Giấy chứng nhận đăng ký hoạt động giáo dục"
             extra={
               taskDetail.status === "None" && taskDetail.submit === "None" && (
                 <Button icon={<FileTextOutlined />} onClick={handleEditDocument}>
