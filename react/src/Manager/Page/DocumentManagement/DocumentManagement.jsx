@@ -1,9 +1,12 @@
 import { Button, Table, Dropdown, Space, Typography, Input, Modal, Tooltip } from "antd";
 import React, { useEffect, useState } from "react";
-import { EditOutlined, DeleteOutlined, SearchOutlined, EllipsisOutlined, DownloadOutlined } from "@ant-design/icons";
+import { EditOutlined, DeleteOutlined, SearchOutlined, EllipsisOutlined, DownloadOutlined, PlusOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { GetDocumentsActionAsync, DeleteDocumentActionAsync } from "../../../Redux/ReducerAPI/DocumentReducer";
 import { useLoading } from "../../../Utils/LoadingContext";
+import EditDocumentModal from "../../Modal/EditDocumentModal";
+import CreateDocumentModal from "../../Modal/CreateDocumentModal";
+import { GetAgencyActionAsync } from "../../../Redux/ReducerAPI/AgencyReducer";
 
 const { Text } = Typography;
 
@@ -15,6 +18,10 @@ const DocumentManagement = () => {
     const [type, setType] = useState(null);
     const [status, setStatus] = useState(null);
     const { setLoading } = useLoading();
+    const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+    const [selectedDocument, setSelectedDocument] = useState(null);
+    const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
+    const { agencyData } = useSelector((state) => state.AgencyReducer);
 
     useEffect(() => {
         setLoading(true);
@@ -37,6 +44,30 @@ const DocumentManagement = () => {
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleEdit = (document) => {
+        setSelectedDocument(document);
+        setIsEditModalVisible(true);
+    };
+
+    const handleEditModalClose = async () => {
+        setIsEditModalVisible(false);
+        setLoading(true);
+        await dispatch(GetDocumentsActionAsync({ pageIndex, pageSize, type, status }));
+        setLoading(false);
+    };
+
+    const handleCreateModalClose = async () => {
+        setIsCreateModalVisible(false);
+        setLoading(true);
+        await dispatch(GetDocumentsActionAsync({ pageIndex, pageSize, type, status }));
+        setLoading(false);
+    };
+
+    const handleCreateModalOpen = () => {
+        dispatch(GetAgencyActionAsync(1, 1000));
+        setIsCreateModalVisible(true);
     };
 
     const renderStatusBadge = (status) => {
@@ -99,7 +130,7 @@ const DocumentManagement = () => {
 
     const handleMenuClick = async (record, key) => {
         if (key === "edit") {
-            // Handle edit action
+            handleEdit(record);
         } else if (key === "delete") {
             Modal.confirm({
                 title: "Bạn có chắc chắn muốn xóa tài liệu này?",
@@ -192,7 +223,12 @@ const DocumentManagement = () => {
     return (
         <div className="card">
             <div className="card-body">
-                <h5 className="card-title mb-3">Quản lý tài liệu</h5>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                    <h5 className="card-title mb-3">Quản lý tài liệu</h5>
+                    <Button type="primary" onClick={handleCreateModalOpen} icon={<PlusOutlined />}>
+                        Tạo tài liệu
+                    </Button>
+                </div>
                 <Table
                     bordered
                     columns={columns}
@@ -208,6 +244,16 @@ const DocumentManagement = () => {
                     onChange={handleTableChange}
                 />
             </div>
+            <EditDocumentModal
+                visible={isEditModalVisible}
+                onClose={handleEditModalClose}
+                document={selectedDocument}
+            />
+            <CreateDocumentModal
+                visible={isCreateModalVisible}
+                onClose={handleCreateModalClose}
+                agencyData={agencyData}
+            />
         </div>
     );
 };
