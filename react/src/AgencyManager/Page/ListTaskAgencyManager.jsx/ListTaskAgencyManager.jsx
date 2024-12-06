@@ -7,12 +7,15 @@ import styled from 'styled-components';
 import moment from 'moment';
 import DynamicFilter from '../../Component/DynamicFilter';
 import { GetTaskUserByLoginActionAsync } from '../../../Redux/ReducerAPI/UserReducer';
-import ViewTaskDetailModal from '../../../Manager/Modal/ViewTaskDetailModal';
-import { GetTaskDetailByIdActionAsync, SubmitTaskReportActionAsync, UpdateTaskStatusActionAsync } from '../../../Redux/ReducerAPI/WorkReducer';
-import SubmitTaskReportModal from '../../Modal/SubmitTaskReportModal';
+import { GetTaskDetailByIdActionAsync, SubmitTaskReportActionAsync, UpdateTaskStatusToSubmittedActionAsync, UpdateTaskStatusActionAsync, GetTaskForAgencyActionAsync } from '../../../Redux/ReducerAPI/WorkReducer';
+import { imageDB } from "../../../Firebasse/Config";
 import { useLoading } from '../../../Utils/LoadingContext';
-import ShowReportModal from '../../Modal/ShowReportModal';
+import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
+import jsPDF from 'jspdf';
 import { CreateEquipmentActionAsync } from '../../../Redux/ReducerAPI/EquipmentReducer';
+import SubmitTaskReportModal from '../../Modal/SubmitTaskReportModal';
+import ShowReportModal from '../../Modal/ShowReportModal';
+import ViewTaskDetailModal from '../../Modal/ViewTaskDetailModal';
 
 const { Title, Text } = Typography;
 
@@ -60,7 +63,7 @@ const getSubmitStatusColor = (submit) => {
     return submit === "Submited" ? '#1890ff' : '#faad14';
 };
 
-const ListTaskManager = () => {
+const ListTaskAgencyManager = () => {
     const { taskUser, totalPagesCount } = useSelector((state) => state.UserReducer);
     const dispatch = useDispatch();
     const { setLoading } = useLoading();
@@ -89,7 +92,7 @@ const ListTaskManager = () => {
     };
 
     useEffect(() => {
-        dispatch(GetTaskUserByLoginActionAsync(
+        dispatch(GetTaskForAgencyActionAsync(
             filters.searchText,
             filters.levelFilter,
             filters.statusFilter,
@@ -120,10 +123,10 @@ const ListTaskManager = () => {
         setSelectedTask(null);
     };
 
-    const openModalShowReport = async (task) => {
+    const openModalShowReport = (task) => {
         setSelectedTask(task);
-        await dispatch(GetTaskDetailByIdActionAsync(task.id));
         setModalShowReportVisible(true);
+        dispatch(GetTaskDetailByIdActionAsync(task.id));
     };
 
     const handleCloseModalShowReport = () => {
@@ -141,7 +144,6 @@ const ListTaskManager = () => {
                     equipmentFormData.append('file', reportData.equipmentFile);
                     const equipmentResponse = await dispatch(CreateEquipmentActionAsync(selectedTask.agencyId, equipmentFormData));
                     if (!equipmentResponse) {
-                        CreateEquipmentActionAsync
                         throw new Error("Error creating equipment");
                     }
                 }
@@ -206,7 +208,7 @@ const ListTaskManager = () => {
                     Xem báo cáo
                 </Button>
             );
-            if (task.submit !== "Submited" && task.status === "None") {
+            if (task.submit !== "Submited") {
                 actions.push(
                     <Button
                         type="primary"
@@ -215,7 +217,7 @@ const ListTaskManager = () => {
                         Nộp báo cáo
                     </Button>
                 );
-            } else if (task.submit === "Submited" && task.status === "None") {
+            } else {
                 actions.push(
                     <Button
                         type="primary"
@@ -348,10 +350,9 @@ const ListTaskManager = () => {
                 visible={modalShowReportVisible}
                 onClose={handleCloseModalShowReport}
                 taskId={selectedTask?.id}
-                taskType={selectedTask?.type} // Pass taskType here
             />
         </Card>
     );
 };
 
-export default ListTaskManager;
+export default ListTaskAgencyManager;

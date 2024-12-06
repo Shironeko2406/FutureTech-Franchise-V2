@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Provider } from "react-redux";
+import { Provider, useSelector } from "react-redux";
 import "./App.css";
 import Home from "./Admin/Page/Home/Home";
 import { store } from "./Redux/Store";
@@ -83,12 +83,17 @@ import ListTaskManager from "./Manager/Page/ListTask/ListTaskManager";
 import AgencyManagerAppointment from "./AgencyManager/Page/ScheduleAgencyManager/AgencyManagerAppointment";
 import AgencyManagerAppointmentDetail from "./AgencyManager/Page/ScheduleAgencyManager/AgencyManagerAppointmentDetail";
 import AgencyActiveManagement from "./Manager/Page/AgencyActiveManagement/AgencyActiveManagement";
-import AgencyActiveDetail from "./Manager/Page/AgencyActiveDetail/AgencyActiveDetail";
 import ViewAssignment from "./Student/Page/ViewAssignment/ViewAssignment";
 import AssignmentDetail from "./Student/Page/AssignmentDetail/AssignmentDetail";
-import EquipmentManagementPage from './Manager/Page/EquipmentManagement/EquipmentManagementPage'; import AgencyAccountManagement from "./AgencyManager/Page/AgencyAccountManagement/AgencyAccountManagement";
+import EquipmentManagementPage from './Manager/Page/EquipmentManagement/EquipmentManagementPage';
+import AgencyAccountManagement from "./AgencyManager/Page/AgencyAccountManagement/AgencyAccountManagement";
 import AccountManagement from "./Admin/Page/AccountManagement/AccountManagement";
 import AccountAgencyManagement from "./Admin/Page/AccountAgencyManagement/AccountAgencyManagement";
+import AgencyActiveDetailTask from "./Manager/Page/AgencyActiveDetailTask/AgencyActiveDetailTask";
+import AgencyActiveInfo from "./Manager/Page/AgencyActiveInfo/AgencyActiveInfo";
+import AgencyProgressFranchise from "./AgencyManager/Page/AgencyProgressFranchise/AgencyProgressFranchise";
+import ListTaskAgencyManager from "./AgencyManager/Page/ListTaskAgencyManager.jsx/ListTaskAgencyManager";
+import WorkTemplate from "./Admin/Page/WorkTemplate/WorkTemplate";
 import HomePageManagement from "./Admin/Page/HomePageManagement/HomePageManagement";
 
 const LoadingOverlay = () => {
@@ -101,142 +106,151 @@ const LoadingOverlay = () => {
 };
 
 function App() {
+  const { statusAgency } = useSelector((state) => state.AuthenticationReducer);
+
   return (
     <ConfigProvider locale={vi_VN}>
       <BrowserRouter>
-        <Provider store={store}>
-          <LoadingProvider>
-            <LoadingOverlay />
-            <Routes>
-              <Route element={<AnonymousRoute />}>
-                <Route path="" element={<Login></Login>} />
-                <Route path="register" element={<Register></Register>} />
-                <Route path="forgot-password" element={<ForgotPassword />} />
-                <Route
-                  path="forgot-password/reset-password"
-                  element={<ResetPassword />}
-                />
+        <LoadingProvider>
+          <LoadingOverlay />
+          <Routes>
+            <Route element={<AnonymousRoute />}>
+              <Route path="" element={<Login></Login>} />
+              <Route path="register" element={<Register></Register>} />
+              <Route path="forgot-password" element={<ForgotPassword />} />
+              <Route
+                path="forgot-password/reset-password"
+                element={<ResetPassword />}
+              />
+            </Route>
+            <Route element={<ProtectedRoute requiredRole="Administrator" />}>
+              <Route path="admin" element={<TempUI />}>
+                <Route path="" element={<Home />} />
+                <Route path="franchise" element={<FranchiseManagement />} />
+                <Route path="course-category" element={<CourseCategoryAdmin />} />
+                <Route path="course" element={<CourseManageAdmin />} />
+                <Route path="profile" element={<Profile />} />
+                <Route path="contracts" element={<ManageContractAdminPage />} />
+                <Route path="system-accounts" element={<AccountManagement />} />
+                <Route path="agency-accounts" element={<AccountAgencyManagement />} />
+                <Route path="work-template" element={<WorkTemplate />} />
+                <Route path="home-page-management" element={<HomePageManagement />} />
               </Route>
-              <Route element={<ProtectedRoute requiredRole="Administrator" />}>
-                <Route path="admin" element={<TempUI />}>
-                  <Route path="" element={<Home />} />
-                  <Route path="franchise" element={<FranchiseManagement />} />
-                  <Route path="course-category" element={<CourseCategoryAdmin />} />
-                  <Route path="course" element={<CourseManageAdmin />} />
-                  <Route path="profile" element={<Profile />} />
-                  <Route path="contracts" element={<ManageContractAdminPage />} />
-                  <Route path="system-accounts" element={<AccountManagement />} />
-                  <Route path="agency-accounts" element={<AccountAgencyManagement />} />
-                  <Route path="home-page-management" element={<HomePageManagement />} />
-                </Route>
-              </Route>
+            </Route>
 
-              <Route element={<ProtectedRoute requiredRole="AgencyManager" />}>
-                <Route path="agency-manager" element={<TempUIAgencyManager />} >
-                  {/* <Route path="" element={<HomeAgencyManager />} /> */}
-                  <Route path="student-consultation-registration" element={<StudentConsultationRegistration />} />
-                  <Route path="student-payment" element={<StudentPaymentManagement />} />
-                  <Route path="slots" element={<SlotManager />} />
-                  <Route path="classes" element={<ClassManagement />} />
-                  <Route path="classes/:id" element={<ClassDetail />} />
-                  <Route path="schedules" element={<ScheduleAgencyManager />} />
-                  <Route path="" element={<AgencyDashboardPage />} />
-                  <Route path="appointment-schedule" element={<AgencyManagerAppointment />} />
-                  <Route path="appointment-schedule/details" element={<AgencyManagerAppointmentDetail />} />
-                  <Route path="course" element={<CourseViewAgencyManager />} />
-                  <Route path="course-detail/:id" element={<CourseDetailAgencyManager />} />
-                  <Route path="accounts" element={<AgencyAccountManagement />} />
-                </Route>
+            <Route element={<ProtectedRoute requiredRole="AgencyManager" />}>
+              <Route path="agency-manager" element={<TempUIAgencyManager />} >
+                <Route path="student-consultation-registration" element={<StudentConsultationRegistration />} />
+                <Route path="student-payment" element={<StudentPaymentManagement />} />
+                <Route path="slots" element={<SlotManager />} />
+                <Route path="classes" element={<ClassManagement />} />
+                <Route path="classes/:id" element={<ClassDetail />} />
+                <Route path="schedules" element={<ScheduleAgencyManager />} />
+                <Route path="task-list" element={<ListTaskAgencyManager />} />
+                <Route path="" element={statusAgency === "active" ? (<AgencyDashboardPage />) : (<AgencyProgressFranchise />)} />
+                <Route path="appointment-schedule" element={<AgencyManagerAppointment />} />
+                <Route path="appointment-schedule/details" element={<AgencyManagerAppointmentDetail />} />
+                <Route path="course" element={<CourseViewAgencyManager />} />
+                <Route path="course-detail/:id" element={<CourseDetailAgencyManager />} />
+                <Route path="accounts" element={<AgencyAccountManagement />} />
+                <Route path="profile" element={<Profile />} />
               </Route>
+            </Route>
 
-              <Route element={<ProtectedRoute requiredRole="Student" />}>
-                <Route path="student" element={<TempUIStudent />}>
-                  <Route path="" element={<HomeStudentNoti />} />
-                  <Route path="class/:id" element={<ClassDetailStudent />} />
-                  <Route path="class/:id/assignment" element={<ViewAssignment />} />
-                  <Route path="quiz" element={<QuizTest />} />
-                  <Route path="assignment/:assignmentId" element={<AssignmentDetail />} />
-                  <Route path="quiz/:quizId" element={<QuizDescription />} />
-                  <Route path="quiz/:quizId/start" element={<QuizTest />} />
-                  <Route path="schedules" element={<ScheduleStudent />} />
-                  <Route path="change-password" element={<ChangePassword />} />
-                </Route>
+            <Route element={<ProtectedRoute requiredRole="Student" />}>
+              <Route path="student" element={<TempUIStudent />}>
+                <Route path="" element={<HomeStudentNoti />} />
+                <Route path="class/:id" element={<ClassDetailStudent />} />
+                <Route path="class/:id/assignment" element={<ViewAssignment />} />
+                <Route path="quiz" element={<QuizTest />} />
+                <Route path="assignment/:assignmentId" element={<AssignmentDetail />} />
+                <Route path="quiz/:quizId" element={<QuizDescription />} />
+                <Route path="quiz/:quizId/start" element={<QuizTest />} />
+                <Route path="schedules" element={<ScheduleStudent />} />
+                <Route path="change-password" element={<ChangePassword />} />
+                <Route path="profile" element={<Profile />} />
               </Route>
+            </Route>
 
-              <Route element={<ProtectedRoute requiredRole="Instructor" />}>
-                <Route path="instructor" element={<TempUIInstructor />}>
-                  <Route path="class/:id" element={<ClassDetailInstructor />} />
-                  <Route path="class/:id/course-detail" element={<CourseDetailOfClass />} />
-                  <Route path="class/:id/quiz" element={<QuizOfClass />} />
-                  <Route path="class/:id/assignment" element={<AssignmentOfClass />} />
-                  <Route path="" element={<HomeInstructor />} />
-                  <Route path="schedule" element={<ScheduleTeaching />} />
-                  <Route path="schedules" element={<ScheduleInstructor />} />
-                  <Route path="schedules/attendances" element={<AttendancePage />} />
-                </Route>
+            <Route element={<ProtectedRoute requiredRole="Instructor" />}>
+              <Route path="instructor" element={<TempUIInstructor />}>
+                <Route path="class/:id" element={<ClassDetailInstructor />} />
+                <Route path="class/:id/course-detail" element={<CourseDetailOfClass />} />
+                <Route path="class/:id/quiz" element={<QuizOfClass />} />
+                <Route path="class/:id/assignment" element={<AssignmentOfClass />} />
+                <Route path="" element={<HomeInstructor />} />
+                <Route path="schedule" element={<ScheduleTeaching />} />
+                <Route path="schedules" element={<ScheduleInstructor />} />
+                <Route path="schedules/attendances" element={<AttendancePage />} />
+                <Route path="profile" element={<Profile />} />
               </Route>
+            </Route>
 
-              <Route element={<ProtectedRoute requiredRole="Manager" />}>
-                <Route path="manager" element={<TempUIManager />}>
-                  <Route path="" element={<HomeManager />} />
-                  <Route path="course-category" element={<CourseCategoryManager />} />
-                  <Route path="course" element={<CourseManage />} />
-                  <Route path="course-detail/:id" element={<CourseDetailManager />} />
-                  <Route path="course-detail/:id/questions" element={<ViewQuestionChapterManager />} />
-                  <Route path="slot" element={<SlotManager />} />
-                  <Route path="documents" element={<DocumentManagement />} />
-                  <Route path="agency/:id/task-detail" element={<AgencyDetail />} />
-                  <Route path="agency-active/:id/task-detail" element={<AgencyActiveDetail />} />
-                  <Route path="agency" element={<AgencyManagement />} />
-                  <Route path="agency-active" element={<AgencyActiveManagement />} />
-                  <Route path="contracts" element={<ManageContractPage />} />
-                  <Route path="contract/create" element={<CreateContractPage />} />
-                  <Route path="appointment-schedule" element={<ManagerAppointment />} />
-                  <Route path="appointment-schedule/details" element={<ManagerAppointmentDetail />} />
-                  <Route path="list-task" element={<ListTaskManager />} />
-                  <Route path="agency-active/:id/equipments" element={<EquipmentManagementPage />} />
-                </Route>
+            <Route element={<ProtectedRoute requiredRole="Manager" />}>
+              <Route path="manager" element={<TempUIManager />}>
+                <Route path="" element={<HomeManager />} />
+                <Route path="course-category" element={<CourseCategoryManager />} />
+                <Route path="course" element={<CourseManage />} />
+                <Route path="course-detail/:id" element={<CourseDetailManager />} />
+                <Route path="course-detail/:id/questions" element={<ViewQuestionChapterManager />} />
+                <Route path="slot" element={<SlotManager />} />
+                <Route path="documents" element={<DocumentManagement />} />
+                <Route path="agency/:id/task-detail" element={<AgencyDetail />} />
+                <Route path="agency-active/:id" element={<AgencyActiveInfo />} />
+                <Route path="agency-active/:id/task-detail" element={<AgencyActiveDetailTask />} />
+                <Route path="agency" element={<AgencyManagement />} />
+                <Route path="agency-active" element={<AgencyActiveManagement />} />
+                <Route path="contracts" element={<ManageContractPage />} />
+                <Route path="contract/create" element={<CreateContractPage />} />
+                <Route path="appointment-schedule" element={<ManagerAppointment />} />
+                <Route path="appointment-schedule/details" element={<ManagerAppointmentDetail />} />
+                <Route path="list-task" element={<ListTaskManager />} />
+                <Route path="agency-active/:id/equipments" element={<EquipmentManagementPage />} />
+                <Route path="profile" element={<Profile />} />
               </Route>
+            </Route>
 
-              <Route element={<ProtectedRoute requiredRole="SystemInstructor" />}>
-                <Route path="system-instructor" element={<TempUISystemInstructor />}>
-                  <Route path="" element={<HomeSystemInstructor />} />
-                  <Route path="course" element={<CourseSystemInstructor />} />
-                  <Route path="course-detail/:id" element={<CourseDetailSystemInstructor />} />
-                  <Route path="course-detail/:id/questions" element={<ViewQuestionChapterSystemInstructor />} />
-                  <Route path="list-task" element={<ListTaskSystemInstructor />} />
-                  <Route path="appointment-schedule" element={<SystemInstructorAppointment />} />
-                  <Route path="appointment-schedule/details" element={<SystemInstructorAppointmentDetail />} />
-                </Route>
+            <Route element={<ProtectedRoute requiredRole="SystemInstructor" />}>
+              <Route path="system-instructor" element={<TempUISystemInstructor />}>
+                <Route path="" element={<HomeSystemInstructor />} />
+                <Route path="course" element={<CourseSystemInstructor />} />
+                <Route path="course-detail/:id" element={<CourseDetailSystemInstructor />} />
+                <Route path="course-detail/:id/questions" element={<ViewQuestionChapterSystemInstructor />} />
+                <Route path="list-task" element={<ListTaskSystemInstructor />} />
+                <Route path="appointment-schedule" element={<SystemInstructorAppointment />} />
+                <Route path="appointment-schedule/details" element={<SystemInstructorAppointmentDetail />} />
+                <Route path="profile" element={<Profile />} />
               </Route>
+            </Route>
 
-              <Route element={<ProtectedRoute requiredRole="SystemTechnician" />}>
-                <Route path="system-technician" element={<TemUISystemTechnician />}>
-                  <Route path="" element={<HomeSystemTechnician />} />
-                  <Route path="list-task" element={<ListTaskSystemTechnician />} />
-                  <Route path="appointment-schedule" element={<SystemTechnicianAppointment />} />
-                  <Route path="appointment-schedule/details" element={<SystemTechnicianAppointmentDetail />} />
-                </Route>
+            <Route element={<ProtectedRoute requiredRole="SystemTechnician" />}>
+              <Route path="system-technician" element={<TemUISystemTechnician />}>
+                <Route path="" element={<HomeSystemTechnician />} />
+                <Route path="list-task" element={<ListTaskSystemTechnician />} />
+                <Route path="appointment-schedule" element={<SystemTechnicianAppointment />} />
+                <Route path="appointment-schedule/details" element={<SystemTechnicianAppointmentDetail />} />
+                <Route path="profile" element={<Profile />} />
               </Route>
+            </Route>
 
-              <Route element={<ProtectedRoute requiredRole="SystemConsultant" />}>
-                <Route path="system-consultant" element={<TempUISystemConsultant />}>
-                  <Route path="" element={<HomeSystemConsultant />} />
-                  <Route path="list-task" element={<ListTaskSystemConsultant />} />
-                  <Route path="appointment-schedule" element={<SystemConsultantAppointment />} />
-                  <Route path="appointment-schedule/details" element={<SystemConsultantAppointmentDetail />} />
-                  <Route path="consult" element={<ConsultationManagement />} />
-                </Route>
+            <Route element={<ProtectedRoute requiredRole="SystemConsultant" />}>
+              <Route path="system-consultant" element={<TempUISystemConsultant />}>
+                <Route path="" element={<HomeSystemConsultant />} />
+                <Route path="list-task" element={<ListTaskSystemConsultant />} />
+                <Route path="appointment-schedule" element={<SystemConsultantAppointment />} />
+                <Route path="appointment-schedule/details" element={<SystemConsultantAppointmentDetail />} />
+                <Route path="consult" element={<ConsultationManagement />} />
+                <Route path="profile" element={<Profile />} />
               </Route>
+            </Route>
 
-              {/*Test page */}
-              <Route path="student-page" element={<TempUIStudent />}>
-                <Route path="" element={<HomeStudent />} />
-                <Route path="course-detail" element={<ClassDetailStudent />} />
-              </Route>
-            </Routes >
-          </LoadingProvider >
-        </Provider >
+            {/*Test page */}
+            <Route path="student-page" element={<TempUIStudent />}>
+              <Route path="" element={<HomeStudent />} />
+              <Route path="course-detail" element={<ClassDetailStudent />} />
+            </Route>
+          </Routes >
+        </LoadingProvider >
       </BrowserRouter >
     </ConfigProvider >
   );

@@ -6,7 +6,7 @@ import {
   USER_LOGIN,
 } from "../../Utils/Interceptors";
 import { message } from "antd";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const MyHeader = ({ onSidebarToggle }) => {
   const navigate = useNavigate();
@@ -56,18 +56,10 @@ const MyHeader = ({ onSidebarToggle }) => {
                 aria-labelledby="drop2"
               >
                 <div className="message-body">
-                  <a className="d-flex align-items-center gap-2 dropdown-item">
+                  <Link className="d-flex align-items-center gap-2 dropdown-item" to={'/instructor/profile'}>
                     <i className="ti ti-user fs-6" />
-                    <p className="mb-0 fs-3">My Profile</p>
-                  </a>
-                  <a className="d-flex align-items-center gap-2 dropdown-item">
-                    <i className="ti ti-mail fs-6" />
-                    <p className="mb-0 fs-3">My Account</p>
-                  </a>
-                  <a className="d-flex align-items-center gap-2 dropdown-item">
-                    <i className="ti ti-list-check fs-6" />
-                    <p className="mb-0 fs-3">My Task</p>
-                  </a>
+                    <p className="mb-0 fs-3">Chi Tiết Tài Khoản</p>
+                  </Link>
                   <button
                     className="btn btn-outline-primary mx-auto d-block mt-2"
                     style={{ width: "85%" }}

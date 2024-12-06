@@ -5,6 +5,7 @@ import { message } from "antd";
 
 const initialState = {
   userLogin: getDataJSONStorage(USER_LOGIN),
+  statusAgency: getDataJSONStorage(USER_LOGIN)?.status || null
 };
 
 const AuthenticationReducer = createSlice({
@@ -12,7 +13,8 @@ const AuthenticationReducer = createSlice({
   initialState,
   reducers: {
     setUserLogin: (state, action) => {
-      state.userLogin = action.payload
+      state.userLogin = action.payload,
+      state.statusAgency = action.payload.status
     }
   },
 });
@@ -37,6 +39,26 @@ export const LoginActionAsync = (dataLogin) => {
     } catch (error) {
       console.error(error);
       message.error("An error occurred during login, please try again.");
+    }
+  };
+};
+
+export const RefreshTokenActionAsync = (refreshToken, accessToken) => {
+  return async (dispatch) => {
+    try {
+
+      const res = await httpClient.put(`/api/v1/auth/new-token`, {refreshToken: refreshToken, accessToken: accessToken});
+      if (res.isSuccess && res.data) {
+        setDataTextStorage(TOKEN_AUTHOR, res.data.accessToken);
+        setDataTextStorage(REFRESH_TOKEN, res.data.refreshToken);
+        return true;
+      } else {
+        message.error(`${res.message}`);
+        return false;
+      }
+    } catch (error) {
+      console.error(error);
+      return false;
     }
   };
 };

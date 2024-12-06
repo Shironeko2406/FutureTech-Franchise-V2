@@ -113,27 +113,6 @@ const AssignmentOfClass = () => {
       </div>
     );
   };
-  
-  
-
-  // const assignments = [
-  //   {
-  //     id: "fb501b04-f6d2-4f8a-941c-08dd0245ef65",
-  //     title: "Bài tập 1",
-  //     description: "Mô tả chi tiết về bài tập 1",
-  //     startTime: "2024-11-11T18:00:00",
-  //     endTime: "2024-11-13T00:00:00",
-  //     status: "Open",
-  //   },
-  //   {
-  //     id: "fb501b04-f6d2-4f8a-941c-08dd0245ef66",
-  //     title: "Bài tập 2",
-  //     description: "Mô tả chi tiết về bài tập 2",
-  //     startTime: "2024-11-14T09:00:00",
-  //     endTime: "2024-11-16T23:59:59",
-  //     status: "Closed",
-  //   },
-  // ];
 
   const columns = [
     {

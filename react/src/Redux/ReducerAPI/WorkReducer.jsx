@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 import { httpClient } from '../../Utils/Interceptors';
 import { message } from 'antd';
 import { GetTaskByAgencyIdActionAsync } from './AgencyReducer';
-import { GetTaskUserByLoginActionAsync } from './UserReducer';
+import { GetTaskUserByLoginActionAsync, setTaskUser } from './UserReducer';
 
 const initialState = {
   taskDetail: {},
@@ -325,6 +325,19 @@ export const GetTaskAgencyActiveByIdActionAsync = (search, level, status, submit
         },
       });
       dispatch(setTaskAgencyActive(res.data));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+};
+
+export const GetTaskForAgencyActionAsync = (search, level, status, submit, pageIndex, pageSize) => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.get(`/agency/api/v1/works`, {
+        params: { Search: search, Level: level, Status: status, Submit: submit, PageIndex: pageIndex, PageSize: pageSize }
+      });
+      dispatch(setTaskUser(res.data));
     } catch (error) {
       console.error(error);
     }

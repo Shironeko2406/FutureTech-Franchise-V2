@@ -10,6 +10,8 @@ const LeftSidebar = ({ onSidebarToggle }) => {
     { type: 'link', label: 'Tài khoản hệ thống', path: '/admin/system-accounts', icon: 'mdi:account-group' },
     { type: 'link', label: 'Tài khoản chi nhánh', path: '/admin/agency-accounts', icon: 'mdi:account-group' },
     { type: 'link', label: 'Hợp đồng', path: '/admin/contracts', icon: 'clarity:contract-solid' },
+    { type: 'section', label: 'Mẫu công việc', icon: 'ti ti-dots' },
+    { type: 'link', label: 'Chi tiết', path: '/admin/work-template', icon: 'solar:file-text-bold-duotone' },
   ];
 
   return (
