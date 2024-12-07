@@ -106,7 +106,7 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
                 <div style={{ display: 'flex', justifyContent: taskType === "Design" ? 'space-between' : 'flex-end', width: '100%' }}>
                     {taskType === "Design" && (
                         <Button key="downloadSample" icon={<DownloadOutlined />} onClick={downloadSampleFile} type="primary">
-                            Tải file mẫu
+                            Tải file trang thiết bị mẫu
                         </Button>
                     )}
                     <div style={{ display: 'flex', gap: '7px' }}>
