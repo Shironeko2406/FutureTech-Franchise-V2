@@ -14,7 +14,7 @@ const ExpandedRow = ({ record }) => {
         const equipment = state.EquipmentReducer.equipmentData.find(e => e.id === record.id);
         return equipment ? equipment.details : [];
     });
-    const { setLoading } = useLoading();
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchDetails = async () => {
@@ -171,10 +171,7 @@ const EquipmentList = () => {
             <div className="card-body">
                 <h5 className="card-title mb-3">Danh sách thiết bị</h5>
                 {/* <Space style={{ marginBottom: 16 }}> */}
-                {/* <span style={{ marginRight: 8 }}>Tìm kiếm:</span>
-                    <Input.Search
-                        placeholder="Tìm kiếm theo tên thiết bị hoặc số seri"
-                        onSearch={handleSearch}
+                {/* <span style={{ marginRight: 8 }}                  onSearch={handleSearch}
                         enterButton
                         style={{ width: 350 }}
                     /> */}
