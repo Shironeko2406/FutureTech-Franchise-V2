@@ -51,8 +51,6 @@ const EquipmentList = () => {
     const [pageIndex, setPageIndex] = useState(1);
     const [pageSize, setPageSize] = useState(10);
     const { setLoading } = useLoading();
-    const [editModalVisible, setEditModalVisible] = useState(false);
-    const [selectedEquipment, setSelectedEquipment] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -114,17 +112,6 @@ const EquipmentList = () => {
         );
     };
 
-    const handleEditClick = (record) => {
-        setSelectedEquipment(record);
-        setEditModalVisible(true);
-    };
-
-    const handleEditSave = async (values) => {
-        await dispatch(UpdateEquipmentActionAsync(selectedEquipment.id, values));
-        await dispatch(GetEquipmentActionAsync(id, status, pageIndex, pageSize));
-        await dispatch(GetEquipmentDetailsActionAsync(selectedEquipment.id)); // Refetch details after edit
-    };
-
     const columns = [
         {
             title: 'STT',
@@ -175,7 +162,6 @@ const EquipmentList = () => {
             key: "action",
             align: "center",
             width: 140,
-
         },
     ];
 

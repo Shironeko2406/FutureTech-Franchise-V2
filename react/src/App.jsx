@@ -95,6 +95,7 @@ import AgencyProgressFranchise from "./AgencyManager/Page/AgencyProgressFranchis
 import ListTaskAgencyManager from "./AgencyManager/Page/ListTaskAgencyManager.jsx/ListTaskAgencyManager";
 import WorkTemplate from "./Admin/Page/WorkTemplate/WorkTemplate";
 import HomePageManagement from "./Admin/Page/HomePageManagement/HomePageManagement";
+import EquipmentList from "./AgencyManager/Page/EquipmentList/EquipmentList";
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -154,6 +155,7 @@ function App() {
                 <Route path="course-detail/:id" element={<CourseDetailAgencyManager />} />
                 <Route path="accounts" element={<AgencyAccountManagement />} />
                 <Route path="profile" element={<Profile />} />
+                <Route path="equipments" element={<EquipmentList />} />
               </Route>
             </Route>
 
