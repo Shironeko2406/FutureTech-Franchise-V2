@@ -70,7 +70,7 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
                 type: taskType
             };
 
-            if (taskType === "Design" && fileEquipment.length > 0) {
+            if (taskType === "Design" && fileEquipment) {
                 formattedValues.equipmentFile = fileEquipment; // Pass the equipment file separately
             }
 
