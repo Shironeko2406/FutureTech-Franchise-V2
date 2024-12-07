@@ -14,15 +14,16 @@ const ExpandedRow = ({ record }) => {
         const equipment = state.EquipmentReducer.equipmentData.find(e => e.id === record.id);
         return equipment ? equipment.details : [];
     });
-    const [loading, setLoading] = useState(true);
+    const { setLoading } = useLoading();
 
     useEffect(() => {
         const fetchDetails = async () => {
+            setLoading(true);
             await dispatch(GetEquipmentDetailsActionAsync(record.id));
             setLoading(false);
         };
         fetchDetails();
-    }, [dispatch, record.id]);
+    }, [dispatch, record.id, setLoading]);
 
     const columns = [
         { title: 'Số seri', dataIndex: 'serialNumber', key: 'serialNumber' },

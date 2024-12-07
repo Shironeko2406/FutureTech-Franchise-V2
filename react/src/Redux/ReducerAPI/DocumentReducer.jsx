@@ -23,12 +23,12 @@ export const { setDocuments, setDocumentDetail } = DocumentReducer.actions;
 export default DocumentReducer.reducer;
 
 //---------API CALL-------------
-export const GetDocumentsActionAsync = ({ pageIndex, pageSize, type, status }) => {
+export const GetDocumentsActionAsync = ({ pageIndex, pageSize, type, status, agencyId }) => {
     return async (dispatch) => {
         try {
             const res = await httpClient.get(`/api/v1/documents`, {
                 params: {
-                    AgencyId: null, // Replace with actual AgencyId
+                    AgencyId: agencyId, // Replace with actual AgencyId
                     Type: type,
                     Status: status,
                     PageIndex: pageIndex,

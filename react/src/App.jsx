@@ -96,6 +96,9 @@ import ListTaskAgencyManager from "./AgencyManager/Page/ListTaskAgencyManager.js
 import WorkTemplate from "./Admin/Page/WorkTemplate/WorkTemplate";
 import HomePageManagement from "./Admin/Page/HomePageManagement/HomePageManagement";
 import EquipmentList from "./AgencyManager/Page/EquipmentList/EquipmentList";
+import DocumentManagementAdmin from "./Admin/Page/DocumentManagementAdmin/DocumentManagementAdmin";
+import ViewContractAgencyManager from "./AgencyManager/Page/ViewContractAgencyManager/ViewContractAgencyManager";
+import ViewDocumentAgencyManager from "./AgencyManager/Page/ViewDocumentAgencyManager/ViewDocumentAgencyManager";
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -136,6 +139,7 @@ function App() {
                 <Route path="agency-accounts" element={<AccountAgencyManagement />} />
                 <Route path="work-template" element={<WorkTemplate />} />
                 <Route path="home-page-management" element={<HomePageManagement />} />
+                <Route path="documents" element={<DocumentManagementAdmin />} />
               </Route>
             </Route>
 
@@ -156,6 +160,9 @@ function App() {
                 <Route path="accounts" element={<AgencyAccountManagement />} />
                 <Route path="profile" element={<Profile />} />
                 <Route path="equipments" element={<EquipmentList />} />
+                <Route path="contracts" element={<ViewContractAgencyManager />} />
+                <Route path="documents" element={<ViewDocumentAgencyManager />} />
+
               </Route>
             </Route>
 

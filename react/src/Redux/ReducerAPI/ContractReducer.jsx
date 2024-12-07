@@ -132,3 +132,24 @@ export const UpdateContractActionAsync = (contractId, contractData) => {
         }
     };
 };
+
+export const GetContractsWithAgencyIdActionAsync = (agencyId, pageIndex, pageSize, startTime, endTime, searchInput) => {
+    return async (dispatch) => {
+        try {
+            const res = await httpClient.get(`/api/v1/contracts`, {
+                params: {
+                    AgencyId: agencyId,
+                    StartTime: startTime,
+                    EndTime: endTime,
+                    SearchInput: searchInput,
+                    PageIndex: pageIndex,
+                    PageSize: pageSize,
+                },
+            });
+            console.log("GetContractsWithAgencyIdActionAsync: ", res);
+            dispatch(setContracts(res.data));
+        } catch (error) {
+            console.error(error);
+        }
+    };
+};

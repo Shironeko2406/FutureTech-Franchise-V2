@@ -68,11 +68,6 @@ const EquipmentManagementPage = () => {
         setStatus(filters.status ? filters.status[0] : null);
     };
 
-    const handleSearch = (value) => {
-        setSearch(value);
-        dispatch(GetEquipmentActionAsync(id, status, 1, pageSize));
-    };
-
     const renderStatusBadge = (status) => {
         const statusConfig = {
             Available: {

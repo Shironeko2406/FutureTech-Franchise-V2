@@ -1,16 +1,14 @@
-import { Button, Table, Dropdown, Space, Typography, Input, Modal, Tooltip } from "antd";
+import { Button, Table, Dropdown, Space, Typography, Modal, Tooltip } from "antd";
 import React, { useEffect, useState } from "react";
-import { EditOutlined, DeleteOutlined, SearchOutlined, EllipsisOutlined, DownloadOutlined, PlusOutlined } from "@ant-design/icons";
+import { EditOutlined, DeleteOutlined, EllipsisOutlined, DownloadOutlined, PlusOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { GetDocumentsActionAsync, DeleteDocumentActionAsync } from "../../../Redux/ReducerAPI/DocumentReducer";
 import { useLoading } from "../../../Utils/LoadingContext";
-import EditDocumentModal from "../../Modal/EditDocumentModal";
-import CreateDocumentModal from "../../Modal/CreateDocumentModal";
 import { GetAgencyActionAsync } from "../../../Redux/ReducerAPI/AgencyReducer";
 
 const { Text } = Typography;
 
-const DocumentManagement = () => {
+const DocumentManagementAdmin = () => {
     const { documents, totalPagesCount } = useSelector((state) => state.DocumentReducer);
     const dispatch = useDispatch();
     const [pageIndex, setPageIndex] = useState(1);
@@ -18,10 +16,6 @@ const DocumentManagement = () => {
     const [type, setType] = useState(null);
     const [status, setStatus] = useState(null);
     const { setLoading } = useLoading();
-    const [isEditModalVisible, setIsEditModalVisible] = useState(false);
-    const [selectedDocument, setSelectedDocument] = useState(null);
-    const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
-    const { agencyData } = useSelector((state) => state.AgencyReducer);
 
     useEffect(() => {
         setLoading(true);
@@ -45,31 +39,6 @@ const DocumentManagement = () => {
             setLoading(false);
         }
     };
-
-    const handleEdit = (document) => {
-        setSelectedDocument(document);
-        setIsEditModalVisible(true);
-    };
-
-    const handleEditModalClose = async () => {
-        setIsEditModalVisible(false);
-        setLoading(true);
-        await dispatch(GetDocumentsActionAsync({ pageIndex, pageSize, type, status }));
-        setLoading(false);
-    };
-
-    const handleCreateModalClose = async () => {
-        setIsCreateModalVisible(false);
-        setLoading(true);
-        await dispatch(GetDocumentsActionAsync({ pageIndex, pageSize, type, status }));
-        setLoading(false);
-    };
-
-    const handleCreateModalOpen = () => {
-        dispatch(GetAgencyActionAsync(1, 1000));
-        setIsCreateModalVisible(true);
-    };
-
     const renderStatusBadge = (status) => {
         const statusConfig = {
             Active: {
@@ -113,36 +82,6 @@ const DocumentManagement = () => {
         };
 
         return typeConfig[type] || typeConfig.AgreementContract;
-    };
-
-    const getActionItems = () => [
-        {
-            label: "Sửa",
-            key: "edit",
-            icon: <EditOutlined style={{ color: "#faad14" }} />,
-        },
-        {
-            label: "Xóa",
-            key: "delete",
-            icon: <DeleteOutlined style={{ color: "red" }} />,
-        },
-    ];
-
-    const handleMenuClick = async (record, key) => {
-        if (key === "edit") {
-            handleEdit(record);
-        } else if (key === "delete") {
-            Modal.confirm({
-                title: "Bạn có chắc chắn muốn xóa tài liệu này?",
-                content: "Hành động này không thể hoàn tác.",
-                okText: "Xóa",
-                okType: "danger",
-                cancelText: "Hủy",
-                onOk: async () => {
-                    await handleDelete(record.id);
-                },
-            });
-        }
     };
 
     const columns = [
@@ -202,18 +141,6 @@ const DocumentManagement = () => {
             align: "center",
             render: (_, record) => (
                 <Space>
-                    <Dropdown
-                        menu={{
-                            items: getActionItems(),
-                            onClick: ({ key }) => handleMenuClick(record, key),
-                        }}
-                    >
-                        <Button
-                            type="primary"
-                            icon={<EllipsisOutlined />}
-                            style={{ backgroundColor: "#50e3c2", color: "#0A5A5A" }}
-                        />
-                    </Dropdown>
                     <Tooltip title="Tải xuống file tài liệu">
                         <Button
                             type="primary"
@@ -231,9 +158,6 @@ const DocumentManagement = () => {
             <div className="card-body">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
                     <h5 className="card-title mb-3">Quản lý tài liệu</h5>
-                    <Button type="primary" onClick={handleCreateModalOpen} icon={<PlusOutlined />}>
-                        Tạo tài liệu
-                    </Button>
                 </div>
                 <Table
                     bordered
@@ -250,18 +174,8 @@ const DocumentManagement = () => {
                     onChange={handleTableChange}
                 />
             </div>
-            <EditDocumentModal
-                visible={isEditModalVisible}
-                onClose={handleEditModalClose}
-                document={selectedDocument}
-            />
-            <CreateDocumentModal
-                visible={isCreateModalVisible}
-                onClose={handleCreateModalClose}
-                agencyData={agencyData}
-            />
         </div>
     );
 };
 
-export default DocumentManagement;
+export default DocumentManagementAdmin;
