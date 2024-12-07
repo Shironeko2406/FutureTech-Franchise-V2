@@ -21,7 +21,7 @@ const CourseViewAgencyManager = () => {
 
     useEffect(() => {
         setLoading(true);
-        dispatch(GetCourseActionAsync(searchTerm, "", pageIndex, pageSize))
+        dispatch(GetCourseActionAsync(searchTerm, "AvailableForFranchise", pageIndex, pageSize))
             .finally(() => setLoading(false));
     }, [searchTerm, pageIndex, pageSize]);
 
