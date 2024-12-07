@@ -1,141 +1,172 @@
-import React, { useState } from 'react';
-import { Modal, Form, Input, DatePicker, InputNumber, Button, Upload, message, Spin } from 'antd'; // Import Spin
-import { UploadOutlined, DownloadOutlined } from '@ant-design/icons';
-import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
+import React, { useState, useEffect } from 'react';
+import { Modal, Form, Upload, Button, DatePicker, Input, InputNumber } from 'antd';
+import { UploadOutlined, DownloadOutlined, CreditCardOutlined } from "@ant-design/icons";
 import { imageDB } from "../../Firebasse/Config";
-import { useDispatch } from 'react-redux';
-import { CreateSignedContractActionAsync, DownloadSampleContractActionAsync } from '../../Redux/ReducerAPI/ContractReducer';
+import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
+import { useDispatch, useSelector } from 'react-redux';
+import { useLoading } from '../../Utils/LoadingContext';
+import { AgencyUploadContractActionAsync, DownloadSampleContractActionAsync, GetContractDetailByAgencyIdActionAsync } from '../../Redux/ReducerAPI/ContractReducer';
+import { CreatePaymentContractActionAsync } from '../../Redux/ReducerAPI/PaymentReducer';
+import { USER_LOGIN } from '../../Utils/Interceptors';
+import { getDataJSONStorage } from '../../Utils/UtilsFunction';
 
-const CreateSignedContractModal = ({ visible, onClose, agencyId }) => {
+const CreateSignedContractModal = ({ visible, onClose, filters, pageIndex, pageSize }) => {
     const [form] = Form.useForm();
-    const dispatch = useDispatch();
     const [file, setFile] = useState(null);
-    const [loading, setLoading] = useState(false); // Local loading state
-    const [downloadLoading, setDownloadLoading] = useState(false);
+    const dispatch = useDispatch();
+    const { contractDetail } = useSelector((state) => state.ContractReducer);
+    const { setLoading } = useLoading();
+    const agencyId = getDataJSONStorage(USER_LOGIN).agencyId
 
-    const handleOk = async () => {
-        setLoading(true);
-        try {
-            const values = await form.validateFields();
-            const storageRef = ref(imageDB, `documents/${file.name}`);
-            await uploadBytes(storageRef, file);
-            const fileURL = await getDownloadURL(storageRef);
-            const contractData = {
-                title: values.title,
-                startTime: values.startTime.format('YYYY-MM-DD'),
-                endTime: values.endTime.format('YYYY-MM-DD'),
-                contractDocumentImageURL: fileURL,
-                revenueSharePercentage: parseFloat(values.revenueSharePercentage),
-                agencyId: agencyId, // Use the passed agencyId
-            };
-            await dispatch(CreateSignedContractActionAsync(contractData));
-            onClose();
-            form.resetFields();
-        } catch (error) {
-            console.error("Error creating signed contract: ", error);
-        } finally {
-            setLoading(false);
+    const requiredPayment = (contractDetail?.depositPercentage / 100) * contractDetail?.total;
+
+    useEffect(() => {
+        if (visible) {
+            dispatch(GetContractDetailByAgencyIdActionAsync(agencyId))
         }
+    }, [visible, dispatch]);
+    
+
+    const handleSubmit =  (value) => {
+        setLoading(true)
+        let formattedValues = {
+            ...value,
+            contractDocumentImageURL: file ? file.url : null, // Use fileUrl to store the URL
+            agencyId: agencyId}
+
+        dispatch(AgencyUploadContractActionAsync(formattedValues, filters, pageIndex, pageSize)).then((res) => {
+            setLoading(false)
+            if (res) {
+                form.resetFields()
+                setFile(null)
+                onClose()
+            }
+        }).catch((err) => {
+            console.log(err)
+            setLoading(false)
+        });  
     };
 
     const handleUpload = async ({ file, onSuccess, onError }) => {
-        if (!file.type.startsWith('application/')) {
-            onError(new Error('Only document files are allowed!'));
-            return;
+        const storageRef = ref(imageDB, `files/${file.name}`);
+        try {
+            await uploadBytes(storageRef, file);
+            const url = await getDownloadURL(storageRef);
+            setFile({ url, name: file.name }); // Store file name and URL
+            onSuccess(null, file);
+        } catch (error) {
+            console.error("Upload error: ", error);
+            onError(error);
         }
-        setFile(file);
-        onSuccess(null, file);
     };
 
     const downloadSampleContract = async () => {
-        setDownloadLoading(true);
+        setLoading(true);
         await dispatch(DownloadSampleContractActionAsync(agencyId));
-        setDownloadLoading(false);
+        setLoading(false);
+    };
+
+    const handlePaymentContract = async () => {
+        setLoading(true);
+        await dispatch(CreatePaymentContractActionAsync(contractDetail?.id));
+        setLoading(false);
     };
 
     return (
         <Modal
-            title="Thêm mới Hợp đồng Chuyển nhượng"
+            title="Nộp bản ký hợp đồng"
             open={visible}
             onCancel={onClose}
+            width={700}
             footer={[
-                <Button key="downloadSample" icon={<DownloadOutlined />} onClick={downloadSampleContract} loading={downloadLoading}>
-                    Tải file mẫu
+                contractDetail?.paidAmount < requiredPayment && ( // Kiểm tra điều kiện
+                    <Button
+                        key="paymentContract"
+                        icon={<CreditCardOutlined />}
+                        type="primary"
+                        onClick={handlePaymentContract}
+                    >
+                        Tạo thanh toán
+                    </Button>
+                ),
+                <Button key="downloadContract" icon={<DownloadOutlined />} onClick={downloadSampleContract} type="primary">
+                    Tải file hợp đồng
                 </Button>,
-                <Button key="back" onClick={onClose} disabled={loading}>
+                <Button key="back" onClick={onClose}>
                     Hủy
                 </Button>,
-                <Button key="submit" type="primary" onClick={handleOk} disabled={loading}>
-                    Thêm mới
+                <Button key="submit" type="primary" onClick={() => form.submit()}>
+                    Nộp hợp đồng
                 </Button>,
             ]}
+            
         >
-            <Spin spinning={loading}>
-                <Form form={form} layout="vertical">
-                    <Form.Item
-                        name="title"
-                        label="Tiêu đề"
-                        rules={[{ required: true, message: 'Vui lòng nhập tiêu đề' }]}
+            <Form form={form} layout="vertical" onFinish={handleSubmit}>
+                <Form.Item
+                    name="contractDocumentImageURL"
+                    label={'File đính kèm'}
+                >
+                    <Upload
+                        name="reportFile"
+                        customRequest={handleUpload}
+                        accept="*"
+                        maxCount={1}
                     >
-                        <Input placeholder="Nhập tiêu đề" />
-                    </Form.Item>
+                        <Button icon={<UploadOutlined />}>Tải file</Button>
+                    </Upload>
+                </Form.Item>
+                {/* {taskType === "Design" && (
                     <Form.Item
-                        name="startTime"
-                        label="Thời gian bắt đầu"
-                        rules={[{ required: true, message: 'Vui lòng chọn thời gian bắt đầu' }]}
-                    >
-                        <DatePicker
-                            style={{ width: '100%' }}
-                            format="YYYY-MM-DD"
-                        />
-                    </Form.Item>
-                    <Form.Item
-                        name="endTime"
-                        label="Thời gian kết thúc"
-                        rules={[{ required: true, message: 'Vui lòng chọn thời gian kết thúc' }]}
-                    >
-                        <DatePicker
-                            style={{ width: '100%' }}
-                            format="YYYY-MM-DD"
-                        />
-                    </Form.Item>
-                    <Form.Item
-                        name="revenueSharePercentage"
-                        label="Tỉ lệ phần trăm ăn chia nhượng quyền"
-                        rules={[
-                            { required: true, message: 'Vui lòng nhập tỉ lệ phần trăm' },
-                            {
-                                pattern: /^[0-9]+(\.[0-9]{1,2})?$/,
-                                message: "Vui lòng nhập số thực hợp lệ (VD: 10.5).",
-                            },
-                            {
-                                validator: (_, value) => {
-                                    if (!value || (parseFloat(value) >= 0 && parseFloat(value) <= 100)) {
-                                        return Promise.resolve();
-                                    }
-                                    return Promise.reject(new Error("Phần trăm phải nằm trong khoảng 0 đến 100!"));
-                                },
-                            },
-                        ]}
-                    >
-                        <Input min={0} max={100} placeholder="Nhập tỉ lệ phần trăm. VD: 10.5)" addonAfter="%" style={{ width: '100%' }} />
-                    </Form.Item>
-                    <Form.Item
-                        name="file"
-                        label="File hợp đồng"
-                        rules={[{ required: true, message: 'Vui lòng upload file' }]}
+                        name="equipmentFile"
+                        label="File trang thiết bị"
                     >
                         <Upload
-                            name="file"
-                            customRequest={handleUpload}
-                            accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                            name="equipmentFile"
+                            customRequest={handleUploadFileEquipment}
+                            accept=".xls,.xlsx"
                             maxCount={1}
                         >
-                            <Button icon={<UploadOutlined />}>Tải tài liệu</Button>
+                            <Button icon={<UploadOutlined />}>Tải file trang thiết bị</Button>
                         </Upload>
                     </Form.Item>
-                </Form>
-            </Spin>
+                )} */}
+                {/* {taskType === "AgreementSigned" && (
+                    <Button key="createAgreement" type="primary" onClick={() => setModalCreateAgreementVisible(true)}>
+                        Thêm mới Thỏa Thuận Nguyên Tắc
+                    </Button>
+                )}
+                {taskType === "BusinessRegistered" && (
+                    <Button key="createBusinessRegistration" type="primary" onClick={() => setModalCreateBusinessRegistrationVisible(true)}>
+                        Thêm mới Giấy Đăng Ký Doanh Nghiệp
+                    </Button>
+                )}
+                {taskType === "EducationLicenseRegistered" && (
+                    <Button key="createEducationalOperationLicense" type="primary" onClick={() => setModalCreateEducationalOperationLicenseVisible(true)}>
+                        Thêm mới giấy phép đăng ký giáo dục
+                    </Button>
+                )} */}
+            </Form>
+            {/* <CreateAgreementModal
+                visible={modalCreateAgreementVisible}
+                onClose={() => setModalCreateAgreementVisible(false)}
+                agencyId={taskDetail?.agencyId}
+            />
+            <CreateBusinessRegistrationModal
+                visible={modalCreateBusinessRegistrationVisible}
+                onClose={() => setModalCreateBusinessRegistrationVisible(false)}
+                agencyId={taskDetail?.agencyId}
+            /> */}
+            {/* <CreateSignedContractModal
+                visible={modalCreateSignedContractVisible}
+                onClose={() => setModalCreateSignedContractVisible(false)}
+                agencyId={taskDetail?.agencyId}
+            /> */}
+
+            {/* <CreateEducationalOperationLicenseModal
+                visible={modalCreateEducationalOperationLicenseVisible}
+                onClose={() => setModalCreateEducationalOperationLicenseVisible(false)}
+                agencyId={taskDetail?.agencyId}
+            /> */}
         </Modal>
     );
 };

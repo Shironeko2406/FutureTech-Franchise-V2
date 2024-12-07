@@ -120,7 +120,7 @@ const AccountManagement = () => {
                 backgroundColor: "#e6fffb",
                 borderColor: "#87e8de",
             },
-            SystemTechician: {
+            SystemTechnician: {
                 text: "Kỹ thuật viên",
                 color: "geekblue",
                 backgroundColor: "#f0f5ff",

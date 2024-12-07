@@ -88,12 +88,12 @@ import AssignmentDetail from "./Student/Page/AssignmentDetail/AssignmentDetail";
 import EquipmentManagementPage from './Manager/Page/EquipmentManagement/EquipmentManagementPage'; 
 import AgencyAccountManagement from "./AgencyManager/Page/AgencyAccountManagement/AgencyAccountManagement";
 import AccountManagement from "./Admin/Page/AccountManagement/AccountManagement";
-import AccountAgencyManagement from "./Admin/Page/AccountAgencyManagement/AccountAgencyManagement";
 import AgencyActiveDetailTask from "./Manager/Page/AgencyActiveDetailTask/AgencyActiveDetailTask";
 import AgencyActiveInfo from "./Manager/Page/AgencyActiveInfo/AgencyActiveInfo";
 import AgencyProgressFranchise from "./AgencyManager/Page/AgencyProgressFranchise/AgencyProgressFranchise";
 import ListTaskAgencyManager from "./AgencyManager/Page/ListTaskAgencyManager.jsx/ListTaskAgencyManager";
 import WorkTemplate from "./Admin/Page/WorkTemplate/WorkTemplate";
+import PaymentSuccess from "./AgencyManager/Page/PaymentSuccess.jsx/PaymentSuccess";
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -131,7 +131,6 @@ function App() {
                   <Route path="profile" element={<Profile />} />
                   <Route path="contracts" element={<ManageContractAdminPage />} />
                   <Route path="system-accounts" element={<AccountManagement />} />
-                  <Route path="agency-accounts" element={<AccountAgencyManagement />} />
                   <Route path="work-template" element={<WorkTemplate/>} />
                 </Route>
               </Route>
@@ -152,6 +151,7 @@ function App() {
                   <Route path="course-detail/:id" element={<CourseDetailAgencyManager />} />
                   <Route path="accounts" element={<AgencyAccountManagement />} />
                   <Route path="profile" element={<Profile />} />
+                  <Route path="payment-success" element={<PaymentSuccess/> } />
                 </Route>
               </Route>
 
