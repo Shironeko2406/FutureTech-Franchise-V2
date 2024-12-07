@@ -1,4 +1,4 @@
-import { CalendarOutlined, CheckCircleFilled, CloseCircleFilled, DeleteOutlined, EditOutlined, EyeOutlined, FileOutlined, FlagOutlined, MinusCircleFilled, PlusOutlined, QuestionCircleOutlined, ReloadOutlined, RightCircleOutlined, SearchOutlined, ToolOutlined, UserSwitchOutlined } from '@ant-design/icons';
+import { BookOutlined, CalendarOutlined, CheckCircleFilled, CloseCircleFilled, DeleteOutlined, EditOutlined, EyeOutlined, FileOutlined, FlagOutlined, MinusCircleFilled, PlusOutlined, QuestionCircleOutlined, ReloadOutlined, RightCircleOutlined, SearchOutlined, ToolOutlined, UserSwitchOutlined } from '@ant-design/icons';
 import { Button, Card, Col, Input, List, Popconfirm, Row, Select, Space, Typography } from 'antd';
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
@@ -93,6 +93,7 @@ const CompulsoryTask = styled(List.Item)`
       case "RepairingEquipment": return <ToolOutlined style={iconStyle} />;
       case "EducationalSupervision": return <EyeOutlined style={iconStyle} />;
       case "RenewContract": return <ReloadOutlined style={iconStyle} />;
+      case "RenewEducationLicense": return <BookOutlined style={iconStyle} />;
       case "Other": return <QuestionCircleOutlined style={iconStyle} />;
       default: return null;
     }
@@ -132,12 +133,13 @@ const translateType = (type) => {
     "RepairingEquipment": "Sửa chữa thiết bị",
     "EducationalSupervision": "Giám sát hoạt động giáo dục",
     "RenewContract": "Gia hạn hợp đồng",
+    "RenewEducationLicense": "Gia hạn giấy phép giáo dục",
     "Other": "Khác"
   };
   return translations[type] || type;
 };
 
-const allTypes = ['TrainningInternal','RepairingEquipment','EducationalSupervision','RenewContract','Other',];
+const allTypes = ['TrainningInternal','RepairingEquipment','EducationalSupervision','RenewContract','RenewEducationLicense','Other',];
 
 const AgencyActiveDetailTask = () => {
   const { tasksAgencyActive, totalPagesCount } = useSelector((state) => state.WorkReducer);

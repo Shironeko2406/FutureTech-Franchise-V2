@@ -88,12 +88,12 @@ import AssignmentDetail from "./Student/Page/AssignmentDetail/AssignmentDetail";
 import EquipmentManagementPage from './Manager/Page/EquipmentManagement/EquipmentManagementPage';
 import AgencyAccountManagement from "./AgencyManager/Page/AgencyAccountManagement/AgencyAccountManagement";
 import AccountManagement from "./Admin/Page/AccountManagement/AccountManagement";
-import AccountAgencyManagement from "./Admin/Page/AccountAgencyManagement/AccountAgencyManagement";
 import AgencyActiveDetailTask from "./Manager/Page/AgencyActiveDetailTask/AgencyActiveDetailTask";
 import AgencyActiveInfo from "./Manager/Page/AgencyActiveInfo/AgencyActiveInfo";
 import AgencyProgressFranchise from "./AgencyManager/Page/AgencyProgressFranchise/AgencyProgressFranchise";
 import ListTaskAgencyManager from "./AgencyManager/Page/ListTaskAgencyManager.jsx/ListTaskAgencyManager";
 import WorkTemplate from "./Admin/Page/WorkTemplate/WorkTemplate";
+import PaymentSuccess from "./AgencyManager/Page/PaymentSuccess.jsx/PaymentSuccess";
 import HomePageManagement from "./Admin/Page/HomePageManagement/HomePageManagement";
 
 const LoadingOverlay = () => {
@@ -132,7 +132,6 @@ function App() {
                 <Route path="profile" element={<Profile />} />
                 <Route path="contracts" element={<ManageContractAdminPage />} />
                 <Route path="system-accounts" element={<AccountManagement />} />
-                <Route path="agency-accounts" element={<AccountAgencyManagement />} />
                 <Route path="work-template" element={<WorkTemplate />} />
                 <Route path="home-page-management" element={<HomePageManagement />} />
               </Route>
@@ -146,7 +145,7 @@ function App() {
                 <Route path="classes" element={<ClassManagement />} />
                 <Route path="classes/:id" element={<ClassDetail />} />
                 <Route path="schedules" element={<ScheduleAgencyManager />} />
-                <Route path="task-list" element={<ListTaskAgencyManager />} />
+                <Route path="task-list" element={<ListTaskAgencyManager/>} />
                 <Route path="" element={statusAgency === "active" ? (<AgencyDashboardPage />) : (<AgencyProgressFranchise />)} />
                 <Route path="appointment-schedule" element={<AgencyManagerAppointment />} />
                 <Route path="appointment-schedule/details" element={<AgencyManagerAppointmentDetail />} />
@@ -154,6 +153,7 @@ function App() {
                 <Route path="course-detail/:id" element={<CourseDetailAgencyManager />} />
                 <Route path="accounts" element={<AgencyAccountManagement />} />
                 <Route path="profile" element={<Profile />} />
+                <Route path="payment-success" element={<PaymentSuccess/> } />
               </Route>
             </Route>
 
@@ -249,7 +249,7 @@ function App() {
               <Route path="" element={<HomeStudent />} />
               <Route path="course-detail" element={<ClassDetailStudent />} />
             </Route>
-          </Routes >
+          </Routes>
         </LoadingProvider >
       </BrowserRouter >
     </ConfigProvider >

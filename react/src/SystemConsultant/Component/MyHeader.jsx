@@ -207,7 +207,7 @@ const MyHeader = ({ onSidebarToggle }) => {
                       removeDataTextStorage(REFRESH_TOKEN);
                       removeDataTextStorage(USER_LOGIN);
                       navigate("/");
-                      message.success("Logout success!");
+                      message.success("Đăng xuất thành công!");
                     }}
                   >
                     Logout
