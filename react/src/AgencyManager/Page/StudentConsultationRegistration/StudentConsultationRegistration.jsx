@@ -89,6 +89,7 @@ const StudentConsultationRegistration = () => {
     // Function
     const handleReloadTableAfterCreateClass = () => {
         setLoading(true);
+        setSelectedRowKeys([]); // Reset selected rows
         dispatch(GetStudentConsultationActionAsync(pageIndex, pageSize, selectedStudentStatus, selectedCourse))
             .finally(() => setLoading(false));
     };
@@ -463,7 +464,11 @@ const StudentConsultationRegistration = () => {
 
                 <AddToClassModal
                     visible={isAddToClassModalVisible}
-                    onClose={() => setIsAddToClassModalVisible(false)}
+                    onClose={() => {
+                        setIsAddToClassModalVisible(false);
+                        setSelectedRowKeys([]); // Reset selected rows
+                        dispatch(GetStudentConsultationActionAsync(pageIndex, pageSize, selectedStudentStatus, selectedCourse));
+                    }}
                     listStudents={getSelectedUserIds()} // Map selectedRowKeys to userIds
                     courseId={selectedCourse}
                     onClassCreated={handleReloadTableAfterCreateClass} // Thêm dòng này
@@ -485,7 +490,10 @@ const StudentConsultationRegistration = () => {
 
                 <AddToClassWithoutCreateModal
                     visible={isAddToClassWithoutCreateModalVisible}
-                    onClose={() => setIsAddToClassWithoutCreateModalVisible(false)}
+                    onClose={() => {
+                        setIsAddToClassWithoutCreateModalVisible(false);
+                        dispatch(GetStudentConsultationActionAsync(pageIndex, pageSize, selectedStudentStatus, selectedCourse));
+                    }}
                     studentId={selectedStudentId}
                     courseId={selectedCourseId}
                 />

@@ -158,7 +158,7 @@ export default function StudentRegistrationDetailsModal({
                                 {formatCurrency(studentDetails.studentAmountPaid)}
                             </Descriptions.Item>
                             <Descriptions.Item label={<Space><CalendarOutlined /> Ngày đăng ký</Space>}>
-                                {studentDetails.registerDate}
+                                {moment(studentDetails.creationDate).format('DD/MM/YYYY')}
                             </Descriptions.Item>
                             <Descriptions.Item label={<Space><ClockCircleOutlined /> Hạn thanh toán</Space>}>
                                 {studentDetails.paymentDeadline ? moment(studentDetails.paymentDeadline).format('DD/MM/YYYY') : "Chưa có"}

@@ -4,8 +4,8 @@ import moment from "moment";
 import "moment/locale/vi"; // Import Vietnamese locale
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useDispatch, useSelector } from 'react-redux';
-import { GetAppointmentSchedulesAgencyActionAsync, GetAppointmentByIdActionAsync } from '../../Redux/ReducerAPI/AppointmentReducer';
-import { useLoading } from '../../Utils/LoadingContext';
+import { GetAppointmentSchedulesAgencyActionAsync, GetAppointmentByIdActionAsync } from '../../../Redux/ReducerAPI/AppointmentReducer';
+import { useLoading } from '../../../Utils/LoadingContext';
 import './AgencyManagerAppointment.css';
 import { useNavigate } from 'react-router-dom';
 

@@ -36,9 +36,6 @@ const ContractDetailModal = ({ visible, onClose, contractDetail }) => {
                     <Space direction="vertical" size="large" style={{ width: '100%' }}>
                         <div style={{ textAlign: 'center', marginBottom: '20px' }}>
                             <Title level={3}>Chi tiết hợp đồng</Title>
-                            <Tag color={getStatusColor(contractDetail.status)} style={{ fontSize: '14px' }}>
-                                {translateStatus(contractDetail.status)}
-                            </Tag>
                         </div>
 
                         <Descriptions bordered column={1} labelStyle={{ fontWeight: 'bold' }}>

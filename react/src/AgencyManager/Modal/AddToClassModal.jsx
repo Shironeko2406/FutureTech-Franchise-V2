@@ -17,6 +17,7 @@ const AddToClassModal = ({ visible, onClose, listStudents, courseId, onClassCrea
     const { slotData } = useSelector((state) => state.SlotReducer);
     const [createdClassId, setCreatedClassId] = useState(null);
 
+
     useEffect(() => {
         if (visible) {
             dispatch(GetSlotActionAsync());
@@ -28,10 +29,17 @@ const AddToClassModal = ({ visible, onClose, listStudents, courseId, onClassCrea
         setSelectedClass(classId);
     };
 
-    const handleConfirm = () => {
+    const handleConfirm = async () => {
         if (selectedClass) {
-            dispatch(AddStudentsToClassActionAsync(selectedClass, listStudents));
-            onClose();
+            setLoading(true);
+            try {
+                await dispatch(AddStudentsToClassActionAsync(selectedClass, listStudents));
+                onClose();
+            } catch (error) {
+                console.error("Error adding students to class: ", error);
+            } finally {
+                setLoading(false);
+            }
         }
     };
 
@@ -107,36 +115,38 @@ const AddToClassModal = ({ visible, onClose, listStudents, courseId, onClassCrea
                     </Button>,
                 ]}
             >
-                <Form layout="vertical mt-4">
-                    <Form.Item label="Chọn lớp học hiện có">
-                        <Select
-                            onChange={handleClassSelect}
-                            style={{ width: "100%" }}
-                        >
-                            {availableClasses.map((cls) => (
-                                <Select.Option key={cls.id} value={cls.id}>
-                                    {`${cls.name} - ${cls.dayOfWeek}`}
-                                </Select.Option>
-                            ))}
-                        </Select>
-                    </Form.Item>
-                    {selectedClass && selectedClassData && (
-                        <>
-                            <Form.Item label="Giảng viên">
-                                <Input value={selectedClassData.instructorName} disabled />
-                            </Form.Item>
-                            <Form.Item label="Sức chứa">
-                                <Input value={selectedClassData.capacity} disabled />
-                            </Form.Item>
-                            <Form.Item label="Số người đang học">
-                                <Input value={selectedClassData.currentEnrollment} disabled />
-                            </Form.Item>
-                        </>
-                    )}
-                    <Button type="link" onClick={handleCreateClassClick}>
-                        <PlusOutlined /> Tạo lớp mới
-                    </Button>
-                </Form>
+                <Spin spinning={isLoading}>
+                    <Form layout="vertical mt-4">
+                        <Form.Item label="Chọn lớp học hiện có">
+                            <Select
+                                onChange={handleClassSelect}
+                                style={{ width: "100%" }}
+                            >
+                                {availableClasses.map((cls) => (
+                                    <Select.Option key={cls.id} value={cls.id}>
+                                        {`${cls.name} - ${cls.dayOfWeek}`}
+                                    </Select.Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                        {selectedClass && selectedClassData && (
+                            <>
+                                <Form.Item label="Giảng viên">
+                                    <Input value={selectedClassData.instructorName} disabled />
+                                </Form.Item>
+                                <Form.Item label="Sức chứa">
+                                    <Input value={selectedClassData.capacity} disabled />
+                                </Form.Item>
+                                <Form.Item label="Số người đang học">
+                                    <Input value={selectedClassData.currentEnrollment} disabled />
+                                </Form.Item>
+                            </>
+                        )}
+                        <Button type="link" onClick={handleCreateClassClick}>
+                            <PlusOutlined /> Tạo lớp mới
+                        </Button>
+                    </Form>
+                </Spin>
             </Modal>
 
             {/* Create Class Modal */}
