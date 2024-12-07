@@ -141,7 +141,6 @@ const ListTaskManager = () => {
                     equipmentFormData.append('file', reportData.equipmentFile);
                     const equipmentResponse = await dispatch(CreateEquipmentActionAsync(selectedTask.agencyId, equipmentFormData));
                     if (!equipmentResponse) {
-                        CreateEquipmentActionAsync
                         throw new Error("Error creating equipment");
                     }
                 }
@@ -156,7 +155,6 @@ const ListTaskManager = () => {
                     pageSize
                 ));
             } catch (error) {
-                message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
                 console.error("Error uploading file: ", error);
             } finally {
                 setLoading(false);

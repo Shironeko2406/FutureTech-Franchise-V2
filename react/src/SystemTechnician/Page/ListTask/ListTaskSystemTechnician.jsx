@@ -137,11 +137,11 @@ const ListTaskSystemTechnician = () => {
       try {
         let formData = { ...reportData };
         if (reportData.type === "Design" && reportData.equipmentFile) {
+          console.log("formData", formData);
           const equipmentFormData = new FormData();
           equipmentFormData.append('file', reportData.equipmentFile);
           const equipmentResponse = await dispatch(CreateEquipmentActionAsync(selectedTask.agencyId, equipmentFormData));
           if (!equipmentResponse) {
-            CreateEquipmentActionAsync
             throw new Error("Error creating equipment");
           }
         }
@@ -156,7 +156,6 @@ const ListTaskSystemTechnician = () => {
           pageSize
         ));
       } catch (error) {
-        message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
         console.error("Error uploading file: ", error);
       } finally {
         setLoading(false);
