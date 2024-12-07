@@ -163,9 +163,8 @@ const HomePageManagement = () => {
                                         <Col xs={24} sm={12}>
                                             <Space align="start">
                                                 <MailOutlined style={{ fontSize: '20px', color: '#1890ff' }} />
-                                                <div>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                                     <Text strong>Email:</Text>
-                                                    <br />
                                                     <Text>{homePageData.contactEmail}</Text>
                                                 </div>
                                             </Space>
@@ -173,9 +172,8 @@ const HomePageManagement = () => {
                                         <Col xs={24} sm={12}>
                                             <Space align="start">
                                                 <PhoneOutlined style={{ fontSize: '20px', color: '#1890ff' }} />
-                                                <div>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                                     <Text strong>Số điện thoại:</Text>
-                                                    <br />
                                                     <Text>{homePageData.phoneNumber}</Text>
                                                 </div>
                                             </Space>
