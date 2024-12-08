@@ -194,7 +194,26 @@ const ListTaskManager = () => {
             />
         ];
 
-        if (task.report) {
+        if (task.type === "AgreementSigned" && task.level === "Compulsory" && task.customerSubmit && task.report === null) {
+            actions.push(
+                <Button
+                    type="primary"
+                    icon={<EyeOutlined />}
+                    onClick={() => window.open(task.customerSubmit, "_blank")}
+                >
+                    Xem tài liệu
+                </Button>
+            );
+            actions.push(
+                <Button
+                    type="primary"
+                    icon={<UploadOutlined />}
+                    onClick={() => openModalSubmitTaskReport(task)}
+                >
+                    Báo cáo
+                </Button>
+            );
+        } else if (task.report) {
             actions.push(
                 <Button
                     type="primary"
@@ -346,7 +365,8 @@ const ListTaskManager = () => {
                 visible={modalShowReportVisible}
                 onClose={handleCloseModalShowReport}
                 taskId={selectedTask?.id}
-                taskType={selectedTask?.type} // Pass taskType here
+                taskType={selectedTask?.type}
+                task={selectedTask} // Pass task here
             />
         </Card>
     );

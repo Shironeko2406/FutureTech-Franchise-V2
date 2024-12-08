@@ -104,7 +104,7 @@ const StyledCard = styled(Card)`
   }
 `;
 
-const ShowReportModal = ({ visible, onClose, taskId, taskType }) => {
+const ShowReportModal = ({ visible, onClose, taskId, taskType, task }) => {
   const dispatch = useDispatch();
   const { taskDetail, loading } = useSelector((state) => state.WorkReducer);
   const { setLoading } = useLoading();
@@ -415,7 +415,7 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType }) => {
           <Descriptions.Item label="Tiêu đề">{additionalInfo.title}</Descriptions.Item>
           <Descriptions.Item label="Ngày hết hạn">{dayjs(additionalInfo.expirationDate).format('DD/MM/YYYY')}</Descriptions.Item>
           <Descriptions.Item label="Tài liệu">
-            <Button type="link" icon={<DownloadOutlined />} href={additionalInfo.urlFile} target="_blank" rel="noopener noreferrer">
+            <Button type="link" icon={<DownloadOutlined />} href={taskType === 'AgreementSigned' && additionalInfo.level === "Compulsory" ? task.customerSubmit : additionalInfo.urlFile} target="_blank" rel="noopener noreferrer">
               Tải xuống file tài liệu
             </Button>
           </Descriptions.Item>
@@ -442,7 +442,7 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType }) => {
       );
     }
     return null;
-  }, [additionalInfo, taskType, isEditingDocument]);
+  }, [additionalInfo, taskType, isEditingDocument, task]);
 
   const renderContent = () => {
     if (loading || additionalLoading) {
@@ -569,13 +569,13 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType }) => {
                     ? 'Thông tin Giấy chứng nhận đăng ký hoạt động giáo dục'
                     : 'Thông tin hợp đồng'
             }
-            extra={
-              taskDetail.status === "None" && taskDetail.submit === "None" && (
-                <Button icon={<FileTextOutlined />} onClick={handleEditDocument}>
-                  Chỉnh sửa
-                </Button>
-              )
-            }
+          // extra={
+          //   taskDetail.status === "None" && taskDetail.submit === "None" && (
+          //     <Button icon={<FileTextOutlined />} onClick={handleEditDocument}>
+          //       Chỉnh sửa
+          //     </Button>
+          //   )
+          // }
           >
             {renderAdditionalInfo}
           </StyledCard>
