@@ -30,10 +30,11 @@ const LeftSidebar = ({ onSidebarToggle }) => {
     { type: 'link', label: 'Chi tiết', path: '#', icon: 'solar:file-text-bold-duotone' },
     { type: 'section', label: 'Công việc bàn giao', icon: 'ti ti-dots' },
     { type: 'link', label: 'Quản lý', path: '/agency-manager/task-list', icon: 'solar:file-text-bold-duotone' },
+    { type: 'link', label: 'Lịch hẹn', path: '/agency-manager/appointment-schedule', icon: 'solar:calendar-bold-duotone' },
   ];
 
   // Lựa chọn menu dựa trên trạng thái người dùng
-  const sidebarItems = statusAgency !== "active" ? activeMenu : inactiveMenu;
+  const sidebarItems = statusAgency === "active" ? activeMenu : inactiveMenu;
 
 
   return (
