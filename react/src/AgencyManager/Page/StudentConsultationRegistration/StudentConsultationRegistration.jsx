@@ -9,6 +9,9 @@ import { CreateStudentPaymentActionAsync } from "../../../Redux/ReducerAPI/Payme
 import AddToClassModal from "../../Modal/AddToClassModal";
 import StudentRegistrationDetailsModal from "../../Modal/StudentRegistrationDetailsModal";
 import AddToClassWithoutCreateModal from "../../Modal/AddToClassWithoutCreateModal";
+import CreateStudentRegistrationModal from "../../Modal/CreateStudentRegistrationModal";
+import { GetUserLoginActionAsync } from "../../../Redux/ReducerAPI/UserReducer";
+import { CreateStudentRegistrationActionAsync } from "../../../Redux/ReducerAPI/RegisterCourseReducer";
 
 const { Text } = Typography;
 
@@ -17,6 +20,7 @@ const StudentConsultationRegistration = () => {
         (state) => state.RegisterCourseReducer
     );
     const { course } = useSelector((state) => state.CourseReducer);
+    const { userProfile } = useSelector((state) => state.UserReducer);
     const dispatch = useDispatch();
     const [pageIndex, setPageIndex] = useState(1);
     const [pageSize, setPageSize] = useState(10); // Default page size is 10
@@ -35,6 +39,8 @@ const StudentConsultationRegistration = () => {
     const [selectedStudentId, setSelectedStudentId] = useState(null);
     const [selectedCourseId, setSelectedCourseId] = useState(null);
     const [isAddToClassWithoutCreateModalVisible, setIsAddToClassWithoutCreateModalVisible] = useState(false);
+    const [isCreateRegistrationModalVisible, setIsCreateRegistrationModalVisible] = useState(false);
+    const [isCreatingRegistration, setIsCreatingRegistration] = useState(false);
 
     useEffect(() => {
         setLoading(true);
@@ -324,6 +330,22 @@ const StudentConsultationRegistration = () => {
         }).filter(userId => userId !== null);
     };
 
+    const handleCreateRegistrationClick = () => {
+        dispatch(GetUserLoginActionAsync()).then(() => {
+            setIsCreateRegistrationModalVisible(true);
+        });
+    };
+
+    const handleCreateRegistrationSubmit = (registrationData) => {
+        setIsCreatingRegistration(true);
+        dispatch(CreateStudentRegistrationActionAsync(registrationData)).then(() => {
+            dispatch(GetStudentConsultationActionAsync(pageIndex, pageSize, selectedStudentStatus, selectedCourse));
+            setIsCreateRegistrationModalVisible(false);
+        }).finally(() => {
+            setIsCreatingRegistration(false);
+        });
+    };
+
     const columns = [
         {
             title: "Tên học viên",
@@ -410,28 +432,37 @@ const StudentConsultationRegistration = () => {
         <div className="card">
             <div className="card-body">
                 <h5 className="card-title mb-3">Danh Sách Học Sinh Đăng Ký Khóa Học</h5>
-                <Space style={{ marginBottom: 16 }}>
+                <Space style={{ marginBottom: 16, justifyContent: 'space-between', width: '100%' }}>
+                    <div>
+                        <Button
+                            type="primary"
+                            onClick={() => setIsAddToClassModalVisible(true)}
+                            disabled={!hasSelected}
+                            icon={<UsergroupAddOutlined />}
+                        >
+                            Thêm vào lớp
+                        </Button>
+                        <Button
+                            type="default"
+                            variant="solid"
+                            disabled={!hasSelected}
+                            onClick={handleReload}
+                            icon={<CloseCircleOutlined />}
+                            style={{ marginLeft: 4 }}
+                        >
+                            Bỏ chọn
+                        </Button>
+                        <span style={{ marginLeft: 4, color: 'black' }}>
+                            {hasSelected ? `Đã chọn ${selectedRowKeys.length} học sinh` : ''}
+                        </span>
+                    </div>
                     <Button
                         type="primary"
-                        onClick={() => setIsAddToClassModalVisible(true)}
-                        disabled={!hasSelected}
+                        onClick={handleCreateRegistrationClick}
                         icon={<UsergroupAddOutlined />}
                     >
-                        Thêm vào lớp
+                        Tạo mới ghi danh
                     </Button>
-                    <Button
-                        type="default"
-                        variant="solid"
-                        disabled={!hasSelected}
-                        onClick={handleReload}
-                        icon={<CloseCircleOutlined />}
-                        style={{ marginLeft: 4 }}
-                    >
-                        Bỏ chọn
-                    </Button>
-                    <span style={{ marginLeft: 4, color: 'black' }}>
-                        {hasSelected ? `Đã chọn ${selectedRowKeys.length} học sinh` : ''}
-                    </span>
                 </Space>
                 <Spin spinning={loading}>
                     <Table
@@ -496,6 +527,15 @@ const StudentConsultationRegistration = () => {
                     }}
                     studentId={selectedStudentId}
                     courseId={selectedCourseId}
+                />
+
+                <CreateStudentRegistrationModal
+                    visible={isCreateRegistrationModalVisible}
+                    onClose={() => setIsCreateRegistrationModalVisible(false)}
+                    onSubmit={handleCreateRegistrationSubmit}
+                    courses={course}
+                    agencyId={userProfile.agencyId}
+                    loading={isCreatingRegistration}
                 />
             </div>
         </div>
