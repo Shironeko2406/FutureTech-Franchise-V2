@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Button, Modal, Select, Form, Input, Spin, DatePicker } from "antd";
+import { Button, Modal, Select, Form, Input, Spin, DatePicker, Typography, Card, Row, Col, Divider } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { GetAllInstructorsAvailableActionAsync, CreateClassActionAsync, GetAvailableClassesByCourseIdActionAsync, AddStudentsToClassActionAsync } from "../../Redux/ReducerAPI/ClassReducer";
 import { CreateClassScheduleActionAsync } from "../../Redux/ReducerAPI/ClassScheduleReducer";
 import { GetSlotActionAsync } from "../../Redux/ReducerAPI/SlotReducer";
 import moment from 'moment';
+
+const { Title, Text } = Typography;
 
 const AddToClassModal = ({ visible, onClose, listStudents, courseId, onClassCreated }) => {
     const dispatch = useDispatch();
@@ -45,7 +47,6 @@ const AddToClassModal = ({ visible, onClose, listStudents, courseId, onClassCrea
 
     // Open the Create Class modal
     const handleCreateClassClick = () => {
-        onClose();
         setIsCreateModalVisible(true);
     };
 
@@ -130,17 +131,33 @@ const AddToClassModal = ({ visible, onClose, listStudents, courseId, onClassCrea
                             </Select>
                         </Form.Item>
                         {selectedClass && selectedClassData && (
-                            <>
-                                <Form.Item label="Giảng viên">
-                                    <Input value={selectedClassData.instructorName} disabled />
-                                </Form.Item>
-                                <Form.Item label="Sức chứa">
-                                    <Input value={selectedClassData.capacity} disabled />
-                                </Form.Item>
-                                <Form.Item label="Số người đang học">
-                                    <Input value={selectedClassData.currentEnrollment} disabled />
-                                </Form.Item>
-                            </>
+                            <Card
+                                className="mt-4"
+                                style={{ backgroundColor: '#f0f2f5', borderRadius: 8 }}
+                            >
+                                <Title level={4} style={{ marginBottom: 16 }}>Thông tin lớp học</Title>
+                                <Divider style={{ margin: '12px 0' }} />
+                                <Row gutter={[16, 16]}>
+                                    <Col span={12}>
+                                        <InfoItem label="Tên lớp" value={selectedClassData.name} />
+                                    </Col>
+                                    <Col span={12}>
+                                        <InfoItem label="Giảng viên" value={selectedClassData.instructorName} />
+                                    </Col>
+                                    <Col span={12}>
+                                        <InfoItem label="Sức chứa" value={`${selectedClassData.capacity} học viên`} />
+                                    </Col>
+                                    <Col span={12}>
+                                        <InfoItem label="Số người đang học" value={`${selectedClassData.currentEnrollment} học viên`} />
+                                    </Col>
+                                    <Col span={12}>
+                                        <InfoItem label="Ngày bắt đầu" value={moment(selectedClassData.startDate).format('DD/MM/YYYY')} />
+                                    </Col>
+                                    <Col span={12}>
+                                        <InfoItem label="Số buổi đã học" value={`${selectedClassData.daysElapsed} buổi`} />
+                                    </Col>
+                                </Row>
+                            </Card>
                         )}
                         <Button type="link" onClick={handleCreateClassClick}>
                             <PlusOutlined /> Tạo lớp mới
@@ -255,5 +272,12 @@ const AddToClassModal = ({ visible, onClose, listStudents, courseId, onClassCrea
         </>
     );
 };
+
+const InfoItem = ({ label, value }) => (
+    <div style={{ marginBottom: 8 }}>
+        <Text type="secondary" style={{ marginRight: 8 }}>{label}:</Text>
+        <Text strong>{value}</Text>
+    </div>
+);
 
 export default AddToClassModal;

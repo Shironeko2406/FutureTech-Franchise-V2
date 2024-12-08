@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Button, Modal, Select, Form, Input } from "antd";
+import { Button, Modal, Select, Form, Input, Typography, Card, Row, Col, Divider } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { GetAvailableClassesByCourseIdActionAsync, AddStudentsToClassActionAsync } from "../../Redux/ReducerAPI/ClassReducer";
 import { useLoading } from '../../Utils/LoadingContext';
+import moment from 'moment';
+
+const { Title, Text } = Typography;
 
 const AddToClassWithoutCreateModal = ({ visible, onClose, studentId, courseId }) => {
     const dispatch = useDispatch();
@@ -68,21 +71,44 @@ const AddToClassWithoutCreateModal = ({ visible, onClose, studentId, courseId })
                     </Select>
                 </Form.Item>
                 {selectedClass && selectedClassData && (
-                    <>
-                        <Form.Item label="Giảng viên">
-                            <Input value={selectedClassData.instructorName} disabled />
-                        </Form.Item>
-                        <Form.Item label="Sức chứa">
-                            <Input value={selectedClassData.capacity} disabled />
-                        </Form.Item>
-                        <Form.Item label="Số người đang học">
-                            <Input value={selectedClassData.currentEnrollment} disabled />
-                        </Form.Item>
-                    </>
+                    <Card
+                        className="mt-4"
+                        style={{ backgroundColor: '#f0f2f5', borderRadius: 8 }}
+                    >
+                        <Title level={4} style={{ marginBottom: 16 }}>Thông tin lớp học</Title>
+                        <Divider style={{ margin: '12px 0' }} />
+                        <Row gutter={[16, 16]}>
+                            <Col span={12}>
+                                <InfoItem label="Tên lớp" value={selectedClassData.name} />
+                            </Col>
+                            <Col span={12}>
+                                <InfoItem label="Giảng viên" value={selectedClassData.instructorName} />
+                            </Col>
+                            <Col span={12}>
+                                <InfoItem label="Sức chứa" value={`${selectedClassData.capacity} học viên`} />
+                            </Col>
+                            <Col span={12}>
+                                <InfoItem label="Số người đang học" value={`${selectedClassData.currentEnrollment} học viên`} />
+                            </Col>
+                            <Col span={12}>
+                                <InfoItem label="Ngày bắt đầu" value={moment(selectedClassData.startDate).format('DD/MM/YYYY')} />
+                            </Col>
+                            <Col span={12}>
+                                <InfoItem label="Số buổi đã học" value={`${selectedClassData.daysElapsed} buổi`} />
+                            </Col>
+                        </Row>
+                    </Card>
                 )}
             </Form>
         </Modal>
     );
 };
+
+const InfoItem = ({ label, value }) => (
+    <div style={{ marginBottom: 8 }}>
+        <Text type="secondary" style={{ marginRight: 8 }}>{label}:</Text>
+        <Text strong>{value}</Text>
+    </div>
+);
 
 export default AddToClassWithoutCreateModal;

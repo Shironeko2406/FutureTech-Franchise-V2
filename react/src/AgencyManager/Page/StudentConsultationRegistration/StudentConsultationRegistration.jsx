@@ -464,12 +464,12 @@ const StudentConsultationRegistration = () => {
 
                 <AddToClassModal
                     visible={isAddToClassModalVisible}
+                    listStudents={getSelectedUserIds()} // Map selectedRowKeys to userIds
                     onClose={() => {
                         setIsAddToClassModalVisible(false);
                         setSelectedRowKeys([]); // Reset selected rows
                         dispatch(GetStudentConsultationActionAsync(pageIndex, pageSize, selectedStudentStatus, selectedCourse));
                     }}
-                    listStudents={getSelectedUserIds()} // Map selectedRowKeys to userIds
                     courseId={selectedCourse}
                     onClassCreated={handleReloadTableAfterCreateClass} // Thêm dòng này
                 />
