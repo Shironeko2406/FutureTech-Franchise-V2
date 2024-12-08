@@ -145,7 +145,7 @@ export const UpdateContractActionAsync = (contractId, contractData) => {
   };
 };
 
-export const AgencyUploadContractActionAsync = (data,  filters, pageIndex, pageSize) => {
+export const AgencyUploadContractActionAsync = (data, filters, pageIndex, pageSize) => {
   return async (dispatch) => {
     try {
       const res = await httpClient.put(`/api/v1/contracts/agency?ContractDocumentImageURL=${data.contractDocumentImageURL}&AgencyId=${data.agencyId}`);
@@ -163,6 +163,28 @@ export const AgencyUploadContractActionAsync = (data,  filters, pageIndex, pageS
       console.error("UpdateContractActionAsync", error);
       message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
       return false;
+    }
+  };
+};
+
+
+export const GetContractsWithAgencyIdActionAsync = (agencyId, pageIndex, pageSize, startTime, endTime, searchInput) => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.get(`/api/v1/contracts`, {
+        params: {
+          AgencyId: agencyId,
+          StartTime: startTime,
+          EndTime: endTime,
+          SearchInput: searchInput,
+          PageIndex: pageIndex,
+          PageSize: pageSize,
+        },
+      });
+      console.log("GetContractsWithAgencyIdActionAsync: ", res);
+      dispatch(setContracts(res.data));
+    } catch (error) {
+      console.error(error);
     }
   };
 };

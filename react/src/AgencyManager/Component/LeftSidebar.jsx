@@ -11,6 +11,9 @@ const LeftSidebar = ({ onSidebarToggle }) => {
     { type: 'link', label: 'Doanh thu', path: '', icon: 'solar:home-smile-bold-duotone' },
     { type: 'link', label: 'Lịch hẹn', path: '/agency-manager/appointment-schedule', icon: 'solar:calendar-bold-duotone' },
     { type: 'link', label: 'Khóa học', path: '/agency-manager/course', icon: 'mdi:book-open-page-variant' },
+    { type: 'link', label: 'Trang thiết bị', path: '/agency-manager/equipments', icon: 'mdi:tools' },
+    { type: 'link', label: 'Hợp đồng', path: '/agency-manager/contracts', icon: 'clarity:contract-solid' },
+    { type: 'link', label: 'Tài liệu', path: '/agency-manager/documents', icon: 'solar:document-bold-duotone' },
     { type: 'section', label: 'Quản lý', icon: 'ti ti-dots' },
     { type: 'link', label: 'Tài khoản', path: '/agency-manager/accounts', icon: 'mdi:account-group' },
     { type: 'link', label: 'Giao dịch', path: '/agency-manager/student-payment', icon: 'fluent:payment-20-filled' },
@@ -27,6 +30,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
     { type: 'link', label: 'Chi tiết', path: '#', icon: 'solar:file-text-bold-duotone' },
     { type: 'section', label: 'Công việc bàn giao', icon: 'ti ti-dots' },
     { type: 'link', label: 'Quản lý', path: '/agency-manager/task-list', icon: 'solar:file-text-bold-duotone' },
+    { type: 'link', label: 'Lịch hẹn', path: '/agency-manager/appointment-schedule', icon: 'solar:calendar-bold-duotone' },
   ];
 
   // Lựa chọn menu dựa trên trạng thái người dùng

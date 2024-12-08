@@ -191,6 +191,12 @@ const DocumentManagement = () => {
             render: (status) => renderStatusBadge(status),
         },
         {
+            title: "Ngày hết hạn",
+            dataIndex: "expirationDate",
+            key: "expirationDate",
+            align: "center",
+        },
+        {
             title: "Hành động",
             key: "action",
             align: "center",

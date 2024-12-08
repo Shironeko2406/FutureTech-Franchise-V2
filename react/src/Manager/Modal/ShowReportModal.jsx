@@ -118,7 +118,7 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType }) => {
   const uploadedDocumentFileURLRef = useRef(null);
 
   useEffect(() => {
-    if (visible && taskId) {
+    if (visible && taskId && taskDetail) {
       console.log("taskDetail", taskDetail);
       let documentType = '';
       if (taskType === 'AgreementSigned') {

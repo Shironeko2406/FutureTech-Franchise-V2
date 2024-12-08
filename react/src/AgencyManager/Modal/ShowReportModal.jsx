@@ -1,12 +1,14 @@
-import React, { useEffect } from 'react';
-import { Modal, Button, Typography, Spin, Empty } from 'antd';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Modal, Button, Typography, Spin, Descriptions } from 'antd';
 import styled from 'styled-components';
-import { EyeOutlined, FilePdfOutlined } from '@ant-design/icons';
-import DOMPurify from 'dompurify';
+import { EyeOutlined, DownloadOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { GetTaskDetailByIdActionAsync } from '../../Redux/ReducerAPI/WorkReducer';
+import { GetDocumentByAgencyIdActionAsync } from '../../Redux/ReducerAPI/DocumentReducer';
+import { GetContractDetailByAgencyIdActionAsync } from '../../Redux/ReducerAPI/ContractReducer';
+import dayjs from 'dayjs';
 
-const { Title, Paragraph } = Typography;
+const { Title, Text } = Typography;
 
 const StyledModal = styled(Modal)`
   .ant-modal-content {
@@ -24,33 +26,15 @@ const StyledModal = styled(Modal)`
   }
 `;
 
-const HTMLContent = styled.div`
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  line-height: 1.6;
-  color: #333;
-
-  h1, h2, h3, h4, h5, h6 {
-    margin-top: 1em;
-    margin-bottom: 0.5em;
-    font-weight: 600;
-  }
-  ul, ol {
-    padding-left: 24px;
-    margin-bottom: 1em;
-  }
-  p {
-    margin-bottom: 1em;
-  }
-  img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
-    margin: 1em 0;
-  }
-`;
-
-const ReportLink = styled(Button)`
+const StyledDescriptions = styled(Descriptions)`
   margin-top: 24px;
+  .ant-descriptions-item-label {
+    font-weight: bold;
+    color: #1890ff;
+  }
+  .ant-descriptions-item-content {
+    color: #333;
+  }
 `;
 
 const LoadingWrapper = styled.div`
@@ -60,18 +44,78 @@ const LoadingWrapper = styled.div`
   height: 200px;
 `;
 
-const ShowReportModal = ({ visible, onClose, taskId }) => {
+const ShowReportModal = ({ visible, onClose, taskId, taskType, agencyId }) => {
   const dispatch = useDispatch();
-  const { taskDetail, loading } = useSelector((state) => state.WorkReducer);
+  const [additionalInfo, setAdditionalInfo] = useState(null);
+  const [additionalLoading, setAdditionalLoading] = useState(false);
 
   useEffect(() => {
-    if (visible && taskId) {
-      dispatch(GetTaskDetailByIdActionAsync(taskId));
+    if (visible && taskId && agencyId) {
+      let documentType = '';
+      if (taskType === 'AgreementSigned') {
+        documentType = 'AgreementContract';
+      } else if (taskType === 'BusinessRegistered') {
+        documentType = 'BusinessLicense';
+      } else if (taskType === 'EducationLicenseRegistered') {
+        documentType = 'EducationalOperationLicense';
+      }
+
+      if (documentType) {
+        setAdditionalLoading(true);
+        dispatch(GetDocumentByAgencyIdActionAsync(agencyId, documentType)).then((res) => {
+          setAdditionalInfo(res);
+          setAdditionalLoading(false);
+        });
+      } else if (taskType === 'SignedContract') {
+        setAdditionalLoading(true);
+        dispatch(GetContractDetailByAgencyIdActionAsync(agencyId)).then((res) => {
+          setAdditionalInfo(res);
+          setAdditionalLoading(false);
+        });
+      }
     }
-  }, [visible, taskId, dispatch]);
+  }, [visible, taskId, taskType, dispatch, agencyId]);
+
+  const renderAdditionalInfo = useMemo(() => {
+    if (!additionalInfo) return null;
+
+    if (taskType === 'AgreementSigned' || taskType === 'BusinessRegistered' || taskType === 'EducationLicenseRegistered') {
+      return (
+        <StyledDescriptions bordered column={1}>
+          <Descriptions.Item label="Tiêu đề">{additionalInfo.title}</Descriptions.Item>
+          <Descriptions.Item label="Ngày hết hạn">{dayjs(additionalInfo.expirationDate).format('DD/MM/YYYY')}</Descriptions.Item>
+          <Descriptions.Item label="Tài liệu">
+            <Button type="link" icon={<DownloadOutlined />} href={additionalInfo.urlFile} target="_blank" rel="noopener noreferrer">
+              Tải xuống file tài liệu
+            </Button>
+          </Descriptions.Item>
+        </StyledDescriptions>
+      );
+    } else if (taskType === 'SignedContract') {
+      return (
+        <StyledDescriptions bordered column={1}>
+          <Descriptions.Item label="Tiêu đề">{additionalInfo.title}</Descriptions.Item>
+          <Descriptions.Item label="Ngày bắt đầu">{dayjs(additionalInfo.startTime).format('DD/MM/YYYY')}</Descriptions.Item>
+          <Descriptions.Item label="Ngày kết thúc">{dayjs(additionalInfo.endTime).format('DD/MM/YYYY')}</Descriptions.Item>
+          <Descriptions.Item label="Tổng số tiền">
+            <Text strong>{Number(additionalInfo.total).toLocaleString('vi-VN')} VND</Text>
+          </Descriptions.Item>
+          <Descriptions.Item label="Tỷ lệ chia sẻ doanh thu">
+            <Text strong>{additionalInfo.revenueSharePercentage}%</Text>
+          </Descriptions.Item>
+          <Descriptions.Item label="Tài liệu">
+            <Button type="link" icon={<EyeOutlined />} href={additionalInfo.contractDocumentImageURL} target="_blank" rel="noopener noreferrer">
+              Xem tài liệu hợp đồng
+            </Button>
+          </Descriptions.Item>
+        </StyledDescriptions>
+      );
+    }
+    return null;
+  }, [additionalInfo, taskType]);
 
   const renderContent = () => {
-    if (loading) {
+    if (additionalLoading) {
       return (
         <LoadingWrapper>
           <Spin size="large" />
@@ -79,31 +123,16 @@ const ShowReportModal = ({ visible, onClose, taskId }) => {
       );
     }
 
-    if (!taskDetail?.report) {
-      return <Empty description="Không có nội dung báo cáo" />;
-    }
-
     return (
       <>
-        <HTMLContent dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(taskDetail.report) }} />
-        {taskDetail.reportImageURL && (
-          <ReportLink
-            type="primary"
-            icon={<FilePdfOutlined />}
-            href={taskDetail.reportImageURL}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Xem tài liệu đính kèm
-          </ReportLink>
-        )}
+        {renderAdditionalInfo}
       </>
     );
   };
 
   return (
     <StyledModal
-      title={<Title level={3}>Nội dung báo cáo</Title>}
+      title={<Title level={3}>Nội dung file tài liệu</Title>}
       open={visible}
       onCancel={onClose}
       footer={[

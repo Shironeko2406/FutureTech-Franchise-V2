@@ -226,14 +226,17 @@ export const AddStudentsToClassActionAsync = (classId, studentIds) => {
     return async () => {
         try {
             const res = await httpClient.post(`/api/v1/classes/${classId}/users`, { studentId: studentIds });
-            if (res.isSuccess) {
+            if (res.isSuccess && res.data) {
                 message.success("Thêm học sinh vào lớp thành công!");
+            } if (res.isSuccess && !res.data) {
+                message.error(`${res.message}`);
             } else {
-                throw new Error(res.message);
+                throw new Error(`${res.message}`);
             }
         } catch (error) {
-            console.error("Error adding students to class:", error);
-            message.error("Đã xảy ra lỗi khi thêm học sinh vào lớp!");
+            console.error(error);
+            message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
         }
     };
 };
+

@@ -1,24 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Card, List, Typography, Button, Tag, Modal, message } from 'antd';
-import { UploadOutlined, EyeOutlined, PhoneOutlined, EnvironmentOutlined } from "@ant-design/icons";
-import { CalendarOutlined, RightCircleOutlined, CheckCircleFilled, CloseCircleFilled, MinusCircleFilled, FlagOutlined } from '@ant-design/icons';
+import { Card, List, Typography, Button, Tag } from 'antd';
+import { UploadOutlined, EyeOutlined } from "@ant-design/icons";
+import { CalendarOutlined, RightCircleOutlined, CheckCircleFilled, DownloadOutlined, CloseCircleFilled, MinusCircleFilled, FlagOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import moment from 'moment';
 import DynamicFilter from '../../Component/DynamicFilter';
 import { GetTaskUserByLoginActionAsync } from '../../../Redux/ReducerAPI/UserReducer';
-import { GetTaskDetailByIdActionAsync, SubmitTaskReportActionAsync, UpdateTaskStatusToSubmittedActionAsync, UpdateTaskStatusActionAsync, GetTaskForAgencyActionAsync } from '../../../Redux/ReducerAPI/WorkReducer';
-import { imageDB } from "../../../Firebasse/Config";
-import { useLoading } from '../../../Utils/LoadingContext';
-import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
-import jsPDF from 'jspdf';
-import { CreateEquipmentActionAsync } from '../../../Redux/ReducerAPI/EquipmentReducer';
+import { GetTaskDetailByIdActionAsync, UpdateTaskStatusActionAsync, GetTaskForAgencyActionAsync } from '../../../Redux/ReducerAPI/WorkReducer';
 import ShowReportModal from '../../Modal/ShowReportModal';
 import ViewTaskDetailModal from '../../Modal/ViewTaskDetailModal';
 import CreateAgreementModal from '../../Modal/CreateAgreementModal';
 import CreateBusinessRegistrationModal from '../../Modal/CreateBusinessRegistrationModal';
 import CreateSignedContractModal from '../../Modal/CreateSignedContractModal';
 import CreateEducationalOperationLicenseModal from '../../Modal/CreateEducationalOperationLicenseModal';
+import UploadFileModal from '../../Modal/UploadFileModal';
 
 const { Title, Text } = Typography;
 
@@ -59,7 +55,7 @@ const translateStatus = (status) => {
 };
 
 const translateSubmitStatus = (submit) => {
-    return submit === "Submited" ? "Đã nộp" : "Chưa nộp";
+    return submit === "Submited" ? "Người phụ trách đã nộp" : "Người phụ trách chưa nộp";
 };
 
 const getSubmitStatusColor = (submit) => {
@@ -69,7 +65,6 @@ const getSubmitStatusColor = (submit) => {
 const ListTaskAgencyManager = () => {
     const { taskUser, totalPagesCount } = useSelector((state) => state.UserReducer);
     const dispatch = useDispatch();
-    const { setLoading } = useLoading();
     const [filters, setFilters] = useState({
         searchText: '',
         levelFilter: '',
@@ -79,7 +74,6 @@ const ListTaskAgencyManager = () => {
     const [pageIndex, setPageIndex] = useState(1);
     const [pageSize, setPageSize] = useState(10);
     const [modalShowTaskDetailVisible, setModalShowTaskDetailVisible] = useState(false);
-    const [modalSubmitTaskReportVisible, setModalSubmitTaskReportVisible] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
     const [taskType, setTaskType] = useState(null);
     const [modalShowReportVisible, setModalShowReportVisible] = useState(false);
@@ -87,6 +81,8 @@ const ListTaskAgencyManager = () => {
     const [modalCreateBusinessRegistrationVisible, setModalCreateBusinessRegistrationVisible] = useState(false);
     const [modalCreateSignedContractVisible, setModalCreateSignedContractVisible] = useState(false);
     const [modalCreateEducationalOperationLicenseVisible, setModalCreateEducationalOperationLicenseVisible] = useState(false);
+    const [modalUploadFileVisible, setModalUploadFileVisible] = useState(false);
+    const [taskToUpload, setTaskToUpload] = useState(null);
 
     const handleFilterChange = (key, value) => {
         setFilters(prevFilters => ({ ...prevFilters, [key]: value }));
@@ -110,26 +106,27 @@ const ListTaskAgencyManager = () => {
         ));
     }, [filters, pageIndex, pageSize, dispatch]);
 
-    const handleOpenModal = (taskType) => {
-        switch (taskType) {
-            case "AgreementSigned":
-                setModalCreateAgreementVisible(true);
-                break;
-            case "BusinessRegistered":
-                setModalCreateBusinessRegistrationVisible(true);
-                break;
-            case "SignedContract":
-                setModalCreateSignedContractVisible(true);
-                break;
-            case "EducationLicenseRegistered":
-                setModalCreateEducationalOperationLicenseVisible(true);
-                break;
-            default:
-                console.warn("Loại công việc không xác định:", taskType);
-                break;
+    const handleOpenModal = (taskType, task) => {
+        if (taskType === "AgreementSigned") {
+            setTaskToUpload(task);
+            setModalUploadFileVisible(true);
+        } else {
+            switch (taskType) {
+                case "BusinessRegistered":
+                    setModalCreateBusinessRegistrationVisible(true);
+                    break;
+                case "SignedContract":
+                    setModalCreateSignedContractVisible(true);
+                    break;
+                case "EducationLicenseRegistered":
+                    setModalCreateEducationalOperationLicenseVisible(true);
+                    break;
+                default:
+                    console.warn("Loại công việc không xác định:", taskType);
+                    break;
+            }
         }
     };
-    
 
     const openModalShowTaskDetail = (id) => {
         setModalShowTaskDetailVisible(true);
@@ -152,8 +149,9 @@ const ListTaskAgencyManager = () => {
     //     setSelectedTask(null);
     // };
 
-    const openModalShowReport = (task) => {
+    const openDocumentShow = (task) => {
         setSelectedTask(task);
+        setTaskType(task.type);
         setModalShowReportVisible(true);
         dispatch(GetTaskDetailByIdActionAsync(task.id));
     };
@@ -161,6 +159,17 @@ const ListTaskAgencyManager = () => {
     const handleCloseModalShowReport = () => {
         setModalShowReportVisible(false);
         setSelectedTask(null);
+    };
+
+    const handleRefreshTasks = () => {
+        dispatch(GetTaskForAgencyActionAsync(
+            filters.searchText,
+            filters.levelFilter,
+            filters.statusFilter,
+            filters.submitFilter,
+            pageIndex,
+            pageSize
+        ));
     };
 
     // const handleSubmitTaskReport = async (contractData) => {
@@ -219,47 +228,54 @@ const ListTaskAgencyManager = () => {
             />
         ];
 
-        if (task.report) {
-            actions.push(
-                <Button
-                    type="primary"
-                    icon={<EyeOutlined />}
-                    onClick={() => openModalShowReport(task)}
-                >
-                    Xem báo cáo
-                </Button>
-            );
-            if (task.submit !== "Submited") {
-                actions.push(
-                    <Button
-                        type="primary"
-                        onClick={() => handleUpdateTaskStatus(task)}
-                    >
-                        Nộp báo cáo
-                    </Button>
-                );
-            } else {
-                actions.push(
-                    <Button
-                        type="primary"
-                        danger
-                        onClick={() => handleUpdateTaskStatus(task)}
-                    >
-                        Hủy nộp
-                    </Button>
-                );
-            }
-        } else {
+        const validTaskTypes = ["AgreementSigned", "BusinessRegistered", "SignedContract", "EducationLicenseRegistered"];
+        if (task.level === "Compulsory" && validTaskTypes.includes(task.type) && task.customerSubmit === null) {
             actions.push(
                 <Button
                     type="primary"
                     icon={<UploadOutlined />}
-                    // onClick={() => openModalSubmitTaskReport(task)}
-                    onClick={() => handleOpenModal(task.type)}
+                    onClick={() => handleOpenModal(task.type, task)}
                 >
-                    Thêm giấy tờ
+                    {task.type === "AgreementSigned" ? "Nộp tài liệu" : "Thêm giấy tờ"}
                 </Button>
             );
+        }
+
+        if (task.type === "AgreementSigned" && task.submit === "Submited") {
+            actions.push(
+                <Button
+                    type="primary"
+                    icon={<EyeOutlined />}
+                    onClick={() => openDocumentShow(task)}
+                >
+                    Xem tài liệu
+                </Button>
+            );
+        }
+
+        if (task.type === "AgreementSigned" && task.level === "Compulsory" && task.customerSubmit !== null) {
+            actions.push(
+                <Button
+                    type="primary"
+                    icon={<DownloadOutlined />}
+                    onClick={() => window.open(task.customerSubmit, "_blank")}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    Xem file đã tải
+                </Button>
+            );
+            if (task.status !== "Approved") {
+                actions.push(
+                    <Button
+                        type="primary"
+                        icon={<UploadOutlined />}
+                        onClick={() => handleOpenModal(task.type, task)}
+                    >
+                        Tải file khác
+                    </Button>
+                );
+            }
         }
 
         return (
@@ -341,9 +357,9 @@ const ListTaskAgencyManager = () => {
                 visible={modalShowTaskDetailVisible}
                 onClose={handleCloseModalShowTaskDetail}
                 setVisible={setModalShowTaskDetailVisible}
-                isFromAgencyDetail={false}
+                selectedType={taskType}
             />
-            
+
             <CreateAgreementModal
                 visible={modalCreateAgreementVisible}
                 onClose={() => setModalCreateAgreementVisible(false)}
@@ -357,7 +373,6 @@ const ListTaskAgencyManager = () => {
             <CreateSignedContractModal
                 visible={modalCreateSignedContractVisible}
                 onClose={() => setModalCreateSignedContractVisible(false)}
-                // onSubmit={handleSubmitTaskReport}
                 taskType={taskType}
                 selectedTask={selectedTask}
                 filters={filters}
@@ -372,6 +387,14 @@ const ListTaskAgencyManager = () => {
                 visible={modalShowReportVisible}
                 onClose={handleCloseModalShowReport}
                 taskId={selectedTask?.id}
+                taskType={taskType}
+                agencyId={selectedTask?.agencyId}
+            />
+            <UploadFileModal
+                visible={modalUploadFileVisible}
+                onClose={() => setModalUploadFileVisible(false)}
+                task={taskToUpload}
+                onRefreshTasks={handleRefreshTasks}
             />
         </Card>
     );

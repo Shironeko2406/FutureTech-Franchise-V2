@@ -343,3 +343,25 @@ export const GetTaskForAgencyActionAsync = (search, level, status, submit, pageI
     }
   };
 };
+
+export const AgencySubmitTaskActionAsync = (id, fileUrl) => {
+  return async (dispatch) => {
+    try {
+      const encodedFileUrl = encodeURIComponent(fileUrl);
+      const res = await httpClient.put(`/agency-manager/api/v1/works/${id}?fileURL=${encodedFileUrl}`);
+      if (res.isSuccess && res.data) {
+        // message.success(`${res.message}`);
+        return true;
+      } else if (res.isSuccess && !res.data) {
+        message.error(`${res.message}`);
+        return false;
+      } else {
+        throw new Error(`${res.message}`);
+      }
+    } catch (error) {
+      console.error("AgencySubmitTaskActionAsync", error);
+      message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
+      return false;
+    }
+  };
+};

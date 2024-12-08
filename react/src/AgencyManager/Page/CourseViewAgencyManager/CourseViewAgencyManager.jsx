@@ -21,7 +21,7 @@ const CourseViewAgencyManager = () => {
 
     useEffect(() => {
         setLoading(true);
-        dispatch(GetCourseActionAsync(searchTerm, "", pageIndex, pageSize))
+        dispatch(GetCourseActionAsync(searchTerm, "AvailableForFranchise", pageIndex, pageSize))
             .finally(() => setLoading(false));
     }, [searchTerm, pageIndex, pageSize]);
 
@@ -143,7 +143,7 @@ const CourseViewAgencyManager = () => {
             <div className="card">
                 <div className="card-body">
                     <div className="d-flex justify-content-between align-items-center mb-3">
-                        <h5 className="card-title">Quản lý khóa học</h5>
+                        <h5 className="card-title">Danh sách khóa học</h5>
                     </div>
                     <Table
                         bordered

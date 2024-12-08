@@ -118,7 +118,7 @@ const getAppointmentStatus = (startTime, endTime) => {
   }
 };
 
-const ViewTaskDetailModal = ({ visible, onClose, setVisible, isFromAgencyDetail, selectedType }) => {
+const ViewTaskDetailModal = ({ visible, onClose, setVisible, selectedType }) => {
   const { taskDetail } = useSelector((state) => state.WorkReducer);
   const { agencyStatus } = useSelector((state) => state.AgencyReducer);
   const dispatch = useDispatch();
@@ -245,7 +245,7 @@ const ViewTaskDetailModal = ({ visible, onClose, setVisible, isFromAgencyDetail,
     },
   ];
 
-  const filteredTabItems = isFromAgencyDetail && taskDetail?.submit === "Submited"
+  const filteredTabItems = taskDetail?.submit === "Submited"
     ? tabItems
     : tabItems.filter(item => item.key !== '4');
 

@@ -201,25 +201,29 @@ const AgencyAccountManagement = () => {
             align: "center",
             render: (text, record) => (
                 <Space size="middle">
-                    <Tooltip title="Chỉnh sửa">
-                        <Button
-                            type="default"
-                            icon={<EditOutlined />}
-                            style={{ backgroundColor: "#faad14", color: "#fff" }}
-                            onClick={() => handleEdit(record)}
-                        />
-                    </Tooltip>
-                    <Tooltip title={record.lockoutEnd ? "Mở khóa tài khoản" : "Khóa tài khoản"}>
-                        <Button
-                            type="default"
-                            icon={record.lockoutEnd ? <UnlockOutlined /> : <LockOutlined />}
-                            style={{
-                                backgroundColor: record.lockoutEnd ? "#52c41a" : "#ff4d4f",
-                                color: "#fff",
-                            }}
-                            onClick={() => handleToggleStatus(record.id)}
-                        />
-                    </Tooltip>
+                    {record.role !== "AgencyManager" && (
+                        <>
+                            <Tooltip title="Chỉnh sửa">
+                                <Button
+                                    type="default"
+                                    icon={<EditOutlined />}
+                                    style={{ backgroundColor: "#faad14", color: "#fff" }}
+                                    onClick={() => handleEdit(record)}
+                                />
+                            </Tooltip>
+                            <Tooltip title={record.lockoutEnd ? "Mở khóa tài khoản" : "Khóa tài khoản"}>
+                                <Button
+                                    type="default"
+                                    icon={record.lockoutEnd ? <UnlockOutlined /> : <LockOutlined />}
+                                    style={{
+                                        backgroundColor: record.lockoutEnd ? "#52c41a" : "#ff4d4f",
+                                        color: "#fff",
+                                    }}
+                                    onClick={() => handleToggleStatus(record.id)}
+                                />
+                            </Tooltip>
+                        </>
+                    )}
                 </Space>
             ),
         },

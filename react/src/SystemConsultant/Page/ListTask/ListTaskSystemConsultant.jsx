@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Card, List, Typography, Button, Tag, Modal } from 'antd';
-import { UploadOutlined, EyeOutlined } from "@ant-design/icons";
+import { Card, List, Typography, Button, Tag, Modal, message } from 'antd';
+import { UploadOutlined, EyeOutlined, PhoneOutlined, EnvironmentOutlined } from "@ant-design/icons";
 import { CalendarOutlined, RightCircleOutlined, CheckCircleFilled, CloseCircleFilled, MinusCircleFilled, FlagOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import moment from 'moment';
@@ -9,12 +9,9 @@ import DynamicFilter from '../../Component/DynamicFilter';
 import { GetTaskUserByLoginActionAsync } from '../../../Redux/ReducerAPI/UserReducer';
 import ViewTaskDetailModal from '../../../Manager/Modal/ViewTaskDetailModal';
 import { GetTaskDetailByIdActionAsync, SubmitTaskReportActionAsync, UpdateTaskStatusActionAsync } from '../../../Redux/ReducerAPI/WorkReducer';
-import SubmitTaskReportModal from '../../../Manager/Modal/SubmitTaskReportModal';
-import { imageDB } from "../../../Firebasse/Config";
+import SubmitTaskReportModal from '../../Modal/SubmitTaskReportModal';
 import { useLoading } from '../../../Utils/LoadingContext';
-import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
-import jsPDF from 'jspdf';
-import ShowReportModal from '../../../Manager/Modal/ShowReportModal';
+import ShowReportModal from '../../Modal/ShowReportModal';
 
 const { Title, Text } = Typography;
 
@@ -122,10 +119,10 @@ const ListTaskSystemConsultant = () => {
     setSelectedTask(null);
   };
 
-  const openModalShowReport = (task) => {
+  const openModalShowReport = async (task) => {
     setSelectedTask(task);
+    await dispatch(GetTaskDetailByIdActionAsync(task.id));
     setModalShowReportVisible(true);
-    dispatch(GetTaskDetailByIdActionAsync(task.id));
   };
 
   const handleCloseModalShowReport = () => {
@@ -138,58 +135,6 @@ const ListTaskSystemConsultant = () => {
       setLoading(true);
       try {
         let formData = { ...reportData };
-        if (reportData.type === "Design") {
-          formData = {
-            ...reportData,
-            reportImageURL: reportData.imageUrls[0],
-          };
-        } else if (reportData.imageUrls && reportData.imageUrls.length > 0) {
-          const pdf = new jsPDF();
-          const margin = 10;
-          let y = margin;
-          let isFirstPage = true;
-
-          for (let index = 0; index < reportData.imageUrls.length; index++) {
-            const url = reportData.imageUrls[index];
-            const img = new Image();
-            img.src = url;
-            await new Promise((resolve) => {
-              img.onload = () => {
-                const imgWidth = img.width;
-                const imgHeight = img.height;
-                const pageHeight = pdf.internal.pageSize.getHeight();
-                const pageWidth = pdf.internal.pageSize.getWidth();
-
-                // Check if the image height exceeds the page height
-                if (y + imgHeight > pageHeight - margin) {
-                  pdf.addPage();
-                  y = margin;
-                  isFirstPage = false;
-                }
-
-                // Check if the image width exceeds the page width
-                if (imgWidth > pageWidth - 2 * margin) {
-                  const ratio = (pageWidth - 2 * margin) / imgWidth;
-                  pdf.addImage(img, 'JPEG', margin, y, imgWidth * ratio, imgHeight * ratio);
-                  y += imgHeight * ratio + margin;
-                } else {
-                  pdf.addImage(img, 'JPEG', margin, y, imgWidth, imgHeight);
-                  y += imgHeight + margin;
-                }
-
-                resolve();
-              };
-            });
-          }
-          const pdfBlob = pdf.output('blob');
-          const storageRef = ref(imageDB, `pdfs/images-${Date.now()}.pdf`);
-          await uploadBytes(storageRef, pdfBlob);
-          const pdfURL = await getDownloadURL(storageRef);
-          formData = {
-            ...reportData,
-            reportImageURL: pdfURL,
-          };
-        }
         await dispatch(SubmitTaskReportActionAsync(selectedTask.id, formData));
         handleCloseModalSubmitTaskReport();
         await dispatch(GetTaskUserByLoginActionAsync(
@@ -201,7 +146,7 @@ const ListTaskSystemConsultant = () => {
           pageSize
         ));
       } catch (error) {
-        console.error("Error uploading PDF: ", error);
+        console.error("Error uploading file: ", error);
       } finally {
         setLoading(false);
       }
@@ -222,6 +167,14 @@ const ListTaskSystemConsultant = () => {
   };
 
   const renderItem = (task) => {
+    const agency = task.agencyViewModel || {};
+    const {
+      address = "Không có địa chỉ",
+      city = "Không rõ",
+      district = "Không rõ",
+      ward = "Không rõ",
+      phoneNumber = "Không có số điện thoại",
+    } = agency;
     const TaskItem = task.level === "Compulsory" ? CompulsoryTask : List.Item;
     const actions = [
       <Button
@@ -242,7 +195,7 @@ const ListTaskSystemConsultant = () => {
           Xem báo cáo
         </Button>
       );
-      if (task.submit !== "Submited") {
+      if (task.submit !== "Submited" && task.status === "None") {
         actions.push(
           <Button
             type="primary"
@@ -251,7 +204,7 @@ const ListTaskSystemConsultant = () => {
             Nộp báo cáo
           </Button>
         );
-      } else {
+      } else if (task.submit === "Submited" && task.status === "None") {
         actions.push(
           <Button
             type="primary"
@@ -323,6 +276,24 @@ const ListTaskSystemConsultant = () => {
                   {moment(task.endDate).format("DD/MM/YYYY HH:mm")}
                 </Text>
               </div>
+              <div
+                style={{
+                  marginTop: "8px",
+                }}
+              >
+                <EnvironmentOutlined style={{ marginRight: "4px" }} />
+                <Text>
+                  {`${address}, ${ward}, ${district}, ${city}`}
+                </Text>
+              </div>
+              <div
+                style={{
+                  marginTop: "4px",
+                }}
+              >
+                <PhoneOutlined style={{ marginRight: "4px" }} />
+                <Text>{phoneNumber}</Text>
+              </div>
             </div>
           }
         />
@@ -366,6 +337,7 @@ const ListTaskSystemConsultant = () => {
         visible={modalShowReportVisible}
         onClose={handleCloseModalShowReport}
         taskId={selectedTask?.id}
+        taskType={selectedTask?.type} // Pass taskType here
       />
     </Card>
   );

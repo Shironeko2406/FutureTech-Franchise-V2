@@ -9,6 +9,22 @@ import { Spin } from 'antd';
 
 const localizer = momentLocalizer(moment);
 
+const messages = {
+    allDay: 'Cả ngày',
+    previous: 'Trước',
+    next: 'Tiếp',
+    today: 'Hôm nay',
+    month: 'Tháng',
+    week: 'Tuần',
+    day: 'Ngày',
+    agenda: 'Lịch trình',
+    date: 'Ngày',
+    time: 'Thời gian',
+    event: 'Sự kiện',
+    noEventsInRange: 'Không có sự kiện nào trong khoảng thời gian này.',
+    showMore: total => `+ Xem thêm (${total})`
+};
+
 const ScheduleAgencyManager = () => {
 
     const dispatch = useDispatch();
@@ -40,15 +56,15 @@ const ScheduleAgencyManager = () => {
         let start, end
         if (view === Views.MONTH) {
             // Lấy ngày đầu tiên của lưới lịch (có thể là ngày của tháng trước)
-            start = moment(date).startOf('month').startOf('week').format('DD/MM/YYYY')
+            start = moment(date).startOf('month').startOf('week').format('MM/DD/YYYY')
             // Lấy ngày cuối cùng của lưới lịch (có thể là ngày của tháng sau)
-            end = moment(date).endOf('month').endOf('week').format('DD/MM/YYYY')
+            end = moment(date).endOf('month').endOf('week').format('MM/DD/YYYY')
         } else if (view === Views.WEEK) {
-            start = moment(date).startOf('week').format('DD/MM/YYYY')
-            end = moment(date).endOf('week').format('DD/MM/YYYY')
+            start = moment(date).startOf('week').format('MM/DD/YYYY')
+            end = moment(date).endOf('week').format('MM/DD/YYYY')
         } else {
-            start = moment(date).format('DD/MM/YYYY')
-            end = moment(date).format('DD/MM/YYYY')
+            start = moment(date).format('MM/DD/YYYY')
+            end = moment(date).format('MM/DD/YYYY')
         }
         return { start, end }
     }, [])
@@ -126,6 +142,7 @@ const ScheduleAgencyManager = () => {
                 onSelectSlot={handleSelectSlot}
                 onSelectEvent={handleSelectSlot}
                 selectable
+                messages={messages} // Add messages prop for localization
             />
         </div>
     );
