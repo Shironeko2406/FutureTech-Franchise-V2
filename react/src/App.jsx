@@ -99,6 +99,16 @@ import EquipmentList from "./AgencyManager/Page/EquipmentList/EquipmentList";
 import DocumentManagementAdmin from "./Admin/Page/DocumentManagementAdmin/DocumentManagementAdmin";
 import ViewContractAgencyManager from "./AgencyManager/Page/ViewContractAgencyManager/ViewContractAgencyManager";
 import ViewDocumentAgencyManager from "./AgencyManager/Page/ViewDocumentAgencyManager/ViewDocumentAgencyManager";
+import TempUIAgencyStaff from "./AgencyStaff/TempUIAgencyStaff/TempUIAgencyStaff";
+import StudentPaymentManagementAgencyStaff from "./AgencyStaff/Page/StudentPaymentManagement/StudentPaymentManagementAgencyStaff";
+import SlotManagerAgencyStaff from "./AgencyStaff/Page/Slot/SlotManagerAgencyStaff";
+import ClassManagementAgencyStaff from "./AgencyStaff/Page/ClassManagement/ClassManagementAgencyStaff";
+import ClassDetailAgencyStaff from "./AgencyStaff/Page/ClassManagement/ClassDetailAgencyStaff";
+import AgencyStaffAppointment from "./AgencyStaff/Page/ScheduleAgencyStaff/AgencyStaffAppointment";
+import AgencyStaffAppointmentDetail from "./AgencyStaff/Page/ScheduleAgencyStaff/AgencyStaffAppointmentDetail";
+import CourseViewAgencyStaff from "./AgencyStaff/Page/CourseViewAgencyStaff/CourseViewAgencyStaff";
+import CourseDetailAgencyStaff from "./AgencyStaff/Page/CourseViewAgencyStaff/CourseDetailAgencyStaff";
+import EquipmentListAgencyStaff from "./AgencyStaff/Page/EquipmentList/EquipmentListAgencyStaff";
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -250,6 +260,23 @@ function App() {
                 <Route path="appointment-schedule/details" element={<SystemConsultantAppointmentDetail />} />
                 <Route path="consult" element={<ConsultationManagement />} />
                 <Route path="profile" element={<Profile />} />
+              </Route>
+            </Route>
+
+            <Route element={<ProtectedRoute requiredRole="AgencyStaff" />}>
+              <Route path="agency-staff" element={<TempUIAgencyStaff />} >
+                <Route path="" element={<StudentConsultationRegistration />} />
+                <Route path="student-payment" element={<StudentPaymentManagementAgencyStaff />} />
+                <Route path="slots" element={<SlotManagerAgencyStaff />} />
+                <Route path="classes" element={<ClassManagementAgencyStaff />} />
+                <Route path="classes/:id" element={<ClassDetailAgencyStaff />} />
+                <Route path="schedules" element={<ScheduleAgencyManager />} />
+                <Route path="appointment-schedule" element={<AgencyStaffAppointment />} />
+                <Route path="appointment-schedule/details" element={<AgencyStaffAppointmentDetail />} />
+                <Route path="course" element={<CourseViewAgencyStaff />} />
+                <Route path="course-detail/:id" element={<CourseDetailAgencyStaff />} />
+                <Route path="profile" element={<Profile />} />
+                <Route path="equipments" element={<EquipmentListAgencyStaff />} />
               </Route>
             </Route>
 
