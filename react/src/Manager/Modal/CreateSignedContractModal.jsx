@@ -27,11 +27,13 @@ const CreateSignedContractModal = ({ visible, onClose, agencyId }) => {
                 endTime: values.endTime.format('YYYY-MM-DD'),
                 contractDocumentImageURL: fileURL,
                 revenueSharePercentage: parseFloat(values.revenueSharePercentage),
+                depositPercentage: parseFloat(values.depositPercentage),
                 agencyId: agencyId, // Use the passed agencyId
             };
             await dispatch(CreateSignedContractActionAsync(contractData));
             onClose();
             form.resetFields();
+            console.log(contractData)
         } catch (error) {
             console.error("Error creating signed contract: ", error);
         } finally {
@@ -57,6 +59,7 @@ const CreateSignedContractModal = ({ visible, onClose, agencyId }) => {
     return (
         <Modal
             title="Thêm mới Hợp đồng Chuyển nhượng"
+            style={{top:20}}
             open={visible}
             onCancel={onClose}
             footer={[
@@ -130,6 +133,27 @@ const CreateSignedContractModal = ({ visible, onClose, agencyId }) => {
                         ]}
                     >
                         <Input min={0} max={100} placeholder="Nhập tỉ lệ phần trăm. VD: 10.5)" addonAfter="%" style={{ width: '100%' }} />
+                    </Form.Item>
+                    <Form.Item
+                        name="depositPercentage"
+                        label="Tỉ lệ phần trăm đặt cọc"
+                        rules={[
+                            { required: true, message: 'Vui lòng nhập tỉ lệ phần trăm đặt cọc' },
+                            {
+                                pattern: /^[0-9]+(\.[0-9]{1,2})?$/,
+                                message: "Vui lòng nhập số thực hợp lệ (VD: 20.5).",
+                            },
+                            {
+                                validator: (_, value) => {
+                                    if (!value || (parseFloat(value) >= 0 && parseFloat(value) <= 100)) {
+                                        return Promise.resolve();
+                                    }
+                                    return Promise.reject(new Error("Phần trăm phải nằm trong khoảng 0 đến 100!"));
+                                },
+                            },
+                        ]}
+                    >
+                        <Input min={0} max={100} placeholder="Nhập tỉ lệ phần trăm đặt cọc. VD: 20.5)" addonAfter="%" style={{ width: '100%' }} />
                     </Form.Item>
                     <Form.Item
                         name="file"
