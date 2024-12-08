@@ -6,12 +6,15 @@ import { imageDB } from "../../Firebasse/Config";
 import { useDispatch } from 'react-redux';
 import { CreateDocumentActionAsync } from '../../Redux/ReducerAPI/DocumentReducer';
 import moment from 'moment';
+import { USER_LOGIN } from '../../Utils/Interceptors';
+import { getDataJSONStorage } from '../../Utils/UtilsFunction';
 
-const CreateBusinessRegistrationModal = ({ visible, onClose, agencyId }) => {
+const CreateBusinessRegistrationModal = ({ visible, onClose }) => {
     const [form] = Form.useForm();
     const dispatch = useDispatch();
     const [file, setFile] = useState(null);
     const [loading, setLoading] = useState(false); // Local loading state
+    const agencyId = getDataJSONStorage(USER_LOGIN).agencyId
 
     const handleOk = async () => {
         setLoading(true);

@@ -86,6 +86,7 @@ const taskTypeTranslations = {
   RepairingEquipment: "Sửa chữa thiết bị",
   EducationalSupervision: "Giám sát hoạt động giáo dục",
   RenewContract: "Gia hạn hợp đồng",
+  RenewEducationLicense: "Gia hạn giấy phép giáo dục",
   Other: "Khác"
 };
 
@@ -353,6 +354,7 @@ const ViewTaskDetailForAfterFranchiseModal = ({ visible, onClose, setVisible, is
         visible={isAddAppointmentModalVisible}
         onClose={handleAddAppointmentCancel}
         workId={taskDetail.id}
+        selectedType={filter.typeFilter}
       />
 
       <ViewAppointmentDetailModal

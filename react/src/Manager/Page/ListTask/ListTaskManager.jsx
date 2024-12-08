@@ -138,7 +138,7 @@ const ListTaskManager = () => {
                 let formData = { ...reportData };
                 if (reportData.type === "Design" && reportData.equipmentFile) {
                     const equipmentFormData = new FormData();
-                    equipmentFormData.append('file', reportData.equipmentFile);
+                    equipmentFormData.append('file', reportData.equipmentFile.file.originFileObj);
                     const equipmentResponse = await dispatch(CreateEquipmentActionAsync(selectedTask.agencyId, equipmentFormData));
                     if (!equipmentResponse) {
                         throw new Error("Error creating equipment");

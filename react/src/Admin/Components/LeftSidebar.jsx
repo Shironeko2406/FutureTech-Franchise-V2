@@ -8,7 +8,6 @@ const LeftSidebar = ({ onSidebarToggle }) => {
     { type: 'link', label: 'Thông tin trang chủ', path: '/admin/home-page-management', icon: 'solar:home-smile-bold-duotone' },
     { type: 'section', label: 'Quản lý', icon: 'ti ti-dots' },
     { type: 'link', label: 'Tài khoản hệ thống', path: '/admin/system-accounts', icon: 'mdi:account-group' },
-    { type: 'link', label: 'Tài khoản chi nhánh', path: '/admin/agency-accounts', icon: 'mdi:account-group' },
     { type: 'link', label: 'Hợp đồng', path: '/admin/contracts', icon: 'clarity:contract-solid' },
     { type: 'link', label: 'Tài liệu', path: '/admin/documents', icon: 'solar:document-bold-duotone' },
     { type: 'section', label: 'Mẫu công việc', icon: 'ti ti-dots' },

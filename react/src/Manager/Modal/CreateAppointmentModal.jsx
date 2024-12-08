@@ -87,11 +87,12 @@ const CreateAppointmentModal = ({ visible, onClose, workId, selectedType}) => {
       Manager: [
         'Interview', 'AgreementSigned', 'BusinessRegistered', 'SiteSurvey',
         'Design', 'Quotation', 'SignedContract', 'ConstructionAndTrainning',
-        'Handover', 'EducationLicenseRegistered',
+        'Handover', 'EducationLicenseRegistered', 'TrainningInternal', 
+        'RepairingEquipment', 'EducationalSupervision', 'RenewContract',
+        'RenewEducationLicense', 'Other'
       ],
-      SystemTechnician: ['Design', 'Quotation', 'SiteSurvey', 'ConstructionAndTrainning'],
-      SystemInstructor: ['ConstructionAndTrainning', 'EducationLicenseRegistered'],
-      AgencyManager: ['AgreementSigned', 'BusinessRegistered', 'SignedContract', 'EducationLicenseRegistered'],
+      SystemTechnician: ['Design', 'Quotation', 'SiteSurvey', 'ConstructionAndTrainning', 'RepairingEquipment', 'Other'],
+      SystemInstructor: ['ConstructionAndTrainning', 'EducationLicenseRegistered', 'TrainningInternal', 'EducationalSupervision', 'Other'],
     };
   
     return rolePermissions[user.role]?.includes(type);

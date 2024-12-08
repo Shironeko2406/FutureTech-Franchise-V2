@@ -89,10 +89,10 @@ const CreateCourseModal = ({ isDrawerVisible, closeDrawer, status, pageIndex, pa
       footer={
         <div style={{ textAlign: "right" }}>
           <Button onClick={closeDrawer} className="me-2">
-            Cancel
+            Hủy
           </Button>
           <Button onClick={() => form.submit()} type="primary">
-            Submit
+            Nộp
           </Button>
         </div>
       }
