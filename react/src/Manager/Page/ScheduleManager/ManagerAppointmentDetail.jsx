@@ -126,7 +126,7 @@ const ManagerAppointmentDetail = () => {
                 </Card>
             )}
 
-            {!isFutureAppointment && !isReportAvailable && (
+            {/* {!isFutureAppointment && !isReportAvailable && (
                 <Card
                     style={{ marginTop: 16 }}
                     type="inner"
@@ -152,7 +152,7 @@ const ManagerAppointmentDetail = () => {
                         </Form.Item>
                     </Form>
                 </Card>
-            )}
+            )} */}
         </Card>
     );
 };
