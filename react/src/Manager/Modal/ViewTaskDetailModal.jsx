@@ -325,6 +325,18 @@ const ViewTaskDetailModal = ({ visible, onClose, setVisible, isFromAgencyDetail,
               Xem tài liệu đính kèm
             </Button>
           )}
+          {taskDetail?.customerSubmit && (
+            <Button
+              type="primary"
+              icon={<FileTextOutlined />}
+              href={taskDetail.customerSubmit}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ marginTop: '16px' }}
+            >
+              Xem tài liệu người dùng nộp
+            </Button>
+          )}
         </div>
       ),
     },

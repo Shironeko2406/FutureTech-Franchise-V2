@@ -174,7 +174,7 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
                         </Upload>
                     </Form.Item>
                 )}
-                {taskType === "AgreementSigned" && (
+                {taskType === "AgreementSigned" && selectedTask?.level !== "Compulsory" && (
                     <Button key="createAgreement" type="primary" onClick={() => setModalCreateAgreementVisible(true)}>
                         Thêm mới Thỏa Thuận Nguyên Tắc
                     </Button>
