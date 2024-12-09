@@ -176,7 +176,7 @@ const CreateAppointmentModal = ({ visible, onClose, workId, selectedType}) => {
           label="Thời gian"
           rules={[{ required: true, message: "Vui lòng chọn thời gian cuộc họp" }]}
         >
-          <RangePicker
+          {/* <RangePicker
             style={{ width: '100%' }}
             showTime
             format="YYYY-MM-DD HH:mm"
@@ -191,7 +191,42 @@ const CreateAppointmentModal = ({ visible, onClose, workId, selectedType}) => {
                 current < startDate
               );
             }}
+          /> */}
+          <RangePicker
+            style={{ width: '100%' }}
+            showTime
+            format="YYYY-MM-DD HH:mm"
+            disabledDate={(current) => {
+              const startDate = moment(taskDetail.startDate);
+              const endDate = moment(taskDetail.endDate);
+
+              // Disable dates outside startDate and endDate
+              return current < startDate.startOf('day') || current > endDate.endOf('day');
+            }}
+            disabledTime={(current) => {
+              const startDate = moment(taskDetail.startDate);
+              const endDate = moment(taskDetail.endDate);
+
+              if (!current) return false;
+
+              if (current.isSame(startDate, 'day')) {
+                return {
+                  disabledHours: () => Array.from({ length: startDate.hour() }, (_, i) => i),
+                  disabledMinutes: (hour) => (hour === startDate.hour() ? Array.from({ length: startDate.minute() }, (_, i) => i) : []),
+                };
+              }
+
+              if (current.isSame(endDate, 'day')) {
+                return {
+                  disabledHours: () => Array.from({ length: 24 - endDate.hour() - 1 }, (_, i) => endDate.hour() + i + 1),
+                  disabledMinutes: (hour) => (hour === endDate.hour() ? Array.from({ length: 60 - endDate.minute() }, (_, i) => endDate.minute() + i) : []),
+                };
+              }
+
+              return false;
+            }}
           />
+
         </Form.Item>
         <Form.Item name="description" label="Mô tả">
           <StyledQuill
