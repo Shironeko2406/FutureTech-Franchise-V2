@@ -33,6 +33,7 @@ const CreateSignedContractModal = ({ visible, onClose, agencyId }) => {
             await dispatch(CreateSignedContractActionAsync(contractData));
             onClose();
             form.resetFields();
+            console.log(contractData)
         } catch (error) {
             console.error("Error creating signed contract: ", error);
         } finally {
@@ -58,6 +59,7 @@ const CreateSignedContractModal = ({ visible, onClose, agencyId }) => {
     return (
         <Modal
             title="Thêm mới Hợp đồng Chuyển nhượng"
+            style={{top:20}}
             open={visible}
             onCancel={onClose}
             footer={[

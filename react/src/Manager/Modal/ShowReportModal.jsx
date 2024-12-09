@@ -255,6 +255,7 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task }) => {
           endTime: values.endTime.format('YYYY-MM-DD'),
           contractDocumentImageURL: formattedValues.contractDocumentImageURL,
           revenueSharePercentage: parseFloat(values.revenueSharePercentage),
+          depositPercentage: parseFloat(values.depositPercentage)
         };
         await dispatch(UpdateContractActionAsync(additionalInfo.id, contractData));
         setAdditionalInfo({ ...additionalInfo, ...contractData });
@@ -291,6 +292,7 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task }) => {
       startTime: additionalInfo.startTime ? dayjs(additionalInfo.startTime) : null,
       endTime: additionalInfo.endTime ? dayjs(additionalInfo.endTime) : null,
       revenueSharePercentage: additionalInfo.revenueSharePercentage,
+      depositPercentage: additionalInfo.depositPercentage,
       urlFile: additionalInfo.urlFile ? [{
         uid: '-1',
         name: 'Tệp tài liệu hiện tại',
@@ -371,6 +373,27 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task }) => {
                 ]}
               >
                 <Input min={0} max={100} placeholder="Nhập tỉ lệ phần trăm. VD: 10.5)" addonAfter="%" style={{ width: '100%' }} />
+              </Form.Item>
+              <Form.Item
+                name="depositPercentage"
+                label="Tỉ lệ phần trăm đặt cọc"
+                rules={[
+                  { required: true, message: 'Vui lòng nhập tỉ lệ phần trăm đặt cọc' },
+                  {
+                    pattern: /^[0-9]+(\.[0-9]{1,2})?$/,
+                    message: "Vui lòng nhập số thực hợp lệ (VD: 20.5).",
+                  },
+                  {
+                    validator: (_, value) => {
+                      if (!value || (parseFloat(value) >= 0 && parseFloat(value) <= 100)) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(new Error("Phần trăm phải nằm trong khoảng 0 đến 100!"));
+                    },
+                  },
+                ]}
+              >
+                <Input min={0} max={100} placeholder="Nhập tỉ lệ phần trăm đặt cọc. VD: 20.5)" addonAfter="%" style={{ width: '100%' }} />
               </Form.Item>
             </>
           )}
