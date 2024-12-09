@@ -114,12 +114,15 @@ const ListTaskAgencyManager = () => {
             switch (taskType) {
                 case "BusinessRegistered":
                     setModalCreateBusinessRegistrationVisible(true);
+                    setSelectedTask(task);
                     break;
                 case "SignedContract":
                     setModalCreateSignedContractVisible(true);
+                    setSelectedTask(task);
                     break;
                 case "EducationLicenseRegistered":
                     setModalCreateEducationalOperationLicenseVisible(true);
+                    setSelectedTask(task);
                     break;
                 default:
                     console.warn("Loại công việc không xác định:", taskType);
@@ -253,7 +256,20 @@ const ListTaskAgencyManager = () => {
             );
         }
 
-        if (task.type === "AgreementSigned" && task.level === "Compulsory" && task.customerSubmit !== null) {
+        if (task.type === "SignedContract" && task.submit === "Submited") {
+            actions.push(
+                <Button
+                    type="primary"
+                    icon={<EyeOutlined />}
+                    onClick={() => openDocumentShow(task)}
+                >
+                    Xem tài liệu
+                </Button>
+            );
+        }
+
+
+        if ((task.type === "AgreementSigned" || task.type === "SignedContract") && task.level === "Compulsory" && task.customerSubmit !== null) {
             actions.push(
                 <Button
                     type="primary"
@@ -276,6 +292,30 @@ const ListTaskAgencyManager = () => {
                     </Button>
                 );
             }
+        }
+
+        if (task.type === "BusinessRegistered" && task.level === "Compulsory" && task.customerSubmit !== null) {
+            actions.push(
+                <Button
+                    type="primary"
+                    icon={<EyeOutlined />}
+                    onClick={() => openDocumentShow(task)}
+                >
+                    Xem tài liệu đã tải
+                </Button>
+            );
+        }
+
+        if (task.type === "EducationLicenseRegistered" && task.level === "Compulsory" && task.customerSubmit !== null) {
+            actions.push(
+                <Button
+                    type="primary"
+                    icon={<EyeOutlined />}
+                    onClick={() => openDocumentShow(task)}
+                >
+                    Xem tài liệu đã tải
+                </Button>
+            );
         }
 
         return (
@@ -368,20 +408,25 @@ const ListTaskAgencyManager = () => {
             <CreateBusinessRegistrationModal
                 visible={modalCreateBusinessRegistrationVisible}
                 onClose={() => setModalCreateBusinessRegistrationVisible(false)}
+                onRefreshTasks={handleRefreshTasks}
+                taskId={selectedTask?.id} // Pass taskId here
             />
 
             <CreateSignedContractModal
                 visible={modalCreateSignedContractVisible}
                 onClose={() => setModalCreateSignedContractVisible(false)}
                 taskType={taskType}
-                selectedTask={selectedTask}
+                taskId={selectedTask?.id}
                 filters={filters}
                 pageIndex={pageIndex}
                 pageSize={pageSize}
+                onRefreshTasks={handleRefreshTasks}
             />
             <CreateEducationalOperationLicenseModal
                 visible={modalCreateEducationalOperationLicenseVisible}
                 onClose={() => setModalCreateEducationalOperationLicenseVisible(false)}
+                onRefreshTasks={handleRefreshTasks}
+                taskId={selectedTask?.id}
             />
             <ShowReportModal
                 visible={modalShowReportVisible}

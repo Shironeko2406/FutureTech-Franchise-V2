@@ -138,7 +138,7 @@ const ListTaskManager = () => {
                 let formData = { ...reportData };
                 if (reportData.type === "Design" && reportData.equipmentFile) {
                     const equipmentFormData = new FormData();
-                    equipmentFormData.append('file', reportData.equipmentFile.file.originFileObj);
+                    equipmentFormData.append('file', reportData.equipmentFile);
                     const equipmentResponse = await dispatch(CreateEquipmentActionAsync(selectedTask.agencyId, equipmentFormData));
                     if (!equipmentResponse) {
                         throw new Error("Error creating equipment");
@@ -194,65 +194,324 @@ const ListTaskManager = () => {
             />
         ];
 
-        if (task.type === "AgreementSigned" && task.level === "Compulsory" && task.customerSubmit && task.report === null) {
-            actions.push(
-                <Button
-                    type="primary"
-                    icon={<EyeOutlined />}
-                    onClick={() => window.open(task.customerSubmit, "_blank")}
-                >
-                    Xem tài liệu
-                </Button>
-            );
-            actions.push(
-                <Button
-                    type="primary"
-                    icon={<UploadOutlined />}
-                    onClick={() => openModalSubmitTaskReport(task)}
-                >
-                    Báo cáo
-                </Button>
-            );
-        } else if (task.report) {
-            actions.push(
-                <Button
-                    type="primary"
-                    icon={<EyeOutlined />}
-                    onClick={() => openModalShowReport(task)}
-                >
-                    Xem báo cáo
-                </Button>
-            );
-            if (task.submit !== "Submited" && task.status === "None") {
-                actions.push(
-                    <Button
-                        type="primary"
-                        onClick={() => handleUpdateTaskStatus(task)}
-                    >
-                        Nộp báo cáo
-                    </Button>
-                );
-            } else if (task.submit === "Submited" && task.status === "None") {
-                actions.push(
-                    <Button
-                        type="primary"
-                        danger
-                        onClick={() => handleUpdateTaskStatus(task)}
-                    >
-                        Hủy nộp
-                    </Button>
-                );
-            }
-        } else {
-            actions.push(
-                <Button
-                    type="primary"
-                    icon={<UploadOutlined />}
-                    onClick={() => openModalSubmitTaskReport(task)}
-                >
-                    Báo cáo
-                </Button>
-            );
+        switch (task.type) {
+            case "AgreementSigned":
+                if (task.level === "Compulsory" && task.customerSubmit && task.report === null) {
+                    actions.push(
+                        <Button
+                            type="primary"
+                            icon={<EyeOutlined />}
+                            onClick={() => window.open(task.customerSubmit, "_blank")}
+                        >
+                            Xem tài liệu
+                        </Button>
+                    );
+                    actions.push(
+                        <Button
+                            type="primary"
+                            icon={<UploadOutlined />}
+                            onClick={() => openModalSubmitTaskReport(task)}
+                        >
+                            Báo cáo
+                        </Button>
+                    );
+                } else if (task.report) {
+                    actions.push(
+                        <Button
+                            type="primary"
+                            icon={<EyeOutlined />}
+                            onClick={() => openModalShowReport(task)}
+                        >
+                            Xem báo cáo
+                        </Button>
+                    );
+                    if (task.submit !== "Submited" && task.status === "None") {
+                        actions.push(
+                            <Button
+                                type="primary"
+                                onClick={() => handleUpdateTaskStatus(task)}
+                            >
+                                Nộp báo cáo
+                            </Button>
+                        );
+                    } else if (task.submit === "Submited" && task.status === "None") {
+                        actions.push(
+                            <Button
+                                type="primary"
+                                danger
+                                onClick={() => handleUpdateTaskStatus(task)}
+                            >
+                                Hủy nộp
+                            </Button>
+                        );
+                    }
+                } else {
+                    actions.push(
+                        <Button
+                            type="primary"
+                            icon={<UploadOutlined />}
+                            onClick={() => openModalSubmitTaskReport(task)}
+                        >
+                            Báo cáo
+                        </Button>
+                    );
+                }
+                break;
+            case "BusinessRegistered":
+                if (task.level === "Compulsory" && task.customerSubmit && task.report === null) {
+                    actions.push(
+                        <Button
+                            type="primary"
+                            icon={<EyeOutlined />}
+                            onClick={() => openModalShowReport(task)}
+                        >
+                            Xem tài liệu
+                        </Button>
+                    );
+                } else if (task.level === "Compulsory" && task.report !== null) {
+                    actions.push(
+                        <Button
+                            type="primary"
+                            icon={<EyeOutlined />}
+                            onClick={() => openModalShowReport(task)}
+                        >
+                            Xem báo cáo
+                        </Button>
+                    );
+                    if (task.submit !== "Submited" && task.status === "None") {
+                        actions.push(
+                            <Button
+                                type="primary"
+                                onClick={() => handleUpdateTaskStatus(task)}
+                            >
+                                Nộp báo cáo
+                            </Button>
+                        );
+                    } else if (task.submit === "Submited" && task.status === "None") {
+                        actions.push(
+                            <Button
+                                type="primary"
+                                danger
+                                onClick={() => handleUpdateTaskStatus(task)}
+                            >
+                                Hủy nộp
+                            </Button>
+                        );
+                    }
+                } else if (task.level !== "Compulsory") {
+                    if (task.report) {
+                        actions.push(
+                            <Button
+                                type="primary"
+                                icon={<EyeOutlined />}
+                                onClick={() => openModalShowReport(task)}
+                            >
+                                Xem báo cáo
+                            </Button>
+                        );
+                        if (task.submit !== "Submited" && task.status === "None") {
+                            actions.push(
+                                <Button
+                                    type="primary"
+                                    onClick={() => handleUpdateTaskStatus(task)}
+                                >
+                                    Nộp báo cáo
+                                </Button>
+                            );
+                        } else if (task.submit === "Submited" && task.status === "None") {
+                            actions.push(
+                                <Button
+                                    type="primary"
+                                    danger
+                                    onClick={() => handleUpdateTaskStatus(task)}
+                                >
+                                    Hủy nộp
+                                </Button>
+                            );
+                        }
+                    }
+                }
+                break;
+            case "SignedContract":
+                if (task.level === "Compulsory" && task.customerSubmit && task.report === null) {
+                    actions.push(
+                        <Button
+                            type="primary"
+                            icon={<EyeOutlined />}
+                            onClick={() => window.open(task.customerSubmit, "_blank")}
+                        >
+                            Xem tài liệu
+                        </Button>
+                    );
+                    actions.push(
+                        <Button
+                            type="primary"
+                            icon={<UploadOutlined />}
+                            onClick={() => openModalSubmitTaskReport(task)}
+                        >
+                            Báo cáo
+                        </Button>
+                    );
+                } else if (task.report) {
+                    actions.push(
+                        <Button
+                            type="primary"
+                            icon={<EyeOutlined />}
+                            onClick={() => openModalShowReport(task)}
+                        >
+                            Xem báo cáo
+                        </Button>
+                    );
+                    if (task.submit !== "Submited" && task.status === "None") {
+                        actions.push(
+                            <Button
+                                type="primary"
+                                onClick={() => handleUpdateTaskStatus(task)}
+                            >
+                                Nộp báo cáo
+                            </Button>
+                        );
+                    } else if (task.submit === "Submited" && task.status === "None") {
+                        actions.push(
+                            <Button
+                                type="primary"
+                                danger
+                                onClick={() => handleUpdateTaskStatus(task)}
+                            >
+                                Hủy nộp
+                            </Button>
+                        );
+                    }
+                } else {
+                    actions.push(
+                        <Button
+                            type="primary"
+                            icon={<UploadOutlined />}
+                            onClick={() => openModalSubmitTaskReport(task)}
+                        >
+                            Báo cáo
+                        </Button>
+                    );
+                }
+                break;
+            case "EducationLicenseRegistered":
+                if (task.level === "Compulsory" && task.customerSubmit && task.report === null) {
+                    actions.push(
+                        <Button
+                            type="primary"
+                            icon={<EyeOutlined />}
+                            onClick={() => openModalShowReport(task)}
+                        >
+                            Xem tài liệu
+                        </Button>
+                    );
+                } else if (task.level === "Compulsory" && task.report !== null) {
+                    actions.push(
+                        <Button
+                            type="primary"
+                            icon={<EyeOutlined />}
+                            onClick={() => openModalShowReport(task)}
+                        >
+                            Xem báo cáo
+                        </Button>
+                    );
+                    if (task.submit !== "Submited" && task.status === "None") {
+                        actions.push(
+                            <Button
+                                type="primary"
+                                onClick={() => handleUpdateTaskStatus(task)}
+                            >
+                                Nộp báo cáo
+                            </Button>
+                        );
+                    } else if (task.submit === "Submited" && task.status === "None") {
+                        actions.push(
+                            <Button
+                                type="primary"
+                                danger
+                                onClick={() => handleUpdateTaskStatus(task)}
+                            >
+                                Hủy nộp
+                            </Button>
+                        );
+                    }
+                } else if (task.level !== "Compulsory") {
+                    if (task.report) {
+                        actions.push(
+                            <Button
+                                type="primary"
+                                icon={<EyeOutlined />}
+                                onClick={() => openModalShowReport(task)}
+                            >
+                                Xem báo cáo
+                            </Button>
+                        );
+                        if (task.submit !== "Submited" && task.status === "None") {
+                            actions.push(
+                                <Button
+                                    type="primary"
+                                    onClick={() => handleUpdateTaskStatus(task)}
+                                >
+                                    Nộp báo cáo
+                                </Button>
+                            );
+                        } else if (task.submit === "Submited" && task.status === "None") {
+                            actions.push(
+                                <Button
+                                    type="primary"
+                                    danger
+                                    onClick={() => handleUpdateTaskStatus(task)}
+                                >
+                                    Hủy nộp
+                                </Button>
+                            );
+                        }
+                    }
+                }
+                break;
+            default:
+                if (task.report) {
+                    actions.push(
+                        <Button
+                            type="primary"
+                            icon={<EyeOutlined />}
+                            onClick={() => openModalShowReport(task)}
+                        >
+                            Xem báo cáo
+                        </Button>
+                    );
+                    if (task.submit !== "Submited" && task.status === "None") {
+                        actions.push(
+                            <Button
+                                type="primary"
+                                onClick={() => handleUpdateTaskStatus(task)}
+                            >
+                                Nộp báo cáo
+                            </Button>
+                        );
+                    } else if (task.submit === "Submited" && task.status === "None") {
+                        actions.push(
+                            <Button
+                                type="primary"
+                                danger
+                                onClick={() => handleUpdateTaskStatus(task)}
+                            >
+                                Hủy nộp
+                            </Button>
+                        );
+                    }
+                } else {
+                    actions.push(
+                        <Button
+                            type="primary"
+                            icon={<UploadOutlined />}
+                            onClick={() => openModalSubmitTaskReport(task)}
+                        >
+                            Báo cáo
+                        </Button>
+                    );
+                }
+                break;
         }
 
         return (
@@ -367,6 +626,9 @@ const ListTaskManager = () => {
                 taskId={selectedTask?.id}
                 taskType={selectedTask?.type}
                 task={selectedTask} // Pass task here
+                filters={filters} // Add filters
+                pageIndex={pageIndex} // Add pageIndex
+                pageSize={pageSize} // Add pageSize
             />
         </Card>
     );

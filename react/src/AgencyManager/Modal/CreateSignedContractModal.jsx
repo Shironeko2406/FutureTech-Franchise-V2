@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Form, Upload, Button, DatePicker, Input, InputNumber } from 'antd';
+import { Modal, Form, Upload, Button, message } from 'antd';
 import { UploadOutlined, DownloadOutlined, CreditCardOutlined } from "@ant-design/icons";
 import { imageDB } from "../../Firebasse/Config";
 import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
@@ -9,8 +9,10 @@ import { AgencyUploadContractActionAsync, DownloadSampleContractActionAsync, Get
 import { CreatePaymentContractActionAsync } from '../../Redux/ReducerAPI/PaymentReducer';
 import { USER_LOGIN } from '../../Utils/Interceptors';
 import { getDataJSONStorage } from '../../Utils/UtilsFunction';
+import { AgencySubmitTaskActionAsync } from '../../Redux/ReducerAPI/WorkReducer';
 
-const CreateSignedContractModal = ({ visible, onClose, filters, pageIndex, pageSize }) => {
+
+const CreateSignedContractModal = ({ visible, onClose, filters, pageIndex, pageSize, onRefreshTasks, taskId }) => {
     const [form] = Form.useForm();
     const [file, setFile] = useState(null);
     const dispatch = useDispatch();
@@ -25,26 +27,36 @@ const CreateSignedContractModal = ({ visible, onClose, filters, pageIndex, pageS
             dispatch(GetContractDetailByAgencyIdActionAsync(agencyId))
         }
     }, [visible, dispatch]);
-    
 
-    const handleSubmit =  (value) => {
+
+    const handleSubmit = async (value) => {
         setLoading(true)
         let formattedValues = {
             ...value,
             contractDocumentImageURL: file ? file.url : null, // Use fileUrl to store the URL
-            agencyId: agencyId}
+            agencyId: agencyId
+        }
 
-        dispatch(AgencyUploadContractActionAsync(formattedValues, filters, pageIndex, pageSize)).then((res) => {
-            setLoading(false)
-            if (res) {
-                form.resetFields()
-                setFile(null)
-                onClose()
-            }
-        }).catch((err) => {
-            console.log(err)
-            setLoading(false)
-        });  
+        // dispatch(AgencyUploadContractActionAsync(formattedValues, filters, pageIndex, pageSize)).then((res) => {
+        //     setLoading(false)
+        //     if (res) {
+        //         form.resetFields()
+        //         setFile(null)
+        //         onClose()
+        //     }
+        // }).catch((err) => {
+        //     console.log(err)
+        //     setLoading(false)
+        // });  
+
+        setLoading(true);
+        const success = await dispatch(AgencySubmitTaskActionAsync(taskId, file.url));
+        setLoading(false);
+        if (success) {
+            message.success("Nộp tài liệu thành công");
+            onClose();
+            onRefreshTasks();
+        }
     };
 
     const handleUpload = async ({ file, onSuccess, onError }) => {
@@ -99,7 +111,7 @@ const CreateSignedContractModal = ({ visible, onClose, filters, pageIndex, pageS
                     Nộp hợp đồng
                 </Button>,
             ]}
-            
+
         >
             <Form form={form} layout="vertical" onFinish={handleSubmit}>
                 <Form.Item

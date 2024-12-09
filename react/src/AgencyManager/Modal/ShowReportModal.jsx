@@ -1,12 +1,16 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { Modal, Button, Typography, Spin, Descriptions } from 'antd';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
+import { Modal, Button, Typography, Spin, Descriptions, Form, Input, DatePicker, Upload } from 'antd';
 import styled from 'styled-components';
-import { EyeOutlined, DownloadOutlined } from '@ant-design/icons';
+import { EyeOutlined, DownloadOutlined, UploadOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { GetTaskDetailByIdActionAsync } from '../../Redux/ReducerAPI/WorkReducer';
-import { GetDocumentByAgencyIdActionAsync } from '../../Redux/ReducerAPI/DocumentReducer';
+import { GetDocumentByAgencyIdActionAsync, UpdateDocumentActionAsync } from '../../Redux/ReducerAPI/DocumentReducer';
 import { GetContractDetailByAgencyIdActionAsync } from '../../Redux/ReducerAPI/ContractReducer';
 import dayjs from 'dayjs';
+import moment from 'moment';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { imageDB } from "../../Firebasse/Config";
+
 
 const { Title, Text } = Typography;
 
@@ -44,10 +48,19 @@ const LoadingWrapper = styled.div`
   height: 200px;
 `;
 
+const ButtonGroup = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+`;
+
 const ShowReportModal = ({ visible, onClose, taskId, taskType, agencyId }) => {
   const dispatch = useDispatch();
   const [additionalInfo, setAdditionalInfo] = useState(null);
   const [additionalLoading, setAdditionalLoading] = useState(false);
+  const [isEditingDocument, setIsEditingDocument] = useState(false);
+  const [form] = Form.useForm();
+  const uploadedDocumentFileURLRef = useRef(null);
 
   useEffect(() => {
     if (visible && taskId && agencyId) {
@@ -76,14 +89,110 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, agencyId }) => {
     }
   }, [visible, taskId, taskType, dispatch, agencyId]);
 
+  const handleSaveDocument = async () => {
+    setAdditionalLoading(true);
+    try {
+      const values = await form.validateFields();
+      const formattedValues = {
+        ...values,
+        urlFile: uploadedDocumentFileURLRef.current || (values.urlFile && values.urlFile[0] ? values.urlFile[0].url : additionalInfo.urlFile),
+      };
+      const documentData = {
+        title: values.title,
+        expirationDate: values.expirationDate ? values.expirationDate.format('YYYY-MM-DD') : null,
+        urlFile: formattedValues.urlFile,
+        type: taskType === 'BusinessRegistered' ? 'BusinessLicense' : 'EducationalOperationLicense',
+      };
+      await dispatch(UpdateDocumentActionAsync(additionalInfo.id, documentData));
+      setAdditionalInfo({ ...additionalInfo, ...documentData });
+      setIsEditingDocument(false);
+    } catch (error) {
+      console.error("Error saving document: ", error);
+    } finally {
+      setAdditionalLoading(false);
+    }
+  };
+
+  const handleUploadDocumentFile = async ({ file, onSuccess, onError }) => {
+    const storageRef = ref(imageDB, `files/${file.name}`);
+    try {
+      await uploadBytes(storageRef, file);
+      const url = await getDownloadURL(storageRef);
+      uploadedDocumentFileURLRef.current = url;
+      onSuccess({ url }, file);
+    } catch (error) {
+      console.error("Upload error: ", error);
+      onError(error);
+    }
+  };
+
+  const handleEditDocument = () => {
+    setIsEditingDocument(true);
+    form.setFieldsValue({
+      title: additionalInfo.title,
+      expirationDate: additionalInfo.expirationDate ? dayjs(additionalInfo.expirationDate) : null,
+      urlFile: additionalInfo.urlFile ? [{
+        uid: '-1',
+        name: 'Tệp tài liệu hiện tại',
+        status: 'done',
+        url: additionalInfo.urlFile,
+      }] : [],
+    });
+  };
+
   const renderAdditionalInfo = useMemo(() => {
     if (!additionalInfo) return null;
+
+    if (isEditingDocument) {
+      return (
+        <Form form={form} layout="vertical">
+          <Form.Item
+            name="title"
+            label="Tiêu đề"
+            rules={[{ required: true, message: 'Vui lòng nhập tiêu đề' }]}
+          >
+            <Input placeholder="Nhập tiêu đề" />
+          </Form.Item>
+          <Form.Item
+            name="expirationDate"
+            label="Ngày hết hạn"
+            rules={[{ required: true, message: 'Vui lòng chọn ngày hết hạn' }]}
+          >
+            <DatePicker style={{ width: '100%' }} format="YYYY-MM-DD" disabledDate={(current) => current && current < moment().startOf('day')} />
+          </Form.Item>
+          <Form.Item
+            name="urlFile"
+            label="Tài liệu"
+            rules={[{ required: true, message: 'Vui lòng upload tài liệu' }]}
+          >
+            <Upload
+              name="documentFile"
+              customRequest={handleUploadDocumentFile}
+              accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+              maxCount={1}
+              defaultFileList={additionalInfo.urlFile ? [{
+                uid: '-1',
+                name: 'Tệp tài liệu hiện tại',
+                status: 'done',
+                url: additionalInfo.urlFile,
+              }] : []}
+            >
+              <Button icon={<UploadOutlined />}>Tải tài liệu</Button>
+            </Upload>
+          </Form.Item>
+          <ButtonGroup>
+            <Button onClick={() => setIsEditingDocument(false)}>Hủy</Button>
+            <Button type="primary" onClick={handleSaveDocument}>Lưu</Button>
+          </ButtonGroup>
+        </Form>
+      );
+    }
 
     if (taskType === 'AgreementSigned' || taskType === 'BusinessRegistered' || taskType === 'EducationLicenseRegistered') {
       return (
         <StyledDescriptions bordered column={1}>
           <Descriptions.Item label="Tiêu đề">{additionalInfo.title}</Descriptions.Item>
-          <Descriptions.Item label="Ngày hết hạn">{dayjs(additionalInfo.expirationDate).format('DD/MM/YYYY')}</Descriptions.Item>
+          <Descriptions.Item label="Ngày hết hạn">{additionalInfo.expirationDate ? dayjs(additionalInfo.expirationDate).format('DD/MM/YYYY') : null}</Descriptions.Item>
           <Descriptions.Item label="Tài liệu">
             <Button type="link" icon={<DownloadOutlined />} href={additionalInfo.urlFile} target="_blank" rel="noopener noreferrer">
               Tải xuống file tài liệu
@@ -97,11 +206,20 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, agencyId }) => {
           <Descriptions.Item label="Tiêu đề">{additionalInfo.title}</Descriptions.Item>
           <Descriptions.Item label="Ngày bắt đầu">{dayjs(additionalInfo.startTime).format('DD/MM/YYYY')}</Descriptions.Item>
           <Descriptions.Item label="Ngày kết thúc">{dayjs(additionalInfo.endTime).format('DD/MM/YYYY')}</Descriptions.Item>
+          <Descriptions.Item label="Phí nhượng quyền">
+            <Text>{Number(additionalInfo.frachiseFee).toLocaleString('vi-VN')} VND</Text>
+          </Descriptions.Item>
+          <Descriptions.Item label="Phí thiết kế">
+            <Text>{Number(additionalInfo.designFee).toLocaleString('vi-VN')} VND</Text>
+          </Descriptions.Item>
           <Descriptions.Item label="Tổng số tiền">
             <Text strong>{Number(additionalInfo.total).toLocaleString('vi-VN')} VND</Text>
           </Descriptions.Item>
           <Descriptions.Item label="Tỷ lệ chia sẻ doanh thu">
             <Text strong>{additionalInfo.revenueSharePercentage}%</Text>
+          </Descriptions.Item>
+          <Descriptions.Item label="Phần trăm trả trước">
+            <Text strong>{additionalInfo.depositPercentage}%</Text>
           </Descriptions.Item>
           <Descriptions.Item label="Tài liệu">
             <Button type="link" icon={<EyeOutlined />} href={additionalInfo.contractDocumentImageURL} target="_blank" rel="noopener noreferrer">
@@ -112,7 +230,7 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, agencyId }) => {
       );
     }
     return null;
-  }, [additionalInfo, taskType]);
+  }, [additionalInfo, taskType, isEditingDocument]);
 
   const renderContent = () => {
     if (additionalLoading) {
@@ -138,7 +256,12 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, agencyId }) => {
       footer={[
         <Button key="back" onClick={onClose} size="large">
           Đóng
-        </Button>
+        </Button>,
+        (taskType === 'BusinessRegistered' || taskType === 'EducationLicenseRegistered') && additionalInfo?.status === "None" && (
+          <Button key="edit" onClick={handleEditDocument} size="large" type="primary">
+            Chỉnh sửa
+          </Button>
+        )
       ]}
       width={800}
     >

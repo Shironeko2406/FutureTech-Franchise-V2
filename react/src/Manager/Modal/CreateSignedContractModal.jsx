@@ -27,6 +27,7 @@ const CreateSignedContractModal = ({ visible, onClose, agencyId }) => {
                 endTime: values.endTime.format('YYYY-MM-DD'),
                 contractDocumentImageURL: fileURL,
                 revenueSharePercentage: parseFloat(values.revenueSharePercentage),
+                depositPercentage: parseFloat(values.depositPercentage),
                 agencyId: agencyId, // Use the passed agencyId
             };
             await dispatch(CreateSignedContractActionAsync(contractData));
@@ -113,6 +114,27 @@ const CreateSignedContractModal = ({ visible, onClose, agencyId }) => {
                     <Form.Item
                         name="revenueSharePercentage"
                         label="Tỉ lệ phần trăm ăn chia nhượng quyền"
+                        rules={[
+                            { required: true, message: 'Vui lòng nhập tỉ lệ phần trăm' },
+                            {
+                                pattern: /^[0-9]+(\.[0-9]{1,2})?$/,
+                                message: "Vui lòng nhập số thực hợp lệ (VD: 10.5).",
+                            },
+                            {
+                                validator: (_, value) => {
+                                    if (!value || (parseFloat(value) >= 0 && parseFloat(value) <= 100)) {
+                                        return Promise.resolve();
+                                    }
+                                    return Promise.reject(new Error("Phần trăm phải nằm trong khoảng 0 đến 100!"));
+                                },
+                            },
+                        ]}
+                    >
+                        <Input min={0} max={100} placeholder="Nhập tỉ lệ phần trăm. VD: 10.5)" addonAfter="%" style={{ width: '100%' }} />
+                    </Form.Item>
+                    <Form.Item
+                        name="depositPercentage"
+                        label="Phần trăm trả trước giá trị hợp đồng"
                         rules={[
                             { required: true, message: 'Vui lòng nhập tỉ lệ phần trăm' },
                             {
