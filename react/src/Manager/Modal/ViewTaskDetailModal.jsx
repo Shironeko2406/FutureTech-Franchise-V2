@@ -325,7 +325,8 @@ const ViewTaskDetailModal = ({ visible, onClose, setVisible, isFromAgencyDetail,
               Xem tài liệu đính kèm
             </Button>
           )}
-          {taskDetail?.customerSubmit && (
+          {taskDetail?.reportImageURL && <br />}
+          {taskDetail?.customerSubmit && (taskDetail?.taskType === 'AgreementSigned' || taskDetail?.taskType === 'SignedContract') && (
             <Button
               type="primary"
               icon={<FileTextOutlined />}
@@ -334,7 +335,7 @@ const ViewTaskDetailModal = ({ visible, onClose, setVisible, isFromAgencyDetail,
               rel="noopener noreferrer"
               style={{ marginTop: '16px' }}
             >
-              Xem tài liệu người dùng nộp
+              Xem tài liệu bên liên quan nộp
             </Button>
           )}
         </div>

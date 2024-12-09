@@ -136,12 +136,12 @@ const CreateSignedContractModal = ({ visible, onClose, agencyId }) => {
                     </Form.Item>
                     <Form.Item
                         name="depositPercentage"
-                        label="Tỉ lệ phần trăm đặt cọc"
+                        label="Phần trăm trả trước giá trị hợp đồng"
                         rules={[
-                            { required: true, message: 'Vui lòng nhập tỉ lệ phần trăm đặt cọc' },
+                            { required: true, message: 'Vui lòng nhập tỉ lệ phần trăm' },
                             {
                                 pattern: /^[0-9]+(\.[0-9]{1,2})?$/,
-                                message: "Vui lòng nhập số thực hợp lệ (VD: 20.5).",
+                                message: "Vui lòng nhập số thực hợp lệ (VD: 10.5).",
                             },
                             {
                                 validator: (_, value) => {
@@ -153,7 +153,7 @@ const CreateSignedContractModal = ({ visible, onClose, agencyId }) => {
                             },
                         ]}
                     >
-                        <Input min={0} max={100} placeholder="Nhập tỉ lệ phần trăm đặt cọc. VD: 20.5)" addonAfter="%" style={{ width: '100%' }} />
+                        <Input min={0} max={100} placeholder="Nhập tỉ lệ phần trăm. VD: 10.5)" addonAfter="%" style={{ width: '100%' }} />
                     </Form.Item>
                     <Form.Item
                         name="file"

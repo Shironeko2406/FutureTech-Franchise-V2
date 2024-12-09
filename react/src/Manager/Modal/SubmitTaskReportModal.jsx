@@ -184,7 +184,7 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
                         Thêm mới Giấy Đăng Ký Doanh Nghiệp
                     </Button>
                 )}
-                {taskType === "SignedContract" && (
+                {taskType === "SignedContract" && selectedTask?.level !== "Compulsory" && (
                     <Button key="createSignedContract" type="primary" onClick={() => setModalCreateSignedContractVisible(true)}>
                         Thêm mới Hợp đồng Chuyển nhượng
                     </Button>

@@ -15,6 +15,7 @@ import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
 import { imageDB } from "../../Firebasse/Config";
 import { useLoading } from '../../Utils/LoadingContext';
 import moment from 'moment';
+import { GetTaskUserByLoginActionAsync } from '../../Redux/ReducerAPI/UserReducer';
 
 const { Title, Text } = Typography;
 
@@ -187,6 +188,14 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task }) => {
 
       await dispatch(SubmitTaskReportActionAsync(taskId, formattedValues));
       setIsEditing(false);
+      await dispatch(GetTaskUserByLoginActionAsync(
+        filters.searchText,
+        filters.levelFilter,
+        filters.statusFilter,
+        filters.submitFilter,
+        pageIndex,
+        pageSize
+      ));
     } catch (error) {
       console.error("Error saving report: ", error);
     } finally {
@@ -296,6 +305,14 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task }) => {
         status: 'done',
         url: additionalInfo.contractDocumentImageURL,
       }] : [],
+    });
+  };
+
+  const handleAddReport = () => {
+    setIsEditing(true);
+    form.setFieldsValue({
+      report: '',
+      reportImageURL: [],
     });
   };
 
@@ -436,9 +453,9 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task }) => {
       return (
         <StyledDescriptions bordered column={1}>
           <Descriptions.Item label="Tiêu đề">{additionalInfo.title}</Descriptions.Item>
-          <Descriptions.Item label="Ngày hết hạn">{dayjs(additionalInfo.expirationDate).format('DD/MM/YYYY')}</Descriptions.Item>
+          <Descriptions.Item label="Ngày hết hạn">{additionalInfo.expirationDate ? dayjs(additionalInfo.expirationDate).format('DD/MM/YYYY') : null}</Descriptions.Item>
           <Descriptions.Item label="Tài liệu">
-            <Button type="link" icon={<DownloadOutlined />} href={taskType === 'AgreementSigned' && additionalInfo.level === "Compulsory" ? task.customerSubmit : additionalInfo.urlFile} target="_blank" rel="noopener noreferrer">
+            <Button type="link" icon={<DownloadOutlined />} href={(taskType === 'AgreementSigned' && additionalInfo.level === "Compulsory") ? task.customerSubmit : additionalInfo.urlFile} target="_blank" rel="noopener noreferrer">
               Tải xuống file tài liệu
             </Button>
           </Descriptions.Item>
@@ -450,17 +467,26 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task }) => {
           <Descriptions.Item label="Tiêu đề">{additionalInfo.title}</Descriptions.Item>
           <Descriptions.Item label="Ngày bắt đầu">{dayjs(additionalInfo.startTime).format('DD/MM/YYYY')}</Descriptions.Item>
           <Descriptions.Item label="Ngày kết thúc">{dayjs(additionalInfo.endTime).format('DD/MM/YYYY')}</Descriptions.Item>
+          <Descriptions.Item label="Phí nhượng quyền">
+            <Text>{Number(additionalInfo.frachiseFee).toLocaleString('vi-VN')} VND</Text>
+          </Descriptions.Item>
+          <Descriptions.Item label="Phí thiết kế">
+            <Text>{Number(additionalInfo.designFee).toLocaleString('vi-VN')} VND</Text>
+          </Descriptions.Item>
           <Descriptions.Item label="Tổng số tiền">
             <Text strong>{Number(additionalInfo.total).toLocaleString('vi-VN')} VND</Text>
           </Descriptions.Item>
           <Descriptions.Item label="Tỷ lệ chia sẻ doanh thu">
             <Text strong>{additionalInfo.revenueSharePercentage}%</Text>
           </Descriptions.Item>
-          <Descriptions.Item label="Tỷ lệ đặt cọc">
+          <Descriptions.Item label="Phần trăm trả trước">
             <Text strong>{additionalInfo.depositPercentage}%</Text>
           </Descriptions.Item>
+          <Descriptions.Item label="Số tiền đã trả">
+            <Text strong>{Number(additionalInfo.paidAmount).toLocaleString('vi-VN')} VND</Text>
+          </Descriptions.Item>
           <Descriptions.Item label="Tài liệu">
-            <Button type="link" icon={<EyeOutlined />} href={additionalInfo.contractDocumentImageURL} target="_blank" rel="noopener noreferrer">
+            <Button type="link" icon={<EyeOutlined />} href={additionalInfo.level === "Compulsory" ? task.customerSubmit : null} target="_blank" rel="noopener noreferrer">
               Xem tài liệu hợp đồng
             </Button>
           </Descriptions.Item>
@@ -482,12 +508,18 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task }) => {
     return (
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
         <StyledCard
-          title="Nội dung báo cáo"
+          title={"Nội dung báo cáo"}
           extra={
-            taskDetail.status === "None" && taskDetail.submit === "None" && (
-              <Button type="primary" icon={<EditOutlined />} onClick={handleEditReport}>
-                Chỉnh sửa
+            taskDetail.report === null ? (
+              <Button type="primary" icon={<EditOutlined />} onClick={handleAddReport}>
+                Thêm báo cáo
               </Button>
+            ) : (
+              taskDetail.status === "None" && taskDetail.submit === "None" && (
+                <Button type="primary" icon={<EditOutlined />} onClick={handleEditReport}>
+                  Chỉnh sửa
+                </Button>
+              )
             )
           }
         >
@@ -560,17 +592,30 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task }) => {
           ) : (
             <Space direction="vertical" size="middle" style={{ width: '100%' }}>
               <HTMLContent dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(taskDetail.report) }} />
-              {taskDetail.reportImageURL && (
+              {taskDetail?.reportImageURL && (
                 <Button
                   type="primary"
-                  icon={<FilePdfOutlined />}
+                  icon={<FileTextOutlined />}
                   href={taskDetail.reportImageURL}
                   target="_blank"
                   rel="noopener noreferrer"
+                  style={{ marginTop: '16px' }}
                 >
                   Xem tài liệu đính kèm
                 </Button>
               )}
+              {/* {taskDetail?.customerSubmit && (
+                <Button
+                  type="primary"
+                  icon={<FileTextOutlined />}
+                  href={taskDetail.customerSubmit}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ marginTop: '16px' }}
+                >
+                  Xem tài liệu bên liên quan nộp
+                </Button>
+              )}s */}
               {taskType === "Design" && (
                 <Button
                   type="primary"
@@ -595,13 +640,6 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task }) => {
                     ? 'Thông tin Giấy chứng nhận đăng ký hoạt động giáo dục'
                     : 'Thông tin hợp đồng'
             }
-          // extra={
-          //   taskDetail.status === "None" && taskDetail.submit === "None" && (
-          //     <Button icon={<FileTextOutlined />} onClick={handleEditDocument}>
-          //       Chỉnh sửa
-          //     </Button>
-          //   )
-          // }
           >
             {renderAdditionalInfo}
           </StyledCard>
@@ -612,7 +650,7 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task }) => {
 
   return (
     <StyledModal
-      title={<Title level={3}>Chi tiết báo cáo</Title>}
+      title={<Title level={3}>{taskDetail.report === null ? "Chi tiết tài liệu" : "Chi tiết báo cáo"}</Title>}
       open={visible}
       onCancel={onClose}
       footer={[

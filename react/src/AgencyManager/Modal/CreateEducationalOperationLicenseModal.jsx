@@ -6,32 +6,38 @@ import { imageDB } from "../../Firebasse/Config";
 import { useDispatch } from 'react-redux';
 import { CreateDocumentActionAsync } from '../../Redux/ReducerAPI/DocumentReducer';
 import moment from 'moment';
+import { AgencySubmitTaskActionAsync } from '../../Redux/ReducerAPI/WorkReducer';
 import { USER_LOGIN } from '../../Utils/Interceptors';
 import { getDataJSONStorage } from '../../Utils/UtilsFunction';
+import { message } from 'antd';
 
-const CreateEducationalOperationLicenseModal = ({ visible, onClose }) => {
+const CreateEducationalOperationLicenseModal = ({ visible, onClose, onRefreshTasks, taskId }) => {
     const [form] = Form.useForm();
     const dispatch = useDispatch();
-    const [file, setFile] = useState(null);
+    const [fileUrl, setFileUrl] = useState(null);
     const [loading, setLoading] = useState(false); // Local loading state
     const agencyId = getDataJSONStorage(USER_LOGIN).agencyId
+    const currentTaskId = taskId;
+
 
     const handleOk = async () => {
         setLoading(true);
         try {
             const values = await form.validateFields();
-            const storageRef = ref(imageDB, `documents/${file.name}`);
-            await uploadBytes(storageRef, file);
-            const fileURL = await getDownloadURL(storageRef);
             const documentData = {
                 title: values.title,
-                urlFile: fileURL,
+                urlFile: fileUrl,
                 expirationDate: values.expirationDate ? values.expirationDate.format('YYYY-MM-DD') : null,
                 documentType: "EducationalOperationLicense",
                 agencyId: agencyId, // Use the passed agencyId
             };
-            await dispatch(CreateDocumentActionAsync(documentData));
+            const data = await dispatch(CreateDocumentActionAsync(documentData));
+            if (data === true) {
+                console.log("currentTaskId", currentTaskId)
+                await dispatch(AgencySubmitTaskActionAsync(currentTaskId, fileUrl));
+            }
             onClose();
+            onRefreshTasks();
             form.resetFields();
         } catch (error) {
             console.error("Error creating agreement: ", error);
@@ -41,17 +47,22 @@ const CreateEducationalOperationLicenseModal = ({ visible, onClose }) => {
     };
 
     const handleUpload = async ({ file, onSuccess, onError }) => {
-        if (!file.type.startsWith('application/')) {
-            onError(new Error('Only document files are allowed!'));
-            return;
+        const storageRef = ref(imageDB, `files/${file.name}`);
+        try {
+            await uploadBytes(storageRef, file);
+            const url = await getDownloadURL(storageRef);
+            setFileUrl(url);
+            onSuccess(null, file);
+        } catch (error) {
+            console.error("Upload error: ", error);
+            onError(error);
+            message.error("Tải tài liệu thất bại");
         }
-        setFile(file);
-        onSuccess(null, file);
     };
 
     return (
         <Modal
-            title="Thêm mới Giấy Đăng Ký Giấy Phép Kinh Doanh"
+            title="Thêm mới Giấy Phép Hoạt Động Giáo Dục"
             open={visible}
             onCancel={onClose}
             footer={[
