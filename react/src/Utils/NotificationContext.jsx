@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import * as signalR from "@microsoft/signalr";
 import { notification } from 'antd';
 import { GetNotificationUnReadOfUserActionAsync, GetNotificationUserLoginActionAsync } from '../Redux/ReducerAPI/NotificationReducer';
+import { HOST_DOMAIN } from './Interceptors';
 
 export const useNotifications = () => {
   const dispatch = useDispatch();
@@ -15,7 +16,7 @@ export const useNotifications = () => {
     
     // Kết nối tới SignalR hub
     connection.current = new signalR.HubConnectionBuilder()
-      .withUrl(`https://localhost:7116/notificationHub?userId=${JSON.parse(localStorage.getItem("userLogin")).id}`, {
+      .withUrl(`${HOST_DOMAIN}/notificationHub?userId=${JSON.parse(localStorage.getItem("userLogin")).id}`, {
         skipNegotiation: true,
         transport: signalR.HttpTransportType.WebSockets,
       })
