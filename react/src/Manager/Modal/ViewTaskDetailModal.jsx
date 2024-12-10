@@ -8,7 +8,7 @@ import { useLoading } from "../../Utils/LoadingContext";
 import { UpdateStatusTaskByIdActionAsync } from "../../Redux/ReducerAPI/WorkReducer";
 import { useParams } from "react-router-dom";
 import CreateAppointmentModal from "./CreateAppointmentModal";
-import { DeleteAppointmentByIdActionAsync, GetAppointmentDetailByIdActionAsync } from "../../Redux/ReducerAPI/AppointmentReducer";
+import { DeleteAppointmentByIdActionAsync, GetAppointmentDetailByIdActionAsync, setAppointmentDetail } from "../../Redux/ReducerAPI/AppointmentReducer";
 import EditAppointmentModal from "./EditAppointmentModal";
 import DOMPurify from 'dompurify';
 import ViewAppointmentDetailModal from "./ViewAppointmentDetailModal";
@@ -170,6 +170,7 @@ const ViewTaskDetailModal = ({ visible, onClose, setVisible, isFromAgencyDetail,
   const handleViewAppointmentDetailCancel = () => {
     setIsViewAppointmentModalVisible(false);
     setVisible(true);
+    dispatch(setAppointmentDetail({}))
   };
 
   const showEditAppointmentByIdModal = (id) => {

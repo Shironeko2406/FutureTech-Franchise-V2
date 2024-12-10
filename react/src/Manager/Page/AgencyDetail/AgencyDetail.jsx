@@ -304,7 +304,6 @@ export default function AgencyDetail() {
   useEffect(() => {
     setLoadingTasks(true);
     dispatch(GetTaskByAgencyIdActionAsync(id)).finally(() => setLoadingTasks(false));
-    dispatch(GetManagerUserAddAppointmentActionAsync());
   }, [id, dispatch]);
 
   const taskDataModify = useMemo(() => {

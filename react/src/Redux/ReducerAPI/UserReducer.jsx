@@ -185,10 +185,15 @@ export const GetClassOfUserLoginActionAsync = () => {
   };
 };
 
-export const GetManagerUserAddAppointmentActionAsync = () => {
+export const GetManagerUserAddAppointmentActionAsync = (filter) => {
   return async (dispatch) => {
     try {
-      const res = await httpClient.get(`/manager/api/v1/users`);
+      const res = await httpClient.get(`/manager/api/v1/users`,{
+        params: {
+          StartTime: filter.startTimeFilter,
+          EndTime: filter.endTimeFilter,
+        },
+      });
       const filteredUsers = res.data.filter((user) =>
         ["Manager", "SystemInstructor", "SystemTechnician", "AgencyManager"].includes(user.role)
       );

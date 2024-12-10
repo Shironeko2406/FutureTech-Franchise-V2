@@ -1,6 +1,6 @@
 // Cookie and local storage interaction functions
 
-const getDataTextStorage = (storeName) => {
+  const getDataTextStorage = (storeName) => {
     if (localStorage.getItem(storeName)) {
       return localStorage.getItem(storeName);
     }
@@ -25,6 +25,11 @@ const getDataTextStorage = (storeName) => {
   const removeDataTextStorage = (storeName) => {
     localStorage.removeItem(storeName);
   };
+
+  const logout = () =>{
+    localStorage.clear()
+    window.location.href = '/';
+  }
   
   function setCookie(name, value, days) {
     let expires = "";
@@ -58,6 +63,7 @@ const getDataTextStorage = (storeName) => {
     setDataTextStorage,
     setDataJSONStorage,
     removeDataTextStorage,
+    logout,
     setCookie,
     getCookie,
     deleteCookie,

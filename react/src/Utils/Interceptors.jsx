@@ -105,7 +105,7 @@
 
 
 import axios from "axios";
-import { getDataTextStorage } from "./UtilsFunction";
+import { getDataTextStorage, logout } from "./UtilsFunction";
 import { RefreshTokenActionAsync } from "../Redux/ReducerAPI/AuthenticationReducer";
 import { store } from "../Redux/Store"
 import { message } from "antd";
@@ -139,7 +139,7 @@ const httpClient = axios.create({
 
 httpClient.interceptors.request.use(
   (req) => {
-    const accessToken = localStorage.getItem(TOKEN_AUTHOR);
+    const accessToken = getDataTextStorage(TOKEN_AUTHOR);
     if (req.headers) {
       req.headers["Authorization"] = accessToken ? `Bearer ${accessToken}` : "";
     }
@@ -162,25 +162,24 @@ httpClient.interceptors.response.use(
         case 401:
           if (!isRefreshing) {
             isRefreshing = true;
-            const refreshToken = localStorage.getItem(REFRESH_TOKEN);
-            const accessToken = localStorage.getItem(TOKEN_AUTHOR);
+            const refreshToken = getDataTextStorage(REFRESH_TOKEN);
+            const accessToken = getDataTextStorage(TOKEN_AUTHOR);
 
             if (refreshToken && accessToken) {
               try {
                 const success = await store.dispatch(RefreshTokenActionAsync(refreshToken, accessToken));
 
                 if (success) {
-                  const newAccessToken = localStorage.getItem(TOKEN_AUTHOR);
+                  const newAccessToken = getDataTextStorage(TOKEN_AUTHOR);
                   onRefreshed(newAccessToken);
                   originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
                   return httpClient(originalRequest);
                 } else {
-                  message.error("Failed to refresh token.");
-                  // Thêm logic đăng xuất/chuyển hướng ở đây
+                  logout()
+                  
                 }
               } catch (err) {
-                console.error("Error refreshing token", err);
-                message.error("Error refreshing token. Please login again.");
+                logout()
                 // Thêm logic đăng xuất/chuyển hướng ở đây
               } finally {
                 isRefreshing = false;
