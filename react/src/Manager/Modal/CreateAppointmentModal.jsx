@@ -8,8 +8,9 @@ import { quillFormats, quillModules } from "../../TextEditorConfig/Config";
 import { getDataJSONStorage } from "../../Utils/UtilsFunction";
 import { USER_LOGIN } from "../../Utils/Interceptors";
 import moment from "moment";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { checkCharacterCount } from "../../Utils/Validator/EditorValid";
+import { GetManagerUserAddAppointmentActionAsync } from "../../Redux/ReducerAPI/UserReducer";
 
 const { RangePicker } = DatePicker;
 const { Title } = Typography;
@@ -51,7 +52,7 @@ const StyledQuill = styled(ReactQuill)`
   }
   
   .ql-tooltip {
-    z-index: 1000000 !important; // Ensure it's above the modal
+    z-index: 1000000 !important;
     position: fixed !important;
   }
   
@@ -81,6 +82,14 @@ const CreateAppointmentModal = ({ visible, onClose, workId, selectedType}) => {
   const { taskDetail } = useSelector((state) => state.WorkReducer);
   const { setLoading } = useLoading();
   const idUserCreateAppointment = getDataJSONStorage(USER_LOGIN).id
+  const [filtersTimeUser, setFiltersTimeUser] = useState(null);
+  const [isTimeRangeSelected, setIsTimeRangeSelected] = useState(false);
+
+  useEffect(() => {
+    if (visible && filtersTimeUser) {
+      dispatch(GetManagerUserAddAppointmentActionAsync(filtersTimeUser));
+    }
+  }, [visible, filtersTimeUser, dispatch]);
 
   const filterUsersByRole = (user, type) => {
     const rolePermissions = {
@@ -97,7 +106,6 @@ const CreateAppointmentModal = ({ visible, onClose, workId, selectedType}) => {
   
     return rolePermissions[user.role]?.includes(type);
   };
-  
 
   const handleKeyDown = (event) => {
     checkCharacterCount(reactQuillRef, 2000, event);
@@ -113,9 +121,9 @@ const CreateAppointmentModal = ({ visible, onClose, workId, selectedType}) => {
       workId,
     };
 
-    const userIds = values.userId || []; // Nếu values.userId undefined, gán giá trị mặc định là mảng rỗng
+    const userIds = values.userId || [];
     const dataNotification = {
-      userIds: userIds.filter(id => id !== idUserCreateAppointment), // Lọc và bỏ đi id của người đang tạo appointment
+      userIds: userIds.filter(id => id !== idUserCreateAppointment),
       message: values.title
     };
 
@@ -125,6 +133,8 @@ const CreateAppointmentModal = ({ visible, onClose, workId, selectedType}) => {
         if (res) {
           onClose();
           form.resetFields();
+          setFiltersTimeUser(null)
+          setIsTimeRangeSelected(false)
         }
       })
       .catch((err) => {
@@ -176,22 +186,6 @@ const CreateAppointmentModal = ({ visible, onClose, workId, selectedType}) => {
           label="Thời gian"
           rules={[{ required: true, message: "Vui lòng chọn thời gian cuộc họp" }]}
         >
-          {/* <RangePicker
-            style={{ width: '100%' }}
-            showTime
-            format="YYYY-MM-DD HH:mm"
-            disabledDate={(current) => {
-              const startDate = moment(taskDetail.startDate).add(1, 'day');
-              const endDate = moment(taskDetail.endDate);
-              
-              // Disable dates before today, after endDate, and before startDate + 1 day
-              return (
-                current < moment().startOf('day') ||
-                current > endDate ||
-                current < startDate
-              );
-            }}
-          /> */}
           <RangePicker
             style={{ width: '100%' }}
             showTime
@@ -199,8 +193,6 @@ const CreateAppointmentModal = ({ visible, onClose, workId, selectedType}) => {
             disabledDate={(current) => {
               const startDate = moment(taskDetail.startDate);
               const endDate = moment(taskDetail.endDate);
-
-              // Disable dates outside startDate and endDate
               return current < startDate.startOf('day') || current > endDate.endOf('day');
             }}
             disabledTime={(current) => {
@@ -225,8 +217,19 @@ const CreateAppointmentModal = ({ visible, onClose, workId, selectedType}) => {
 
               return false;
             }}
+            onChange={(dates) => {
+              if (dates && dates.length === 2) {
+                setFiltersTimeUser({
+                  startTimeFilter: dates[0].format("YYYY-MM-DDTHH:mm:ss[Z]"),
+                  endTimeFilter: dates[1].format("YYYY-MM-DDTHH:mm:ss[Z]"),
+                });
+                setIsTimeRangeSelected(true);
+              } else {
+                setIsTimeRangeSelected(false);
+                setFiltersTimeUser(null);
+              }
+            }}
           />
-
         </Form.Item>
         <Form.Item name="description" label="Mô tả">
           <StyledQuill
@@ -238,28 +241,59 @@ const CreateAppointmentModal = ({ visible, onClose, workId, selectedType}) => {
             style={{ minHeight: '200px' }}
           />
         </Form.Item>
-        <Form.Item name="userId" label="Người tham gia">
+        <Form.Item
+          name="userId"
+          label="Người tham gia"
+          rules={[
+            { required: true, message: "Vui lòng chọn người tham gia" },
+            () => ({
+              validator(_, value) {
+                if (!isTimeRangeSelected) {
+                  return Promise.reject("Hãy chọn thời gian bắt đầu và kết thúc trước");
+                }
+                return Promise.resolve();
+              },
+            }),
+          ]}
+        >
           <Select
             mode="multiple"
             placeholder="Chọn người tham gia"
             showSearch
-            filterOption={(input, option) =>
-              option?.children?.toLowerCase().includes(input.toLowerCase())
-            }
+            filterOption={(input, option) => {
+              if (option && option.label) {
+                return option.label.toLowerCase().includes(input.toLowerCase());
+              }
+              return false;
+            }}
             optionLabelProp="label"
+            disabled={!isTimeRangeSelected}
+            onClick={() => {
+              if (!isTimeRangeSelected) {
+                form.setFields([
+                  {
+                    name: 'userId',
+                    errors: ['Hãy chọn thời gian bắt đầu và kết thúc trước'],
+                  },
+                ]);
+              }
+            }}
           >
-            {userManager
+          {userManager
             .filter((user) => filterUsersByRole(user, selectedType))
             .map((user) => (
               <Select.Option
                 key={user.id}
                 value={user.id}
-                label={user.userName}
+                label={`${user.fullName} (${translateRole(user.role)})`}
               >
-                {`${user.userName} (${translateRole(user.role)})`}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span>{`${user.fullName} (${translateRole(user.role)})`}</span>
+                  <span style={{ marginLeft: '10px', color: '#888' }}>{`Công việc: ${user.workCount}`}</span>
+                </div>
               </Select.Option>
             ))}
-          </Select>
+        </Select>
         </Form.Item>
       </StyledForm>
     </StyledModal>
@@ -267,3 +301,4 @@ const CreateAppointmentModal = ({ visible, onClose, workId, selectedType}) => {
 };
 
 export default CreateAppointmentModal;
+

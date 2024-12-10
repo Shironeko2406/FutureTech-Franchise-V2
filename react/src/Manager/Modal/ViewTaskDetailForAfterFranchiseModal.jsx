@@ -5,7 +5,7 @@ import styled from "styled-components";
 import moment from 'moment';
 import { useDispatch, useSelector } from "react-redux";
 import { useLoading } from "../../Utils/LoadingContext";
-import { UpdateStatusTaskByIdActionAsync, UpdateStatusTaskByIdForAfterFranchiseActionAsync } from "../../Redux/ReducerAPI/WorkReducer";
+import { UpdateStatusTaskByIdForAfterFranchiseActionAsync } from "../../Redux/ReducerAPI/WorkReducer";
 import { useParams } from "react-router-dom";
 import CreateAppointmentModal from "./CreateAppointmentModal";
 import { DeleteAppointmentByIdActionAsync, GetAppointmentDetailByIdActionAsync } from "../../Redux/ReducerAPI/AppointmentReducer";

@@ -8,6 +8,7 @@ import DOMPurify from 'dompurify';
 import { UpdateUserListInAppointmentActionAsync } from '../../Redux/ReducerAPI/AppointmentReducer'
 import { getDataJSONStorage } from '../../Utils/UtilsFunction'
 import { USER_LOGIN } from '../../Utils/Interceptors'
+import { GetManagerUserAddAppointmentActionAsync } from '../../Redux/ReducerAPI/UserReducer'
 
 const { Title, Text } = Typography
 
@@ -98,6 +99,7 @@ export default function ViewAppointmentDetailModal({ visible, onClose, selectedT
   const { setLoading } = useLoading()
   const [isSelectingUsers, setIsSelectingUsers] = useState(false)
   const [selectedUsers, setSelectedUsers] = useState([]);
+  const [filtersTimeUser, setFiltersTimeUser] = useState(null);
 
   const filterUsersByRole = (user, type) => {
     const rolePermissions = {
@@ -120,6 +122,17 @@ export default function ViewAppointmentDetailModal({ visible, onClose, selectedT
       setSelectedUsers(appointmentDetail.user.map(user => user.id))
     }
   }, [appointmentDetail])
+
+  useEffect(() => {
+    if (visible && appointmentDetail?.startTime && appointmentDetail?.endTime) {
+      const newFiltersTimeUser = {
+        startTimeFilter: appointmentDetail.startTime,
+        endTimeFilter: appointmentDetail.endTime,
+      };
+      dispatch(GetManagerUserAddAppointmentActionAsync(newFiltersTimeUser));
+    }
+  }, [visible, appointmentDetail, dispatch]);
+  
 
   const formatDate = (dateString) => {
     if (!dateString) return 'Not set';
@@ -169,9 +182,12 @@ export default function ViewAppointmentDetailModal({ visible, onClose, selectedT
           onChange={handleUserSelection}
           value={selectedUsers}
           showSearch
-          filterOption={(input, option) =>
-            option?.children?.toLowerCase().includes(input.toLowerCase())
-          }
+          filterOption={(input, option) => {
+            if (option && option.label) {
+              return option.label.toLowerCase().includes(input.toLowerCase());
+            }
+            return false;
+          }}
           optionLabelProp="label"
         >
           {userManager
@@ -180,9 +196,12 @@ export default function ViewAppointmentDetailModal({ visible, onClose, selectedT
               <Select.Option
                 key={user.id}
                 value={user.id}
-                label={user.userName}
+                label={user.fullName}
               >
-                {`${user.userName} (${translateRole(user.role)})`}
+                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span>{`${user.fullName} (${translateRole(user.role)})`}</span>
+                  <span style={{ marginLeft: '10px', color: '#888' }}>{`Công việc: ${user.workCount}`}</span>
+                </div>
               </Select.Option>
             ))}
         </Select>
@@ -194,37 +213,6 @@ export default function ViewAppointmentDetailModal({ visible, onClose, selectedT
       </div>
     </>
   )
-
-  // const renderAvatars = () => {
-  //   const users = appointmentDetail.user || [];
-  //   const visibleUsers = users.slice(0, 3);
-  //   const remainingUsers = users.slice(3);
-
-  //   return (
-  //     <AvatarGroup>
-  //       {visibleUsers.map((user) => (
-  //         <Tooltip key={user.id} title={user.fullName}>
-  //           <StyledAvatar>{user.username?.[0] || '?'}</StyledAvatar>
-  //         </Tooltip>
-  //       ))}
-  //       {remainingUsers.length > 0 && (
-  //         <Tooltip
-  //           title={
-  //             <div>
-  //               {remainingUsers.map((user) => (
-  //                 <div key={user.id}>{user.fullName}</div>
-  //               ))}
-  //             </div>
-  //           }
-  //         >
-  //           <StyledAvatar style={{ backgroundColor: '#1890ff' }}>
-  //             +{remainingUsers.length}
-  //           </StyledAvatar>
-  //         </Tooltip>
-  //       )}
-  //     </AvatarGroup>
-  //   );
-  // };
 
   const sanitizeHTML = (html) => {
     return {
