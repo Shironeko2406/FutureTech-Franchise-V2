@@ -306,7 +306,7 @@ const CourseSystemInstructor = () => {
       },
     },
     {
-      title: "Action",
+      title: "Hành động",
       key: "action",
       render: (text, record) => (
         <>
