@@ -116,7 +116,7 @@ const SlotManager = () => {
       render: (text, record, index) => index + 1,
     },
     {
-      title: "Tên khung giờ",
+      title: "Tiết học",
       dataIndex: "name",
       key: "name",
       width: "20%",
@@ -147,7 +147,7 @@ const SlotManager = () => {
             onClick={() => handleUpdate(record)} // Sửa thông tin slot
           />
           <Popconfirm
-            title="Xác nhận xóa slot này?"
+            title="Xác nhận xóa tiết học này?"
             onConfirm={() => handleDelete(record.id)}
             okText="Đồng ý"
             cancelText="Hủy"
@@ -163,12 +163,12 @@ const SlotManager = () => {
     <div className="card">
       <div className="card-body">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-          <h5 className="card-title">Danh Sách Khung Giờ Học</h5>
+          <h5 className="card-title">Danh Sách Tiết Học</h5>
           <Button
             type="primary"
             onClick={() => { setIsModalVisible(true); setEditingSlot(null); }} // Hiển thị modal cho thêm mới
           >
-            Thêm khung giờ
+            Thêm tiết học
           </Button>
         </div>
 
