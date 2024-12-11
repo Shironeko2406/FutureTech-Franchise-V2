@@ -40,7 +40,7 @@ const SlotModal = ({ visible, onCancel, onCreate, initialValues }) => {
     return (
         <Modal
             open={visible}
-            title={initialValues ? 'Chỉnh sửa Slot học' : 'Thêm Slot học'}
+            title={initialValues ? 'Chỉnh sửa Khung giờ học' : 'Thêm khung giờ học'}
             okText={initialValues ? 'Cập nhật' : 'Thêm mới'}
             cancelText="Hủy"
             onCancel={onCancel}
@@ -58,7 +58,7 @@ const SlotModal = ({ visible, onCancel, onCreate, initialValues }) => {
             <Form form={form} layout="vertical" name="form_in_modal">
                 <Form.Item
                     name="name"
-                    label="Tên slot học"
+                    label="Tên khung giờ"
                     rules={[{ required: true, message: 'Vui lòng nhập tên slot học!' }]}
                 >
                     <Input />

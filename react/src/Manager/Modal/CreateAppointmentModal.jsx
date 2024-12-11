@@ -102,6 +102,8 @@ const CreateAppointmentModal = ({ visible, onClose, workId, selectedType}) => {
       ],
       SystemTechnician: ['Design', 'Quotation', 'SiteSurvey', 'ConstructionAndTrainning', 'RepairingEquipment', 'Other'],
       SystemInstructor: ['ConstructionAndTrainning', 'EducationLicenseRegistered', 'TrainningInternal', 'EducationalSupervision', 'Other'],
+      SystemConsultant: ['Other'],
+
     };
   
     return rolePermissions[user.role]?.includes(type);

@@ -116,7 +116,7 @@ const SlotManager = () => {
       render: (text, record, index) => index + 1,
     },
     {
-      title: "Slot học",
+      title: "Tên khung giờ",
       dataIndex: "name",
       key: "name",
       width: "20%",
@@ -136,7 +136,7 @@ const SlotManager = () => {
       render: (time) => dayjs(time, "HH:mm:ss").format("HH:mm A"),
     },
     {
-      title: "Action",
+      title: "Hành động",
       key: "action",
       width: "20%",
       render: (text, record) => (
@@ -163,12 +163,12 @@ const SlotManager = () => {
     <div className="card">
       <div className="card-body">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-          <h5 className="card-title">Danh Sách Slot Học</h5>
+          <h5 className="card-title">Danh Sách Khung Giờ Học</h5>
           <Button
             type="primary"
             onClick={() => { setIsModalVisible(true); setEditingSlot(null); }} // Hiển thị modal cho thêm mới
           >
-            Thêm Slot
+            Thêm khung giờ
           </Button>
         </div>
 

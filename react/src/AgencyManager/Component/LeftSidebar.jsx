@@ -21,7 +21,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
     { type: 'link', label: 'Ghi danh', path: '/agency-manager/student-consultation-registration', icon: 'solar:file-text-bold-duotone' },
     { type: 'link', label: 'Danh sách', path: '/agency-manager/classes', icon: 'ri:file-list-3-fill' },
     { type: 'link', label: 'Lịch học', path: '/agency-manager/schedules', icon: 'mdi:clock' },
-    { type: 'link', label: 'Slot', path: '/agency-manager/slots', icon: 'solar:file-text-bold-duotone' },
+    { type: 'link', label: 'Khung giờ học', path: '/agency-manager/slots', icon: 'solar:file-text-bold-duotone' },
   ];
 
   // Menu cho trạng thái "inactive"

@@ -26,6 +26,9 @@ const Login = () => {
             case "AgencyManager":
               navigate("/agency-manager");
               break;
+            case "AgencyStaff":
+              navigate("/agency-staff");
+              break;
             case "Student":
               navigate("/student");
               break;
