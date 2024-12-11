@@ -15,7 +15,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
     { type: 'link', label: 'Ghi danh', path: '', icon: 'solar:file-text-bold-duotone' },
     { type: 'link', label: 'Danh sách', path: '/agency-staff/classes', icon: 'ri:file-list-3-fill' },
     { type: 'link', label: 'Lịch học', path: '/agency-staff/schedules', icon: 'mdi:clock' },
-    { type: 'link', label: 'Slot', path: '/agency-staff/slots', icon: 'solar:file-text-bold-duotone' },
+    { type: 'link', label: 'Tiết học', path: '/agency-staff/slots', icon: 'solar:file-text-bold-duotone' },
   ];
 
 
