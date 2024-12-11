@@ -195,7 +195,7 @@ export const GetManagerUserAddAppointmentActionAsync = (filter) => {
         },
       });
       const filteredUsers = res.data.filter((user) =>
-        ["Manager", "SystemInstructor", "SystemTechnician", "AgencyManager"].includes(user.role)
+        ["Manager", "SystemInstructor", "SystemTechnician", "AgencyManager", "SystemConsultant"].includes(user.role)
       );
       dispatch(setUserManager(filteredUsers));
     } catch (error) {

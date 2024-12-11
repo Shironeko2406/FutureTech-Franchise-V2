@@ -136,7 +136,7 @@ const SlotManager = () => {
       render: (time) => dayjs(time, "HH:mm:ss").format("HH:mm A"),
     },
     {
-      title: "Action",
+      title: "Hành động",
       key: "action",
       width: "20%",
       render: (text, record) => (

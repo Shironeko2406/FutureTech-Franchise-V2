@@ -56,15 +56,15 @@ const ScheduleAgencyManager = () => {
         let start, end
         if (view === Views.MONTH) {
             // Lấy ngày đầu tiên của lưới lịch (có thể là ngày của tháng trước)
-            start = moment(date).startOf('month').startOf('week').format('MM/DD/YYYY')
+            start = moment(date).startOf('month').startOf('week').format('DD/MM/YYYY')
             // Lấy ngày cuối cùng của lưới lịch (có thể là ngày của tháng sau)
-            end = moment(date).endOf('month').endOf('week').format('MM/DD/YYYY')
+            end = moment(date).endOf('month').endOf('week').format('DD/MM/YYYY')
         } else if (view === Views.WEEK) {
-            start = moment(date).startOf('week').format('MM/DD/YYYY')
-            end = moment(date).endOf('week').format('MM/DD/YYYY')
+            start = moment(date).startOf('week').format('DD/MM/YYYY')
+            end = moment(date).endOf('week').format('DD/MM/YYYY')
         } else {
-            start = moment(date).format('MM/DD/YYYY')
-            end = moment(date).format('MM/DD/YYYY')
+            start = moment(date).format('DD/MM/YYYY')
+            end = moment(date).format('DD/MM/YYYY')
         }
         return { start, end }
     }, [])
