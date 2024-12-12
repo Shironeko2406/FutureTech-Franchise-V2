@@ -2,24 +2,31 @@ import React, { useEffect, useState } from "react";
 import { Button, Modal, Select, Form, Input, Spin } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { GetAllInstructorsAvailableActionAsync, CreateClassActionAsync } from "../../Redux/ReducerAPI/ClassReducer";
+import { GetAllCoursesAvailableActionAsync } from "../../Redux/ReducerAPI/CourseReducer";
 
 const CreateClassModal = ({ visible, onClose }) => {
     const dispatch = useDispatch();
     const { instructors } = useSelector((state) => state.ClassReducer);
     const [isLoading, setLoading] = useState(false);
+    const { course } = useSelector((state) => state.CourseReducer);
+
 
     useEffect(() => {
         if (visible) {
             dispatch(GetAllInstructorsAvailableActionAsync());
+            dispatch(GetAllCoursesAvailableActionAsync());
         }
     }, [visible, dispatch]);
 
     const handleCreateClass = (values) => {
         setLoading(true);
+        console.log(`Create class: ${values}`);
         const classData = {
             name: values.name,
             capacity: values.capacity,
             instructorId: values.instructor,
+            courseId: values.course,
+            studentId: [],
         };
 
         dispatch(CreateClassActionAsync(classData))
@@ -58,6 +65,23 @@ const CreateClassModal = ({ visible, onClose }) => {
                             {instructors?.map((instructor) => (
                                 <Select.Option key={instructor.id} value={instructor.id}>
                                     {instructor.userName}
+                                </Select.Option>
+                            ))}
+                        </Select>
+                    </Form.Item>
+                    <Form.Item name="course" label="Khóa học">
+                        <Select
+                            placeholder="Tùy chọn - Lựa chọn khóa học"
+                            allowClear
+                            showSearch
+                            optionFilterProp="children"
+                            filterOption={(input, option) =>
+                                option?.children.toLowerCase().includes(input.toLowerCase())
+                            }
+                        >
+                            {course?.map((course) => (
+                                <Select.Option key={course.id} value={course.id}>
+                                    {course.code}
                                 </Select.Option>
                             ))}
                         </Select>

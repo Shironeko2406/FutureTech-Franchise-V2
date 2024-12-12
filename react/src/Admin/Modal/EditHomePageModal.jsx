@@ -1,10 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Modal, Form, Input, Row, Col, Divider, Button, Upload, message, Spin } from 'antd';
+import { Modal, Form, Input, Row, Col, Divider, Button, Upload, message, Spin, Typography } from 'antd';
 import { MailOutlined, PhoneOutlined, UploadOutlined } from '@ant-design/icons';
 import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
 import { imageDB } from "../../Firebasse/Config";
 import { useDispatch } from 'react-redux';
 import { UpdateHomePageActionAsync } from '../../Redux/ReducerAPI/HomePageReducer';
+
+const { Text } = Typography;
 
 const EditHomePageModal = ({ visible, onCancel, data }) => {
     const [form] = Form.useForm();
@@ -110,6 +112,20 @@ const EditHomePageModal = ({ visible, onCancel, data }) => {
                     </Form.Item>
                     <Form.Item name="franchiseMainContent" label="Nội dung chính nhượng quyền" rules={[{ required: true, message: 'Vui lòng nhập nội dung chính nhượng quyền' }]}>
                         <Input.TextArea rows={4} />
+                    </Form.Item>
+                    <Form.Item name="feeAmount" label="Phí Chuyển Nhượng" rules={[{ required: true, message: 'Vui lòng nhập phí chuyển nhượng' }]}>
+                        <Input onChange={(e) => form.setFieldsValue({ formattedFeeAmount: new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(e.target.value) })} />
+                    </Form.Item>
+                    <Form.Item shouldUpdate={(prevValues, currentValues) => prevValues.feeAmount !== currentValues.feeAmount}>
+                        {() => (
+                            <div>
+                                {form.getFieldValue('feeAmount') && (
+                                    <Text type="secondary">
+                                        {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(form.getFieldValue('feeAmount'))}
+                                    </Text>
+                                )}
+                            </div>
+                        )}
                     </Form.Item>
 
                     <Divider orientation="left">Thông Tin Khóa Học</Divider>
