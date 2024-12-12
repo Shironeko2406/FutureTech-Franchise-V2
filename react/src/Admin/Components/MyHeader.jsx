@@ -7,9 +7,11 @@ import {
 } from "../../Utils/Interceptors";
 import { message } from "antd";
 import { Link, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const MyHeader = ({ onSidebarToggle }) => {
   const navigate = useNavigate();
+  const { userLogin } = useSelector((state) => state.AuthenticationReducer);
 
   return (
     <header className="app-header">
@@ -44,7 +46,7 @@ const MyHeader = ({ onSidebarToggle }) => {
                 aria-expanded="false"
               >
                 <img
-                  src="/assets/images/profile/user-1.jpg"
+                  src={userLogin.urlImage || "/assets/images/profile/user-1.jpg"}
                   alt=""
                   width={35}
                   height={35}

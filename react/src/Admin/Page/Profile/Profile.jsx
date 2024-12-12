@@ -1,11 +1,31 @@
 import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
-import { GetUserLoginActionAsync } from "../../../Redux/ReducerAPI/UserReducer";
+import { GetUserLoginActionAsync, UpdateUserAccountByLoginActionAsync } from "../../../Redux/ReducerAPI/UserReducer";
 import dayjs from "dayjs";
 import "dayjs/locale/vi";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { message } from "antd";
+import { imageDB } from "../../../Firebasse/Config";
 
 dayjs.locale("vi");
+
+const translateRoleToVietnamese = (role) => {
+  const roleMap = {
+    Administrator: "Quản trị viên",
+    Manager: "Quản lý hệ thống",
+    AgencyManager: "Quản lý chi nhánh",
+    Student: "Sinh viên",
+    Instructor: "Giảng viên",
+    SystemInstructor: "Giảng viên hệ thống",
+    SystemConsultant: "Tư vấn viên hệ thống",
+    SystemTechnician: "Kĩ thuật viên hệ thống",
+    AgencyStaff: "Nhân viên chi nhánh",
+  };
+
+  return roleMap[role] || "Không xác định"; //
+};
+
 
 const Profile = () => {
   const dispatch = useDispatch();
@@ -22,19 +42,54 @@ const Profile = () => {
 
   const userUpdate = useFormik({
     initialValues: {
-      userName: userProfile.userName || "",
       email: userProfile.email || "",
-      fullName: userProfile.fullName || "",
       phoneNumber: userProfile.phoneNumber || "",
+      fullName: userProfile.fullName || "",
+      userName: userProfile.userName || "",
       dateOfBirth: userProfile.dateOfBirth ? dayjs(userProfile.dateOfBirth).format("YYYY-MM-DD") : "",
-      gender: userProfile.gender || "",
+      gender: userProfile.gender || "", // Added gender field
+      urlImage: userProfile.urlImage || "",
     },
     enableReinitialize: true,
-    onSubmit: (values) => {
-      console.log(values);
-      setIsEditing(false);
+    onSubmit: async (values) => {
+      try {
+        dispatch(UpdateUserAccountByLoginActionAsync(values))
+        setIsEditing(false);
+      } catch (error) {
+        console.error("Error updating profile:", error);
+        message.error("Failed to update profile. Please try again.");
+      }
     },
   });
+
+  const handleUpload = (file) => {
+    return new Promise((resolve, reject) => {
+      const storageRef = ref(imageDB, `images/${file.name}`);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {},
+        (error) => {
+          message.error("Upload failed!");
+          console.error(error);
+          reject(error);
+        },
+        async () => {
+          try {
+            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+            userUpdate.setFieldValue("urlImage", downloadURL);
+            message.success("Upload successful!");
+            resolve(downloadURL);
+          } catch (err) {
+            message.error("Failed to retrieve image URL.");
+            console.error(err);
+            reject(err);
+          }
+        }
+      );
+    });
+  };
 
   return (
     <div className="card">
@@ -45,10 +100,15 @@ const Profile = () => {
               <div className="mx-auto" style={{ width: 140 }}>
                 <div
                   className="d-flex justify-content-center align-items-center rounded"
-                  style={{ height: 140, backgroundColor: "rgb(233, 236, 239)" }}
+                  style={{ height: 140, backgroundColor: "rgb(233, 236, 239)", cursor: isEditing ? 'pointer' : 'default' }}
+                  onClick={() => {
+                    if (isEditing) {
+                      document.getElementById('avatarUpload').click();
+                    }
+                  }}
                 >
                   <img
-                    src={userProfile?.urlImage || "/assets/images/profile/user-1.jpg"}
+                    src={userUpdate.values.urlImage || "/assets/images/profile/user-1.jpg"}
                     alt="Profile"
                     style={{
                       width: "140px",
@@ -57,6 +117,18 @@ const Profile = () => {
                     }}
                   />
                 </div>
+                <input
+                  id="avatarUpload"
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                      handleUpload(file);
+                    }
+                  }}
+                  style={{ display: 'none' }}
+                />
               </div>
             </div>
             <div className="col d-flex flex-column flex-sm-row justify-content-between mb-3">
@@ -70,7 +142,7 @@ const Profile = () => {
                 </div>
               </div>
               <div className="text-center text-sm-end">
-                <span className="badge bg-secondary">{userProfile?.role}</span>
+                <span className="badge bg-secondary">{translateRoleToVietnamese(userProfile?.role)}</span>
                 <div className="text-muted">
                   <small>Joined 09 Dec 2017</small>
                 </div>
@@ -150,7 +222,7 @@ const Profile = () => {
                     />
                   </div>
                 </div>
-                <div className="col-12 col-md-6 mb-3">
+                <div className="col-12 col-md-6 mb-3"> {/* Added Gender select */}
                   <div className="form-group">
                     <label>Giới tính</label>
                     <select
@@ -161,9 +233,8 @@ const Profile = () => {
                       onChange={userUpdate.handleChange}
                     >
                       <option value="">Chọn giới tính</option>
-                      <option value="Male">Nam</option>
-                      <option value="Female">Nữ</option>
-                      <option value="Other">Khác</option>
+                      <option value="male">Nam</option>
+                      <option value="female">Nữ</option>
                     </select>
                   </div>
                 </div>
@@ -207,3 +278,5 @@ const Profile = () => {
 };
 
 export default Profile;
+
+
