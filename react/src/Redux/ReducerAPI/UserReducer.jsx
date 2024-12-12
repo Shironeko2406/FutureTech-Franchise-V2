@@ -1,7 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { httpClient } from "../../Utils/Interceptors";
+import { httpClient, USER_LOGIN } from "../../Utils/Interceptors";
 import { message } from "antd";
 import { GetAssignmentDetailByIdActionAsync, GetAssignmentsByClassIdActionAsync } from "./AssignmentReducer";
+import { getDataJSONStorage, setDataJSONStorage } from "../../Utils/UtilsFunction";
+import { setUserLogin } from "./AuthenticationReducer";
 
 const initialState = {
   userData: [],
@@ -445,3 +447,30 @@ export const UpdateUserByAgencyManagerActionAsync = (id, userData) => {
   };
 };
 
+export const UpdateUserAccountByLoginActionAsync = (dataUpdate) => {
+  return async (dispatch) => {
+    try {
+      const currentUser = getDataJSONStorage(USER_LOGIN)
+      const res = await httpClient.put(`/api/v1/users`, dataUpdate);
+      if (res.isSuccess && res.data) {
+        const updatedUser = { ...currentUser, ...dataUpdate };
+        await Promise.all([
+          dispatch(GetUserLoginActionAsync()),
+          dispatch(setUserLogin(updatedUser))
+        ]);
+        setDataJSONStorage(USER_LOGIN, updatedUser)
+        message.success(`${res.message}`);      
+        return true;
+      } else if (res.isSuccess && !res.data) {
+        message.error(`${res.message}`);
+        return false;
+      } else {
+        throw new Error(`${res.message}`);
+      }
+    } catch (error) {
+      console.error(error);
+      message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
+      return false;
+    }
+  };
+};

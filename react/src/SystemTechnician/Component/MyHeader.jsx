@@ -94,6 +94,7 @@ const MyHeader = ({ onSidebarToggle }) => {
   const navigate = useNavigate();
   const { fetchNotifications } = useNotifications(); // Gọi hook
   const dispatch = useDispatch()
+  const { userLogin } = useSelector((state) => state.AuthenticationReducer);
   const { notificationData, countNotificationUnRead } = useSelector((state) => state.NotificationReducer);
 
   useEffect(() => {
@@ -183,7 +184,7 @@ const MyHeader = ({ onSidebarToggle }) => {
                 aria-expanded="false"
               >
                 <img
-                  src="/assets/images/profile/user-1.jpg"
+                  src={userLogin.urlImage || "/assets/images/profile/user-1.jpg"}
                   alt=""
                   width={35}
                   height={35}

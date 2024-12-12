@@ -7,9 +7,11 @@ import {
 } from "../../Utils/Interceptors";
 import { message } from "antd";
 import { Link, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const MyHeader = ({ onSidebarToggle }) => {
   const navigate = useNavigate();
+  const { userLogin } = useSelector((state) => state.AuthenticationReducer);
 
   return (
     <header className="app-header">
@@ -44,7 +46,7 @@ const MyHeader = ({ onSidebarToggle }) => {
                 aria-expanded="false"
               >
                 <img
-                  src="/assets/images/profile/user-1.jpg"
+                  src={userLogin.urlImage || "/assets/images/profile/user-1.jpg"}
                   alt=""
                   width={35}
                   height={35}
@@ -56,7 +58,7 @@ const MyHeader = ({ onSidebarToggle }) => {
                 aria-labelledby="drop2"
               >
                 <div className="message-body">
-                  <Link className="d-flex align-items-center gap-2 dropdown-item" to={'/agency-manager/profile'}>
+                  <Link className="d-flex align-items-center gap-2 dropdown-item" to={'/agency-staff/profile'}>
                     <i className="ti ti-user fs-6" />
                     <p className="mb-0 fs-3">Chi Tiết Tài Khoản</p>
                   </Link>
