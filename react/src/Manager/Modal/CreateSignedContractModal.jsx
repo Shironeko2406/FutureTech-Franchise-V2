@@ -59,7 +59,7 @@ const CreateSignedContractModal = ({ visible, onClose, agencyId }) => {
     return (
         <Modal
             title="Thêm mới Hợp đồng Chuyển nhượng"
-            style={{top:20}}
+            style={{ top: 20 }}
             open={visible}
             onCancel={onClose}
             footer={[
@@ -155,7 +155,7 @@ const CreateSignedContractModal = ({ visible, onClose, agencyId }) => {
                     >
                         <Input min={0} max={100} placeholder="Nhập tỉ lệ phần trăm. VD: 10.5)" addonAfter="%" style={{ width: '100%' }} />
                     </Form.Item>
-                    <Form.Item
+                    {/* <Form.Item
                         name="file"
                         label="File hợp đồng"
                         rules={[{ required: true, message: 'Vui lòng upload file' }]}
@@ -168,7 +168,7 @@ const CreateSignedContractModal = ({ visible, onClose, agencyId }) => {
                         >
                             <Button icon={<UploadOutlined />}>Tải tài liệu</Button>
                         </Upload>
-                    </Form.Item>
+                    </Form.Item> */}
                 </Form>
             </Spin>
         </Modal>

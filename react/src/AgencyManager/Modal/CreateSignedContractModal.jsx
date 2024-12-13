@@ -124,7 +124,7 @@ const CreateSignedContractModal = ({ visible, onClose, filters, pageIndex, pageS
                         accept="*"
                         maxCount={1}
                     >
-                        <Button icon={<UploadOutlined />}>Tải file</Button>
+                        <Button icon={<UploadOutlined />}>Thêm file</Button>
                     </Upload>
                 </Form.Item>
                 {/* {taskType === "Design" && (

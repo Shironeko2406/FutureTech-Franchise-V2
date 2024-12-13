@@ -557,7 +557,7 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task }) => {
                   }] : []}
                 >
                   <Button icon={<UploadOutlined />}>
-                    {taskDetail.reportImageURL ? "Tải file khác" : "Tải file"}
+                    {taskDetail.reportImageURL ? "Thêm file khác" : "Thêm file"}
                   </Button>
                 </Upload>
               </Form.Item>
@@ -579,7 +579,7 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task }) => {
                     }] : []}
                   >
                     <Button icon={<UploadOutlined />}>
-                      {taskDetail.equipmentFileURL ? "Tải file khác" : "Tải file"}
+                      {taskDetail.equipmentFileURL ? "Thêm file khác" : "Thêm file"}
                     </Button>
                   </Upload>
                 </Form.Item>

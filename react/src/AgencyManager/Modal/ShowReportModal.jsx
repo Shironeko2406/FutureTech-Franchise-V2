@@ -177,7 +177,7 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, agencyId, taskSub
                 url: additionalInfo.urlFile,
               }] : []}
             >
-              <Button icon={<UploadOutlined />}>Tải tài liệu</Button>
+              <Button icon={<UploadOutlined />}>Thêm file</Button>
             </Upload>
           </Form.Item>
         </Form>
