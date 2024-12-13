@@ -293,7 +293,7 @@ const ListTaskAgencyManager = () => {
                         icon={<UploadOutlined />}
                         onClick={() => handleOpenModal(task.type, task)}
                     >
-                        Tải file khác
+                        Thêm file khác
                     </Button>
                 );
             }

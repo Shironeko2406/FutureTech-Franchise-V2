@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Form, Upload, Button, DatePicker, Input, InputNumber } from 'antd';
+import { Modal, Form, Upload, Button, DatePicker, Input, InputNumber, message, Typography } from 'antd';
 import ReactQuill from 'react-quill';
 import styled from 'styled-components';
 import { quillFormats, quillModules } from '../../TextEditorConfig/Config';
-import { UploadOutlined, DownloadOutlined } from "@ant-design/icons";
+import { UploadOutlined, DownloadOutlined, PlusOutlined } from "@ant-design/icons";
 import { imageDB } from "../../Firebasse/Config";
 import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
 import moment from 'moment';
@@ -13,7 +13,10 @@ import CreateSignedContractModal from './CreateSignedContractModal';
 import CreateEducationalOperationLicenseModal from './CreateEducationalOperationLicenseModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { GetTaskDetailByIdActionAsync } from '../../Redux/ReducerAPI/WorkReducer';
+import { DownloadSampleContractActionAsync } from '../../Redux/ReducerAPI/ContractReducer';
 import { useLoading } from '../../Utils/LoadingContext';
+
+const { Text } = Typography;
 
 const StyledQuill = styled(ReactQuill)`
   .ql-container {
@@ -40,14 +43,21 @@ const StyledQuill = styled(ReactQuill)`
   }
 `;
 
+const formatCurrency = (amount) => {
+    return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + " VNĐ";
+};
+
 const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedTask }) => {
     const [form] = Form.useForm();
-    const [fileEquipment, setFileEquipment] = useState([]);
+    const [fileEquipment, setFileEquipment] = useState(null);
     const [file, setFile] = useState(null);
     const [modalCreateAgreementVisible, setModalCreateAgreementVisible] = useState(false);
     const [modalCreateBusinessRegistrationVisible, setModalCreateBusinessRegistrationVisible] = useState(false);
     const [modalCreateSignedContractVisible, setModalCreateSignedContractVisible] = useState(false);
     const [modalCreateEducationalOperationLicenseVisible, setModalCreateEducationalOperationLicenseVisible] = useState(false);
+    const [designFee, setDesignFee] = useState('');
+    const [formattedDesignFee, setFormattedDesignFee] = useState('');
+    const [downloadLoading, setDownloadLoading] = useState(false);
     const dispatch = useDispatch();
     const { taskDetail } = useSelector((state) => state.WorkReducer);
 
@@ -60,6 +70,16 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
     const handleOk = async () => {
         try {
             const values = await form.validateFields();
+            if (taskType === "Design") {
+                if ((designFee && !file)) {
+                    message.error('Hãy tải lên file thiết kế nếu nhập giá tiền!');
+                    return;
+                }
+                if (file && !designFee) {
+                    message.error('Hãy nhập giá tiền nếu đã tải lên file thiết kế!');
+                    return;
+                }
+            }
             let formattedValues = {
                 ...values,
                 expirationDate: values.expirationDate ? values.expirationDate.format('YYYY-MM-DD') : null,
@@ -73,7 +93,11 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
             if (taskType === "Design" && fileEquipment) {
                 formattedValues.equipmentFile = fileEquipment; // Pass the equipment file separately
             }
+            if (taskType === "Design" && designFee) {
+                formattedValues.designFee = designFee; // Add design fee
+            }
 
+            console.log("formattedValues: ", formattedValues);
             onSubmit(formattedValues);
         } catch (error) {
             console.error("Error submitting task report: ", error);
@@ -98,6 +122,22 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
         onSuccess(null, file);
     };
 
+    const handleRemoveFile = () => {
+        setFile(null);
+    };
+
+    const handleRemoveFileEquipment = () => {
+        setFileEquipment(null);
+    };
+
+    const handleDesignFeeChange = (e) => {
+        const value = e.target.value;
+        if (/^\d*$/.test(value)) { // Only allow integers
+            setDesignFee(value);
+            setFormattedDesignFee(formatCurrency(value));
+        }
+    };
+
     const downloadSampleFile = () => {
         const link = document.createElement('a');
         link.href = '/Equipment.xlsx';
@@ -107,16 +147,27 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
         document.body.removeChild(link);
     };
 
+    const downloadSampleContract = async () => {
+        setDownloadLoading(true);
+        await dispatch(DownloadSampleContractActionAsync(selectedTask?.agencyId));
+        setDownloadLoading(false);
+    };
+
     return (
         <Modal
             title="Nộp báo cáo công việc"
             open={visible}
             onCancel={onClose}
             footer={[
-                <div style={{ display: 'flex', justifyContent: taskType === "Design" ? 'space-between' : 'flex-end', width: '100%' }}>
+                <div style={{ display: 'flex', justifyContent: taskType === "SignedContract" ? 'space-between' : 'flex-end', width: '100%' }}>
+                    {taskType === "SignedContract" && (
+                        <Button key="downloadSample" icon={<DownloadOutlined />} onClick={downloadSampleContract} loading={downloadLoading}>
+                            Tải file hợp đồng đã tạo
+                        </Button>
+                    )}
                     {taskType === "Design" && (
                         <Button key="downloadSample" icon={<DownloadOutlined />} onClick={downloadSampleFile} type="primary">
-                            Tải file mẫu
+                            Tải file trang thiết bị mẫu
                         </Button>
                     )}
                     <div style={{ display: 'flex', gap: '7px' }}>
@@ -146,31 +197,69 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
                         style={{ minHeight: '200px' }}
                     />
                 </Form.Item>
-                <Form.Item
-                    name="reportFileURL"
-                    label={taskType === "Design" ? "File thiết kế" : "File đính kèm"}
-                >
-                    <Upload
-                        name="reportFile"
-                        customRequest={handleUpload}
-                        accept="*"
-                        maxCount={1}
-                    >
-                        <Button icon={<UploadOutlined />}>Tải file</Button>
-                    </Upload>
-                </Form.Item>
-                {taskType === "Design" && (
+                {taskType === "Design" ? (
+                    <>
+                        <Form.Item
+                            name="reportFileURL"
+                            label="File thiết kế"
+                            style={{ display: 'inline-block', width: 'calc(50% - 8px)', marginRight: '16px' }}
+                        >
+                            <Upload
+                                name="reportFile"
+                                customRequest={handleUpload}
+                                onRemove={handleRemoveFile}
+                                accept="*"
+                                maxCount={1}
+                            >
+                                <Button icon={<UploadOutlined />}>Thêm file</Button>
+                            </Upload>
+                        </Form.Item>
+                        <Form.Item
+                            label="Giá tiền thiết kế"
+                            name="designFee"
+                            rules={[
+                                { pattern: /^\d+$/, message: "Vui lòng nhập số nguyên" }
+                            ]}
+                            style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}
+                        >
+                            <Input type="text" onChange={handleDesignFeeChange} placeholder="Ví dụ 5 triệu đồng: 5000000" />
+                            {formattedDesignFee && (
+                                <Form.Item style={{ marginBottom: 0 }}>
+                                    <Text type="secondary">Giá tiền thiết kế: {formattedDesignFee}</Text>
+                                </Form.Item>
+                            )}
+                        </Form.Item>
+                        <Form.Item
+                            name="equipmentFile"
+                            label="File trang thiết bị"
+                        >
+                            <Upload
+                                name="equipmentFile"
+                                customRequest={handleUploadFileEquipment}
+                                onRemove={handleRemoveFileEquipment}
+                                accept=".xls,.xlsx"
+                                maxCount={1}
+                            >
+                                <Button icon={<UploadOutlined />}>Thêm file trang thiết bị</Button>
+                            </Upload>
+                        </Form.Item>
+                    </>
+                ) : (
                     <Form.Item
-                        name="equipmentFile"
-                        label="File trang thiết bị"
+                        name="reportFileURL"
+                        label={taskType === "SignedContract" ? "File hợp đồng đã ký" : "File đính kèm"}
+                        rules={[
+                            { required: taskType === "SignedContract", message: 'Vui lòng thêm file hợp đồng đã ký' }
+                        ]}
                     >
                         <Upload
-                            name="equipmentFile"
-                            customRequest={handleUploadFileEquipment}
-                            accept=".xls,.xlsx"
+                            name="reportFile"
+                            customRequest={handleUpload}
+                            onRemove={handleRemoveFile}
+                            accept="*"
                             maxCount={1}
                         >
-                            <Button icon={<UploadOutlined />}>Tải file trang thiết bị</Button>
+                            <Button icon={<UploadOutlined />}>Thêm file</Button>
                         </Upload>
                     </Form.Item>
                 )}
@@ -185,7 +274,7 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
                     </Button>
                 )}
                 {taskType === "SignedContract" && selectedTask?.level !== "Compulsory" && (
-                    <Button key="createSignedContract" type="primary" onClick={() => setModalCreateSignedContractVisible(true)}>
+                    <Button key="createSignedContract" type="primary" onClick={() => setModalCreateSignedContractVisible(true)} icon={<PlusOutlined />}>
                         Thêm mới Hợp đồng Chuyển nhượng
                     </Button>
                 )}

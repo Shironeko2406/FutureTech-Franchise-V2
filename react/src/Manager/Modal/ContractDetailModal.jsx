@@ -1,6 +1,6 @@
 import React from 'react';
-import { Modal, Typography, Descriptions, Card, Tag, Space, Divider } from 'antd';
-import { CalendarOutlined, DollarOutlined, PercentageOutlined, FileOutlined } from '@ant-design/icons';
+import { Modal, Typography, Descriptions, Card, Tag, Space, Divider, Row, Col } from 'antd';
+import { CalendarOutlined, DollarOutlined, PercentageOutlined, FileOutlined, BankOutlined, CheckCircleOutlined, ToolOutlined, LaptopOutlined, ShopOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 
 const { Title, Text } = Typography;
@@ -23,12 +23,22 @@ const ContractDetailModal = ({ visible, onClose, contractDetail }) => {
         return translations[status.toLowerCase()] || status;
     };
 
+    const FinancialItem = ({ icon, label, value, color }) => (
+        <div className="mb-4">
+            <Space align="center" style={{ width: '100%' }}>
+                {React.cloneElement(icon, { style: { fontSize: '24px', color } })}
+                <Text strong style={{ minWidth: '150px' }}>{label}</Text>
+                <Text>{value}</Text>
+            </Space>
+        </div>
+    );
+
     return (
         <Modal
             open={visible}
             onCancel={onClose}
             footer={null}
-            width={700}
+            width={800}
             styles={{ body: { overflowY: 'auto', maxHeight: 'calc(100vh - 200px)' } }}
         >
             {contractDetail && (
@@ -61,24 +71,69 @@ const ContractDetailModal = ({ visible, onClose, contractDetail }) => {
                         </Space>
 
                         <Divider orientation="left">Thông tin tài chính</Divider>
-                        <Space>
-                            <DollarOutlined style={{ fontSize: '24px', color: '#52c41a' }} />
-                            <Text strong>Tổng số tiền: </Text>
-                            <Text>{Number(contractDetail.total).toLocaleString('vi-VN')} VND</Text>
-                        </Space>
-                        <Space>
-                            <PercentageOutlined style={{ fontSize: '24px', color: '#faad14' }} />
-                            <Text strong>Tỷ lệ chia sẻ doanh thu: </Text>
-                            <Text>{contractDetail.revenueSharePercentage}%</Text>
-                        </Space>
+                        <div style={{ padding: '0 16px' }}>
+                            <Row gutter={[32, 0]}>
+                                <Col span={12}>
+                                    <FinancialItem
+                                        icon={<ShopOutlined />}
+                                        label="Phí nhượng quyền:"
+                                        value={`${Number(contractDetail.frachiseFee).toLocaleString('vi-VN')} VND`}
+                                        color="#1890ff"
+                                    />
+                                    <FinancialItem
+                                        icon={<ToolOutlined />}
+                                        label="Phí thiết kế:"
+                                        value={`${Number(contractDetail.designFee).toLocaleString('vi-VN')} VND`}
+                                        color="#722ed1"
+                                    />
+                                    <FinancialItem
+                                        icon={<LaptopOutlined />}
+                                        label="Phí trang thiết bị:"
+                                        value={`${Number(contractDetail.equipmentFee).toLocaleString('vi-VN')} VND`}
+                                        color="#fa8c16"
+                                    />
+                                </Col>
+                                <Col span={12}>
+                                    <FinancialItem
+                                        icon={<PercentageOutlined />}
+                                        label="Tỷ lệ chia sẻ doanh thu:"
+                                        value={`${contractDetail.revenueSharePercentage}%`}
+                                        color="#faad14"
+                                    />
+                                    <FinancialItem
+                                        icon={<BankOutlined />}
+                                        label="Phần trăm trả trước:"
+                                        value={`${contractDetail.depositPercentage}%`}
+                                        color="#eb2f96"
+                                    />
+                                    <FinancialItem
+                                        icon={<CheckCircleOutlined />}
+                                        label="Số tiền đã trả:"
+                                        value={`${Number(contractDetail.paidAmount).toLocaleString('vi-VN')} VND`}
+                                        color="#13c2c2"
+                                    />
+                                </Col>
+                            </Row>
+                            <Divider style={{ margin: '16px 0' }} />
+                            <FinancialItem
+                                icon={<DollarOutlined />}
+                                label="Tổng số tiền:"
+                                value={`${Number(contractDetail.total).toLocaleString('vi-VN')} VND`}
+                                color="#52c41a"
+                            />
+                        </div>
 
-                        <Divider orientation="left">Tài liệu</Divider>
-                        <Space>
-                            <FileOutlined style={{ fontSize: '24px', color: '#1890ff' }} />
-                            <a href={contractDetail.contractDocumentImageURL} target="_blank" rel="noopener noreferrer">
-                                Xem tài liệu hợp đồng
-                            </a>
-                        </Space>
+                        {contractDetail.contractDocumentImageURL && (
+                            <>
+                                <Divider orientation="left">Tài liệu</Divider>
+                                <Space>
+                                    <FileOutlined style={{ fontSize: '24px', color: '#1890ff' }} />
+                                    <a href={contractDetail.contractDocumentImageURL} target="_blank" rel="noopener noreferrer">
+                                        Xem tài liệu hợp đồng
+                                    </a>
+                                </Space>
+                            </>
+                        )}
                     </Space>
                 </Card>
             )}

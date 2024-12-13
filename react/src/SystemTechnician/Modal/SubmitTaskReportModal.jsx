@@ -186,7 +186,7 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
                                 accept="*"
                                 maxCount={1}
                             >
-                                <Button icon={<UploadOutlined />}>Tải file</Button>
+                                <Button icon={<UploadOutlined />}>Thêm file</Button>
                             </Upload>
                         </Form.Item>
                         <Form.Item
@@ -215,7 +215,7 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
                                 accept=".xls,.xlsx"
                                 maxCount={1}
                             >
-                                <Button icon={<UploadOutlined />}>Tải file trang thiết bị</Button>
+                                <Button icon={<UploadOutlined />}>Thêm file trang thiết bị</Button>
                             </Upload>
                         </Form.Item>
                     </>
@@ -232,7 +232,7 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
                             accept="*"
                             maxCount={1}
                         >
-                            <Button icon={<UploadOutlined />}>Tải file</Button>
+                            <Button icon={<UploadOutlined />}>Thêm file</Button>
                         </Upload>
                     </Form.Item>
                 )}

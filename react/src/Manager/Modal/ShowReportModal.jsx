@@ -105,7 +105,7 @@ const StyledCard = styled(Card)`
   }
 `;
 
-const ShowReportModal = ({ visible, onClose, taskId, taskType, task }) => {
+const ShowReportModal = ({ visible, onClose, taskId, taskType, task, filters, pageIndex, pageSize }) => {
   const dispatch = useDispatch();
   const { taskDetail, loading } = useSelector((state) => state.WorkReducer);
   const { setLoading } = useLoading();
@@ -470,6 +470,9 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task }) => {
           <Descriptions.Item label="Phí nhượng quyền">
             <Text>{Number(additionalInfo.frachiseFee).toLocaleString('vi-VN')} VND</Text>
           </Descriptions.Item>
+          <Descriptions.Item label="Phí trang thiết bị">
+            <Text>{Number(additionalInfo.equipmentFee).toLocaleString('vi-VN')} VND</Text>
+          </Descriptions.Item>
           <Descriptions.Item label="Phí thiết kế">
             <Text>{Number(additionalInfo.designFee).toLocaleString('vi-VN')} VND</Text>
           </Descriptions.Item>
@@ -482,14 +485,18 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task }) => {
           <Descriptions.Item label="Phần trăm trả trước">
             <Text strong>{additionalInfo.depositPercentage}%</Text>
           </Descriptions.Item>
-          <Descriptions.Item label="Số tiền đã trả">
-            <Text strong>{Number(additionalInfo.paidAmount).toLocaleString('vi-VN')} VND</Text>
-          </Descriptions.Item>
-          <Descriptions.Item label="Tài liệu">
-            <Button type="link" icon={<EyeOutlined />} href={taskDetail.level === "Compulsory" ? taskDetail.customerSubmit : additionalInfo.urlFile} target="_blank" rel="noopener noreferrer">
-              Xem tài liệu hợp đồng
-            </Button>
-          </Descriptions.Item>
+          {additionalInfo.paidAmount && (
+            <Descriptions.Item label="Số tiền đã trả">
+              <Text strong>{Number(additionalInfo.paidAmount).toLocaleString('vi-VN')} VND</Text>
+            </Descriptions.Item>
+          )}
+          {(taskDetail.level === "Compulsory" ? taskDetail.customerSubmit : additionalInfo.urlFile) && (
+            <Descriptions.Item label="Tài liệu">
+              <Button type="link" icon={<EyeOutlined />} href={taskDetail.level === "Compulsory" ? taskDetail.customerSubmit : additionalInfo.urlFile} target="_blank" rel="noopener noreferrer">
+                Xem tài liệu hợp đồng
+              </Button>
+            </Descriptions.Item>
+          )}
         </StyledDescriptions>
       );
     }

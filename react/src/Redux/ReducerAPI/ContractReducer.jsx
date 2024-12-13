@@ -60,7 +60,7 @@ export const CreateSignedContractActionAsync = (contractData) => {
     try {
       const res = await httpClient.put(`/api/v1/contracts`, contractData);
       if (res.isSuccess && res.data) {
-        message.success(`${res.message}`);
+        message.success(`Tạo hợp đồng thành công!`);
         return true;
       } else if (res.isSuccess && !res.data) {
         message.error(`${res.message}`);
@@ -87,7 +87,7 @@ export const DownloadSampleContractActionAsync = (agencyId) => {
       if (res.isSuccess && res.data != null) {
         const link = document.createElement("a");
         link.href = res.data;
-        link.setAttribute("download", "SampleContract.pdf");
+        link.setAttribute("download", "Contract.doc");
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -210,6 +210,30 @@ export const UpdateDesignFeeActionAsync = (agencyId, designFee) => {
       console.error("UpdateContractActionAsync", error);
       message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
       return false;
+    }
+  };
+};
+
+export const DownloadContractDocumentActionAsync = (agencyId) => {
+  return async (dispatch) => {
+    try {
+      const res = await dispatch(GetContractDetailByAgencyIdActionAsync(agencyId));
+      console.log("DownloadContractDocumentActionAsync", res);
+      const contractDocumentImageURL = res.contractDocumentImageURL;
+      console.log("DownloadContractDocumentActionAsync, contractDocumentImageURL", contractDocumentImageURL);
+      if (contractDocumentImageURL) {
+        const link = document.createElement("a");
+        link.href = contractDocumentImageURL;
+        link.setAttribute("download", "Contract.doc");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } else {
+        message.error("Chưa có hợp đồng nào được tạo ra.");
+      }
+    } catch (error) {
+      console.error("DownloadContractDocumentActionAsync", error);
+      message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
     }
   };
 };

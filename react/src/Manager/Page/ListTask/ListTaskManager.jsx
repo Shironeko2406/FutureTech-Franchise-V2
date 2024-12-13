@@ -13,6 +13,7 @@ import SubmitTaskReportModal from '../../Modal/SubmitTaskReportModal';
 import { useLoading } from '../../../Utils/LoadingContext';
 import ShowReportModal from '../../Modal/ShowReportModal';
 import { CreateEquipmentActionAsync } from '../../../Redux/ReducerAPI/EquipmentReducer';
+import { UpdateDesignFeeActionAsync } from '../../../Redux/ReducerAPI/ContractReducer';
 
 const { Title, Text } = Typography;
 
@@ -89,14 +90,25 @@ const ListTaskManager = () => {
     };
 
     useEffect(() => {
-        dispatch(GetTaskUserByLoginActionAsync(
-            filters.searchText,
-            filters.levelFilter,
-            filters.statusFilter,
-            filters.submitFilter,
-            pageIndex,
-            pageSize
-        ));
+        const fetchTasks = async () => {
+            setLoading(true);
+            try {
+                await dispatch(GetTaskUserByLoginActionAsync(
+                    filters.searchText,
+                    filters.levelFilter,
+                    filters.statusFilter,
+                    filters.submitFilter,
+                    pageIndex,
+                    pageSize
+                ));
+            } catch (error) {
+                console.error("Error fetching tasks: ", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchTasks();
     }, [filters, pageIndex, pageSize, dispatch]);
 
     const openModalShowTaskDetail = (id) => {
@@ -142,6 +154,13 @@ const ListTaskManager = () => {
                     const equipmentResponse = await dispatch(CreateEquipmentActionAsync(selectedTask.agencyId, equipmentFormData));
                     if (!equipmentResponse) {
                         throw new Error("Error creating equipment");
+                    }
+                }
+
+                if (reportData.type === "Design" && reportData.designFee) {
+                    const designFeeResponse = await dispatch(UpdateDesignFeeActionAsync(selectedTask.agencyId, reportData.designFee));
+                    if (!designFeeResponse) {
+                        throw new Error("Error updating design fee");
                     }
                 }
                 await dispatch(SubmitTaskReportActionAsync(selectedTask.id, formData));

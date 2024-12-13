@@ -5,7 +5,7 @@ import { imageDB } from "../../Firebasse/Config";
 import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
 import { useDispatch, useSelector } from 'react-redux';
 import { useLoading } from '../../Utils/LoadingContext';
-import { AgencyUploadContractActionAsync, DownloadSampleContractActionAsync, GetContractDetailByAgencyIdActionAsync } from '../../Redux/ReducerAPI/ContractReducer';
+import { GetContractDetailByAgencyIdActionAsync } from '../../Redux/ReducerAPI/ContractReducer';
 import { CreatePaymentContractActionAsync } from '../../Redux/ReducerAPI/PaymentReducer';
 import { USER_LOGIN } from '../../Utils/Interceptors';
 import { getDataJSONStorage } from '../../Utils/UtilsFunction';
@@ -72,10 +72,19 @@ const CreateSignedContractModal = ({ visible, onClose, filters, pageIndex, pageS
         }
     };
 
+    const handleRemoveFile = () => {
+        setFile(null);
+    };
+
     const downloadSampleContract = async () => {
         setLoading(true);
-        await dispatch(DownloadSampleContractActionAsync(agencyId));
+        const res = await dispatch(GetContractDetailByAgencyIdActionAsync(agencyId));
         setLoading(false);
+        if (res && res.contractDocumentImageURL) {
+            window.open(res.contractDocumentImageURL, "_blank");
+        } else {
+            message.error("Chưa có hợp đồng nào được tạo ra.");
+        }
     };
 
     const handlePaymentContract = async () => {
@@ -121,6 +130,7 @@ const CreateSignedContractModal = ({ visible, onClose, filters, pageIndex, pageS
                     <Upload
                         name="reportFile"
                         customRequest={handleUpload}
+                        onRemove={handleRemoveFile}
                         accept="*"
                         maxCount={1}
                     >
