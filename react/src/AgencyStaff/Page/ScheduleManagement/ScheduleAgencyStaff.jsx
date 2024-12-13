@@ -56,15 +56,15 @@ const ScheduleAgencyStaff = () => {
         let start, end
         if (view === Views.MONTH) {
             // Lấy ngày đầu tiên của lưới lịch (có thể là ngày của tháng trước)
-            start = moment(date).startOf('month').startOf('week').format('MM/DD/YYYY')
+            start = moment(date).startOf('month').startOf('week').format('YYYY-MM-DDT00:00:00')
             // Lấy ngày cuối cùng của lưới lịch (có thể là ngày của tháng sau)
-            end = moment(date).endOf('month').endOf('week').format('MM/DD/YYYY')
+            end = moment(date).endOf('month').endOf('week').format('YYYY-MM-DDT00:00:00')
         } else if (view === Views.WEEK) {
-            start = moment(date).startOf('week').format('MM/DD/YYYY')
-            end = moment(date).endOf('week').format('MM/DD/YYYY')
+            start = moment(date).startOf('week').format('YYYY-MM-DDT00:00:00')
+            end = moment(date).endOf('week').format('YYYY-MM-DDT00:00:00')
         } else {
-            start = moment(date).format('MM/DD/YYYY')
-            end = moment(date).format('MM/DD/YYYY')
+            start = moment(date).format('YYYY-MM-DDT00:00:00')
+            end = moment(date).format('YYYY-MM-DDT00:00:00')
         }
         return { start, end }
     }, [])
