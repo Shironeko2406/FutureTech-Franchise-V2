@@ -91,6 +91,8 @@ export const DownloadSampleContractActionAsync = (agencyId) => {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+      } else if (res.isSuccess && res.data == null) {
+        message.error("Chưa có hợp đồng nào được tạo ra.");
       } else {
         throw new Error(res.message);
       }
@@ -185,6 +187,29 @@ export const GetContractsWithAgencyIdActionAsync = (agencyId, pageIndex, pageSiz
       dispatch(setContracts(res.data));
     } catch (error) {
       console.error(error);
+    }
+  };
+};
+
+export const UpdateDesignFeeActionAsync = (agencyId, designFee) => {
+  return async () => {
+    try {
+      const res = await httpClient.put(`/api/v1/contracts/agency/${agencyId}/designFee`, null, {
+        params: { designFee }
+      });
+      if (res.isSuccess && res.data) {
+        message.success(`${res.message}`);
+        return true;
+      } else if (res.isSuccess && !res.data) {
+        message.error(`${res.message}`);
+        return false;
+      } else {
+        throw new Error(`${res.message}`);
+      }
+    } catch (error) {
+      console.error("UpdateContractActionAsync", error);
+      message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
+      return false;
     }
   };
 };

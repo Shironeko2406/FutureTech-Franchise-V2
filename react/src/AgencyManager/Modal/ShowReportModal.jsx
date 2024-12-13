@@ -54,7 +54,7 @@ const ButtonGroup = styled.div`
   gap: 8px;
 `;
 
-const ShowReportModal = ({ visible, onClose, taskId, taskType, agencyId }) => {
+const ShowReportModal = ({ visible, onClose, taskId, taskType, agencyId, taskSubmit }) => {
   const dispatch = useDispatch();
   const [additionalInfo, setAdditionalInfo] = useState(null);
   const [additionalLoading, setAdditionalLoading] = useState(false);
@@ -180,10 +180,6 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, agencyId }) => {
               <Button icon={<UploadOutlined />}>Tải tài liệu</Button>
             </Upload>
           </Form.Item>
-          <ButtonGroup>
-            <Button onClick={() => setIsEditingDocument(false)}>Hủy</Button>
-            <Button type="primary" onClick={handleSaveDocument}>Lưu</Button>
-          </ButtonGroup>
         </Form>
       );
     }
@@ -257,10 +253,20 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, agencyId }) => {
         <Button key="back" onClick={onClose} size="large">
           Đóng
         </Button>,
-        (taskType === 'BusinessRegistered' || taskType === 'EducationLicenseRegistered') && additionalInfo?.status === "None" && (
+        (taskType === 'BusinessRegistered' || taskType === 'EducationLicenseRegistered') && taskSubmit === "None" && !isEditingDocument && (
           <Button key="edit" onClick={handleEditDocument} size="large" type="primary">
             Chỉnh sửa
           </Button>
+        ),
+        isEditingDocument && (
+          <>
+            <Button key="cancel" onClick={() => setIsEditingDocument(false)} size="large">
+              Hủy
+            </Button>,
+            <Button key="save" type="primary" onClick={handleSaveDocument} size="large">
+              Lưu
+            </Button>
+          </>
         )
       ]}
       width={800}

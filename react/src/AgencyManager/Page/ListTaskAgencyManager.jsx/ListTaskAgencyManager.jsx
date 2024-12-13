@@ -15,6 +15,7 @@ import CreateBusinessRegistrationModal from '../../Modal/CreateBusinessRegistrat
 import CreateSignedContractModal from '../../Modal/CreateSignedContractModal';
 import CreateEducationalOperationLicenseModal from '../../Modal/CreateEducationalOperationLicenseModal';
 import UploadFileModal from '../../Modal/UploadFileModal';
+import { useLoading } from '../../../Utils/LoadingContext';
 
 const { Title, Text } = Typography;
 
@@ -65,6 +66,7 @@ const getSubmitStatusColor = (submit) => {
 const ListTaskAgencyManager = () => {
     const { taskUser, totalPagesCount } = useSelector((state) => state.UserReducer);
     const dispatch = useDispatch();
+    const { setLoading } = useLoading();
     const [filters, setFilters] = useState({
         searchText: '',
         levelFilter: '',
@@ -96,6 +98,7 @@ const ListTaskAgencyManager = () => {
 
     console.log(taskUser)
     useEffect(() => {
+        setLoading(true);
         dispatch(GetTaskForAgencyActionAsync(
             filters.searchText,
             filters.levelFilter,
@@ -103,7 +106,7 @@ const ListTaskAgencyManager = () => {
             filters.submitFilter,
             pageIndex,
             pageSize
-        ));
+        )).finally(() => setLoading(false));
     }, [filters, pageIndex, pageSize, dispatch]);
 
     const handleOpenModal = (taskType, task) => {
@@ -208,6 +211,7 @@ const ListTaskAgencyManager = () => {
     // };
 
     const handleUpdateTaskStatus = async (task) => {
+        setLoading(true);
         const newStatus = task.submit === "Submited" ? "None" : "Submited";
         await dispatch(UpdateTaskStatusActionAsync(task.id, newStatus));
         await dispatch(GetTaskUserByLoginActionAsync(
@@ -218,6 +222,7 @@ const ListTaskAgencyManager = () => {
             pageIndex,
             pageSize
         ));
+        setLoading(false);
     };
 
     const renderItem = (task) => {
@@ -379,7 +384,7 @@ const ListTaskAgencyManager = () => {
             <Title level={4}>
                 <CalendarOutlined /> Danh sách công việc
             </Title>
-            <DynamicFilter onFilterChange={handleFilterChange} defaultFilters={filters}/>
+            <DynamicFilter onFilterChange={handleFilterChange} defaultFilters={filters} />
             <List
                 dataSource={taskUser}
                 renderItem={renderItem}
@@ -434,7 +439,9 @@ const ListTaskAgencyManager = () => {
                 taskId={selectedTask?.id}
                 taskType={taskType}
                 agencyId={selectedTask?.agencyId}
+                taskSubmit={selectedTask?.submit}
             />
+
             <UploadFileModal
                 visible={modalUploadFileVisible}
                 onClose={() => setModalUploadFileVisible(false)}
