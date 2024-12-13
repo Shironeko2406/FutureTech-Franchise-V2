@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
-import { Modal, Form, Input, DatePicker, Button, Upload, Spin } from 'antd'; // Import Spin
+import { Modal, Form, Input, Button, Upload, Spin } from 'antd'; // Import Spin
 import { UploadOutlined } from '@ant-design/icons';
 import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
 import { imageDB } from "../../Firebasse/Config";
 import { useDispatch } from 'react-redux';
 import { CreateDocumentActionAsync } from '../../Redux/ReducerAPI/DocumentReducer';
-import moment from 'moment';
 
-const CreateAgreementModal = ({ visible, onClose, agencyId }) => {
+const CreateHandoverModal = ({ visible, onClose, agencyId }) => {
     const [form] = Form.useForm();
     const dispatch = useDispatch();
     const [file, setFile] = useState(null);
@@ -23,15 +22,14 @@ const CreateAgreementModal = ({ visible, onClose, agencyId }) => {
             const documentData = {
                 title: values.title,
                 urlFile: fileURL,
-                expirationDate: values.expirationDate ? values.expirationDate.format('YYYY-MM-DD') : null,
-                documentType: "AgreementContract",
+                documentType: "Handover",
                 agencyId: agencyId, // Use the passed agencyId
             };
             await dispatch(CreateDocumentActionAsync(documentData));
             onClose();
             form.resetFields();
         } catch (error) {
-            console.error("Error creating agreement: ", error);
+            console.error("Error creating handover: ", error);
         } finally {
             setLoading(false);
         }
@@ -52,7 +50,7 @@ const CreateAgreementModal = ({ visible, onClose, agencyId }) => {
 
     return (
         <Modal
-            title="Thêm mới Thỏa Thuận Nguyên Tắc"
+            title="Thêm mới giấy nghiệm thu"
             visible={visible}
             onCancel={onClose}
             footer={[
@@ -75,17 +73,8 @@ const CreateAgreementModal = ({ visible, onClose, agencyId }) => {
                         <Input placeholder="Nhập tiêu đề" />
                     </Form.Item>
                     <Form.Item
-                        name="expirationDate"
-                        label="Ngày hết hạn thỏa thuận"
-                    >
-                        <DatePicker
-                            style={{ width: '100%' }}
-                            disabledDate={(current) => current && current < moment().endOf('day')}
-                        />
-                    </Form.Item>
-                    <Form.Item
                         name="file"
-                        label="File giấy thỏa thuận"
+                        label="File giấy nghiệm thu"
                         rules={[{ required: true, message: 'Vui lòng upload file' }]}
                     >
                         <Upload
@@ -104,4 +93,4 @@ const CreateAgreementModal = ({ visible, onClose, agencyId }) => {
     );
 };
 
-export default CreateAgreementModal;
+export default CreateHandoverModal;

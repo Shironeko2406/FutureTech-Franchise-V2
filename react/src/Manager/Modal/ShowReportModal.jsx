@@ -16,6 +16,7 @@ import { imageDB } from "../../Firebasse/Config";
 import { useLoading } from '../../Utils/LoadingContext';
 import moment from 'moment';
 import { GetTaskUserByLoginActionAsync } from '../../Redux/ReducerAPI/UserReducer';
+import CreateCashPaymentModal from './CreateCashPaymentModal';
 
 const { Title, Text } = Typography;
 
@@ -117,6 +118,7 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task, filters, pa
   const [uploadedEquipmentFileURL, setUploadedEquipmentFileURL] = useState(null);
   const uploadedFileURLRef = useRef(null);
   const uploadedDocumentFileURLRef = useRef(null);
+  const [modalCreateCashPaymentVisible, setModalCreateCashPaymentVisible] = useState(false);
 
   useEffect(() => {
     if (visible && taskId && taskDetail) {
@@ -128,7 +130,9 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task, filters, pa
         documentType = 'BusinessLicense';
       } else if (taskType === 'EducationLicenseRegistered') {
         documentType = 'EducationalOperationLicense';
-      }
+      } else if (taskType === 'Handover') {
+        documentType = 'Handover';
+      };
 
       if (documentType) {
         setAdditionalLoading(true);
@@ -316,6 +320,15 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task, filters, pa
     });
   };
 
+  const handleCreateCashPayment = () => {
+    setModalCreateCashPaymentVisible(true);
+  };
+
+  const handleCashPaymentClose = async () => {
+    setModalCreateCashPaymentVisible(false);
+    await dispatch(GetContractDetailByAgencyIdActionAsync(taskDetail.agencyId));
+  };
+
   const renderAdditionalInfo = useMemo(() => {
     if (!additionalInfo) return null;
 
@@ -449,11 +462,13 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task, filters, pa
       );
     }
 
-    if (taskType === 'AgreementSigned' || taskType === 'BusinessRegistered' || taskType === 'EducationLicenseRegistered') {
+    if (taskType === 'AgreementSigned' || taskType === 'BusinessRegistered' || taskType === 'EducationLicenseRegistered' || taskType === 'Handover') {
       return (
         <StyledDescriptions bordered column={1}>
           <Descriptions.Item label="Tiêu đề">{additionalInfo.title}</Descriptions.Item>
-          <Descriptions.Item label="Ngày hết hạn">{additionalInfo.expirationDate ? dayjs(additionalInfo.expirationDate).format('DD/MM/YYYY') : null}</Descriptions.Item>
+          {additionalInfo.expirationDate && (
+            <Descriptions.Item label="Ngày hết hạn">{dayjs(additionalInfo.expirationDate).format('DD/MM/YYYY')}</Descriptions.Item>
+          )}
           <Descriptions.Item label="Tài liệu">
             <Button type="link" icon={<DownloadOutlined />} href={(taskType === 'AgreementSigned' && taskDetail.level === "Compulsory") ? taskDetail.customerSubmit : additionalInfo.urlFile} target="_blank" rel="noopener noreferrer">
               Tải xuống file tài liệu
@@ -676,11 +691,21 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task, filters, pa
       footer={[
         <Button key="back" onClick={onClose} size="large">
           Đóng
-        </Button>
+        </Button>,
+        taskType === 'SignedContract' && !additionalInfo?.paidAmount && (
+          <Button type="primary" size="large" onClick={handleCreateCashPayment}>
+            Tạo thanh toán tiền mặt
+          </Button>
+        )
       ]}
       width={800}
     >
       {renderContent()}
+      <CreateCashPaymentModal
+        visible={modalCreateCashPaymentVisible}
+        onClose={handleCashPaymentClose}
+        agencyId={taskDetail.agencyId}
+      />
     </StyledModal>
   );
 };

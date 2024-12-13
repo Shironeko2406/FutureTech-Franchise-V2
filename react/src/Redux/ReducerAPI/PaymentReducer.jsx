@@ -64,7 +64,41 @@ export const CreateStudentPaymentActionAsync = (paymentData, paymentType) => {
 export const CreatePaymentContractActionAsync = (contractId) => {
     return async (dispatch) => {
         try {
-            const res = await httpClient.post(`/api/v1/payments/create-vnpay-url`, {contractId});
+            const res = await httpClient.post(`/api/v1/payments/create-vnpay-url`, { contractId });
+            if (res.isSuccess && res.data) {
+                window.open(res.data, '_blank');
+            } else if (res.isSuccess && !res.data) {
+                message.error(`${res.message}`);
+            } else {
+                throw new Error(`${res.message}`);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
+};
+
+export const CreateCashPaymentActionAsync = (paymentData) => {
+    return async (dispatch) => {
+        try {
+            const res = await httpClient.post(`/direct`, paymentData);
+            if (res.isSuccess && res.data) {
+                message.success('Tạo thanh toán tiền mặt thành công');
+            } else if (res.isSuccess && !res.data) {
+                message.error(`${res.message}`);
+            } else {
+                throw new Error(`${res.message}`);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
+};
+
+export const CreatePaymentContract2ndActionAsync = (contractId) => {
+    return async (dispatch) => {
+        try {
+            const res = await httpClient.post(`/api/v1/payments/create-vnpay-url-2`, { contractId });
             if (res.isSuccess && res.data) {
                 window.open(res.data, '_blank');
             } else if (res.isSuccess && !res.data) {

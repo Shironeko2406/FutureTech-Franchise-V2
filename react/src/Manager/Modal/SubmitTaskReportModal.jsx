@@ -11,6 +11,7 @@ import CreateAgreementModal from './CreateAgreementModal';
 import CreateBusinessRegistrationModal from './CreateBusinessRegistrationModal';
 import CreateSignedContractModal from './CreateSignedContractModal';
 import CreateEducationalOperationLicenseModal from './CreateEducationalOperationLicenseModal';
+import CreateHandoverModal from './CreateHandoverModal'; // Import the new modal
 import { useDispatch, useSelector } from 'react-redux';
 import { GetTaskDetailByIdActionAsync } from '../../Redux/ReducerAPI/WorkReducer';
 import { DownloadSampleContractActionAsync } from '../../Redux/ReducerAPI/ContractReducer';
@@ -55,6 +56,7 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
     const [modalCreateBusinessRegistrationVisible, setModalCreateBusinessRegistrationVisible] = useState(false);
     const [modalCreateSignedContractVisible, setModalCreateSignedContractVisible] = useState(false);
     const [modalCreateEducationalOperationLicenseVisible, setModalCreateEducationalOperationLicenseVisible] = useState(false);
+    const [modalCreateHandoverVisible, setModalCreateHandoverVisible] = useState(false); // Add state for the new modal
     const [designFee, setDesignFee] = useState('');
     const [formattedDesignFee, setFormattedDesignFee] = useState('');
     const [downloadLoading, setDownloadLoading] = useState(false);
@@ -268,6 +270,11 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
                         Thêm mới Thỏa Thuận Nguyên Tắc
                     </Button>
                 )}
+                {taskType === "Handover" && selectedTask?.level !== "Compulsory" && (
+                    <Button key="createHandover" type="primary" onClick={() => setModalCreateHandoverVisible(true)}>
+                        Thêm mới giấy nghiệm thu
+                    </Button>
+                )}
                 {taskType === "BusinessRegistered" && (
                     <Button key="createBusinessRegistration" type="primary" onClick={() => setModalCreateBusinessRegistrationVisible(true)}>
                         Thêm mới Giấy Đăng Ký Doanh Nghiệp
@@ -303,6 +310,11 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
             <CreateEducationalOperationLicenseModal
                 visible={modalCreateEducationalOperationLicenseVisible}
                 onClose={() => setModalCreateEducationalOperationLicenseVisible(false)}
+                agencyId={taskDetail?.agencyId}
+            />
+            <CreateHandoverModal
+                visible={modalCreateHandoverVisible}
+                onClose={() => setModalCreateHandoverVisible(false)}
                 agencyId={taskDetail?.agencyId}
             />
         </Modal>

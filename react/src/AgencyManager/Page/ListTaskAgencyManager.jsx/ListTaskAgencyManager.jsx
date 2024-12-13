@@ -14,6 +14,7 @@ import CreateAgreementModal from '../../Modal/CreateAgreementModal';
 import CreateBusinessRegistrationModal from '../../Modal/CreateBusinessRegistrationModal';
 import CreateSignedContractModal from '../../Modal/CreateSignedContractModal';
 import CreateEducationalOperationLicenseModal from '../../Modal/CreateEducationalOperationLicenseModal';
+import CreateHandoverModal from '../../Modal/CreateHandoverModal';
 import UploadFileModal from '../../Modal/UploadFileModal';
 import { useLoading } from '../../../Utils/LoadingContext';
 
@@ -83,6 +84,7 @@ const ListTaskAgencyManager = () => {
     const [modalCreateBusinessRegistrationVisible, setModalCreateBusinessRegistrationVisible] = useState(false);
     const [modalCreateSignedContractVisible, setModalCreateSignedContractVisible] = useState(false);
     const [modalCreateEducationalOperationLicenseVisible, setModalCreateEducationalOperationLicenseVisible] = useState(false);
+    const [modalCreateHandoverDocumentVisible, setModalCreateHandoverDocumentVisible] = useState(false);
     const [modalUploadFileVisible, setModalUploadFileVisible] = useState(false);
     const [taskToUpload, setTaskToUpload] = useState(null);
 
@@ -125,6 +127,10 @@ const ListTaskAgencyManager = () => {
                     break;
                 case "EducationLicenseRegistered":
                     setModalCreateEducationalOperationLicenseVisible(true);
+                    setSelectedTask(task);
+                    break;
+                case "Handover":
+                    setModalCreateHandoverDocumentVisible(true);
                     setSelectedTask(task);
                     break;
                 default:
@@ -236,7 +242,7 @@ const ListTaskAgencyManager = () => {
             />
         ];
 
-        const validTaskTypes = ["AgreementSigned", "BusinessRegistered", "SignedContract", "EducationLicenseRegistered"];
+        const validTaskTypes = ["AgreementSigned", "BusinessRegistered", "SignedContract", "EducationLicenseRegistered", "Handover"];
         if (task.level === "Compulsory" && validTaskTypes.includes(task.type) && task.customerSubmit === null) {
             actions.push(
                 <Button
@@ -274,7 +280,7 @@ const ListTaskAgencyManager = () => {
         }
 
 
-        if ((task.type === "AgreementSigned" || task.type === "SignedContract") && task.level === "Compulsory" && task.customerSubmit !== null) {
+        if ((task.type === "AgreementSigned" || task.type === "SignedContract" || task.type === "Handover") && task.level === "Compulsory" && task.customerSubmit !== null) {
             actions.push(
                 <Button
                     type="primary"
@@ -322,7 +328,6 @@ const ListTaskAgencyManager = () => {
                 </Button>
             );
         }
-
         return (
             <TaskItem
                 style={{
@@ -427,12 +432,25 @@ const ListTaskAgencyManager = () => {
                 pageSize={pageSize}
                 onRefreshTasks={handleRefreshTasks}
             />
+
+            <CreateHandoverModal
+                visible={modalCreateHandoverDocumentVisible}
+                onClose={() => setModalCreateHandoverDocumentVisible(false)}
+                taskType={taskType}
+                taskId={selectedTask?.id}
+                filters={filters}
+                pageIndex={pageIndex}
+                pageSize={pageSize}
+                onRefreshTasks={handleRefreshTasks}
+            />
+
             <CreateEducationalOperationLicenseModal
                 visible={modalCreateEducationalOperationLicenseVisible}
                 onClose={() => setModalCreateEducationalOperationLicenseVisible(false)}
                 onRefreshTasks={handleRefreshTasks}
                 taskId={selectedTask?.id}
             />
+
             <ShowReportModal
                 visible={modalShowReportVisible}
                 onClose={handleCloseModalShowReport}

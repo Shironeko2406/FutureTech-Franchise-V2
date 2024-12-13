@@ -76,6 +76,8 @@ const ViewDocumentAgencyManager = () => {
             AgreementContract: "Hợp đồng thỏa thuận",
             BusinessLicense: "Giấy phép kinh doanh",
             EducationalOperationLicense: "Giấy phép hoạt động giáo dục",
+            Handover: "Giấy nghiệm thu",
+            Other: "Giấy tờ khác"
         };
 
         return typeConfig[type] || typeConfig.AgreementContract;
@@ -110,6 +112,8 @@ const ViewDocumentAgencyManager = () => {
                 { text: "Hợp đồng thỏa thuận", value: "AgreementContract" },
                 { text: "Giấy phép kinh doanh", value: "BusinessLicense" },
                 { text: "Giấy phép hoạt động giáo dục", value: "EducationalOperationLicense" },
+                { text: "Giấy nghiệm thu", value: "Handover" },
+                { text: "Giấy tờ khác", value: "Other" },
             ],
             filterMultiple: false,
             render: (type) => renderTypeBadge(type),
