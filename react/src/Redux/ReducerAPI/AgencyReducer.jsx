@@ -20,8 +20,8 @@ const AgencyReducer = createSlice({
       state.totalPagesCount = action.payload.totalPagesCount;
     },
     setTaskByAgencyId: (state, action) => {
-      state.tasks = action.payload?.work || []; // Nếu không có work, đặt là mảng rỗng
-      state.agencyStatus = action.payload?.agencyStatus || null; // Nếu không có agencyStatus, đặt là null
+      state.tasks = action.payload.work
+      state.agencyStatus = action.payload.agencyStatus
     },
     setAgencyDetail: (state, action) => {
       state.agencyDetail = action.payload
