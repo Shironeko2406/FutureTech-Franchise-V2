@@ -213,27 +213,3 @@ export const UpdateDesignFeeActionAsync = (agencyId, designFee) => {
     }
   };
 };
-
-export const DownloadContractDocumentActionAsync = (agencyId) => {
-  return async (dispatch) => {
-    try {
-      const res = await dispatch(GetContractDetailByAgencyIdActionAsync(agencyId));
-      console.log("DownloadContractDocumentActionAsync", res);
-      const contractDocumentImageURL = res.contractDocumentImageURL;
-      console.log("DownloadContractDocumentActionAsync, contractDocumentImageURL", contractDocumentImageURL);
-      if (contractDocumentImageURL) {
-        const link = document.createElement("a");
-        link.href = contractDocumentImageURL;
-        link.setAttribute("download", "Contract.doc");
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      } else {
-        message.error("Chưa có hợp đồng nào được tạo ra.");
-      }
-    } catch (error) {
-      console.error("DownloadContractDocumentActionAsync", error);
-      message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
-    }
-  };
-};
