@@ -2,9 +2,10 @@ import { Table, Button, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { GetClassesActionAsync } from "../../../Redux/ReducerAPI/ClassReducer";
-import { RightCircleOutlined } from "@ant-design/icons";
+import { RightCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { UpdateClassStatusActionAsync } from "../../../Redux/ReducerAPI/ClassReducer";
+import CreateClassModal from "../../Modal/CreateClassModal"; // Import the new modal component
 
 const { Text } = Typography;
 
@@ -14,6 +15,7 @@ const ClassManagementAgencyStaff = () => {
     const [pageIndex, setPageIndex] = useState(1);
     const [pageSize, setPageSize] = useState(10);
     const [loading, setLoading] = useState(false);
+    const [isCreateModalVisible, setIsCreateModalVisible] = useState(false); // State for modal visibility
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -74,6 +76,15 @@ const ClassManagementAgencyStaff = () => {
             .finally(
                 setLoading(false)
             );
+    };
+
+    const handleCreateClassClick = () => {
+        setIsCreateModalVisible(true);
+    };
+
+    const handleCreateClassClose = () => {
+        setIsCreateModalVisible(false);
+        dispatch(GetClassesActionAsync(pageIndex, pageSize)); // Refresh the class list
     };
 
     const columns = [
@@ -164,7 +175,12 @@ const ClassManagementAgencyStaff = () => {
     return (
         <div className="card">
             <div className="card-body">
-                <h5 className="card-title mb-3">Danh Sách Lớp Học</h5>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                    <h5 className="card-title mb-0">Danh Sách Lớp Học</h5>
+                    <Button type="primary" onClick={handleCreateClassClick} icon={<PlusOutlined />}>
+                        Thêm mới lớp học
+                    </Button>
+                </div>
                 <Table
                     bordered
                     columns={columns}
@@ -186,6 +202,7 @@ const ClassManagementAgencyStaff = () => {
                     }}
                 />
             </div>
+            <CreateClassModal visible={isCreateModalVisible} onClose={handleCreateClassClose} />
         </div>
     );
 };

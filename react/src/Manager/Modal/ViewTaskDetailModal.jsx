@@ -327,7 +327,7 @@ const ViewTaskDetailModal = ({ visible, onClose, setVisible, isFromAgencyDetail,
             </Button>
           )}
           {taskDetail?.reportImageURL && <br />}
-          {taskDetail?.customerSubmit && (taskDetail?.taskType === 'AgreementSigned' || taskDetail?.taskType === 'SignedContract') && (
+          {taskDetail?.customerSubmit && (taskDetail?.type === 'AgreementSigned' || taskDetail?.type === 'SignedContract') && (
             <Button
               type="primary"
               icon={<FileTextOutlined />}

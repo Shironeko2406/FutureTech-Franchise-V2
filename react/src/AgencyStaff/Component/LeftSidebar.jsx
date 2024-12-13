@@ -9,7 +9,6 @@ const LeftSidebar = ({ onSidebarToggle }) => {
     { type: 'section', label: 'Trang chủ', icon: 'ti ti-dots' },
     { type: 'link', label: 'Lịch hẹn', path: '/agency-staff/appointment-schedule', icon: 'solar:calendar-bold-duotone' },
     { type: 'link', label: 'Khóa học', path: '/agency-staff/course', icon: 'mdi:book-open-page-variant' },
-    { type: 'link', label: 'Trang thiết bị', path: '/agency-staff/equipments', icon: 'mdi:tools' },
     { type: 'link', label: 'Giao dịch', path: '/agency-staff/student-payment', icon: 'fluent:payment-20-filled' },
     { type: 'section', label: 'Lớp học', icon: 'ti ti-dots' },
     { type: 'link', label: 'Ghi danh', path: '', icon: 'solar:file-text-bold-duotone' },

@@ -13,6 +13,7 @@ import SubmitTaskReportModal from '../../Modal/SubmitTaskReportModal';
 import { useLoading } from '../../../Utils/LoadingContext';
 import ShowReportModal from '../../Modal/ShowReportModal';
 import { CreateEquipmentActionAsync } from '../../../Redux/ReducerAPI/EquipmentReducer';
+import { UpdateDesignFeeActionAsync } from '../../../Redux/ReducerAPI/ContractReducer';
 
 const { Title, Text } = Typography;
 
@@ -89,14 +90,22 @@ const ListTaskManager = () => {
     };
 
     useEffect(() => {
-        dispatch(GetTaskUserByLoginActionAsync(
-            filters.searchText,
-            filters.levelFilter,
-            filters.statusFilter,
-            filters.submitFilter,
-            pageIndex,
-            pageSize
-        ));
+        const fetchData = async () => {
+            setLoading(true);
+            try {
+                await dispatch(GetTaskUserByLoginActionAsync(
+                    filters.searchText,
+                    filters.levelFilter,
+                    filters.statusFilter,
+                    filters.submitFilter,
+                    pageIndex,
+                    pageSize
+                ));
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchData();
     }, [filters, pageIndex, pageSize, dispatch]);
 
     const openModalShowTaskDetail = (id) => {
@@ -144,16 +153,28 @@ const ListTaskManager = () => {
                         throw new Error("Error creating equipment");
                     }
                 }
+
+                if (reportData.type === "Design" && reportData.designFee) {
+                    const designFeeResponse = await dispatch(UpdateDesignFeeActionAsync(selectedTask.agencyId, reportData.designFee));
+                    if (!designFeeResponse) {
+                        throw new Error("Error updating design fee");
+                    }
+                }
                 await dispatch(SubmitTaskReportActionAsync(selectedTask.id, formData));
                 handleCloseModalSubmitTaskReport();
-                await dispatch(GetTaskUserByLoginActionAsync(
-                    filters.searchText,
-                    filters.levelFilter,
-                    filters.statusFilter,
-                    filters.submitFilter,
-                    pageIndex,
-                    pageSize
-                ));
+                setLoading(true);
+                try {
+                    await dispatch(GetTaskUserByLoginActionAsync(
+                        filters.searchText,
+                        filters.levelFilter,
+                        filters.statusFilter,
+                        filters.submitFilter,
+                        pageIndex,
+                        pageSize
+                    ));
+                } finally {
+                    setLoading(false);
+                }
             } catch (error) {
                 console.error("Error uploading file: ", error);
             } finally {
@@ -163,16 +184,21 @@ const ListTaskManager = () => {
     };
 
     const handleUpdateTaskStatus = async (task) => {
-        const newStatus = task.submit === "Submited" ? "None" : "Submited";
-        await dispatch(UpdateTaskStatusActionAsync(task.id, newStatus));
-        await dispatch(GetTaskUserByLoginActionAsync(
-            filters.searchText,
-            filters.levelFilter,
-            filters.statusFilter,
-            filters.submitFilter,
-            pageIndex,
-            pageSize
-        ));
+        setLoading(true);
+        try {
+            const newStatus = task.submit === "Submited" ? "None" : "Submited";
+            await dispatch(UpdateTaskStatusActionAsync(task.id, newStatus));
+            await dispatch(GetTaskUserByLoginActionAsync(
+                filters.searchText,
+                filters.levelFilter,
+                filters.statusFilter,
+                filters.submitFilter,
+                pageIndex,
+                pageSize
+            ));
+        } finally {
+            setLoading(false);
+        }
     };
 
     const renderItem = (task) => {
@@ -338,7 +364,7 @@ const ListTaskManager = () => {
                         <Button
                             type="primary"
                             icon={<EyeOutlined />}
-                            onClick={() => window.open(task.customerSubmit, "_blank")}
+                            onClick={() => openModalShowReport(task)}
                         >
                             Xem tài liệu
                         </Button>
@@ -467,6 +493,68 @@ const ListTaskManager = () => {
                             );
                         }
                     }
+                }
+                break;
+            case "Handover":
+                if (task.level === "Compulsory" && task.customerSubmit && task.report === null) {
+                    actions.push(
+                        <Button
+                            type="primary"
+                            icon={<EyeOutlined />}
+                            onClick={() => openModalShowReport(task)}
+                        >
+                            Xem tài liệu
+                        </Button>
+                    );
+                    actions.push(
+                        <Button
+                            type="primary"
+                            icon={<UploadOutlined />}
+                            onClick={() => openModalSubmitTaskReport(task)}
+                        >
+                            Báo cáo
+                        </Button>
+                    );
+                } else if (task.report) {
+                    actions.push(
+                        <Button
+                            type="primary"
+                            icon={<EyeOutlined />}
+                            onClick={() => openModalShowReport(task)}
+                        >
+                            Xem báo cáo
+                        </Button>
+                    );
+                    if (task.submit !== "Submited" && task.status === "None") {
+                        actions.push(
+                            <Button
+                                type="primary"
+                                onClick={() => handleUpdateTaskStatus(task)}
+                            >
+                                Nộp báo cáo
+                            </Button>
+                        );
+                    } else if (task.submit === "Submited" && task.status === "None") {
+                        actions.push(
+                            <Button
+                                type="primary"
+                                danger
+                                onClick={() => handleUpdateTaskStatus(task)}
+                            >
+                                Hủy nộp
+                            </Button>
+                        );
+                    }
+                } else {
+                    actions.push(
+                        <Button
+                            type="primary"
+                            icon={<UploadOutlined />}
+                            onClick={() => openModalSubmitTaskReport(task)}
+                        >
+                            Báo cáo
+                        </Button>
+                    );
                 }
                 break;
             default:

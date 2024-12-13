@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Form, Upload, Button } from 'antd';
+import { Modal, Form, Upload, Button, Input, Typography, message } from 'antd';
 import ReactQuill from 'react-quill';
 import styled from 'styled-components';
 import { quillFormats, quillModules } from '../../TextEditorConfig/Config';
@@ -8,6 +8,8 @@ import { imageDB } from "../../Firebasse/Config";
 import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
 import { useDispatch, useSelector } from 'react-redux';
 import { GetTaskDetailByIdActionAsync } from '../../Redux/ReducerAPI/WorkReducer';
+
+const { Text } = Typography;
 
 const StyledQuill = styled(ReactQuill)`
   .ql-container {
@@ -34,10 +36,16 @@ const StyledQuill = styled(ReactQuill)`
   }
 `;
 
+const formatCurrency = (amount) => {
+    return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + " VNĐ";
+};
+
 const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedTask }) => {
     const [form] = Form.useForm();
-    const [fileEquipment, setFileEquipment] = useState([]);
+    const [fileEquipment, setFileEquipment] = useState(null);
     const [file, setFile] = useState(null);
+    const [designFee, setDesignFee] = useState("");
+    const [formattedDesignFee, setFormattedDesignFee] = useState("");
     const dispatch = useDispatch();
     const { taskDetail } = useSelector((state) => state.WorkReducer);
 
@@ -50,6 +58,14 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
     const handleOk = async () => {
         try {
             const values = await form.validateFields();
+            if ((designFee && !file)) {
+                message.error('Hãy tải lên file thiết kế nếu nhập giá tiền!');
+                return;
+            }
+            if (file && !designFee) {
+                message.error('Hãy nhập giá tiền nếu đã tải lên file thiết kế!');
+                return;
+            }
             let formattedValues = {
                 ...values,
                 expirationDate: values.expirationDate ? values.expirationDate.format('YYYY-MM-DD') : null,
@@ -63,7 +79,11 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
             if (taskType === "Design" && fileEquipment) {
                 formattedValues.equipmentFile = fileEquipment; // Pass the equipment file separately
             }
+            if (taskType === "Design" && designFee) {
+                formattedValues.designFee = designFee; // Add design fee
+            }
 
+            console.log("formattedValues: ", formattedValues);
             onSubmit(formattedValues);
         } catch (error) {
             console.error("Error submitting task report: ", error);
@@ -83,9 +103,17 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
         }
     };
 
+    const handleRemoveFile = () => {
+        setFile(null);
+    };
+
     const handleUploadFileEquipment = async ({ file, onSuccess, onError }) => {
         setFileEquipment(file);
         onSuccess(null, file);
+    };
+
+    const handleRemoveFileEquipment = () => {
+        setFileEquipment(null);
     };
 
     const downloadSampleFile = () => {
@@ -95,6 +123,14 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+    };
+
+    const handleDesignFeeChange = (e) => {
+        const value = e.target.value;
+        if (/^\d*$/.test(value)) { // Only allow integers
+            setDesignFee(value);
+            setFormattedDesignFee(formatCurrency(value));
+        }
     };
 
     return (
@@ -136,31 +172,67 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
                         style={{ minHeight: '200px' }}
                     />
                 </Form.Item>
-                <Form.Item
-                    name="reportFileURL"
-                    label={taskType === "Design" ? "File thiết kế" : "File đính kèm"}
-                >
-                    <Upload
-                        name="reportFile"
-                        customRequest={handleUpload}
-                        accept="*"
-                        maxCount={1}
-                    >
-                        <Button icon={<UploadOutlined />}>Tải file</Button>
-                    </Upload>
-                </Form.Item>
                 {taskType === "Design" && (
+                    <>
+                        <Form.Item
+                            name="reportFileURL"
+                            label="File thiết kế"
+                            style={{ display: 'inline-block', width: 'calc(50% - 8px)', marginRight: '16px' }}
+                        >
+                            <Upload
+                                name="reportFile"
+                                customRequest={handleUpload}
+                                onRemove={handleRemoveFile}
+                                accept="*"
+                                maxCount={1}
+                            >
+                                <Button icon={<UploadOutlined />}>Thêm file</Button>
+                            </Upload>
+                        </Form.Item>
+                        <Form.Item
+                            label="Giá tiền thiết kế"
+                            name="designFee"
+                            rules={[
+                                { pattern: /^\d+$/, message: "Vui lòng nhập số nguyên" }
+                            ]}
+                            style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}
+                        >
+                            <Input type="text" onChange={handleDesignFeeChange} placeholder="Ví dụ 5 triệu đồng: 5000000" />
+                            {formattedDesignFee && (
+                                <Form.Item style={{ marginBottom: 0 }}>
+                                    <Text type="secondary">Giá tiền thiết kế: {formattedDesignFee}</Text>
+                                </Form.Item>
+                            )}
+                        </Form.Item>
+                        <Form.Item
+                            name="equipmentFile"
+                            label="File trang thiết bị"
+                        >
+                            <Upload
+                                name="equipmentFile"
+                                customRequest={handleUploadFileEquipment}
+                                onRemove={handleRemoveFileEquipment}
+                                accept=".xls,.xlsx"
+                                maxCount={1}
+                            >
+                                <Button icon={<UploadOutlined />}>Thêm file trang thiết bị</Button>
+                            </Upload>
+                        </Form.Item>
+                    </>
+                )}
+                {taskType !== "Design" && (
                     <Form.Item
-                        name="equipmentFile"
-                        label="File trang thiết bị"
+                        name="reportFileURL"
+                        label="File đính kèm"
                     >
                         <Upload
-                            name="equipmentFile"
-                            customRequest={handleUploadFileEquipment}
-                            accept=".xls,.xlsx"
+                            name="reportFile"
+                            customRequest={handleUpload}
+                            onRemove={handleRemoveFile}
+                            accept="*"
                             maxCount={1}
                         >
-                            <Button icon={<UploadOutlined />}>Tải file trang thiết bị</Button>
+                            <Button icon={<UploadOutlined />}>Thêm file</Button>
                         </Upload>
                     </Form.Item>
                 )}

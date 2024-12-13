@@ -88,7 +88,7 @@ const UploadFileModal = ({ visible, onClose, task, onRefreshTasks }) => {
                             customRequest={handleUpload}
                             accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                         >
-                            <Button icon={<UploadOutlined />}>Chọn file</Button>
+                            <Button icon={<UploadOutlined />}>Thêm file</Button>
                         </Upload>
                     </div>
                 </Spin>

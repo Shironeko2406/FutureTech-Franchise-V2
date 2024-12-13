@@ -101,6 +101,9 @@ const HomePageManagement = () => {
                                             />
                                         </Descriptions.Item>
                                         <Descriptions.Item label="Nội dung chính">{homePageData.franchiseMainContent}</Descriptions.Item>
+                                        <Descriptions.Item label="Phí Chuyển Nhượng">
+                                            {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(homePageData.feeAmount)}
+                                        </Descriptions.Item>
                                     </Descriptions>
                                 </Card>
                             </Col>

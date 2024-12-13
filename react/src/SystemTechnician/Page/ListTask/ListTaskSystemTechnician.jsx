@@ -13,6 +13,7 @@ import SubmitTaskReportModal from '../../Modal/SubmitTaskReportModal';
 import { useLoading } from '../../../Utils/LoadingContext';
 import ShowReportModal from '../../Modal/ShowReportModal';
 import { CreateEquipmentActionAsync } from '../../../Redux/ReducerAPI/EquipmentReducer';
+import { UpdateDesignFeeActionAsync } from '../../../Redux/ReducerAPI/ContractReducer';
 
 const { Title, Text } = Typography;
 
@@ -143,6 +144,13 @@ const ListTaskSystemTechnician = () => {
           const equipmentResponse = await dispatch(CreateEquipmentActionAsync(selectedTask.agencyId, equipmentFormData));
           if (!equipmentResponse) {
             throw new Error("Error creating equipment");
+          }
+        }
+
+        if (reportData.type === "Design" && reportData.designFee) {
+          const designFeeResponse = await dispatch(UpdateDesignFeeActionAsync(selectedTask.agencyId, reportData.designFee));
+          if (!designFeeResponse) {
+            throw new Error("Error updating design fee");
           }
         }
         await dispatch(SubmitTaskReportActionAsync(selectedTask.id, formData));

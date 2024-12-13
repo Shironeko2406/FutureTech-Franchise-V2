@@ -6,13 +6,13 @@ import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
 import { useDispatch, useSelector } from 'react-redux';
 import { useLoading } from '../../Utils/LoadingContext';
 import { GetContractDetailByAgencyIdActionAsync } from '../../Redux/ReducerAPI/ContractReducer';
-import { CreatePaymentContractActionAsync } from '../../Redux/ReducerAPI/PaymentReducer';
+import { CreatePaymentContract2ndActionAsync } from '../../Redux/ReducerAPI/PaymentReducer';
 import { USER_LOGIN } from '../../Utils/Interceptors';
 import { getDataJSONStorage } from '../../Utils/UtilsFunction';
 import { AgencySubmitTaskActionAsync } from '../../Redux/ReducerAPI/WorkReducer';
+import { GetDocumentByAgencyIdActionAsync } from '../../Redux/ReducerAPI/DocumentReducer';
 
-
-const CreateSignedContractModal = ({ visible, onClose, filters, pageIndex, pageSize, onRefreshTasks, taskId }) => {
+const CreateHandoverModal = ({ visible, onClose, filters, pageIndex, pageSize, onRefreshTasks, taskId }) => {
     const [form] = Form.useForm();
     const [file, setFile] = useState(null);
     const dispatch = useDispatch();
@@ -20,7 +20,7 @@ const CreateSignedContractModal = ({ visible, onClose, filters, pageIndex, pageS
     const { setLoading } = useLoading();
     const agencyId = getDataJSONStorage(USER_LOGIN).agencyId
 
-    const requiredPayment = (contractDetail?.depositPercentage / 100) * contractDetail?.total;
+    const requiredPayment = contractDetail?.total - contractDetail?.paidAmount;
 
     useEffect(() => {
         if (visible) {
@@ -76,31 +76,31 @@ const CreateSignedContractModal = ({ visible, onClose, filters, pageIndex, pageS
         setFile(null);
     };
 
-    const downloadSampleContract = async () => {
+    const downloadHandover = async () => {
         setLoading(true);
-        const res = await dispatch(GetContractDetailByAgencyIdActionAsync(agencyId));
+        const res = await dispatch(GetDocumentByAgencyIdActionAsync(agencyId, 'handover'));
         setLoading(false);
-        if (res && res.contractDocumentImageURL) {
-            window.open(res.contractDocumentImageURL, "_blank");
+        if (res && res.urlFile) {
+            window.location.href = res.urlFile;
         } else {
-            message.error("Chưa có hợp đồng nào được tạo ra.");
+            message.error("Chưa có giấy nghiệm thu được tạo ra.");
         }
     };
 
     const handlePaymentContract = async () => {
         setLoading(true);
-        await dispatch(CreatePaymentContractActionAsync(contractDetail?.id));
+        await dispatch(CreatePaymentContract2ndActionAsync(contractDetail?.id));
         setLoading(false);
     };
 
     return (
         <Modal
-            title="Nộp bản ký hợp đồng"
+            title="Nộp bản ký giấy nghiệm thu"
             open={visible}
             onCancel={onClose}
             width={700}
             footer={[
-                contractDetail?.paidAmount < requiredPayment && ( // Kiểm tra điều kiện
+                requiredPayment > 0 && ( // Kiểm tra điều kiện
                     <Button
                         key="paymentContract"
                         icon={<CreditCardOutlined />}
@@ -110,14 +110,14 @@ const CreateSignedContractModal = ({ visible, onClose, filters, pageIndex, pageS
                         Tạo thanh toán
                     </Button>
                 ),
-                <Button key="downloadContract" icon={<DownloadOutlined />} onClick={downloadSampleContract} type="primary">
-                    Tải file hợp đồng
+                <Button key="downloadHandover" icon={<DownloadOutlined />} onClick={downloadHandover} type="primary">
+                    Tải file giấy nghiệm thu
                 </Button>,
                 <Button key="back" onClick={onClose}>
                     Hủy
                 </Button>,
                 <Button key="submit" type="primary" onClick={() => form.submit()}>
-                    Nộp hợp đồng
+                    Nộp giấy
                 </Button>,
             ]}
 
@@ -193,4 +193,4 @@ const CreateSignedContractModal = ({ visible, onClose, filters, pageIndex, pageS
     );
 };
 
-export default CreateSignedContractModal;
+export default CreateHandoverModal;
