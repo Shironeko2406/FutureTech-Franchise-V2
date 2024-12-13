@@ -69,7 +69,7 @@ const CreateClassModal = ({ visible, onClose }) => {
                             ))}
                         </Select>
                     </Form.Item>
-                    <Form.Item name="course" label="Khóa học">
+                    <Form.Item name="course" label="Khóa học" rules={[{ required: true, message: "Vui lòng chọn khóa học" }]}>
                         <Select
                             placeholder="Tùy chọn - Lựa chọn khóa học"
                             allowClear

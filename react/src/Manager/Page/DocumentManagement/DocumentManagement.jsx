@@ -202,18 +202,14 @@ const DocumentManagement = () => {
             align: "center",
             render: (_, record) => (
                 <Space>
-                    <Dropdown
-                        menu={{
-                            items: getActionItems(),
-                            onClick: ({ key }) => handleMenuClick(record, key),
-                        }}
-                    >
+                    <Tooltip title="Chỉnh sửa">
                         <Button
-                            type="primary"
-                            icon={<EllipsisOutlined />}
-                            style={{ backgroundColor: "#50e3c2", color: "#0A5A5A" }}
+                            type="default"
+                            icon={<EditOutlined />}
+                            style={{ backgroundColor: "#faad14", color: "#fff" }}
+                            onClick={() => handleEdit(record)}
                         />
-                    </Dropdown>
+                    </Tooltip>
                     <Tooltip title="Tải xuống file tài liệu">
                         <Button
                             type="primary"

@@ -455,7 +455,7 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task }) => {
           <Descriptions.Item label="Tiêu đề">{additionalInfo.title}</Descriptions.Item>
           <Descriptions.Item label="Ngày hết hạn">{additionalInfo.expirationDate ? dayjs(additionalInfo.expirationDate).format('DD/MM/YYYY') : null}</Descriptions.Item>
           <Descriptions.Item label="Tài liệu">
-            <Button type="link" icon={<DownloadOutlined />} href={(taskType === 'AgreementSigned' && additionalInfo.level === "Compulsory") ? task.customerSubmit : additionalInfo.urlFile} target="_blank" rel="noopener noreferrer">
+            <Button type="link" icon={<DownloadOutlined />} href={(taskType === 'AgreementSigned' && taskDetail.level === "Compulsory") ? taskDetail.customerSubmit : additionalInfo.urlFile} target="_blank" rel="noopener noreferrer">
               Tải xuống file tài liệu
             </Button>
           </Descriptions.Item>
@@ -486,7 +486,7 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task }) => {
             <Text strong>{Number(additionalInfo.paidAmount).toLocaleString('vi-VN')} VND</Text>
           </Descriptions.Item>
           <Descriptions.Item label="Tài liệu">
-            <Button type="link" icon={<EyeOutlined />} href={additionalInfo.level === "Compulsory" ? task.customerSubmit : null} target="_blank" rel="noopener noreferrer">
+            <Button type="link" icon={<EyeOutlined />} href={taskDetail.level === "Compulsory" ? taskDetail.customerSubmit : additionalInfo.urlFile} target="_blank" rel="noopener noreferrer">
               Xem tài liệu hợp đồng
             </Button>
           </Descriptions.Item>
@@ -639,6 +639,14 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task }) => {
                   : taskType === 'EducationLicenseRegistered'
                     ? 'Thông tin Giấy chứng nhận đăng ký hoạt động giáo dục'
                     : 'Thông tin hợp đồng'
+            }
+            extra={
+              taskDetail.status === "None" && taskDetail.submit === "None" && taskDetail.level !== "Compulsory" &&
+              (taskType === 'AgreementSigned' || taskType === 'SignedContract') && (
+                <Button icon={<FileTextOutlined />} onClick={handleEditDocument}>
+                  Chỉnh sửa
+                </Button>
+              )
             }
           >
             {renderAdditionalInfo}
