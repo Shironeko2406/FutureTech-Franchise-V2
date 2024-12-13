@@ -1,5 +1,3 @@
-"use client"
-
 import { useEffect, useState } from "react"
 import { Table, DatePicker, Button, Card, Row, Col, Statistic, Typography, Layout, Space } from "antd"
 import { useDispatch, useSelector } from "react-redux"

@@ -27,6 +27,7 @@ import EquipmentReducer from "./ReducerAPI/EquipmentReducer";
 import WorkTemplateReducer from "./ReducerAPI/WorkTemplateReducer";
 import AppointmentTemplateReducer from "./ReducerAPI/AppointmentTemplateReducer";
 import HomePageReducer from "./ReducerAPI/HomePageReducer";
+import ReportReducer from "./ReducerAPI/ReportReducer";
 
 export const store = configureStore({
   reducer: {
@@ -58,6 +59,7 @@ export const store = configureStore({
     EquipmentReducer,
     WorkTemplateReducer,
     AppointmentTemplateReducer,
-    HomePageReducer
+    HomePageReducer,
+    ReportReducer,
   },
 });

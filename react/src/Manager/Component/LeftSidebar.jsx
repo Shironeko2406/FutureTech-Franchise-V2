@@ -13,6 +13,7 @@ const sidebarItems = [
   { type: 'link', label: 'Hợp đồng', path: '/manager/contracts', icon: 'clarity:contract-solid' },
   { type: 'section', label: 'Chi nhánh' },
   { type: 'link', label: 'Quản lý', path: '/manager/agency-active', icon: 'solar:login-3-bold-duotone' },
+  { type: 'link', label: 'Báo cáo sự cố', path: '/manager/report', icon: 'solar:login-3-bold-duotone' },
   { type: 'section', label: 'Công việc' },
   { type: 'link', label: 'Danh sách', path: '/manager/list-task', icon: 'solar:login-3-bold-duotone' },
   { type: 'link', label: 'Lịch hẹn', path: '/manager/appointment-schedule', icon: 'solar:calendar-bold-duotone' },

@@ -287,10 +287,10 @@ const CreateAppointmentModal = ({ visible, onClose, workId, selectedType}) => {
               <Select.Option
                 key={user.id}
                 value={user.id}
-                label={`${user.fullName} (${translateRole(user.role)})`}
+                label={`${user.userName} (${translateRole(user.role)})`}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span>{`${user.fullName} (${translateRole(user.role)})`}</span>
+                  <span>{`${user.userName} (${translateRole(user.role)})`}</span>
                   <span style={{ marginLeft: '10px', color: '#888' }}>{`Công việc: ${user.workCount}`}</span>
                 </div>
               </Select.Option>
