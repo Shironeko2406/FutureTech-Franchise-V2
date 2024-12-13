@@ -12,6 +12,7 @@ import { DeleteAppointmentByIdActionAsync, GetAppointmentDetailByIdActionAsync, 
 import EditAppointmentModal from "./EditAppointmentModal";
 import DOMPurify from 'dompurify';
 import ViewAppointmentDetailModal from "./ViewAppointmentDetailModal";
+import { setTaskByAgencyId } from "../../Redux/ReducerAPI/AgencyReducer";
 
 const { Title, Text } = Typography;
 
@@ -171,6 +172,7 @@ const ViewTaskDetailModal = ({ visible, onClose, setVisible, isFromAgencyDetail,
     setIsViewAppointmentModalVisible(false);
     setVisible(true);
     dispatch(setAppointmentDetail({}))
+    dispatch(setTaskByAgencyId({}))
   };
 
   const showEditAppointmentByIdModal = (id) => {
