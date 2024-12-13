@@ -90,25 +90,14 @@ const ListTaskManager = () => {
     };
 
     useEffect(() => {
-        const fetchTasks = async () => {
-            setLoading(true);
-            try {
-                await dispatch(GetTaskUserByLoginActionAsync(
-                    filters.searchText,
-                    filters.levelFilter,
-                    filters.statusFilter,
-                    filters.submitFilter,
-                    pageIndex,
-                    pageSize
-                ));
-            } catch (error) {
-                console.error("Error fetching tasks: ", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchTasks();
+        dispatch(GetTaskUserByLoginActionAsync(
+            filters.searchText,
+            filters.levelFilter,
+            filters.statusFilter,
+            filters.submitFilter,
+            pageIndex,
+            pageSize
+        ));
     }, [filters, pageIndex, pageSize, dispatch]);
 
     const openModalShowTaskDetail = (id) => {
@@ -357,7 +346,7 @@ const ListTaskManager = () => {
                         <Button
                             type="primary"
                             icon={<EyeOutlined />}
-                            onClick={() => window.open(task.customerSubmit, "_blank")}
+                            onClick={() => openModalShowReport(task)}
                         >
                             Xem tài liệu
                         </Button>

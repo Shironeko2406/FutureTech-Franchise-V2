@@ -485,15 +485,20 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task, filters, pa
           <Descriptions.Item label="Phần trăm trả trước">
             <Text strong>{additionalInfo.depositPercentage}%</Text>
           </Descriptions.Item>
-          {additionalInfo.paidAmount && (
-            <Descriptions.Item label="Số tiền đã trả">
-              <Text strong>{Number(additionalInfo.paidAmount).toLocaleString('vi-VN')} VND</Text>
+          <Descriptions.Item label="Số tiền đã trả">
+            <Text strong>{Number(additionalInfo.paidAmount).toLocaleString('vi-VN')} VND</Text>
+          </Descriptions.Item>
+          {(taskDetail.level === "Compulsory" && taskDetail.customerSubmit) && (
+            <Descriptions.Item label="Tài liệu hợp đồng khách gửi">
+              <Button type="link" icon={<EyeOutlined />} href={taskDetail.customerSubmit} target="_blank" rel="noopener noreferrer">
+                Xem tài liệu hợp đồng khách gửi
+              </Button>
             </Descriptions.Item>
           )}
-          {(taskDetail.level === "Compulsory" ? taskDetail.customerSubmit : additionalInfo.urlFile) && (
-            <Descriptions.Item label="Tài liệu">
-              <Button type="link" icon={<EyeOutlined />} href={taskDetail.level === "Compulsory" ? taskDetail.customerSubmit : additionalInfo.urlFile} target="_blank" rel="noopener noreferrer">
-                Xem tài liệu hợp đồng
+          {additionalInfo.contractDocumentImageURL && (
+            <Descriptions.Item label="Tài liệu hợp đồng gốc">
+              <Button type="link" icon={<EyeOutlined />} href={additionalInfo.contractDocumentImageURL} target="_blank" rel="noopener noreferrer">
+                Xem tài liệu hợp đồng gốc
               </Button>
             </Descriptions.Item>
           )}
