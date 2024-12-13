@@ -109,6 +109,8 @@ import AgencyStaffAppointmentDetail from "./AgencyStaff/Page/ScheduleAgencyStaff
 import CourseViewAgencyStaff from "./AgencyStaff/Page/CourseViewAgencyStaff/CourseViewAgencyStaff";
 import CourseDetailAgencyStaff from "./AgencyStaff/Page/CourseViewAgencyStaff/CourseDetailAgencyStaff";
 import EquipmentListAgencyStaff from "./AgencyStaff/Page/EquipmentList/EquipmentListAgencyStaff";
+import ReportList from "./AgencyManager/Page/ReportList/ReportList";
+import ListReport from "./Manager/Page/ListReport/ListReport";
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -170,6 +172,7 @@ function App() {
                 <Route path="profile" element={<Profile />} />
                 <Route path="payment-success" element={<PaymentSuccess />} />
                 <Route path="equipments" element={<EquipmentList />} />
+                <Route path="reports" element={<ReportList/>} />
                 <Route path="contracts" element={<ViewContractAgencyManager />} />
                 <Route path="documents" element={<ViewDocumentAgencyManager />} />
 
@@ -226,6 +229,7 @@ function App() {
                 <Route path="list-task" element={<ListTaskManager />} />
                 <Route path="agency-active/:id/equipments" element={<EquipmentManagementPage />} />
                 <Route path="profile" element={<Profile />} />
+                <Route path="report" element={<ListReport/>} />
               </Route>
             </Route>
 

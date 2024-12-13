@@ -56,3 +56,36 @@ export const FetchDashboardAgencyAsync = (startDate, endDate) => {
         }
     };
 };
+
+export const FetchDashboardAgencyByIdAsync = (id, startDate, endDate) => {
+    return async (dispatch) => {
+        try {
+            const res = await httpClient.get(`api/v1/agency-dashboards/agencies/${id}/amount?startDate=${startDate}&endDate=${endDate}`);
+            console.log("FetchDashboardAgencyByIdAsync", res);
+            if (res.isSuccess) {
+                dispatch(setRevenueSummary(res.data));  // Lưu dữ liệu vào Redux
+            } else {
+                message.error(res.message);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
+}
+
+export const FetchDashboardAgencyByIdCoursesAsync = (id, startDate, endDate) => {
+    return async (dispatch) => {
+        try {
+            const res = await httpClient.get(`api/v1/agency-dashboards/agencies/${id}?startDate=${startDate}&endDate=${endDate}`);
+            console.log("FetchDashboardAgencyCoursesAsync", res)
+            if (res.isSuccess && res.data) {
+                dispatch(setDashboardData(res.data))
+            } else {
+                message.error(res.message);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+};

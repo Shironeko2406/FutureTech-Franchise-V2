@@ -3,6 +3,7 @@ import { httpClient } from '../../Utils/Interceptors';
 import { message } from 'antd';
 import { GetTaskByAgencyIdActionAsync } from './AgencyReducer';
 import { GetTaskUserByLoginActionAsync, setTaskUser } from './UserReducer';
+import { GetReportActionAsync, UpdateReportStatusByIdActionAsync } from './ReportReducer';
 
 const initialState = {
   taskDetail: {},
@@ -35,6 +36,25 @@ export const CreateTaskActionAsync = (data) => {
       if (res.isSuccess && res.data) {
         message.success(`${res.message}`);
         await dispatch(GetTaskByAgencyIdActionAsync(data.agencyId));
+        return true;
+      } else {
+        message.error(`${res.message}`);
+        return false;
+      }
+    } catch (error) {
+      console.log(error);
+      message.error("Lỗi hệ thống");
+    }
+  };
+};
+
+export const CreateTaskRepairingEquipmentActionAsync = (data, statusUpdate, reportId, filters, pageIndex, pageSize) => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.post(`/api/v1/works`, data);
+      if (res.isSuccess && res.data) {
+        message.success(`${res.message}`);      
+        await dispatch(UpdateReportStatusByIdActionAsync(reportId, statusUpdate, filters, pageIndex, pageSize));
         return true;
       } else {
         message.error(`${res.message}`);

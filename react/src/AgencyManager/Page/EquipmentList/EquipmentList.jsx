@@ -5,6 +5,7 @@ import { Table, Button, Space, Typography } from 'antd';
 import { useLoading } from '../../../Utils/LoadingContext';
 import { GetUserLoginActionAsync } from "../../../Redux/ReducerAPI/UserReducer";
 import moment from 'moment';
+import AddReportEquipmentModal from '../../Modal/AddReportEquipmentModal';
 
 const { Text } = Typography;
 
@@ -52,6 +53,8 @@ const EquipmentList = () => {
     const [pageIndex, setPageIndex] = useState(1);
     const [pageSize, setPageSize] = useState(10);
     const { setLoading } = useLoading();
+    const [selectedEquipmentIds, setSelectedEquipmentIds] = useState([]);
+    const [addReportModalVisible, setAddReportModalVisible] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -166,6 +169,18 @@ const EquipmentList = () => {
         },
     ];
 
+    const onSelectChange = (selectedRowKeys) => {
+        setSelectedEquipmentIds(selectedRowKeys);
+    };
+
+    const rowSelection = {
+        selectedRowKeys: selectedEquipmentIds,
+        onChange: onSelectChange,
+    };
+
+    const showModalAddReport= () => setAddReportModalVisible(true);
+    const handleCloseModalAddReport = () => setAddReportModalVisible(false);
+
     return (
         <div className="card">
             <div className="card-body">
@@ -176,11 +191,20 @@ const EquipmentList = () => {
                         style={{ width: 350 }}
                     /> */}
                 {/* </Space> */}
+                <Button 
+                    onClick={showModalAddReport} 
+                    disabled={selectedEquipmentIds.length === 0}
+                    type="primary"
+                    style={{ marginBottom: 16 }}
+                >
+                    Thêm báo cáo trang thiết bị
+                </Button>
                 <Table
                     bordered
                     columns={columns}
                     dataSource={equipmentData}
                     rowKey={(record) => record.id}
+                    rowSelection={rowSelection}
                     pagination={{
                         showTotal: () => `Tổng số thiết bị: ${totalItemsCount}`,
                         current: pageIndex,
@@ -193,6 +217,13 @@ const EquipmentList = () => {
                     expandable={{ expandedRowRender: (record) => <ExpandedRow record={record} /> }}
                 />
             </div>
+
+            <AddReportEquipmentModal
+                visible={addReportModalVisible}
+                onClose={handleCloseModalAddReport}
+                selectedEquipmentIds={selectedEquipmentIds}
+                setSelectedEquipmentIds={setSelectedEquipmentIds}
+            />
         </div>
     );
 };

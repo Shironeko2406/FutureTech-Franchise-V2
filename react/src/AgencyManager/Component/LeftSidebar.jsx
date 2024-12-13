@@ -12,6 +12,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
     { type: 'link', label: 'Lịch hẹn', path: '/agency-manager/appointment-schedule', icon: 'solar:calendar-bold-duotone' },
     { type: 'link', label: 'Khóa học', path: '/agency-manager/course', icon: 'mdi:book-open-page-variant' },
     { type: 'link', label: 'Trang thiết bị', path: '/agency-manager/equipments', icon: 'mdi:tools' },
+    { type: 'link', label: 'Báo cáo sự cố', path: '/agency-manager/reports', icon: 'mdi:tools' },
     { type: 'link', label: 'Hợp đồng', path: '/agency-manager/contracts', icon: 'clarity:contract-solid' },
     { type: 'link', label: 'Tài liệu', path: '/agency-manager/documents', icon: 'solar:document-bold-duotone' },
     { type: 'section', label: 'Quản lý', icon: 'ti ti-dots' },
