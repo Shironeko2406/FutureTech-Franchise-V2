@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Modal, Typography, Space, Tag, Avatar, Card, Tabs, Tooltip, Button, Select, message } from 'antd'
+import { Modal, Typography, Space, Tag, Avatar, Card, Tabs, Tooltip, Button, Select, message, Spin } from 'antd'
 import { CalendarOutlined, ClockCircleOutlined, FileTextOutlined, TeamOutlined, LinkOutlined, PlusOutlined } from '@ant-design/icons'
 import styled from 'styled-components'
 import { useDispatch, useSelector } from 'react-redux'
@@ -100,6 +100,7 @@ export default function ViewAppointmentDetailModal({ visible, onClose, selectedT
   const [isSelectingUsers, setIsSelectingUsers] = useState(false)
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [filtersTimeUser, setFiltersTimeUser] = useState(null);
+  const [loadingParticipants, setLoadingParticipants] = useState(false);
 
   const filterUsersByRole = (user, type) => {
     const rolePermissions = {
@@ -125,11 +126,14 @@ export default function ViewAppointmentDetailModal({ visible, onClose, selectedT
 
   useEffect(() => {
     if (visible && appointmentDetail?.startTime && appointmentDetail?.endTime) {
+      setLoadingParticipants(true);
       const newFiltersTimeUser = {
         startTimeFilter: appointmentDetail.startTime,
         endTimeFilter: appointmentDetail.endTime,
       };
-      dispatch(GetManagerUserAddAppointmentActionAsync(newFiltersTimeUser));
+      dispatch(GetManagerUserAddAppointmentActionAsync(newFiltersTimeUser)).finally(() => {
+        setLoadingParticipants(false);
+      });
     }
   }, [visible, appointmentDetail, dispatch]);
 
@@ -310,26 +314,28 @@ export default function ViewAppointmentDetailModal({ visible, onClose, selectedT
             label: 'Người tham gia',
             children: (
               <StyledCard>
-                <Space direction="vertical" style={{ width: '100%' }}>
-                  <Space>
-                    <TeamOutlined style={{ fontSize: 18, color: '#1890ff' }} />
-                    <Text strong>Danh sách người tham gia:</Text>
+                <Spin spinning={loadingParticipants}>
+                  <Space direction="vertical" style={{ width: '100%' }}>
+                    <Space>
+                      <TeamOutlined style={{ fontSize: 18, color: '#1890ff' }} />
+                      <Text strong>Danh sách người tham gia:</Text>
+                    </Space>
+
+                    {isSelectingUsers ? renderUserSelection() : (
+                      <>
+                        {/* {renderAvatars()} */}
+                        {renderParticipants()}
+                        {!isFromTaskDetail && taskDetail?.status === "None" &&
+                          ['Processing', 'Approved'].includes(agencyStatus) && (
+                            <Button icon={<PlusOutlined />} onClick={handleAddUsers}>
+                              Thêm người tham gia
+                            </Button>
+                          )}
+                      </>
+                    )}
+
                   </Space>
-
-                  {isSelectingUsers ? renderUserSelection() : (
-                    <>
-                      {/* {renderAvatars()} */}
-                      {renderParticipants()}
-                      {!isFromTaskDetail && taskDetail?.status === "None" &&
-                        ['Processing', 'Approved'].includes(agencyStatus) && (
-                          <Button icon={<PlusOutlined />} onClick={handleAddUsers}>
-                            Thêm người tham gia
-                          </Button>
-                        )}
-                    </>
-                  )}
-
-                </Space>
+                </Spin>
               </StyledCard>
             ),
           },
