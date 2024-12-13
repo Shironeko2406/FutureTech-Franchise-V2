@@ -700,6 +700,7 @@ const ListTaskManager = () => {
                 onClose={handleCloseModalShowTaskDetail}
                 setVisible={setModalShowTaskDetailVisible}
                 isFromAgencyDetail={false}
+                isFromTaskDetail={true} // Add this line
             />
             <SubmitTaskReportModal
                 visible={modalSubmitTaskReportVisible}

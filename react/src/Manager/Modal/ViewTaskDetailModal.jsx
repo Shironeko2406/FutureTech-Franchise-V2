@@ -124,7 +124,7 @@ const getAppointmentStatus = (startTime, endTime) => {
   }
 };
 
-const ViewTaskDetailModal = ({ visible, onClose, setVisible, isFromAgencyDetail, selectedType }) => {
+const ViewTaskDetailModal = ({ visible, onClose, setVisible, isFromAgencyDetail, selectedType, isFromTaskDetail }) => {
   const { taskDetail } = useSelector((state) => state.WorkReducer);
   const { agencyStatus } = useSelector((state) => state.AgencyReducer);
   const dispatch = useDispatch();
@@ -385,6 +385,7 @@ const ViewTaskDetailModal = ({ visible, onClose, setVisible, isFromAgencyDetail,
         visible={isViewAppointmentModalVisible}
         onClose={handleViewAppointmentDetailCancel}
         selectedType={selectedType}
+        isFromTaskDetail={isFromTaskDetail}
       />
 
       <EditAppointmentModal

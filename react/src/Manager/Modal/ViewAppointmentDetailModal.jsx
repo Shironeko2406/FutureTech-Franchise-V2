@@ -89,7 +89,7 @@ const translateRole = (role) => ({
   AgencyManager: "Đối tác chi nhánh",
 }[role] || "Không xác định");
 
-export default function ViewAppointmentDetailModal({ visible, onClose, selectedType }) {
+export default function ViewAppointmentDetailModal({ visible, onClose, selectedType, isFromTaskDetail }) {
   const { appointmentDetail } = useSelector((state) => state.AppointmentReducer);
   const { agencyStatus } = useSelector((state) => state.AgencyReducer);
   const { taskDetail } = useSelector((state) => state.WorkReducer);
@@ -106,14 +106,14 @@ export default function ViewAppointmentDetailModal({ visible, onClose, selectedT
       Manager: [
         'Interview', 'AgreementSigned', 'BusinessRegistered', 'SiteSurvey',
         'Design', 'Quotation', 'SignedContract', 'ConstructionAndTrainning',
-        'Handover', 'EducationLicenseRegistered', 'TrainningInternal', 
+        'Handover', 'EducationLicenseRegistered', 'TrainningInternal',
         'RepairingEquipment', 'EducationalSupervision', 'RenewContract',
         'RenewEducationLicense', 'Other'
       ],
       SystemTechnician: ['Design', 'Quotation', 'SiteSurvey', 'ConstructionAndTrainning', 'RepairingEquipment', 'Other'],
       SystemInstructor: ['ConstructionAndTrainning', 'EducationLicenseRegistered', 'TrainningInternal', 'EducationalSupervision', 'Other'],
     };
-  
+
     return rolePermissions[user.role]?.includes(type);
   };
 
@@ -132,7 +132,7 @@ export default function ViewAppointmentDetailModal({ visible, onClose, selectedT
       dispatch(GetManagerUserAddAppointmentActionAsync(newFiltersTimeUser));
     }
   }, [visible, appointmentDetail, dispatch]);
-  
+
 
   const formatDate = (dateString) => {
     if (!dateString) return 'Not set';
@@ -198,7 +198,7 @@ export default function ViewAppointmentDetailModal({ visible, onClose, selectedT
                 value={user.id}
                 label={`${user.fullName} - ${user.userName} - (${translateRole(user.role)})`}
               >
-                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span>{`${user.fullName} - ${user.userName} - (${translateRole(user.role)})`}</span>
                   <span style={{ marginLeft: '10px', color: '#888' }}>{`Công việc: ${user.workCount}`}</span>
                 </div>
@@ -320,7 +320,7 @@ export default function ViewAppointmentDetailModal({ visible, onClose, selectedT
                     <>
                       {/* {renderAvatars()} */}
                       {renderParticipants()}
-                      {taskDetail?.status === "None" &&
+                      {!isFromTaskDetail && taskDetail?.status === "None" &&
                         ['Processing', 'Approved'].includes(agencyStatus) && (
                           <Button icon={<PlusOutlined />} onClick={handleAddUsers}>
                             Thêm người tham gia
