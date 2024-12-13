@@ -196,10 +196,10 @@ export default function ViewAppointmentDetailModal({ visible, onClose, selectedT
               <Select.Option
                 key={user.id}
                 value={user.id}
-                label={user.userName}
+                label={`${user.fullName} - ${user.userName} - (${translateRole(user.role)})`}
               >
                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span>{`${user.userName} (${translateRole(user.role)})`}</span>
+                  <span>{`${user.fullName} - ${user.userName} - (${translateRole(user.role)})`}</span>
                   <span style={{ marginLeft: '10px', color: '#888' }}>{`Công việc: ${user.workCount}`}</span>
                 </div>
               </Select.Option>
