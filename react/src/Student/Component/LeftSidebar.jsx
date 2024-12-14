@@ -15,13 +15,8 @@ const LeftSidebar = ({ onSidebarToggle }) => {
   },[])
 
   const sidebarItems = [
-    { type: "section", label: "Trang chủ", icon: "ti ti-dots" },
-    {
-      type: "submenu",
-      label: "Bảng điều khiển",
-      path: "#",
-      icon: "mdi:view-dashboard",
-    },
+    { type: "section", label: "Lịch học", icon: "ti ti-dots" },
+    { type: 'link', label: 'Lịch học', path: '/student', icon: 'mdi:clock' },
     { type: "section", label: "Khóa học", icon: "ti ti-dots" },
 
     ...classOfUserLogin?.map((classItem, index) => ({
@@ -33,8 +28,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
         { label: "Bài tập nộp", path: `/student/class/${classItem.classId}/assignment` },
       ],
     })),
-    { type: "section", label: "Lịch học", icon: "ti ti-dots" },
-    { type: 'link', label: 'Lịch học', path: '/student/schedules', icon: 'mdi:clock' },
+
   ];
 
 

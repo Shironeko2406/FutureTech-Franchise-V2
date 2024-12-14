@@ -12,13 +12,8 @@ const LeftSidebar = ({ onSidebarToggle }) => {
   const { classOfUserLogin } = useSelector((state) => state.UserReducer);
 
   const sidebarItems = [
-    { type: "section", label: "Trang chủ", icon: "ti ti-dots" },
-    {
-      type: "link",
-      label: "Bảng điều khiển",
-      path: "/instructor" ,
-      icon: "mdi:view-dashboard",
-    },
+    { type: "section", label: "Lịch dạy", icon: "ti ti-dots" },
+    { type: 'link', label: 'Lịch dạy', path: '/instructor', icon: 'mdi:clock' },
     { type: "section", label: "Các lớp học", icon: "ti ti-dots" },
 
     ...classOfUserLogin?.map((classItem, index) => ({
@@ -32,8 +27,6 @@ const LeftSidebar = ({ onSidebarToggle }) => {
         { label: "Tài liệu khóa học", path: `/instructor/class/${classItem.classId}` },
       ],
     })),
-    { type: "section", label: "Lịch dạy", icon: "ti ti-dots" },
-    { type: 'link', label: 'Lịch dạy', path: '/instructor/schedules', icon: 'mdi:clock' },
   ];
 
 

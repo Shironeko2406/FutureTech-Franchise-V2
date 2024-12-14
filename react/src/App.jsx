@@ -141,7 +141,6 @@ function App() {
             </Route>
             <Route element={<ProtectedRoute requiredRole="Administrator" />}>
               <Route path="admin" element={<TempUI />}>
-                <Route path="" element={<Home />} />
                 <Route path="franchise" element={<FranchiseManagement />} />
                 <Route path="course-category" element={<CourseCategoryAdmin />} />
                 <Route path="course" element={<CourseManageAdmin />} />
@@ -149,7 +148,7 @@ function App() {
                 <Route path="contracts" element={<ManageContractAdminPage />} />
                 <Route path="system-accounts" element={<AccountManagement />} />
                 <Route path="work-template" element={<WorkTemplate />} />
-                <Route path="home-page-management" element={<HomePageManagement />} />
+                <Route path="" element={<HomePageManagement />} />
                 <Route path="documents" element={<DocumentManagementAdmin />} />
               </Route>
             </Route>
@@ -181,14 +180,13 @@ function App() {
 
             <Route element={<ProtectedRoute requiredRole="Student" />}>
               <Route path="student" element={<TempUIStudent />}>
-                <Route path="" element={<HomeStudentNoti />} />
                 <Route path="class/:id" element={<ClassDetailStudent />} />
                 <Route path="class/:id/assignment" element={<ViewAssignment />} />
                 <Route path="quiz" element={<QuizTest />} />
                 <Route path="assignment/:assignmentId" element={<AssignmentDetail />} />
                 <Route path="quiz/:quizId" element={<QuizDescription />} />
                 <Route path="quiz/:quizId/start" element={<QuizTest />} />
-                <Route path="schedules" element={<ScheduleStudent />} />
+                <Route path="" element={<ScheduleStudent />} />
                 <Route path="change-password" element={<ChangePassword />} />
                 <Route path="profile" element={<Profile />} />
               </Route>
@@ -200,9 +198,9 @@ function App() {
                 <Route path="class/:id/course-detail" element={<CourseDetailOfClass />} />
                 <Route path="class/:id/quiz" element={<QuizOfClass />} />
                 <Route path="class/:id/assignment" element={<AssignmentOfClass />} />
-                <Route path="" element={<HomeInstructor />} />
-                <Route path="schedule" element={<ScheduleTeaching />} />
-                <Route path="schedules" element={<ScheduleInstructor />} />
+                {/* <Route path="" element={<HomeInstructor />} /> */}
+                {/* <Route path="schedule" element={<ScheduleTeaching />} /> */}
+                <Route path="" element={<ScheduleInstructor />} />
                 <Route path="schedules/attendances" element={<AttendancePage />} />
                 <Route path="profile" element={<Profile />} />
               </Route>
@@ -210,9 +208,8 @@ function App() {
 
             <Route element={<ProtectedRoute requiredRole="Manager" />}>
               <Route path="manager" element={<TempUIManager />}>
-                <Route path="" element={<HomeManager />} />
                 <Route path="course-category" element={<CourseCategoryManager />} />
-                <Route path="course" element={<CourseManage />} />
+                <Route path="" element={<CourseManage />} />
                 <Route path="course-detail/:id" element={<CourseDetailManager />} />
                 <Route path="course-detail/:id/questions" element={<ViewQuestionChapterManager />} />
                 <Route path="slot" element={<SlotManager />} />
@@ -235,8 +232,7 @@ function App() {
 
             <Route element={<ProtectedRoute requiredRole="SystemInstructor" />}>
               <Route path="system-instructor" element={<TempUISystemInstructor />}>
-                <Route path="" element={<HomeSystemInstructor />} />
-                <Route path="course" element={<CourseSystemInstructor />} />
+                <Route path="" element={<CourseSystemInstructor />} />
                 <Route path="course-detail/:id" element={<CourseDetailSystemInstructor />} />
                 <Route path="course-detail/:id/questions" element={<ViewQuestionChapterSystemInstructor />} />
                 <Route path="list-task" element={<ListTaskSystemInstructor />} />
@@ -248,8 +244,7 @@ function App() {
 
             <Route element={<ProtectedRoute requiredRole="SystemTechnician" />}>
               <Route path="system-technician" element={<TemUISystemTechnician />}>
-                <Route path="" element={<HomeSystemTechnician />} />
-                <Route path="list-task" element={<ListTaskSystemTechnician />} />
+                <Route path="" element={<ListTaskSystemTechnician />} />
                 <Route path="appointment-schedule" element={<SystemTechnicianAppointment />} />
                 <Route path="appointment-schedule/details" element={<SystemTechnicianAppointmentDetail />} />
                 <Route path="profile" element={<Profile />} />
@@ -258,11 +253,10 @@ function App() {
 
             <Route element={<ProtectedRoute requiredRole="SystemConsultant" />}>
               <Route path="system-consultant" element={<TempUISystemConsultant />}>
-                <Route path="" element={<HomeSystemConsultant />} />
                 <Route path="list-task" element={<ListTaskSystemConsultant />} />
                 <Route path="appointment-schedule" element={<SystemConsultantAppointment />} />
                 <Route path="appointment-schedule/details" element={<SystemConsultantAppointmentDetail />} />
-                <Route path="consult" element={<ConsultationManagement />} />
+                <Route path="" element={<ConsultationManagement />} />
                 <Route path="profile" element={<Profile />} />
               </Route>
             </Route>
