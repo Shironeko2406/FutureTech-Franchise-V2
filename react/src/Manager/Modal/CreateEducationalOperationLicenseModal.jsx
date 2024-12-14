@@ -89,7 +89,7 @@ const CreateEducationalOperationLicenseModal = ({ visible, onClose, agencyId }) 
                             accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                             maxCount={1}
                         >
-                            <Button icon={<UploadOutlined />}>Tải file</Button>
+                            <Button icon={<UploadOutlined />}>Thêm file</Button>
                         </Upload>
                     </Form.Item>
                 </Form>

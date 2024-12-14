@@ -14,7 +14,9 @@ import CreateAgreementModal from '../../Modal/CreateAgreementModal';
 import CreateBusinessRegistrationModal from '../../Modal/CreateBusinessRegistrationModal';
 import CreateSignedContractModal from '../../Modal/CreateSignedContractModal';
 import CreateEducationalOperationLicenseModal from '../../Modal/CreateEducationalOperationLicenseModal';
+import CreateHandoverModal from '../../Modal/CreateHandoverModal';
 import UploadFileModal from '../../Modal/UploadFileModal';
+import { useLoading } from '../../../Utils/LoadingContext';
 
 const { Title, Text } = Typography;
 
@@ -65,6 +67,7 @@ const getSubmitStatusColor = (submit) => {
 const ListTaskAgencyManager = () => {
     const { taskUser, totalPagesCount } = useSelector((state) => state.UserReducer);
     const dispatch = useDispatch();
+    const { setLoading } = useLoading();
     const [filters, setFilters] = useState({
         searchText: '',
         levelFilter: '',
@@ -81,6 +84,7 @@ const ListTaskAgencyManager = () => {
     const [modalCreateBusinessRegistrationVisible, setModalCreateBusinessRegistrationVisible] = useState(false);
     const [modalCreateSignedContractVisible, setModalCreateSignedContractVisible] = useState(false);
     const [modalCreateEducationalOperationLicenseVisible, setModalCreateEducationalOperationLicenseVisible] = useState(false);
+    const [modalCreateHandoverDocumentVisible, setModalCreateHandoverDocumentVisible] = useState(false);
     const [modalUploadFileVisible, setModalUploadFileVisible] = useState(false);
     const [taskToUpload, setTaskToUpload] = useState(null);
 
@@ -96,6 +100,7 @@ const ListTaskAgencyManager = () => {
 
     console.log(taskUser)
     useEffect(() => {
+        setLoading(true);
         dispatch(GetTaskForAgencyActionAsync(
             filters.searchText,
             filters.levelFilter,
@@ -103,7 +108,7 @@ const ListTaskAgencyManager = () => {
             filters.submitFilter,
             pageIndex,
             pageSize
-        ));
+        )).finally(() => setLoading(false));
     }, [filters, pageIndex, pageSize, dispatch]);
 
     const handleOpenModal = (taskType, task) => {
@@ -122,6 +127,10 @@ const ListTaskAgencyManager = () => {
                     break;
                 case "EducationLicenseRegistered":
                     setModalCreateEducationalOperationLicenseVisible(true);
+                    setSelectedTask(task);
+                    break;
+                case "Handover":
+                    setModalCreateHandoverDocumentVisible(true);
                     setSelectedTask(task);
                     break;
                 default:
@@ -208,6 +217,7 @@ const ListTaskAgencyManager = () => {
     // };
 
     const handleUpdateTaskStatus = async (task) => {
+        setLoading(true);
         const newStatus = task.submit === "Submited" ? "None" : "Submited";
         await dispatch(UpdateTaskStatusActionAsync(task.id, newStatus));
         await dispatch(GetTaskUserByLoginActionAsync(
@@ -218,6 +228,7 @@ const ListTaskAgencyManager = () => {
             pageIndex,
             pageSize
         ));
+        setLoading(false);
     };
 
     const renderItem = (task) => {
@@ -231,7 +242,7 @@ const ListTaskAgencyManager = () => {
             />
         ];
 
-        const validTaskTypes = ["AgreementSigned", "BusinessRegistered", "SignedContract", "EducationLicenseRegistered"];
+        const validTaskTypes = ["AgreementSigned", "BusinessRegistered", "SignedContract", "EducationLicenseRegistered", "Handover"];
         if (task.level === "Compulsory" && validTaskTypes.includes(task.type) && task.customerSubmit === null) {
             actions.push(
                 <Button
@@ -269,7 +280,7 @@ const ListTaskAgencyManager = () => {
         }
 
 
-        if ((task.type === "AgreementSigned" || task.type === "SignedContract") && task.level === "Compulsory" && task.customerSubmit !== null) {
+        if ((task.type === "AgreementSigned" || task.type === "SignedContract" || task.type === "Handover") && task.level === "Compulsory" && task.customerSubmit !== null) {
             actions.push(
                 <Button
                     type="primary"
@@ -288,7 +299,7 @@ const ListTaskAgencyManager = () => {
                         icon={<UploadOutlined />}
                         onClick={() => handleOpenModal(task.type, task)}
                     >
-                        Tải file khác
+                        Thêm file khác
                     </Button>
                 );
             }
@@ -317,7 +328,6 @@ const ListTaskAgencyManager = () => {
                 </Button>
             );
         }
-
         return (
             <TaskItem
                 style={{
@@ -379,7 +389,7 @@ const ListTaskAgencyManager = () => {
             <Title level={4}>
                 <CalendarOutlined /> Danh sách công việc
             </Title>
-            <DynamicFilter onFilterChange={handleFilterChange} defaultFilters={filters}/>
+            <DynamicFilter onFilterChange={handleFilterChange} defaultFilters={filters} />
             <List
                 dataSource={taskUser}
                 renderItem={renderItem}
@@ -422,19 +432,34 @@ const ListTaskAgencyManager = () => {
                 pageSize={pageSize}
                 onRefreshTasks={handleRefreshTasks}
             />
+
+            <CreateHandoverModal
+                visible={modalCreateHandoverDocumentVisible}
+                onClose={() => setModalCreateHandoverDocumentVisible(false)}
+                taskType={taskType}
+                taskId={selectedTask?.id}
+                filters={filters}
+                pageIndex={pageIndex}
+                pageSize={pageSize}
+                onRefreshTasks={handleRefreshTasks}
+            />
+
             <CreateEducationalOperationLicenseModal
                 visible={modalCreateEducationalOperationLicenseVisible}
                 onClose={() => setModalCreateEducationalOperationLicenseVisible(false)}
                 onRefreshTasks={handleRefreshTasks}
                 taskId={selectedTask?.id}
             />
+
             <ShowReportModal
                 visible={modalShowReportVisible}
                 onClose={handleCloseModalShowReport}
                 taskId={selectedTask?.id}
                 taskType={taskType}
                 agencyId={selectedTask?.agencyId}
+                taskSubmit={selectedTask?.submit}
             />
+
             <UploadFileModal
                 visible={modalUploadFileVisible}
                 onClose={() => setModalUploadFileVisible(false)}

@@ -87,6 +87,8 @@ const CreateDocumentModal = ({ visible, onClose, agencyData }) => {
                         <Select.Option value="AgreementContract">Hợp đồng thỏa thuận</Select.Option>
                         <Select.Option value="BusinessLicense">Giấy phép kinh doanh</Select.Option>
                         <Select.Option value="EducationalOperationLicense">Giấy phép hoạt động giáo dục</Select.Option>
+                        <Select.Option value="Handover">Giấy nghiệm thu</Select.Option>
+                        <Select.Option value="Other">Giấy tờ khác</Select.Option>
                     </Select>
                 </Form.Item>
                 <Form.Item

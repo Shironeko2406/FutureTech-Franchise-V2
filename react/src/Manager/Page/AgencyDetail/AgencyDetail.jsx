@@ -408,6 +408,11 @@ export default function AgencyDetail() {
     task.submit === 'Submited'
   );
 
+  const hasSubmittedHandoverTask = selectedTasks.some(task =>
+    task.type === 'Handover' &&
+    task.submit === 'Submited'
+  );
+
   const downloadEquipmentFile = async (agencyId) => {
     setLoading(true);
     await dispatch(DownloadEquipmentFileActionAsync(agencyId));
@@ -443,6 +448,19 @@ export default function AgencyDetail() {
   const openModalEducationalOperationLicenseDocumentDetail = async (agencyId) => {
     setLoading(true);
     const documentData = await dispatch(GetDocumentByAgencyIdActionAsync(agencyId, 'EducationalOperationLicense'));
+    setLoading(false);
+    if (documentData) {
+      setDocumentDetail(documentData);
+      setModalDocumentDetailVisible(true);
+    } else {
+      message.error("Không tìm thấy tài liệu");
+    }
+  };
+
+
+  const openModalHandoverDocumentDetail = async (agencyId) => {
+    setLoading(true);
+    const documentData = await dispatch(GetDocumentByAgencyIdActionAsync(agencyId, 'Handover'));
     setLoading(false);
     if (documentData) {
       setDocumentDetail(documentData);
@@ -600,6 +618,15 @@ export default function AgencyDetail() {
                         type="primary"
                         icon={<FileOutlined />}
                         onClick={() => openModalEducationalOperationLicenseDocumentDetail(tasks[0].agencyId)}
+                      >
+                        Xem tài liệu
+                      </Button>
+                    )}
+                    {hasSubmittedHandoverTask && (
+                      <Button
+                        type="primary"
+                        icon={<FileOutlined />}
+                        onClick={() => openModalHandoverDocumentDetail(tasks[0].agencyId)}
                       >
                         Xem tài liệu
                       </Button>

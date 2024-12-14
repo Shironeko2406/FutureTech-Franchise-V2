@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, Form, Input, DatePicker, InputNumber, Button, Upload, message, Spin } from 'antd'; // Import Spin
-import { UploadOutlined, DownloadOutlined } from '@ant-design/icons';
+import { UploadOutlined, DownloadOutlined, PlusOutlined } from '@ant-design/icons';
 import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
 import { imageDB } from "../../Firebasse/Config";
 import { useDispatch } from 'react-redux';
@@ -10,27 +10,30 @@ import moment from 'moment'; // Import moment
 const CreateSignedContractModal = ({ visible, onClose, agencyId }) => {
     const [form] = Form.useForm();
     const dispatch = useDispatch();
-    const [file, setFile] = useState(null);
+    // const [file, setFile] = useState(null);
     const [loading, setLoading] = useState(false); // Local loading state
-    const [downloadLoading, setDownloadLoading] = useState(false);
+    // const [downloadLoading, setDownloadLoading] = useState(false);
 
     const handleOk = async () => {
         setLoading(true);
         try {
             const values = await form.validateFields();
-            const storageRef = ref(imageDB, `documents/${file.name}`);
-            await uploadBytes(storageRef, file);
-            const fileURL = await getDownloadURL(storageRef);
+            // const storageRef = ref(imageDB, `documents/${file.name}`);
+            // await uploadBytes(storageRef, file);
+            // const fileURL = await getDownloadURL(storageRef);
             const contractData = {
                 title: values.title,
                 startTime: values.startTime.format('YYYY-MM-DD'),
                 endTime: values.endTime.format('YYYY-MM-DD'),
-                contractDocumentImageURL: fileURL,
+                // contractDocumentImageURL: fileURL,
                 revenueSharePercentage: parseFloat(values.revenueSharePercentage),
                 depositPercentage: parseFloat(values.depositPercentage),
                 agencyId: agencyId, // Use the passed agencyId
             };
-            await dispatch(CreateSignedContractActionAsync(contractData));
+            const success = await dispatch(CreateSignedContractActionAsync(contractData));
+            if (success) {
+                await dispatch(DownloadSampleContractActionAsync(agencyId));
+            }
             onClose();
             form.resetFields();
             console.log(contractData)
@@ -41,41 +44,34 @@ const CreateSignedContractModal = ({ visible, onClose, agencyId }) => {
         }
     };
 
-    const handleUpload = async ({ file, onSuccess, onError }) => {
-        if (!file.type.startsWith('application/')) {
-            onError(new Error('Only document files are allowed!'));
-            return;
-        }
-        setFile(file);
-        onSuccess(null, file);
-    };
+    // const handleUpload = async ({ file, onSuccess, onError }) => {
+    //     if (!file.type.startsWith('application/')) {
+    //         onError(new Error('Only document files are allowed!'));
+    //         return;
+    //     }
+    //     setFile(file);
+    //     onSuccess(null, file);
+    // };
 
-    const downloadSampleContract = async () => {
-        setDownloadLoading(true);
-        await dispatch(DownloadSampleContractActionAsync(agencyId));
-        setDownloadLoading(false);
-    };
+    // const downloadSampleContract = async () => {
+    //     setDownloadLoading(true);
+    //     await dispatch(DownloadSampleContractActionAsync(agencyId));
+    //     setDownloadLoading(false);
+    // };
 
     return (
         <Modal
             title="Thêm mới Hợp đồng Chuyển nhượng"
-            style={{top:20}}
+            style={{ top: 20 }}
             open={visible}
             onCancel={onClose}
             footer={[
-                <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                    <Button key="downloadSample" icon={<DownloadOutlined />} onClick={downloadSampleContract} loading={downloadLoading} disabled={loading}>
-                        Tải file mẫu
-                    </Button>
-                    <div style={{ display: 'flex', gap: '8px' }}>
-                        <Button key="back" onClick={onClose} disabled={loading}>
-                            Hủy
-                        </Button>
-                        <Button key="submit" type="primary" onClick={handleOk} disabled={loading}>
-                            Thêm mới
-                        </Button>
-                    </div>
-                </div>
+                <Button key="back" onClick={onClose} disabled={loading}>
+                    Hủy
+                </Button>,
+                <Button key="submit" type="primary" onClick={handleOk} disabled={loading}>
+                    Tạo
+                </Button>
             ]}
         >
             <Spin spinning={loading}>
@@ -155,7 +151,7 @@ const CreateSignedContractModal = ({ visible, onClose, agencyId }) => {
                     >
                         <Input min={0} max={100} placeholder="Nhập tỉ lệ phần trăm. VD: 10.5)" addonAfter="%" style={{ width: '100%' }} />
                     </Form.Item>
-                    <Form.Item
+                    {/* <Form.Item
                         name="file"
                         label="File hợp đồng"
                         rules={[{ required: true, message: 'Vui lòng upload file' }]}
@@ -168,7 +164,7 @@ const CreateSignedContractModal = ({ visible, onClose, agencyId }) => {
                         >
                             <Button icon={<UploadOutlined />}>Tải tài liệu</Button>
                         </Upload>
-                    </Form.Item>
+                    </Form.Item> */}
                 </Form>
             </Spin>
         </Modal>

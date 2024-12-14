@@ -123,7 +123,7 @@ const getAppointmentStatus = (startTime, endTime) => {
   }
 };
 
-const ViewTaskDetailModal = ({ visible, onClose, setVisible, isFromAgencyDetail, selectedType }) => {
+const ViewTaskDetailModal = ({ visible, onClose, setVisible, isFromAgencyDetail, selectedType, isFromTaskDetail }) => {
   const { taskDetail } = useSelector((state) => state.WorkReducer);
   const { agencyStatus } = useSelector((state) => state.AgencyReducer);
   const dispatch = useDispatch();
@@ -327,7 +327,7 @@ const ViewTaskDetailModal = ({ visible, onClose, setVisible, isFromAgencyDetail,
             </Button>
           )}
           {taskDetail?.reportImageURL && <br />}
-          {taskDetail?.customerSubmit && (taskDetail?.taskType === 'AgreementSigned' || taskDetail?.taskType === 'SignedContract') && (
+          {taskDetail?.customerSubmit && (taskDetail?.type === 'AgreementSigned' || taskDetail?.type === 'SignedContract') && (
             <Button
               type="primary"
               icon={<FileTextOutlined />}
@@ -383,6 +383,7 @@ const ViewTaskDetailModal = ({ visible, onClose, setVisible, isFromAgencyDetail,
         visible={isViewAppointmentModalVisible}
         onClose={handleViewAppointmentDetailCancel}
         selectedType={selectedType}
+        isFromTaskDetail={isFromTaskDetail}
       />
 
       <EditAppointmentModal

@@ -72,7 +72,9 @@ const ManagerAppointmentDetail = () => {
     const isReportAvailable = status === 'Completed' || status === 'Cancelled';
 
     return (
-        <Card title="Chi tiết lịch hẹn" extra={<Tag color={getStatusColor(status)}>{getStatusText(status)}</Tag>}>
+        <Card title="Chi tiết lịch hẹn"
+        //  extra={<Tag color={getStatusColor(status)}>{getStatusText(status)}</Tag>}
+        >
             <Descriptions bordered column={1}>
                 <Descriptions.Item label="Tiêu đề">{title}</Descriptions.Item>
                 <Descriptions.Item label="Thời gian bắt đầu">

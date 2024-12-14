@@ -16,6 +16,7 @@ import { imageDB } from "../../Firebasse/Config";
 import { useLoading } from '../../Utils/LoadingContext';
 import moment from 'moment';
 import { GetTaskUserByLoginActionAsync } from '../../Redux/ReducerAPI/UserReducer';
+import CreateCashPaymentModal from './CreateCashPaymentModal';
 
 const { Title, Text } = Typography;
 
@@ -105,7 +106,7 @@ const StyledCard = styled(Card)`
   }
 `;
 
-const ShowReportModal = ({ visible, onClose, taskId, taskType, task }) => {
+const ShowReportModal = ({ visible, onClose, taskId, taskType, task, filters, pageIndex, pageSize }) => {
   const dispatch = useDispatch();
   const { taskDetail, loading } = useSelector((state) => state.WorkReducer);
   const { setLoading } = useLoading();
@@ -117,6 +118,7 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task }) => {
   const [uploadedEquipmentFileURL, setUploadedEquipmentFileURL] = useState(null);
   const uploadedFileURLRef = useRef(null);
   const uploadedDocumentFileURLRef = useRef(null);
+  const [modalCreateCashPaymentVisible, setModalCreateCashPaymentVisible] = useState(false);
 
   useEffect(() => {
     if (visible && taskId && taskDetail) {
@@ -128,7 +130,9 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task }) => {
         documentType = 'BusinessLicense';
       } else if (taskType === 'EducationLicenseRegistered') {
         documentType = 'EducationalOperationLicense';
-      }
+      } else if (taskType === 'Handover') {
+        documentType = 'Handover';
+      };
 
       if (documentType) {
         setAdditionalLoading(true);
@@ -316,6 +320,15 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task }) => {
     });
   };
 
+  const handleCreateCashPayment = () => {
+    setModalCreateCashPaymentVisible(true);
+  };
+
+  const handleCashPaymentClose = async () => {
+    setModalCreateCashPaymentVisible(false);
+    await dispatch(GetContractDetailByAgencyIdActionAsync(taskDetail.agencyId));
+  };
+
   const renderAdditionalInfo = useMemo(() => {
     if (!additionalInfo) return null;
 
@@ -449,13 +462,15 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task }) => {
       );
     }
 
-    if (taskType === 'AgreementSigned' || taskType === 'BusinessRegistered' || taskType === 'EducationLicenseRegistered') {
+    if (taskType === 'AgreementSigned' || taskType === 'BusinessRegistered' || taskType === 'EducationLicenseRegistered' || taskType === 'Handover') {
       return (
         <StyledDescriptions bordered column={1}>
           <Descriptions.Item label="Tiêu đề">{additionalInfo.title}</Descriptions.Item>
-          <Descriptions.Item label="Ngày hết hạn">{additionalInfo.expirationDate ? dayjs(additionalInfo.expirationDate).format('DD/MM/YYYY') : null}</Descriptions.Item>
+          {additionalInfo.expirationDate && (
+            <Descriptions.Item label="Ngày hết hạn">{dayjs(additionalInfo.expirationDate).format('DD/MM/YYYY')}</Descriptions.Item>
+          )}
           <Descriptions.Item label="Tài liệu">
-            <Button type="link" icon={<DownloadOutlined />} href={(taskType === 'AgreementSigned' && additionalInfo.level === "Compulsory") ? task.customerSubmit : additionalInfo.urlFile} target="_blank" rel="noopener noreferrer">
+            <Button type="link" icon={<DownloadOutlined />} href={(taskType === 'AgreementSigned' && taskDetail.level === "Compulsory") ? taskDetail.customerSubmit : additionalInfo.urlFile} target="_blank" rel="noopener noreferrer">
               Tải xuống file tài liệu
             </Button>
           </Descriptions.Item>
@@ -469,6 +484,9 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task }) => {
           <Descriptions.Item label="Ngày kết thúc">{dayjs(additionalInfo.endTime).format('DD/MM/YYYY')}</Descriptions.Item>
           <Descriptions.Item label="Phí nhượng quyền">
             <Text>{Number(additionalInfo.frachiseFee).toLocaleString('vi-VN')} VND</Text>
+          </Descriptions.Item>
+          <Descriptions.Item label="Phí trang thiết bị">
+            <Text>{Number(additionalInfo.equipmentFee).toLocaleString('vi-VN')} VND</Text>
           </Descriptions.Item>
           <Descriptions.Item label="Phí thiết kế">
             <Text>{Number(additionalInfo.designFee).toLocaleString('vi-VN')} VND</Text>
@@ -485,11 +503,20 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task }) => {
           <Descriptions.Item label="Số tiền đã trả">
             <Text strong>{Number(additionalInfo.paidAmount).toLocaleString('vi-VN')} VND</Text>
           </Descriptions.Item>
-          <Descriptions.Item label="Tài liệu">
-            <Button type="link" icon={<EyeOutlined />} href={additionalInfo.level === "Compulsory" ? task.customerSubmit : null} target="_blank" rel="noopener noreferrer">
-              Xem tài liệu hợp đồng
-            </Button>
-          </Descriptions.Item>
+          {(taskDetail.level === "Compulsory" && taskDetail.customerSubmit) && (
+            <Descriptions.Item label="Tài liệu hợp đồng khách gửi">
+              <Button type="link" icon={<EyeOutlined />} href={taskDetail.customerSubmit} target="_blank" rel="noopener noreferrer">
+                Xem tài liệu hợp đồng khách gửi
+              </Button>
+            </Descriptions.Item>
+          )}
+          {additionalInfo.contractDocumentImageURL && (
+            <Descriptions.Item label="Tài liệu hợp đồng gốc">
+              <Button type="link" icon={<EyeOutlined />} href={additionalInfo.contractDocumentImageURL} target="_blank" rel="noopener noreferrer">
+                Xem tài liệu hợp đồng gốc
+              </Button>
+            </Descriptions.Item>
+          )}
         </StyledDescriptions>
       );
     }
@@ -557,7 +584,7 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task }) => {
                   }] : []}
                 >
                   <Button icon={<UploadOutlined />}>
-                    {taskDetail.reportImageURL ? "Tải file khác" : "Tải file"}
+                    {taskDetail.reportImageURL ? "Thêm file khác" : "Thêm file"}
                   </Button>
                 </Upload>
               </Form.Item>
@@ -579,7 +606,7 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task }) => {
                     }] : []}
                   >
                     <Button icon={<UploadOutlined />}>
-                      {taskDetail.equipmentFileURL ? "Tải file khác" : "Tải file"}
+                      {taskDetail.equipmentFileURL ? "Thêm file khác" : "Thêm file"}
                     </Button>
                   </Upload>
                 </Form.Item>
@@ -640,6 +667,14 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task }) => {
                     ? 'Thông tin Giấy chứng nhận đăng ký hoạt động giáo dục'
                     : 'Thông tin hợp đồng'
             }
+            extra={
+              taskDetail.status === "None" && taskDetail.submit === "None" && taskDetail.level !== "Compulsory" &&
+              (taskType === 'AgreementSigned' || taskType === 'SignedContract') && (
+                <Button icon={<FileTextOutlined />} onClick={handleEditDocument}>
+                  Chỉnh sửa
+                </Button>
+              )
+            }
           >
             {renderAdditionalInfo}
           </StyledCard>
@@ -656,11 +691,21 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task }) => {
       footer={[
         <Button key="back" onClick={onClose} size="large">
           Đóng
-        </Button>
+        </Button>,
+        taskType === 'SignedContract' && !additionalInfo?.paidAmount && (
+          <Button type="primary" size="large" onClick={handleCreateCashPayment}>
+            Tạo thanh toán tiền mặt
+          </Button>
+        )
       ]}
       width={800}
     >
       {renderContent()}
+      <CreateCashPaymentModal
+        visible={modalCreateCashPaymentVisible}
+        onClose={handleCashPaymentClose}
+        agencyId={taskDetail.agencyId}
+      />
     </StyledModal>
   );
 };

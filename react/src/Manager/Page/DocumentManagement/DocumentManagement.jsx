@@ -110,6 +110,8 @@ const DocumentManagement = () => {
             AgreementContract: "Hợp đồng thỏa thuận",
             BusinessLicense: "Giấy phép kinh doanh",
             EducationalOperationLicense: "Giấy phép hoạt động giáo dục",
+            Handover: "Giấy nghiệm thu",
+            Other: "Giấy tờ khác",
         };
 
         return typeConfig[type] || typeConfig.AgreementContract;
@@ -174,6 +176,8 @@ const DocumentManagement = () => {
                 { text: "Hợp đồng thỏa thuận", value: "AgreementContract" },
                 { text: "Giấy phép kinh doanh", value: "BusinessLicense" },
                 { text: "Giấy phép hoạt động giáo dục", value: "EducationalOperationLicense" },
+                { text: "Giấy nghiệm thu", value: "Handover" },
+                { text: "Giấy tờ khác", value: "Other" },
             ],
             filterMultiple: false,
             render: (type) => renderTypeBadge(type),
@@ -202,18 +206,14 @@ const DocumentManagement = () => {
             align: "center",
             render: (_, record) => (
                 <Space>
-                    <Dropdown
-                        menu={{
-                            items: getActionItems(),
-                            onClick: ({ key }) => handleMenuClick(record, key),
-                        }}
-                    >
+                    <Tooltip title="Chỉnh sửa">
                         <Button
-                            type="primary"
-                            icon={<EllipsisOutlined />}
-                            style={{ backgroundColor: "#50e3c2", color: "#0A5A5A" }}
+                            type="default"
+                            icon={<EditOutlined />}
+                            style={{ backgroundColor: "#faad14", color: "#fff" }}
+                            onClick={() => handleEdit(record)}
                         />
-                    </Dropdown>
+                    </Tooltip>
                     <Tooltip title="Tải xuống file tài liệu">
                         <Button
                             type="primary"

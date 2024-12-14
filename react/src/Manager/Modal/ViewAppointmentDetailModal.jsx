@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Modal, Typography, Space, Tag, Avatar, Card, Tabs, Tooltip, Button, Select, message } from 'antd'
+import { Modal, Typography, Space, Tag, Avatar, Card, Tabs, Tooltip, Button, Select, message, Spin } from 'antd'
 import { CalendarOutlined, ClockCircleOutlined, FileTextOutlined, TeamOutlined, LinkOutlined, PlusOutlined } from '@ant-design/icons'
 import styled from 'styled-components'
 import { useDispatch, useSelector } from 'react-redux'
@@ -89,7 +89,7 @@ const translateRole = (role) => ({
   AgencyManager: "Đối tác chi nhánh",
 }[role] || "Không xác định");
 
-export default function ViewAppointmentDetailModal({ visible, onClose, selectedType }) {
+export default function ViewAppointmentDetailModal({ visible, onClose, selectedType, isFromTaskDetail }) {
   const { appointmentDetail } = useSelector((state) => state.AppointmentReducer);
   const { agencyStatus } = useSelector((state) => state.AgencyReducer);
   const { taskDetail } = useSelector((state) => state.WorkReducer);
@@ -100,20 +100,21 @@ export default function ViewAppointmentDetailModal({ visible, onClose, selectedT
   const [isSelectingUsers, setIsSelectingUsers] = useState(false)
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [filtersTimeUser, setFiltersTimeUser] = useState(null);
+  const [loadingParticipants, setLoadingParticipants] = useState(false);
 
   const filterUsersByRole = (user, type) => {
     const rolePermissions = {
       Manager: [
         'Interview', 'AgreementSigned', 'BusinessRegistered', 'SiteSurvey',
         'Design', 'Quotation', 'SignedContract', 'ConstructionAndTrainning',
-        'Handover', 'EducationLicenseRegistered', 'TrainningInternal', 
+        'Handover', 'EducationLicenseRegistered', 'TrainningInternal',
         'RepairingEquipment', 'EducationalSupervision', 'RenewContract',
         'RenewEducationLicense', 'Other'
       ],
       SystemTechnician: ['Design', 'Quotation', 'SiteSurvey', 'ConstructionAndTrainning', 'RepairingEquipment', 'Other'],
       SystemInstructor: ['ConstructionAndTrainning', 'EducationLicenseRegistered', 'TrainningInternal', 'EducationalSupervision', 'Other'],
     };
-  
+
     return rolePermissions[user.role]?.includes(type);
   };
 
@@ -125,14 +126,17 @@ export default function ViewAppointmentDetailModal({ visible, onClose, selectedT
 
   useEffect(() => {
     if (visible && appointmentDetail?.startTime && appointmentDetail?.endTime) {
+      setLoadingParticipants(true);
       const newFiltersTimeUser = {
         startTimeFilter: appointmentDetail.startTime,
         endTimeFilter: appointmentDetail.endTime,
       };
-      dispatch(GetManagerUserAddAppointmentActionAsync(newFiltersTimeUser));
+      dispatch(GetManagerUserAddAppointmentActionAsync(newFiltersTimeUser)).finally(() => {
+        setLoadingParticipants(false);
+      });
     }
   }, [visible, appointmentDetail, dispatch]);
-  
+
 
   const formatDate = (dateString) => {
     if (!dateString) return 'Not set';
@@ -198,7 +202,7 @@ export default function ViewAppointmentDetailModal({ visible, onClose, selectedT
                 value={user.id}
                 label={`${user.fullName} - ${user.userName} - (${translateRole(user.role)})`}
               >
-                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span>{`${user.fullName} - ${user.userName} - (${translateRole(user.role)})`}</span>
                   <span style={{ marginLeft: '10px', color: '#888' }}>{`Công việc: ${user.workCount}`}</span>
                 </div>
@@ -310,26 +314,28 @@ export default function ViewAppointmentDetailModal({ visible, onClose, selectedT
             label: 'Người tham gia',
             children: (
               <StyledCard>
-                <Space direction="vertical" style={{ width: '100%' }}>
-                  <Space>
-                    <TeamOutlined style={{ fontSize: 18, color: '#1890ff' }} />
-                    <Text strong>Danh sách người tham gia:</Text>
+                <Spin spinning={loadingParticipants}>
+                  <Space direction="vertical" style={{ width: '100%' }}>
+                    <Space>
+                      <TeamOutlined style={{ fontSize: 18, color: '#1890ff' }} />
+                      <Text strong>Danh sách người tham gia:</Text>
+                    </Space>
+
+                    {isSelectingUsers ? renderUserSelection() : (
+                      <>
+                        {/* {renderAvatars()} */}
+                        {renderParticipants()}
+                        {!isFromTaskDetail && taskDetail?.status === "None" &&
+                          ['Processing', 'Approved'].includes(agencyStatus) && (
+                            <Button icon={<PlusOutlined />} onClick={handleAddUsers}>
+                              Thêm người tham gia
+                            </Button>
+                          )}
+                      </>
+                    )}
+
                   </Space>
-
-                  {isSelectingUsers ? renderUserSelection() : (
-                    <>
-                      {/* {renderAvatars()} */}
-                      {renderParticipants()}
-                      {taskDetail?.status === "None" &&
-                        ['Processing', 'Approved'].includes(agencyStatus) && (
-                          <Button icon={<PlusOutlined />} onClick={handleAddUsers}>
-                            Thêm người tham gia
-                          </Button>
-                        )}
-                    </>
-                  )}
-
-                </Space>
+                </Spin>
               </StyledCard>
             ),
           },

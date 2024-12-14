@@ -65,6 +65,12 @@ const ManageContractPage = () => {
             render: (text, record, index) => index + 1 + (pageIndex - 1) * pageSize,
         },
         {
+            title: "Mã hợp đồng",
+            dataIndex: "contractCode",
+            key: "contractCode",
+            align: "center",
+        },
+        {
             title: "Tiêu đề",
             dataIndex: "title",
             key: "title",
@@ -152,6 +158,7 @@ const ManageContractPage = () => {
                             showSizeChanger: true,
                             pageSizeOptions: ["10", "20", "50"],
                         }}
+                        scroll={{ x: 'max-content' }}
                         loading={loading}
                         onChange={handleTableChange}
                         style={{
