@@ -2,10 +2,8 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 
 const sidebarItems = [
-  { type: 'section', label: 'Trang chủ', icon: 'ti ti-dots' },
-  { type: 'link', label: 'Bảng điều khiển', path: '/system-technician', icon: 'solar:home-smile-bold-duotone' },
   { type: 'section', label: 'Công việc' },
-  { type: 'link', label: 'Danh sách', path: '/system-technician/list-task', icon: 'solar:login-3-bold-duotone' },
+  { type: 'link', label: 'Danh sách', path: '/system-technician', icon: 'solar:login-3-bold-duotone' },
   { type: 'link', label: 'Lịch hẹn', path: '/system-technician/appointment-schedule', icon: 'solar:calendar-bold-duotone' },
 ];
 
