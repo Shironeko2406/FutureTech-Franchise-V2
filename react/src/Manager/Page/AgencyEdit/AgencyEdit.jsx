@@ -51,28 +51,33 @@ const AgencyEdit = () => {
 
   useEffect(() => {
     if (agencyDetail && cityData) {
+      const selectedCity = cityData.find((city) => city.Name === agencyDetail.city);
+      const selectedDistrict = selectedCity?.Districts.find(
+        (district) => district.Name === agencyDetail.district
+      );
+      const selectedWard = selectedDistrict?.Wards.find(
+        (ward) => ward.Name === agencyDetail.ward
+      );
+  
       form.setFieldsValue({
         name: agencyDetail.name,
         address: agencyDetail.address,
-        city: agencyDetail.city,
-        district: agencyDetail.district,
-        ward: agencyDetail.ward,
+        city: selectedCity?.Id, // Set city ID
+        district: selectedDistrict?.Id, // Set district ID
+        ward: selectedWard?.Id, // Set ward ID
         phoneNumber: agencyDetail.phoneNumber,
         email: agencyDetail.email,
       });
-
-      const selectedCity = cityData.find((city) => city.Name === agencyDetail.city);
+  
       if (selectedCity) {
         setDistricts(selectedCity.Districts);
-        const selectedDistrict = selectedCity.Districts.find(
-          (district) => district.Name === agencyDetail.district
-        );
         if (selectedDistrict) {
           setWards(selectedDistrict.Wards);
         }
       }
     }
   }, [agencyDetail, cityData, form]);
+  
 
   const handleCityChange = (cityId) => {
     form.setFieldsValue({ district: undefined, ward: undefined });
@@ -102,20 +107,17 @@ const AgencyEdit = () => {
   const handleSubmit = async (values) => {
     setLoading(true)
     const cityName = cityData.find((city) => city.Id === values.city)?.Name;
-    const districtName = districts.find(
-      (district) => district.Id === values.district
-    )?.Name;
+    const districtName = districts.find((district) => district.Id === values.district)?.Name;
     const wardName = wards.find((ward) => ward.Id === values.ward)?.Name;
-
+  
     const submittedData = {
       ...values,
       city: cityName,
       district: districtName,
       ward: wardName,
     };
-
-    await dispatch(UpdateAgencyByIdActionAsync(submittedData, id))
-    setLoading(false)
+    await dispatch(UpdateAgencyByIdActionAsync(submittedData, id));
+    setLoading(false);
   };
 
   return (
