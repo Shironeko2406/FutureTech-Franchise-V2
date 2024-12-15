@@ -2,7 +2,7 @@ import { Button, Card, Input, Select, Space, Table, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { GetAgencyActionAsync } from "../../../Redux/ReducerAPI/AgencyReducer";
-import { RightCircleOutlined, SearchOutlined, ShopOutlined } from "@ant-design/icons";
+import { EditOutlined, RightCircleOutlined, SearchOutlined, ShopOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 
 const { Title, Text } = Typography;
@@ -150,6 +150,23 @@ const AgencyManagement = () => {
       dataIndex: 'status',
       key: 'status',
       render: (text) => renderStatusBadge(text),
+    },
+    {
+      title: 'Hành động',
+      key: 'action',
+      render: (_, record) => (
+        <Button
+          type="link"
+          icon={<EditOutlined />}
+          onClick={() => navigate(`/manager/agency/edit/${record.id}`)}
+          style={{
+            fontSize: "16px",
+            color: "#1890ff",
+            transition: "all 0.3s ease",
+          }}
+          className="hover:text-blue-500"
+        />
+      ),
     },
   ];
   //----------------------------------
