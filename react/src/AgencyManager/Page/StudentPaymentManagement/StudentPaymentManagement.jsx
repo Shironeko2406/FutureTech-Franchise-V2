@@ -15,7 +15,7 @@ const StudentPaymentManagement = () => {
     const [searchName, setSearchName] = useState("");
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
-    const [loading, setLoading] = useState(false);
+    const [imageLoading, setImageLoading] = useState(false);
 
     useEffect(() => {
         // Fetch data
@@ -32,10 +32,12 @@ const StudentPaymentManagement = () => {
     };
 
     const handleImageClick = (imageURL) => {
-        setLoading(true);
+        setImageLoading(true);
         setSelectedImage(imageURL);
-        setIsModalVisible(true);
-        setLoading(false);
+        setTimeout(() => {
+            setIsModalVisible(true);
+            setImageLoading(false);
+        }, 500); // Simulate loading delay
     };
 
     const handleModalClose = () => {
@@ -160,7 +162,7 @@ const StudentPaymentManagement = () => {
                         footer={null}
                         onCancel={handleModalClose}
                     >
-                        <Spin spinning={loading}>
+                        <Spin spinning={imageLoading}>
                             <img src={selectedImage} alt="Payment" style={{ width: '100%' }} />
                         </Spin>
                     </Modal>
