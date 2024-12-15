@@ -19,7 +19,7 @@ const PaymentSuccess = () => {
   }, [location]);
 
   const handleReturnToDashboard = () => {
-    navigate('/agency-manager/task-list');
+    navigate('/agency-manager/list-task');
   };
 
   if (loading) {

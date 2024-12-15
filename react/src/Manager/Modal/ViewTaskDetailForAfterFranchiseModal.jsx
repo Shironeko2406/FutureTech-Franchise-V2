@@ -11,7 +11,7 @@ import CreateAppointmentModal from "./CreateAppointmentModal";
 import { DeleteAppointmentByIdActionAsync, GetAppointmentDetailByIdActionAsync } from "../../Redux/ReducerAPI/AppointmentReducer";
 import EditAppointmentModal from "./EditAppointmentModal";
 import DOMPurify from 'dompurify';
-import ViewAppointmentDetailModal from "./ViewAppointmentDetailModal";
+import ViewAppointmentDetailForAfterFranchise from "./ViewAppointmentDetailForAfterFranchise";
 
 const { Title, Text } = Typography;
 
@@ -357,9 +357,10 @@ const ViewTaskDetailForAfterFranchiseModal = ({ visible, onClose, setVisible, is
         selectedType={filter.typeFilter}
       />
 
-      <ViewAppointmentDetailModal
+      <ViewAppointmentDetailForAfterFranchise
         visible={isViewAppointmentModalVisible}
         onClose={handleViewAppointmentDetailCancel}
+        selectedType={filter.typeFilter}
       />
 
       <EditAppointmentModal

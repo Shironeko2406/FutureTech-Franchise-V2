@@ -89,9 +89,8 @@ const translateRole = (role) => ({
   AgencyManager: "Đối tác chi nhánh",
 }[role] || "Không xác định");
 
-export default function ViewAppointmentDetailModal({ visible, onClose, selectedType, isFromTaskDetail }) {
+export default function ViewAppointmentDetailModal({ visible, onClose, selectedType }) {
   const { appointmentDetail } = useSelector((state) => state.AppointmentReducer);
-  const { agencyStatus } = useSelector((state) => state.AgencyReducer);
   const { taskDetail } = useSelector((state) => state.WorkReducer);
   const { userManager } = useSelector((state) => state.UserReducer);
   const dispatch = useDispatch()
@@ -325,8 +324,8 @@ export default function ViewAppointmentDetailModal({ visible, onClose, selectedT
                       <>
                         {/* {renderAvatars()} */}
                         {renderParticipants()}
-                        {!isFromTaskDetail && taskDetail?.status === "None" &&
-                          ['Processing', 'Approved'].includes(agencyStatus) && (
+                        {taskDetail?.status === "None" &&
+                           (
                             <Button icon={<PlusOutlined />} onClick={handleAddUsers}>
                               Thêm người tham gia
                             </Button>

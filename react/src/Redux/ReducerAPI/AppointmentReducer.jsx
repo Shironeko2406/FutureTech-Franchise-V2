@@ -122,7 +122,7 @@ export const EditAppointmentByIdActionAsync = (appointmentId, dataEdit, workId) 
       }
     } catch (error) {
       console.log(error);
-      message.error("Lỗi hệ thống");
+      message.error("Đã có lỗi xảy ra, vui lòng thử lại sau!");
     }
   };
 };
