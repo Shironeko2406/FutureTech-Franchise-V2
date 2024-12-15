@@ -30,8 +30,10 @@ const PaymentManagement = () => {
     const handleImageClick = (imageURL) => {
         setImageLoading(true);
         setSelectedImage(imageURL);
-        setIsModalVisible(true);
-        setImageLoading(false);
+        setTimeout(() => {
+            setIsModalVisible(true);
+            setImageLoading(false);
+        }, 500); // Simulate loading delay
     };
 
     const handleModalClose = () => {

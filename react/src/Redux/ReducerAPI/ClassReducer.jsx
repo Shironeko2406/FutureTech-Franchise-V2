@@ -228,7 +228,7 @@ export const AddStudentsToClassActionAsync = (classId, studentIds) => {
             const res = await httpClient.post(`/api/v1/classes/${classId}/users`, { studentId: studentIds });
             if (res.isSuccess && res.data) {
                 message.success("Thêm học sinh vào lớp thành công!");
-            } if (res.isSuccess && !res.data) {
+            } else if (res.isSuccess && !res.data) {
                 message.error(`${res.message}`);
             } else {
                 throw new Error(`${res.message}`);
