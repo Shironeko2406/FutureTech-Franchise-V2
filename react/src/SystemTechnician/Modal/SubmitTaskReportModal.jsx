@@ -72,15 +72,15 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
                 startTime: values.startTime ? values.startTime.format('YYYY-MM-DD') : null,
                 endTime: values.endTime ? values.endTime.format('YYYY-MM-DD') : null,
                 revenueSharePercentage: parseFloat(values.revenueSharePercentage),
-                reportImageURL: file ? file.url : null, // Use fileUrl to store the URL
+                reportImageURL: file ? file.url : null,
                 type: taskType
             };
 
             if (taskType === "Design" && fileEquipment) {
-                formattedValues.equipmentFile = fileEquipment; // Pass the equipment file separately
+                formattedValues.equipmentFile = fileEquipment;
             }
             if (taskType === "Design" && designFee) {
-                formattedValues.designFee = designFee; // Add design fee
+                formattedValues.designFee = designFee;
             }
 
             console.log("formattedValues: ", formattedValues);

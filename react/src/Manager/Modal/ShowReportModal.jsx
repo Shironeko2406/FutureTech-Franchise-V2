@@ -346,7 +346,7 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task, filters, pa
             <Form.Item
               name="expirationDate"
               label="Ngày hết hạn"
-              rules={[{ required: true, message: 'Vui lòng chọn ngày hết hạn' }]}
+            // rules={[{ required: true, message: 'Vui lòng chọn ngày hết hạn' }]}
             >
               <DatePicker style={{ width: '100%' }} format="YYYY-MM-DD" disabledDate={(current) => current && current < moment().startOf('day')} />
             </Form.Item>
@@ -469,11 +469,26 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task, filters, pa
           {additionalInfo.expirationDate && (
             <Descriptions.Item label="Ngày hết hạn">{dayjs(additionalInfo.expirationDate).format('DD/MM/YYYY')}</Descriptions.Item>
           )}
-          <Descriptions.Item label="Tài liệu">
-            <Button type="link" icon={<DownloadOutlined />} href={(taskType === 'AgreementSigned' && taskDetail.level === "Compulsory") ? taskDetail.customerSubmit : additionalInfo.urlFile} target="_blank" rel="noopener noreferrer">
-              Tải xuống file tài liệu
-            </Button>
-          </Descriptions.Item>
+          {taskType === 'AgreementSigned' && taskDetail.level === "Compulsory" ? (
+            <>
+              <Descriptions.Item label="Tài liệu khách gửi">
+                <Button type="link" icon={<DownloadOutlined />} href={taskDetail.customerSubmit} target="_blank" rel="noopener noreferrer">
+                  Tải xuống file tài liệu khách gửi
+                </Button>
+              </Descriptions.Item>
+              <Descriptions.Item label="Tài liệu gốc">
+                <Button type="link" icon={<DownloadOutlined />} href={additionalInfo.urlFile} target="_blank" rel="noopener noreferrer">
+                  Tải xuống file tài liệu gốc
+                </Button>
+              </Descriptions.Item>
+            </>
+          ) : (
+            <Descriptions.Item label="Tài liệu">
+              <Button type="link" icon={<DownloadOutlined />} href={(taskType === 'AgreementSigned' && taskDetail.level === "Compulsory") ? taskDetail.customerSubmit : additionalInfo.urlFile} target="_blank" rel="noopener noreferrer">
+                Tải xuống file tài liệu
+              </Button>
+            </Descriptions.Item>
+          )}
         </StyledDescriptions>
       );
     } else if (taskType === 'SignedContract') {
