@@ -6,7 +6,7 @@ import DOMPurify from 'dompurify';
 import { useDispatch, useSelector } from 'react-redux';
 import { SubmitTaskReportActionAsync } from '../../Redux/ReducerAPI/WorkReducer';
 import { GetDocumentByAgencyIdActionAsync, UpdateDocumentActionAsync } from '../../Redux/ReducerAPI/DocumentReducer';
-import { GetContractDetailByAgencyIdActionAsync, UpdateContractActionAsync } from '../../Redux/ReducerAPI/ContractReducer';
+import { GetContractDetailByAgencyIdActionAsync, UpdateContractActionAsync, UpdateDesignFeeActionAsync } from '../../Redux/ReducerAPI/ContractReducer';
 import { CreateEquipmentActionAsync, DownloadEquipmentFileActionAsync } from '../../Redux/ReducerAPI/EquipmentReducer';
 import dayjs from 'dayjs';
 import ReactQuill from 'react-quill';
@@ -106,6 +106,10 @@ const StyledCard = styled(Card)`
   }
 `;
 
+const formatCurrency = (amount) => {
+  return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + " VNĐ";
+};
+
 const ShowReportModal = ({ visible, onClose, taskId, taskType, task, filters, pageIndex, pageSize }) => {
   const dispatch = useDispatch();
   const { taskDetail, loading } = useSelector((state) => state.WorkReducer);
@@ -119,6 +123,8 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task, filters, pa
   const uploadedFileURLRef = useRef(null);
   const uploadedDocumentFileURLRef = useRef(null);
   const [modalCreateCashPaymentVisible, setModalCreateCashPaymentVisible] = useState(false);
+  const [designFee, setDesignFee] = useState('');
+  const [formattedDesignFee, setFormattedDesignFee] = useState('');
 
   useEffect(() => {
     if (visible && taskId && taskDetail) {
@@ -147,6 +153,10 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task, filters, pa
           setAdditionalLoading(false);
         });
       }
+      if (taskType === 'Design') {
+        setDesignFee(taskDetail.designFee || '');
+        setFormattedDesignFee(taskDetail.designFee ? formatCurrency(taskDetail.designFee) : '');
+      }
     }
   }, [visible, taskId, taskType, dispatch, taskDetail?.agencyId]);
 
@@ -155,6 +165,8 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task, filters, pa
       setIsEditing(false);
       setIsEditingDocument(false);
       form.resetFields();
+      setDesignFee('');
+      setFormattedDesignFee('');
     }
   }, [visible]);
 
@@ -168,6 +180,7 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task, filters, pa
         status: 'done',
         url: taskDetail.reportImageURL,
       }] : [],
+      designFee: taskType === "Design" ? taskDetail.designFee : undefined,
     });
   };
 
@@ -179,6 +192,7 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task, filters, pa
       const formattedValues = {
         ...values,
         reportImageURL: uploadedFileURLRef.current || (values.reportImageURL && values.reportImageURL[0] ? values.reportImageURL[0].url : null),
+        designFee: taskType === "Design" ? designFee : undefined,
       };
 
       if (taskType === "Design" && uploadedEquipmentFileURL) {
@@ -187,6 +201,13 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task, filters, pa
         const equipmentResponse = await dispatch(CreateEquipmentActionAsync(taskDetail.agencyId, equipmentFormData));
         if (!equipmentResponse) {
           throw new Error("Error creating equipment");
+        }
+      }
+
+      if (taskType === "Design" && designFee) {
+        const designFeeResponse = await dispatch(UpdateDesignFeeActionAsync(taskDetail.agencyId, designFee));
+        if (!designFeeResponse) {
+          throw new Error("Error updating design fee");
         }
       }
 
@@ -343,6 +364,14 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task, filters, pa
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  };
+
+  const handleDesignFeeChange = (e) => {
+    const value = e.target.value;
+    if (/^\d*$/.test(value)) { // Only allow integers
+      setDesignFee(value);
+      setFormattedDesignFee(formatCurrency(value));
+    }
   };
 
   const renderAdditionalInfo = useMemo(() => {
@@ -620,27 +649,41 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task, filters, pa
                 </Upload>
               </Form.Item>
               {taskType === "Design" && (
-                <Form.Item
-                  name="equipmentFileURL"
-                  label="File trang thiết bị"
-                >
-                  <Upload
-                    name="equipmentFile"
-                    customRequest={handleUploadEquipmentFile}
-                    accept=".xls,.xlsx"
-                    maxCount={1}
-                    defaultFileList={taskDetail.equipmentFileURL ? [{
-                      uid: '-1',
-                      name: 'Tệp trang thiết bị hiện tại',
-                      status: 'done',
-                      url: taskDetail.equipmentFileURL,
-                    }] : []}
+                <>
+                  <Form.Item
+                    name="designFee"
+                    label="Giá tiền thiết kế"
+                    rules={[{ pattern: /^\d+$/, message: "Vui lòng nhập số nguyên" }]}
                   >
-                    <Button icon={<UploadOutlined />}>
-                      {taskDetail.equipmentFileURL ? "Thêm file khác" : "Thêm file"}
-                    </Button>
-                  </Upload>
-                </Form.Item>
+                    <Input type="text" onChange={handleDesignFeeChange} placeholder="Ví dụ 5 triệu đồng: 5000000" />
+                    {formattedDesignFee && (
+                      <Form.Item style={{ marginBottom: 0 }}>
+                        <Text type="secondary">Giá tiền thiết kế: {formattedDesignFee}</Text>
+                      </Form.Item>
+                    )}
+                  </Form.Item>
+                  <Form.Item
+                    name="equipmentFileURL"
+                    label="File trang thiết bị"
+                  >
+                    <Upload
+                      name="equipmentFile"
+                      customRequest={handleUploadEquipmentFile}
+                      accept=".xls,.xlsx"
+                      maxCount={1}
+                      defaultFileList={taskDetail.equipmentFileURL ? [{
+                        uid: '-1',
+                        name: 'Tệp trang thiết bị hiện tại',
+                        status: 'done',
+                        url: taskDetail.equipmentFileURL,
+                      }] : []}
+                    >
+                      <Button icon={<UploadOutlined />}>
+                        {taskDetail.equipmentFileURL ? "Thêm file khác" : "Thêm file"}
+                      </Button>
+                    </Upload>
+                  </Form.Item>
+                </>
               )}
               <ButtonGroup>
                 <Button onClick={() => setIsEditing(false)}>Hủy</Button>
@@ -650,6 +693,11 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task, filters, pa
           ) : (
             <Space direction="vertical" size="middle" style={{ width: '100%' }}>
               <HTMLContent dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(taskDetail.report) }} />
+              {taskType === "Design" && formattedDesignFee && (
+                <Text type="secondary" style={{ marginTop: '16px' }}>
+                  Giá tiền thiết kế: {formattedDesignFee}
+                </Text>
+              )}
               {taskDetail?.reportImageURL && (
                 <Button
                   type="primary"
@@ -660,18 +708,6 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task, filters, pa
                   Xem tài liệu đính kèm
                 </Button>
               )}
-              {/* {taskDetail?.customerSubmit && (
-                <Button
-                  type="primary"
-                  icon={<FileTextOutlined />}
-                  href={taskDetail.customerSubmit}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ marginTop: '16px' }}
-                >
-                  Xem tài liệu bên liên quan nộp
-                </Button>
-              )}s */}
               {taskType === "Design" && (
                 <Button
                   type="primary"

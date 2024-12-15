@@ -198,7 +198,7 @@ export const UpdateDesignFeeActionAsync = (agencyId, designFee) => {
         params: { designFee }
       });
       if (res.isSuccess && res.data) {
-        message.success(`${res.message}`);
+        // message.success(`${res.message}`);
         return true;
       } else if (res.isSuccess && !res.data) {
         message.error(`${res.message}`);
