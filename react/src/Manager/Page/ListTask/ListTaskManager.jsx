@@ -355,6 +355,16 @@ const ListTaskManager = () => {
                                 </Button>
                             );
                         }
+                    } else {
+                        actions.push(
+                            <Button
+                                type="primary"
+                                icon={<UploadOutlined />}
+                                onClick={() => openModalSubmitTaskReport(task)}
+                            >
+                                Báo cáo
+                            </Button>
+                        );
                     }
                 }
                 break;
@@ -483,6 +493,16 @@ const ListTaskManager = () => {
                                 </Button>
                             );
                         }
+                    } else {
+                        actions.push(
+                            <Button
+                                type="primary"
+                                icon={<UploadOutlined />}
+                                onClick={() => openModalSubmitTaskReport(task)}
+                            >
+                                Báo cáo
+                            </Button>
+                        );
                     }
                 }
                 break;
