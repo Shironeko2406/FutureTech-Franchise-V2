@@ -176,10 +176,6 @@ const AgencyActiveDetailTask = () => {
     ));
   }, [filters,id, pageIndex, pageSize, dispatch]);
 
-  useEffect(() => {
-    dispatch(GetManagerUserAddAppointmentActionAsync());
-  }, [id]);
-
   const handleFilterChange = (key, value) => {
     setFilters(prev => ({ ...prev, [key]: value }));
     setPageIndex(1)

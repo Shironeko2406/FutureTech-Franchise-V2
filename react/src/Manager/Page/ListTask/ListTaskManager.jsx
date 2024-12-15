@@ -672,7 +672,7 @@ const ListTaskManager = () => {
             <Title level={4}>
                 <CalendarOutlined /> Danh sách công việc
             </Title>
-            <DynamicFilter onFilterChange={handleFilterChange} />
+            <DynamicFilter onFilterChange={handleFilterChange} defaultFilters={filters} />
             <List
                 dataSource={taskUser}
                 renderItem={renderItem}

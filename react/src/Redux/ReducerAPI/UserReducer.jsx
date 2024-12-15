@@ -4,6 +4,7 @@ import { message } from "antd";
 import { GetAssignmentDetailByIdActionAsync, GetAssignmentsByClassIdActionAsync } from "./AssignmentReducer";
 import { getDataJSONStorage, setDataJSONStorage } from "../../Utils/UtilsFunction";
 import { setUserLogin } from "./AuthenticationReducer";
+import { dark } from "@mui/material/styles/createPalette";
 
 const initialState = {
   userData: [],
@@ -130,6 +131,29 @@ export const GetUserLoginActionAsync = () => {
       const res = await httpClient.get(`/api/v1/users/mine`);
       if (res.isSuccess && res.data) {
         dispatch(setUserProfile(res.data));
+      } else {
+        message.error(`${res.message}`);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+};
+
+export const GetCheckStatusAgencyLoginActionAsync = () => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.get(`/api/v1/users/mine`);
+      if (res.isSuccess && res.data) {
+        const agencyLogin = getDataJSONStorage(USER_LOGIN);
+        console.log("đang check")
+        if (agencyLogin?.status && res.data.status !== agencyLogin.status) { // kiểm tra status re.data.status trả về có giống statusAgencyLogin hay ko
+          const updatedAgencyLogin = { ...agencyLogin, status: res.data.status };
+          setDataJSONStorage(USER_LOGIN, updatedAgencyLogin);
+
+          dispatch(setUserLogin(updatedAgencyLogin));
+        }
+        //
       } else {
         message.error(`${res.message}`);
       }

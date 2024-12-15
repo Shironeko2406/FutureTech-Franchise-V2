@@ -16,7 +16,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
     { type: 'link', label: 'Hợp đồng', path: '/agency-manager/contracts', icon: 'clarity:contract-solid' },
     { type: 'link', label: 'Tài liệu', path: '/agency-manager/documents', icon: 'solar:document-bold-duotone' },
     { type: 'section', label: 'Công việc bàn giao', icon: 'ti ti-dots' },
-    { type: 'link', label: 'Quản lý', path: '/agency-manager/task-list', icon: 'solar:file-text-bold-duotone' },
+    { type: 'link', label: 'Quản lý', path: '/agency-manager/list-task', icon: 'solar:file-text-bold-duotone' },
     { type: 'link', label: 'Lịch hẹn', path: '/agency-manager/appointment-schedule', icon: 'solar:calendar-bold-duotone' },
     { type: 'section', label: 'Quản lý', icon: 'ti ti-dots' },
     { type: 'link', label: 'Tài khoản', path: '/agency-manager/accounts', icon: 'mdi:account-group' },
@@ -30,10 +30,8 @@ const LeftSidebar = ({ onSidebarToggle }) => {
 
   // Menu cho trạng thái "inactive"
   const inactiveMenu = [
-    // { type: 'section', label: 'Quá trình nhượng quyền', icon: 'ti ti-dots' },
-    // { type: 'link', label: 'Chi tiết', path: '#', icon: 'solar:file-text-bold-duotone' },
     { type: 'section', label: 'Công việc bàn giao', icon: 'ti ti-dots' },
-    { type: 'link', label: 'Quản lý', path: '/agency-manager/task-list', icon: 'solar:file-text-bold-duotone' },
+    { type: 'link', label: 'Quản lý', path: '/agency-manager', icon: 'solar:file-text-bold-duotone' },
     { type: 'link', label: 'Lịch hẹn', path: '/agency-manager/appointment-schedule', icon: 'solar:calendar-bold-duotone' },
   ];
 
@@ -45,7 +43,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
     <aside className="left-sidebar">
       <div>
         <div className="brand-logo d-flex align-items-center justify-content-between">
-          <NavLink to="/agency-manager/dashboard" className="text-nowrap logo-img">
+          <NavLink to="/agency-manager" className="text-nowrap logo-img">
             <img src="/assets/images/logos/FutureTechLogo.png" alt="logo" />
           </NavLink>
           <div

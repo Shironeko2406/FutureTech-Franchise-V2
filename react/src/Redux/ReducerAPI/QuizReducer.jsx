@@ -32,7 +32,7 @@ export const GetQuizReviewByIdActionAsync = (quizId) => {
       dispatch(setQuizReview(res.data));
     } catch (error) {
       console.log(error);
-      message.error("Lỗi hệ thống");
+      message.error("Đã có lỗi xảy ra, vui lòng thử lại sau!");
     }
   };
 };
@@ -44,7 +44,7 @@ export const GetQuizStudentTestActionAsync = (quizId) => {
       dispatch(setQuizQuestion(res.data));
     } catch (error) {
       console.log(error);
-      message.error("Lỗi hệ thống");
+      message.error("Đã có lỗi xảy ra, vui lòng thử lại sau!");
     }
   };
 };
@@ -61,12 +61,12 @@ export const SubmitQuizActionAsync = (quizId, dataOption) => {
 
         return true;
       } else {
-        message.error(`Lỗi hệ thống`);
+        message.error(`Đã có lỗi xảy ra, vui lòng thử lại sau!`);
         return false;
       }
     } catch (error) {
       console.log(error);
-      message.error("Lỗi hệ thống");
+      message.error("Đã có lỗi xảy ra, vui lòng thử lại sau!");
     }
   };
 };
@@ -80,12 +80,12 @@ export const CreateQuizActionAsync = (data) => {
         await dispatch(GetQuizDataAndScoreByClassIdActionAsync(data.classId));
         return true;
       } else {
-        message.error(`Lỗi hệ thống`);
+        message.error(`Đã có lỗi xảy ra, vui lòng thử lại sau!`);
         return false;
       }
     } catch (error) {
       console.log(error);
-      message.error("Lỗi hệ thống");
+      message.error("Đã có lỗi xảy ra, vui lòng thử lại sau!");
     }
   };
 };
@@ -103,12 +103,12 @@ export const DeleteQuizByIdActionAsync = (classId, quizId) => {
         await dispatch(GetQuizDataAndScoreByClassIdActionAsync(classId));
         return true;
       } else {
-        message.error(`Lỗi hệ thống`);
+        message.error(`Đã có lỗi xảy ra, vui lòng thử lại sau!`);
         return false;
       }
     } catch (error) {
       console.log(error);
-      message.error("Lỗi hệ thống");
+      message.error("Đã có lỗi xảy ra, vui lòng thử lại sau!");
     }
   };
 };
@@ -122,12 +122,12 @@ export const EditQuizByIdActionAsync = (quizId, dataEdit, classId) => {
         await dispatch(GetQuizDataAndScoreByClassIdActionAsync(classId));
         return true;
       } else {
-        message.error(`Lỗi hệ thống`);
+        message.error(`Đã có lỗi xảy ra, vui lòng thử lại sau!`);
         return false;
       }
     } catch (error) {
       console.log(error);
-      message.error("Lỗi hệ thống");
+      message.error("Đã có lỗi xảy ra, vui lòng thử lại sau!");
     }
   };
 };

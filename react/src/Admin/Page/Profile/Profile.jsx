@@ -45,7 +45,6 @@ const Profile = () => {
       email: userProfile.email || "",
       phoneNumber: userProfile.phoneNumber || "",
       fullName: userProfile.fullName || "",
-      userName: userProfile.userName || "",
       dateOfBirth: userProfile.dateOfBirth ? dayjs(userProfile.dateOfBirth).format("YYYY-MM-DD") : "",
       gender: userProfile.gender || "", // Added gender field
       urlImage: userProfile.urlImage || "",
@@ -153,7 +152,7 @@ const Profile = () => {
           <div className="tab-content pt-3">
             <form className="form" onSubmit={userUpdate.handleSubmit}>
               <div className="row">
-                <div className="col-12 col-md-6 mb-3">
+                <div className="col-12 mb-3">
                   <div className="form-group">
                     <label>Họ và Tên</label>
                     <input
@@ -162,19 +161,6 @@ const Profile = () => {
                       name="fullName"
                       readOnly={!isEditing}
                       value={userUpdate.values.fullName}
-                      onChange={userUpdate.handleChange}
-                    />
-                  </div>
-                </div>
-                <div className="col-12 col-md-6 mb-3">
-                  <div className="form-group">
-                    <label>Tên đăng nhập</label>
-                    <input
-                      className="form-control"
-                      type="text"
-                      name="userName"
-                      readOnly={!isEditing}
-                      value={userUpdate.values.userName}
                       onChange={userUpdate.handleChange}
                     />
                   </div>
