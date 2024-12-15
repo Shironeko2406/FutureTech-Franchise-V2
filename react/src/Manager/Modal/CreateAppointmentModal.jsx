@@ -101,7 +101,7 @@ const CreateAppointmentModal = ({ visible, onClose, workId, selectedType}) => {
         'RenewEducationLicense', 'Other'
       ],
       SystemTechnician: ['Design', 'Quotation', 'SiteSurvey', 'ConstructionAndTrainning', 'Handover', 'RepairingEquipment', 'Other'],
-      SystemInstructor: ['ConstructionAndTrainning', 'EducationLicenseRegistered', 'TrainningInternal', 'EducationalSupervision', 'Other'],
+      SystemInstructor: ['ConstructionAndTrainning', 'TrainningInternal', 'EducationalSupervision', 'Other'],
       SystemConsultant: ['Other'],
 
     };

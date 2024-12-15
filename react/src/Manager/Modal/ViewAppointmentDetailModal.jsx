@@ -112,7 +112,7 @@ export default function ViewAppointmentDetailModal({ visible, onClose, selectedT
         'RenewEducationLicense', 'Other'
       ],
       SystemTechnician: ['Design', 'Quotation', 'SiteSurvey', 'ConstructionAndTrainning', 'Handover', 'RepairingEquipment', 'Other'],
-      SystemInstructor: ['ConstructionAndTrainning', 'EducationLicenseRegistered', 'TrainningInternal', 'EducationalSupervision', 'Other'],
+      SystemInstructor: ['ConstructionAndTrainning', 'TrainningInternal', 'EducationalSupervision', 'Other'],
     };
 
     return rolePermissions[user.role]?.includes(type);
