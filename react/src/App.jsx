@@ -112,6 +112,8 @@ import EquipmentListAgencyStaff from "./AgencyStaff/Page/EquipmentList/Equipment
 import ReportList from "./AgencyManager/Page/ReportList/ReportList";
 import ListReport from "./Manager/Page/ListReport/ListReport";
 import PaymentManagement from "./Manager/Page/PaymentManagement/PaymentManagement";
+import AgencyActiveAdminManagement from "./Admin/Page/AgencyActiveAdminManagement/AgencyActiveAdminManagement";
+import AgencyActiveInfoAdmin from "./Admin/Page/AgencyActiveInfoAdmin/AgencyActiveInfoAdmin";
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -151,6 +153,8 @@ function App() {
                 <Route path="work-template" element={<WorkTemplate />} />
                 <Route path="" element={<HomePageManagement />} />
                 <Route path="documents" element={<DocumentManagementAdmin />} />
+                <Route path="agency-active" element={<AgencyActiveAdminManagement />} />
+                <Route path="agency-active/:id" element={<AgencyActiveInfoAdmin />} />
               </Route>
             </Route>
 
