@@ -30,10 +30,8 @@ const LeftSidebar = ({ onSidebarToggle }) => {
 
   // Menu cho trạng thái "inactive"
   const inactiveMenu = [
-    // { type: 'section', label: 'Quá trình nhượng quyền', icon: 'ti ti-dots' },
-    // { type: 'link', label: 'Chi tiết', path: '#', icon: 'solar:file-text-bold-duotone' },
     { type: 'section', label: 'Công việc bàn giao', icon: 'ti ti-dots' },
-    { type: 'link', label: 'Quản lý', path: '/agency-manager/task-list', icon: 'solar:file-text-bold-duotone' },
+    { type: 'link', label: 'Quản lý', path: '/agency-manager', icon: 'solar:file-text-bold-duotone' },
     { type: 'link', label: 'Lịch hẹn', path: '/agency-manager/appointment-schedule', icon: 'solar:calendar-bold-duotone' },
   ];
 
