@@ -8,6 +8,7 @@ import { GetCourseCategoryActionAsync } from "../../../Redux/ReducerAPI/CourseCa
 import { NavLink } from "react-router-dom";
 import { useLoading } from "../../../Utils/LoadingContext";
 import SendFileCourseDetailModal from "../../Modal/SendFileCourseDetailModal";
+import EditCourseModal from "../../Modal/EditCourseModal";
 
 
 const statusItems = [
@@ -28,7 +29,9 @@ const CourseSystemInstructor = () => {
   const [pageSize, setPageSize] = useState(7); // Default page size is 10
   const [searchTerm, setSearchTerm] = useState(""); // State for search term
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
+  const [isModalEditVisible, setIsModalEditVisible] = useState(false);
   const [isModalUploadVisible, setIsModalUploadVisible] = useState(false);
+  const [selectedCourse, setSelectedCourse] = useState(null);
   const { setLoading } = useLoading();
 
   useEffect(() => {
@@ -172,6 +175,16 @@ const CourseSystemInstructor = () => {
 
   const closeModalUpload = () => {
     setIsModalUploadVisible(false);
+  };
+
+  const showModalEdit = (course) => {
+    setIsModalEditVisible(true);
+    setSelectedCourse(course)
+  };
+
+  const closeModalEdit = () => {
+    setIsModalEditVisible(false);
+    setSelectedCourse(null)
   };
 
   const columns = [
@@ -330,7 +343,7 @@ const CourseSystemInstructor = () => {
                   type="default"
                   icon={<EditOutlined />}
                   style={{ backgroundColor: "#faad14", color: "#fff" }}
-                  onClick={() => handleEdit(record.id)}
+                  onClick={() => showModalEdit(record)}
                 />
                 <Popconfirm
                   title="Bạn muốn xóa khóa học này?"
@@ -414,6 +427,16 @@ const CourseSystemInstructor = () => {
       <CreateCourseModal
         isDrawerVisible={isDrawerVisible}
         closeDrawer={closeDrawer}
+        status={status}
+        pageIndex={pageIndex}
+        pageSize={pageSize}
+        searchTerm={searchTerm}
+      />
+
+      <EditCourseModal
+        visible={isModalEditVisible}
+        onClose={closeModalEdit}
+        selectedCourse={selectedCourse}
         status={status}
         pageIndex={pageIndex}
         pageSize={pageSize}
