@@ -6,9 +6,10 @@ import { imageDB } from "../../Firebasse/Config";
 import { useDispatch } from 'react-redux';
 import { CreateCashPaymentActionAsync } from '../../Redux/ReducerAPI/PaymentReducer';
 
-const CreateCashPaymentModal = ({ visible, onClose, agencyId }) => {
+const CreateCashPaymentModal = ({ visible, onClose, agencyId, paymentAmount }) => {
     const [form] = Form.useForm();
     const [imageUrl, setImageUrl] = useState(null);
+    const [loading, setLoading] = useState(false);
     const dispatch = useDispatch();
 
     const handleUpload = async ({ file, onSuccess, onError }) => {
@@ -26,6 +27,7 @@ const CreateCashPaymentModal = ({ visible, onClose, agencyId }) => {
 
     const handleOk = async () => {
         try {
+            setLoading(true);
             const values = await form.validateFields();
             const paymentData = {
                 ...values,
@@ -33,20 +35,21 @@ const CreateCashPaymentModal = ({ visible, onClose, agencyId }) => {
                 agencyId,
             };
             await dispatch(CreateCashPaymentActionAsync(paymentData));
-            message.success('Tạo thanh toán tiền mặt thành công');
             onClose();
         } catch (error) {
             console.error("Error creating cash payment: ", error);
-            message.error('Đã xảy ra lỗi, vui lòng thử lại sau.');
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
         <Modal
             title="Tạo thanh toán tiền mặt"
-            visible={visible}
+            open={visible}
             onCancel={onClose}
             onOk={handleOk}
+            confirmLoading={loading}
         >
             <Form form={form} layout="vertical">
                 <Form.Item
@@ -71,6 +74,7 @@ const CreateCashPaymentModal = ({ visible, onClose, agencyId }) => {
                     <Upload
                         name="image"
                         customRequest={handleUpload}
+                        onRemove={() => setImageUrl(null)}
                         accept="image/*"
                         maxCount={1}
                     >

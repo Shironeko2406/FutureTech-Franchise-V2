@@ -140,6 +140,15 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, agencyId, taskSub
     });
   };
 
+  const handleDownloadFile = (url) => {
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = url.split('/').pop();
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const renderAdditionalInfo = useMemo(() => {
     if (!additionalInfo) return null;
 
@@ -190,7 +199,7 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, agencyId, taskSub
           <Descriptions.Item label="Tiêu đề">{additionalInfo.title}</Descriptions.Item>
           <Descriptions.Item label="Ngày hết hạn">{additionalInfo.expirationDate ? dayjs(additionalInfo.expirationDate).format('DD/MM/YYYY') : null}</Descriptions.Item>
           <Descriptions.Item label="Tài liệu">
-            <Button type="link" icon={<DownloadOutlined />} href={additionalInfo.urlFile} target="_blank" rel="noopener noreferrer">
+            <Button type="link" icon={<DownloadOutlined />} onClick={() => handleDownloadFile(additionalInfo.urlFile)}>
               Tải xuống file tài liệu
             </Button>
           </Descriptions.Item>
@@ -218,7 +227,7 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, agencyId, taskSub
             <Text strong>{additionalInfo.depositPercentage}%</Text>
           </Descriptions.Item>
           <Descriptions.Item label="Tài liệu">
-            <Button type="link" icon={<EyeOutlined />} href={additionalInfo.contractDocumentImageURL} target="_blank" rel="noopener noreferrer">
+            <Button type="link" icon={<EyeOutlined />} onClick={() => handleDownloadFile(additionalInfo.contractDocumentImageURL)}>
               Xem tài liệu hợp đồng
             </Button>
           </Descriptions.Item>

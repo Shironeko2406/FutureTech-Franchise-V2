@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, Typography, Descriptions, Card, Tag, Space, Divider, Row, Col } from 'antd';
+import { Modal, Typography, Descriptions, Card, Tag, Space, Divider, Row, Col, Button } from 'antd';
 import { CalendarOutlined, DollarOutlined, PercentageOutlined, FileOutlined, BankOutlined, CheckCircleOutlined, ToolOutlined, LaptopOutlined, ShopOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 
@@ -32,6 +32,15 @@ const ContractDetailModal = ({ visible, onClose, contractDetail }) => {
             </Space>
         </div>
     );
+
+    const handleDownload = (url) => {
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = url.split('/').pop();
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
 
     return (
         <Modal
@@ -128,9 +137,9 @@ const ContractDetailModal = ({ visible, onClose, contractDetail }) => {
                                 <Divider orientation="left">Tài liệu</Divider>
                                 <Space>
                                     <FileOutlined style={{ fontSize: '24px', color: '#1890ff' }} />
-                                    <a href={contractDetail.contractDocumentImageURL} target="_blank" rel="noopener noreferrer">
+                                    <Button type="link" onClick={() => handleDownload(contractDetail.contractDocumentImageURL)}>
                                         Xem tài liệu hợp đồng
-                                    </a>
+                                    </Button>
                                 </Space>
                             </>
                         )}

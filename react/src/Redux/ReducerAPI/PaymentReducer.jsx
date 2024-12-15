@@ -40,8 +40,6 @@ export const GetStudentPaymentInfoActionAsync = (pageIndex, pageSize, search) =>
 };
 
 export const CreateStudentPaymentActionAsync = (paymentData, paymentType) => {
-    console.log("paymentData", paymentData);
-    console.log("paymentType", paymentType);
     return async () => {
         console.log("create payment", paymentData);
         try {
@@ -83,7 +81,7 @@ export const CreateCashPaymentActionAsync = (paymentData) => {
         try {
             const res = await httpClient.post(`/direct`, paymentData);
             if (res.isSuccess && res.data) {
-                message.success('Tạo thanh toán tiền mặt thành công');
+                message.success('Tạo thanh toán trực tiếp thành công');
             } else if (res.isSuccess && !res.data) {
                 message.error(`${res.message}`);
             } else {

@@ -123,6 +123,15 @@ const getAppointmentStatus = (startTime, endTime) => {
   }
 };
 
+const handleDownloadFile = (url) => {
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = url.split('/').pop();
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
 const ViewTaskDetailModal = ({ visible, onClose, setVisible, isFromAgencyDetail, selectedType, isFromTaskDetail }) => {
   const { taskDetail } = useSelector((state) => state.WorkReducer);
   const { agencyStatus } = useSelector((state) => state.AgencyReducer);
@@ -331,9 +340,7 @@ const ViewTaskDetailModal = ({ visible, onClose, setVisible, isFromAgencyDetail,
             <Button
               type="primary"
               icon={<FileTextOutlined />}
-              href={taskDetail.customerSubmit}
-              target="_blank"
-              rel="noopener noreferrer"
+              onClick={() => handleDownloadFile(taskDetail.customerSubmit)}
               style={{ marginTop: '16px' }}
             >
               Xem tài liệu bên liên quan nộp

@@ -329,6 +329,22 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task, filters, pa
     await dispatch(GetContractDetailByAgencyIdActionAsync(taskDetail.agencyId));
   };
 
+  const paymentAmount = useMemo(() => {
+    if (additionalInfo && additionalInfo.depositPercentage && additionalInfo.total) {
+      return (additionalInfo.depositPercentage / 100) * additionalInfo.total;
+    }
+    return 0;
+  }, [additionalInfo]);
+
+  const handleDownloadFile = (url) => {
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = url.split('/').pop();
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const renderAdditionalInfo = useMemo(() => {
     if (!additionalInfo) return null;
 
@@ -428,7 +444,7 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task, filters, pa
                   url: additionalInfo.urlFile,
                 }] : []}
               >
-                <Button icon={<UploadOutlined />}>Tải tài liệu</Button>
+                <Button icon={<UploadOutlined />}>Thêm file</Button>
               </Upload>
             </Form.Item>
           )}
@@ -450,7 +466,7 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task, filters, pa
                   url: additionalInfo.contractDocumentImageURL,
                 }] : []}
               >
-                <Button icon={<UploadOutlined />}>Tải hợp đồng</Button>
+                <Button icon={<UploadOutlined />}>Thêm hợp đồng</Button>
               </Upload>
             </Form.Item>
           )}
@@ -472,19 +488,19 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task, filters, pa
           {taskType === 'AgreementSigned' && taskDetail.level === "Compulsory" ? (
             <>
               <Descriptions.Item label="Tài liệu khách gửi">
-                <Button type="link" icon={<DownloadOutlined />} href={taskDetail.customerSubmit} target="_blank" rel="noopener noreferrer">
+                <Button type="link" icon={<DownloadOutlined />} onClick={() => handleDownloadFile(taskDetail.customerSubmit)}>
                   Tải xuống file tài liệu khách gửi
                 </Button>
               </Descriptions.Item>
               <Descriptions.Item label="Tài liệu gốc">
-                <Button type="link" icon={<DownloadOutlined />} href={additionalInfo.urlFile} target="_blank" rel="noopener noreferrer">
+                <Button type="link" icon={<DownloadOutlined />} onClick={() => handleDownloadFile(additionalInfo.urlFile)}>
                   Tải xuống file tài liệu gốc
                 </Button>
               </Descriptions.Item>
             </>
           ) : (
             <Descriptions.Item label="Tài liệu">
-              <Button type="link" icon={<DownloadOutlined />} href={(taskType === 'AgreementSigned' && taskDetail.level === "Compulsory") ? taskDetail.customerSubmit : additionalInfo.urlFile} target="_blank" rel="noopener noreferrer">
+              <Button type="link" icon={<DownloadOutlined />} onClick={() => handleDownloadFile(additionalInfo.urlFile)}>
                 Tải xuống file tài liệu
               </Button>
             </Descriptions.Item>
@@ -527,7 +543,7 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task, filters, pa
           )}
           {additionalInfo.contractDocumentImageURL && (
             <Descriptions.Item label="Tài liệu hợp đồng gốc">
-              <Button type="link" icon={<EyeOutlined />} href={additionalInfo.contractDocumentImageURL} target="_blank" rel="noopener noreferrer">
+              <Button type="link" icon={<EyeOutlined />} onClick={() => handleDownloadFile(additionalInfo.contractDocumentImageURL)}>
                 Xem tài liệu hợp đồng gốc
               </Button>
             </Descriptions.Item>
@@ -638,9 +654,7 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task, filters, pa
                 <Button
                   type="primary"
                   icon={<FileTextOutlined />}
-                  href={taskDetail.reportImageURL}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  onClick={() => handleDownloadFile(taskDetail.reportImageURL)}
                   style={{ marginTop: '16px' }}
                 >
                   Xem tài liệu đính kèm
@@ -707,7 +721,7 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task, filters, pa
         <Button key="back" onClick={onClose} size="large">
           Đóng
         </Button>,
-        taskType === 'SignedContract' && !additionalInfo?.paidAmount && (
+        taskType === 'SignedContract' && !additionalInfo?.paidAmount && taskDetail.level === "Compulsory" && (
           <Button type="primary" size="large" onClick={handleCreateCashPayment}>
             Tạo thanh toán tiền mặt
           </Button>
@@ -720,6 +734,7 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, task, filters, pa
         visible={modalCreateCashPaymentVisible}
         onClose={handleCashPaymentClose}
         agencyId={taskDetail.agencyId}
+        paymentAmount={paymentAmount}
       />
     </StyledModal>
   );

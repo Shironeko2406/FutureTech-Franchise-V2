@@ -55,7 +55,7 @@ export const GetClassSchedulesActionAsync = (startDate, endDate) => {
       }
     } catch (error) {
       console.error(error);
-      message.error("Không thể lấy lịch học, vui lòng thử lại sau.");
+      // message.error("Không thể lấy lịch học, vui lòng thử lại sau.");
     }
   };
 };
