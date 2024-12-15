@@ -43,7 +43,7 @@ export const CreateTaskActionAsync = (data) => {
       }
     } catch (error) {
       console.log(error);
-      message.error("Lỗi hệ thống");
+      message.error("Đã có lỗi xảy ra, vui lòng thử lại sau!");
     }
   };
 };
@@ -62,7 +62,7 @@ export const CreateTaskRepairingEquipmentActionAsync = (data, statusUpdate, repo
       }
     } catch (error) {
       console.log(error);
-      message.error("Lỗi hệ thống");
+      message.error("Đã có lỗi xảy ra, vui lòng thử lại sau!");
     }
   };
 };
@@ -81,7 +81,7 @@ export const CreateTaskAfterFranchiseActionAsync = (data, filter, pageIndex, pag
       }
     } catch (error) {
       console.log(error);
-      message.error("Lỗi hệ thống");
+      message.error("Đã có lỗi xảy ra, vui lòng thử lại sau!");
     }
   };
 };
@@ -94,7 +94,7 @@ export const GetTaskDetailByIdActionAsync = (id) => {
       dispatch(setTaskDetail(res.data));
     } catch (error) {
       console.log(error);
-      message.error("Lỗi hệ thống");
+      message.error("Đã có lỗi xảy ra, vui lòng thử lại sau!");
     }
   };
 };
@@ -116,7 +116,7 @@ export const UpdateStatusTaskByIdActionAsync = (id, status, agencyId) => {
       }
     } catch (error) {
       console.log(error);
-      message.error("Lỗi hệ thống");
+      message.error("Đã có lỗi xảy ra, vui lòng thử lại sau!");
     }
   };
 };
@@ -138,7 +138,7 @@ export const UpdateStatusTaskByIdForAfterFranchiseActionAsync = (id, status, age
       }
     } catch (error) {
       console.log(error);
-      message.error("Lỗi hệ thống");
+      message.error("Đã có lỗi xảy ra, vui lòng thử lại sau!");
     }
   };
 };
@@ -152,12 +152,12 @@ export const DeleteTaskByIdActionAsync = (taskId, agencyId) => {
         await dispatch(GetTaskByAgencyIdActionAsync(agencyId));
         return true;
       } else {
-        message.error(`Lỗi hệ thống`);
+        message.error(`Đã có lỗi xảy ra, vui lòng thử lại sau!`);
         return false;
       }
     } catch (error) {
       console.log(error);
-      message.error("Lỗi hệ thống");
+      message.error("Đã có lỗi xảy ra, vui lòng thử lại sau!");
     }
   };
 };
@@ -171,12 +171,12 @@ export const DeleteTaskByIdForAfterFranchiseActionAsync = (taskId, agencyId, fil
         await dispatch(GetTaskAgencyActiveByIdActionAsync(filter.searchText, filter.levelFilter, filter.statusFilter, filter.submitFilter, filter.typeFilter, agencyId, pageIndex, pageSize));
         return true;
       } else {
-        message.error(`Lỗi hệ thống`);
+        message.error(`Đã có lỗi xảy ra, vui lòng thử lại sau!`);
         return false;
       }
     } catch (error) {
       console.log(error);
-      message.error("Lỗi hệ thống");
+      message.error("Đã có lỗi xảy ra, vui lòng thử lại sau!");
     }
   };
 };
@@ -195,7 +195,7 @@ export const EditTaskByIdActionAsync = (dataUpdate, taskId, agencyId) => {
       }
     } catch (error) {
       console.log(error);
-      message.error("Lỗi hệ thống");
+      message.error("Đã có lỗi xảy ra, vui lòng thử lại sau!");
     }
   };
 };
@@ -214,7 +214,7 @@ export const EditTaskByIdForAfterFranchiseActionAsync = (dataUpdate, taskId, age
       }
     } catch (error) {
       console.log(error);
-      message.error("Lỗi hệ thống");
+      message.error("Đã có lỗi xảy ra, vui lòng thử lại sau!");
     }
   };
 };
@@ -233,7 +233,7 @@ export const StaffSubmitReportTaskByIdActionAsync = (data, taskId) => {
       }
     } catch (error) {
       console.log(error);
-      message.error("Lỗi hệ thống");
+      message.error("Đã có lỗi xảy ra, vui lòng thử lại sau!");
     }
   }
 }
@@ -282,7 +282,7 @@ export const UpdateStatusSubmitByTaskByIdActionAsync = (status, workId, filters,
       }
     } catch (error) {
       console.log(error);
-      message.error("Lỗi hệ thống");
+      message.error("Đã có lỗi xảy ra, vui lòng thử lại sau!");
     }
   }
 }

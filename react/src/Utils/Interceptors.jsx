@@ -54,7 +54,7 @@
 //               if (success) {
 //                 // Lấy token mới
 //                 const newAccessToken = localStorage.getItem(TOKEN_AUTHOR);
-                
+
 //                 // Retry lại request ban đầu với token mới
 //                 error.config.headers["Authorization"] = `Bearer ${newAccessToken}`;
 //                 return httpClient(error.config); // Gọi lại request
@@ -176,7 +176,7 @@ httpClient.interceptors.response.use(
                   return httpClient(originalRequest);
                 } else {
                   logout()
-                  
+
                 }
               } catch (err) {
                 logout()

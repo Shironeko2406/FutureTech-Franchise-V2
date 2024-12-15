@@ -66,9 +66,9 @@ const StyledQuill = styled(ReactQuill)`
 
 const EditTaskModal = ({ visible, onClose, task }) => {
   const [form] = Form.useForm();
-  const {setLoading} = useLoading()
+  const { setLoading } = useLoading()
   const dispatch = useDispatch()
-  const {id} = useParams();
+  const { id } = useParams();
 
 
   useEffect(() => {
@@ -95,20 +95,20 @@ const EditTaskModal = ({ visible, onClose, task }) => {
     delete taskUpdate.dateRange;
 
     dispatch(EditTaskByIdActionAsync(taskUpdate, task.id, id)).then((res) => {
-        setLoading(false)
-        if (res) {
-            onClose()
-        }
+      setLoading(false)
+      if (res) {
+        onClose()
+      }
     }).catch((err) => {
-        console.log(err)
-        setLoading(false)
+      console.log(err)
+      setLoading(false)
     });
   };
 
   return (
     <StyledModal
       title={<Title level={3}>Cập nhật công việc</Title>}
-      style={{top:20}}
+      style={{ top: 20 }}
       open={visible}
       onCancel={onClose}
       onOk={() => form.submit()}
@@ -138,7 +138,7 @@ const EditTaskModal = ({ visible, onClose, task }) => {
           name="dateRange"
           label="Thời gian"
           rules={[{ required: true, message: 'Vui lòng chọn thời gian' }]}
-          >
+        >
           <RangePicker
             showTime
             format="DD/MM/YYYY, HH:mm"

@@ -9,7 +9,7 @@ import { DeleteOutlined, EditOutlined, EllipsisOutlined, PlusOutlined, Reconcili
 import { GetCityDataActionAsync } from "../../../Redux/ReducerAPI/CityReducer";
 import CreateAgencyModal from "../../Modal/CreateAgencyModal";
 
-const { Title} = Typography;
+const { Title } = Typography;
 
 const renderStatusBadge = (status, type) => {
   // Cấu hình trạng thái tư vấn và trạng thái khách hàng
@@ -104,7 +104,7 @@ const ConsultationManagement = () => {
     setPageSize(pagination.pageSize);
     setStatusFilter(filters.status ? filters.status[0] : null);
     setCustomerStatusFilter(filters.customerStatus ? filters.customerStatus[0] : null);
-};
+  };
 
   useEffect(() => {
     dispatch(GetFranchiseRegistrationConsultActionAsync(searchTerm, statusFilter, customerStatusFilter, pageIndex, pageSize));
@@ -119,10 +119,10 @@ const ConsultationManagement = () => {
       approve: "Approved",
       reject: "Reject",
     };
-  
+
     const status = statusMap[key];
     if (status) {
-      dispatch(UpdateFranchiseRegistrationConsultActionAsync(record.id, status, searchTerm, statusFilter, customerStatusFilter,pageIndex, pageSize));
+      dispatch(UpdateFranchiseRegistrationConsultActionAsync(record.id, status, searchTerm, statusFilter, customerStatusFilter, pageIndex, pageSize));
     }
   };
 
@@ -199,7 +199,7 @@ const ConsultationManagement = () => {
       dataIndex: 'modificationDate',
       key: 'modificationDate',
       align: 'center',
-      render: (date) => new Date(date).toLocaleDateString(),
+      render: (date) => date ? new Date(date).toLocaleDateString() : null,
     },
     {
       title: 'Người tư vấn',
@@ -214,7 +214,7 @@ const ConsultationManagement = () => {
       fixed: 'right',
       render: (_, record) => (
         <Space size="small">
-          {record.status === 'Consulted' && record.customerStatus === 'Approved' &&  (
+          {record.status === 'Consulted' && record.customerStatus === 'Approved' && (
             <Tooltip title="Tạo đối tác">
               <Button
                 type="primary"

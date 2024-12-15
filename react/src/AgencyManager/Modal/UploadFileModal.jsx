@@ -85,7 +85,9 @@ const UploadFileModal = ({ visible, onClose, task, onRefreshTasks }) => {
                 <Spin spinning={loading}>
                     <div style={{ margin: '25px 0px' }}>
                         <Upload
+                            maxCount={1}
                             customRequest={handleUpload}
+                            onRemove={() => setFileUrl(null)}
                             accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                         >
                             <Button icon={<UploadOutlined />}>Thêm file</Button>

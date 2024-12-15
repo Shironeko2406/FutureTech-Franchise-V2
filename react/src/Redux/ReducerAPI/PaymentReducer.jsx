@@ -111,3 +111,17 @@ export const CreatePaymentContract2ndActionAsync = (contractId) => {
         }
     };
 };
+
+export const GetPaymentContractsActionAsync = (startDate, endDate, contractCode, agencyId, pageIndex, pageSize) => {
+    return async (dispatch) => {
+        try {
+            const res = await httpClient.get(`api/v1/payments/contract/filter`, {
+                params: { StartDate: startDate, EndDate: endDate, ContractCode: contractCode, AgencyId: agencyId, PageIndex: pageIndex, PageSize: pageSize },
+            });
+            console.log(res.data);
+            dispatch(setPaymentInfo(res.data));
+        } catch (error) {
+            console.error(error);
+        }
+    };
+};

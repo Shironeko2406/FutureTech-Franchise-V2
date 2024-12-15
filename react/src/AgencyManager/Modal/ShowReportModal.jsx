@@ -156,7 +156,7 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, agencyId, taskSub
           <Form.Item
             name="expirationDate"
             label="Ngày hết hạn"
-            rules={[{ required: true, message: 'Vui lòng chọn ngày hết hạn' }]}
+          // rules={[{ required: true, message: 'Vui lòng chọn ngày hết hạn' }]}
           >
             <DatePicker style={{ width: '100%' }} format="YYYY-MM-DD" disabledDate={(current) => current && current < moment().startOf('day')} />
           </Form.Item>
@@ -177,7 +177,7 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType, agencyId, taskSub
                 url: additionalInfo.urlFile,
               }] : []}
             >
-              <Button icon={<UploadOutlined />}>Thêm file</Button>
+              <Button icon={<UploadOutlined />}>{additionalInfo.urlFile ? "Thêm file khác" : "Thêm file"}</Button>
             </Upload>
           </Form.Item>
         </Form>
