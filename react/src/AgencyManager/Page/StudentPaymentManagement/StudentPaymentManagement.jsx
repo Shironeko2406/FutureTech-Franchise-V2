@@ -1,4 +1,4 @@
-import { Space, Table, Input, Button, Modal, Typography } from "antd";
+import { Space, Table, Input, Button, Modal, Typography, Spin } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { SearchOutlined } from "@ant-design/icons";
@@ -15,6 +15,7 @@ const StudentPaymentManagement = () => {
     const [searchName, setSearchName] = useState("");
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         // Fetch data
@@ -31,8 +32,10 @@ const StudentPaymentManagement = () => {
     };
 
     const handleImageClick = (imageURL) => {
+        setLoading(true);
         setSelectedImage(imageURL);
         setIsModalVisible(true);
+        setLoading(false);
     };
 
     const handleModalClose = () => {
@@ -157,7 +160,9 @@ const StudentPaymentManagement = () => {
                         footer={null}
                         onCancel={handleModalClose}
                     >
-                        <img src={selectedImage} alt="Payment" style={{ width: '100%' }} />
+                        <Spin spinning={loading}>
+                            <img src={selectedImage} alt="Payment" style={{ width: '100%' }} />
+                        </Spin>
                     </Modal>
                 </div>
             </div>
