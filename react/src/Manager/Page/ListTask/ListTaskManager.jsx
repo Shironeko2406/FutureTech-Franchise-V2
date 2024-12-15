@@ -68,8 +68,8 @@ const ListTaskManager = () => {
     const [filters, setFilters] = useState({
         searchText: '',
         levelFilter: '',
-        statusFilter: 'None',
-        submitFilter: 'None',
+        statusFilter: '',
+        submitFilter: '',
     });
     const [pageIndex, setPageIndex] = useState(1);
     const [pageSize, setPageSize] = useState(10);
