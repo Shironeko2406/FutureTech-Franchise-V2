@@ -42,7 +42,7 @@ export const CreateAssignmentActionAsync = (data) => {
         }
       } catch (error) {
         console.log(error);
-        message.error("Lỗi hệ thống");
+        message.error("Đã có lỗi xảy ra, vui lòng thử lại sau!");
       }
     };
   };
@@ -61,7 +61,7 @@ export const CreateAssignmentActionAsync = (data) => {
         }
       } catch (error) {
         console.log(error);
-        message.error("Lỗi hệ thống");
+        message.error("Đã có lỗi xảy ra, vui lòng thử lại sau!");
       }
     };
   };
@@ -80,7 +80,7 @@ export const CreateAssignmentActionAsync = (data) => {
         }
       } catch (error) {
         console.log(error);
-        message.error("Lỗi hệ thống");
+        message.error("Đã có lỗi xảy ra, vui lòng thử lại sau!");
       }
     };
   };
@@ -92,7 +92,7 @@ export const CreateAssignmentActionAsync = (data) => {
         dispatch(setAssignments(res.data))
       } catch (error) {
         console.log(error);
-        message.error("Lỗi hệ thống");
+        message.error("Đã có lỗi xảy ra, vui lòng thử lại sau!");
       }
     };
   };
@@ -104,7 +104,7 @@ export const CreateAssignmentActionAsync = (data) => {
         dispatch(setStudentAssignmentOfClass(res.data))
       } catch (error) {
         console.log(error);
-        message.error("Lỗi hệ thống");
+        message.error("Đã có lỗi xảy ra, vui lòng thử lại sau!");
       }
     };
   };
@@ -116,7 +116,7 @@ export const CreateAssignmentActionAsync = (data) => {
         dispatch(setAssignmentDetail(res.data))
       } catch (error) {
         console.log(error);
-        message.error("Lỗi hệ thống");
+        message.error("Đã có lỗi xảy ra, vui lòng thử lại sau!");
       }
     };
   };

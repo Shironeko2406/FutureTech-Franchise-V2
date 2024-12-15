@@ -53,7 +53,7 @@ export const DeleteAppointmentTemplateByIdActionAsync = (appointmentId, workId) 
       }
     } catch (error) {
       console.log(error);
-      message.error("Lỗi hệ thống");
+      message.error("Đã có lỗi xảy ra, vui lòng thử lại sau!");
     }
   };
 };
@@ -72,7 +72,7 @@ export const EditAppointmentTemplateByIdActionAsync = (appointmentId, dataEdit, 
       }
     } catch (error) {
       console.log(error);
-      message.error("Lỗi hệ thống");
+      message.error("Đã có lỗi xảy ra, vui lòng thử lại sau!");
     }
   };
 };

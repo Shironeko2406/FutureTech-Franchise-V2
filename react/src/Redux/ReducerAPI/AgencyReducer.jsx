@@ -80,7 +80,7 @@ export const UpdateStatusAgencyActionAsync = (id, status) => {
       }
     } catch (error) {
       console.log(error);
-      message.error("Lỗi hệ thống");
+      message.error("Đã có lỗi xảy ra, vui lòng thử lại sau!");
     }
   };
 };
@@ -99,7 +99,7 @@ export const CreateAgencyActionAsync = (data, search, statusFilter, customerStat
       }
     } catch (error) {
       console.log(error);
-      message.error("Lỗi hệ thống");
+      message.error("Đã có lỗi xảy ra, vui lòng thử lại sau!");
     }
   };
 };

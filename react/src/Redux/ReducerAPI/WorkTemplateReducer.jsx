@@ -31,7 +31,7 @@ export const GetTasksTemplateActionAsync = () => {
       dispatch(setTaskTemplate(res.data));
     } catch (error) {
       console.log(error);
-      message.error("Lỗi hệ thống");
+      message.error("Đã có lỗi xảy ra, vui lòng thử lại sau!");
     }
   };
 };
@@ -43,7 +43,7 @@ export const GetTasksDetailByIdTemplateActionAsync = (id) => {
       dispatch(setTaskDetailTemplate(res.data));
     } catch (error) {
       console.log(error);
-      message.error("Lỗi hệ thống");
+      message.error("Đã có lỗi xảy ra, vui lòng thử lại sau!");
     }
   };
 };
@@ -62,7 +62,7 @@ export const CreateTaskTemplateActionAsync = (data) => {
       }
     } catch (error) {
       console.log(error);
-      message.error("Lỗi hệ thống");
+      message.error("Đã có lỗi xảy ra, vui lòng thử lại sau!");
     }
   };
 };
@@ -76,12 +76,12 @@ export const DeleteTaskTemplateByIdActionAsync = (id) => {
         await dispatch(GetTasksTemplateActionAsync());
         return true;
       } else {
-        message.error(`Lỗi hệ thống`);
+        message.error(`Đã có lỗi xảy ra, vui lòng thử lại sau!`);
         return false;
       }
     } catch (error) {
       console.log(error);
-      message.error("Lỗi hệ thống");
+      message.error("Đã có lỗi xảy ra, vui lòng thử lại sau!");
     }
   };
 };
@@ -100,7 +100,7 @@ export const EditTaskTemplateByIdActionAsync = (dataUpdate, taskId) => {
       }
     } catch (error) {
       console.log(error);
-      message.error("Lỗi hệ thống");
+      message.error("Đã có lỗi xảy ra, vui lòng thử lại sau!");
     }
   };
 };

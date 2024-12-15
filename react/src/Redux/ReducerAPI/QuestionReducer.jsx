@@ -45,11 +45,11 @@ export const DeleteQuestionByIdActionAsync = (questionId, chapterId) => {
           await dispatch(GetQuestionBankByChapterId(chapterId));
           return true;
         } else {
-          message.error(`Lỗi hệ thống`);
+          message.error(`Đã có lỗi xảy ra, vui lòng thử lại sau!`);
           return false;
         }
       } catch (error) {
-        message.error(`Lỗi hệ thống`);
+        message.error(`Đã có lỗi xảy ra, vui lòng thử lại sau!`);
         return false;
       }
     };
