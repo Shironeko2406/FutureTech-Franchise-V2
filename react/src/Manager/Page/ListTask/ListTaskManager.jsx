@@ -68,8 +68,8 @@ const ListTaskManager = () => {
     const [filters, setFilters] = useState({
         searchText: '',
         levelFilter: '',
-        statusFilter: '',
-        submitFilter: '',
+        statusFilter: 'None',
+        submitFilter: 'None',
     });
     const [pageIndex, setPageIndex] = useState(1);
     const [pageSize, setPageSize] = useState(10);
@@ -681,7 +681,7 @@ const ListTaskManager = () => {
             <Title level={4}>
                 <CalendarOutlined /> Danh sách công việc
             </Title>
-            <DynamicFilter onFilterChange={handleFilterChange} />
+            <DynamicFilter onFilterChange={handleFilterChange} defaultFilters={filters} />
             <List
                 dataSource={taskUser}
                 renderItem={renderItem}
