@@ -275,21 +275,21 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
                         Thêm mới giấy nghiệm thu
                     </Button>
                 )}
-                {taskType === "BusinessRegistered" && (
+                {/* {taskType === "BusinessRegistered" && selectedTask?.level === "Compulsory" && (
                     <Button key="createBusinessRegistration" type="primary" onClick={() => setModalCreateBusinessRegistrationVisible(true)}>
                         Thêm mới Giấy Đăng Ký Doanh Nghiệp
                     </Button>
-                )}
+                )} */}
                 {taskType === "SignedContract" && selectedTask?.level !== "Compulsory" && (
                     <Button key="createSignedContract" type="primary" onClick={() => setModalCreateSignedContractVisible(true)} icon={<PlusOutlined />}>
                         Thêm mới Hợp đồng Chuyển nhượng
                     </Button>
                 )}
-                {taskType === "EducationLicenseRegistered" && (
+                {/* {taskType === "EducationLicenseRegistered" && selectedTask?.level === "Compulsory" && (
                     <Button key="createEducationalOperationLicense" type="primary" onClick={() => setModalCreateEducationalOperationLicenseVisible(true)}>
                         Thêm mới giấy phép đăng ký giáo dục
                     </Button>
-                )}
+                )} */}
             </Form>
             <CreateAgreementModal
                 visible={modalCreateAgreementVisible}
