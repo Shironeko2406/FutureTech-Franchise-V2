@@ -111,7 +111,7 @@ export default function ViewAppointmentDetailModal({ visible, onClose, selectedT
         'RepairingEquipment', 'EducationalSupervision', 'RenewContract',
         'RenewEducationLicense', 'Other'
       ],
-      SystemTechnician: ['Design', 'Quotation', 'SiteSurvey', 'ConstructionAndTrainning', 'RepairingEquipment', 'Other'],
+      SystemTechnician: ['Design', 'Quotation', 'SiteSurvey', 'ConstructionAndTrainning', 'Handover', 'RepairingEquipment', 'Other'],
       SystemInstructor: ['ConstructionAndTrainning', 'EducationLicenseRegistered', 'TrainningInternal', 'EducationalSupervision', 'Other'],
     };
 
