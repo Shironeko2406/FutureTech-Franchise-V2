@@ -89,7 +89,7 @@ const translateRole = (role) => ({
   AgencyManager: "Đối tác chi nhánh",
 }[role] || "Không xác định");
 
-export default function ViewAppointmentDetailModal({ visible, onClose, selectedType, isFromTaskDetail }) {
+export default function ViewAppointmentDetailModal({ visible, onClose, selectedType }) {
   const { appointmentDetail } = useSelector((state) => state.AppointmentReducer);
   const { taskDetail } = useSelector((state) => state.WorkReducer);
   const { userManager } = useSelector((state) => state.UserReducer);

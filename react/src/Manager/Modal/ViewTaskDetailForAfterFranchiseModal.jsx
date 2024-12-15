@@ -360,6 +360,7 @@ const ViewTaskDetailForAfterFranchiseModal = ({ visible, onClose, setVisible, is
       <ViewAppointmentDetailForAfterFranchise
         visible={isViewAppointmentModalVisible}
         onClose={handleViewAppointmentDetailCancel}
+        selectedType={filter.typeFilter}
       />
 
       <EditAppointmentModal
