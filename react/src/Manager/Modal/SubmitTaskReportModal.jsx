@@ -88,15 +88,15 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
                 startTime: values.startTime ? values.startTime.format('YYYY-MM-DD') : null,
                 endTime: values.endTime ? values.endTime.format('YYYY-MM-DD') : null,
                 revenueSharePercentage: parseFloat(values.revenueSharePercentage),
-                reportImageURL: file ? file.url : null, // Use fileUrl to store the URL
+                reportImageURL: file ? file.url : null,
                 type: taskType
             };
 
             if (taskType === "Design" && fileEquipment) {
-                formattedValues.equipmentFile = fileEquipment; // Pass the equipment file separately
+                formattedValues.equipmentFile = fileEquipment;
             }
             if (taskType === "Design" && designFee) {
-                formattedValues.designFee = designFee; // Add design fee
+                formattedValues.designFee = designFee;
             }
 
             console.log("formattedValues: ", formattedValues);
@@ -161,7 +161,7 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
             open={visible}
             onCancel={onClose}
             footer={[
-                <div style={{ display: 'flex', justifyContent: taskType === "SignedContract" ? 'space-between' : 'flex-end', width: '100%' }}>
+                <div style={{ display: 'flex', justifyContent: (taskType === "SignedContract" || taskType === "Design") ? 'space-between' : 'flex-end', width: '100%' }}>
                     {taskType === "SignedContract" && (
                         <Button key="downloadSample" icon={<DownloadOutlined />} onClick={downloadSampleContract} loading={downloadLoading}>
                             Tải file hợp đồng đã tạo

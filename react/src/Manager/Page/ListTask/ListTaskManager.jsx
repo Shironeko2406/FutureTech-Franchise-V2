@@ -227,7 +227,7 @@ const ListTaskManager = () => {
                         <Button
                             type="primary"
                             icon={<EyeOutlined />}
-                            onClick={() => window.open(task.customerSubmit, "_blank")}
+                            onClick={() => openModalShowReport(task)}
                         >
                             Xem tài liệu
                         </Button>
@@ -714,10 +714,10 @@ const ListTaskManager = () => {
                 onClose={handleCloseModalShowReport}
                 taskId={selectedTask?.id}
                 taskType={selectedTask?.type}
-                task={selectedTask} // Pass task here
-                filters={filters} // Add filters
-                pageIndex={pageIndex} // Add pageIndex
-                pageSize={pageSize} // Add pageSize
+                task={selectedTask}
+                filters={filters}
+                pageIndex={pageIndex}
+                pageSize={pageSize}
             />
         </Card>
     );

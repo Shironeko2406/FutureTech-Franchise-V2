@@ -61,7 +61,7 @@ const DocumentDetailModal = ({ visible, onClose, documentDetail }) => {
                             <CalendarOutlined style={{ fontSize: '24px', color: '#1890ff' }} />
                             <Descriptions column={2}>
                                 <Descriptions.Item label={getExpirationLabel(documentDetail.type)}>
-                                    {dayjs(documentDetail.expirationDate).format('DD/MM/YYYY')}
+                                    {documentDetail.expirationDate ? dayjs(documentDetail.expirationDate).format('DD/MM/YYYY') : "Không có"}
                                 </Descriptions.Item>
                             </Descriptions>
                         </Space>
