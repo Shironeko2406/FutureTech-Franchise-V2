@@ -133,6 +133,7 @@ const CreateSignedContractModal = ({ visible, onClose, filters, pageIndex, pageS
                         onRemove={handleRemoveFile}
                         accept="*"
                         maxCount={1}
+                        rules={[{ required: true, message: 'Vui lòng upload file' }]}
                     >
                         <Button icon={<UploadOutlined />}>Thêm file</Button>
                     </Upload>
