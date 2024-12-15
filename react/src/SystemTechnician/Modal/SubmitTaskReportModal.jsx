@@ -58,13 +58,15 @@ const SubmitTaskReportModal = ({ visible, onClose, onSubmit, taskType, selectedT
     const handleOk = async () => {
         try {
             const values = await form.validateFields();
-            if ((designFee && !file)) {
-                message.error('Hãy tải lên file thiết kế nếu nhập giá tiền!');
-                return;
-            }
-            if (file && !designFee) {
-                message.error('Hãy nhập giá tiền nếu đã tải lên file thiết kế!');
-                return;
+            if (taskType === "Design") {
+                if ((designFee && !file)) {
+                    message.error('Hãy tải lên file thiết kế nếu nhập giá tiền!');
+                    return;
+                }
+                if (file && !designFee) {
+                    message.error('Hãy nhập giá tiền nếu đã tải lên file thiết kế!');
+                    return;
+                }
             }
             let formattedValues = {
                 ...values,
