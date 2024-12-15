@@ -429,7 +429,7 @@ export default function AgencyDetail() {
       setModalDocumentDetailVisible(true);
     }
     else {
-      message.error("Không tìm thấy tài liệu");
+      // message.error("Không tìm thấy tài liệu");
     }
   };
 
@@ -441,7 +441,7 @@ export default function AgencyDetail() {
       setDocumentDetail(documentData);
       setModalDocumentDetailVisible(true);
     } else {
-      message.error("Không tìm thấy tài liệu");
+      // message.error("Không tìm thấy tài liệu");
     }
   };
 
@@ -452,8 +452,6 @@ export default function AgencyDetail() {
     if (documentData) {
       setDocumentDetail(documentData);
       setModalDocumentDetailVisible(true);
-    } else {
-      message.error("Không tìm thấy tài liệu");
     }
   };
 
@@ -465,8 +463,6 @@ export default function AgencyDetail() {
     if (documentData) {
       setDocumentDetail(documentData);
       setModalDocumentDetailVisible(true);
-    } else {
-      message.error("Không tìm thấy tài liệu");
     }
   };
 
@@ -501,9 +497,13 @@ export default function AgencyDetail() {
 
   const openModalContractDetail = async (agencyId) => {
     setLoading(true);
-    await dispatch(GetContractDetailByAgencyIdActionAsync(agencyId));
+    const res = await dispatch(GetContractDetailByAgencyIdActionAsync(agencyId));
     setLoading(false);
-    setModalContractDetailVisible(true);
+    if (res.data) {
+      setModalContractDetailVisible(true);
+    } else {
+      message.error("Chưa có hợp đồng nào được tạo ra.");
+    }
   };
 
   const handleCloseModalContractDetail = () => {

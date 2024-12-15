@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, Typography, Descriptions, Card, Tag, Space, Divider } from 'antd';
+import { Modal, Typography, Descriptions, Card, Tag, Space, Divider, Button } from 'antd';
 import { CalendarOutlined, FileOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 
@@ -30,6 +30,15 @@ const DocumentDetailModal = ({ visible, onClose, documentDetail }) => {
             default:
                 return 'Ngày hết hạn';
         }
+    };
+
+    const handleDownload = (url) => {
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = url.split('/').pop();
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     };
 
     return (
@@ -69,9 +78,9 @@ const DocumentDetailModal = ({ visible, onClose, documentDetail }) => {
                         <Divider orientation="left">Tài liệu</Divider>
                         <Space>
                             <FileOutlined style={{ fontSize: '24px', color: '#1890ff' }} />
-                            <a href={documentDetail.urlFile} target="_blank" rel="noopener noreferrer">
+                            <Button type="link" onClick={() => handleDownload(documentDetail.urlFile)}>
                                 Tải xuống file tài liệu
-                            </a>
+                            </Button>
                         </Space>
                     </Space>
                 </Card>

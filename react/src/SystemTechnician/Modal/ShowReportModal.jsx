@@ -12,6 +12,7 @@ import { quillFormats, quillModules } from '../../TextEditorConfig/Config';
 import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
 import { imageDB } from "../../Firebasse/Config";
 import { useLoading } from '../../Utils/LoadingContext';
+import { UpdateDesignFeeActionAsync } from "../../Redux/ReducerAPI/ContractReducer";
 
 const { Title, Text } = Typography;
 
@@ -101,6 +102,10 @@ const StyledCard = styled(Card)`
   }
 `;
 
+const formatCurrency = (amount) => {
+  return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + " VNĐ";
+};
+
 const ShowReportModal = ({ visible, onClose, taskId, taskType }) => {
   const dispatch = useDispatch();
   const { taskDetail, loading } = useSelector((state) => state.WorkReducer);
@@ -109,11 +114,15 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType }) => {
   const [form] = Form.useForm();
   const [uploadedEquipmentFileURL, setUploadedEquipmentFileURL] = useState(null);
   const uploadedFileURLRef = useRef(null);
+  const [designFee, setDesignFee] = useState('');
+  const [formattedDesignFee, setFormattedDesignFee] = useState('');
 
   useEffect(() => {
     if (!visible) {
       setIsEditing(false);
       form.resetFields();
+      setDesignFee('');
+      setFormattedDesignFee('');
     }
   }, [visible]);
 
@@ -127,7 +136,11 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType }) => {
         status: 'done',
         url: taskDetail.reportImageURL,
       }] : [],
+      designFee: taskType === "Design" ? taskDetail.designFee : undefined,
     });
+    if (taskType === "Design" && taskDetail.designFee) {
+      setFormattedDesignFee(formatCurrency(taskDetail.designFee));
+    }
   };
 
   const handleSaveReport = async () => {
@@ -138,6 +151,7 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType }) => {
       const formattedValues = {
         ...values,
         reportImageURL: uploadedFileURLRef.current || (values.reportImageURL && values.reportImageURL[0] ? values.reportImageURL[0].url : null),
+        designFee: taskType === "Design" ? designFee : undefined,
       };
 
       if (taskType === "Design" && uploadedEquipmentFileURL) {
@@ -146,6 +160,13 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType }) => {
         const equipmentResponse = await dispatch(CreateEquipmentActionAsync(taskDetail.agencyId, equipmentFormData));
         if (!equipmentResponse) {
           throw new Error("Error creating equipment");
+        }
+      }
+
+      if (taskType === "Design" && designFee) {
+        const designFeeResponse = await dispatch(UpdateDesignFeeActionAsync(taskDetail.agencyId, designFee));
+        if (!designFeeResponse) {
+          throw new Error("Error updating design fee");
         }
       }
 
@@ -170,6 +191,15 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType }) => {
       onError(error);
     }
   };
+
+  const handleDesignFeeChange = (e) => {
+    const value = e.target.value;
+    if (/^\d*$/.test(value)) { // Only allow integers
+      setDesignFee(value);
+      setFormattedDesignFee(formatCurrency(value));
+    }
+  };
+
 
   const handleUploadEquipmentFile = async ({ file, onSuccess, onError }) => {
     setUploadedEquipmentFileURL(file);
@@ -241,7 +271,7 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType }) => {
                   </Button>
                 </Upload>
               </Form.Item>
-              {taskType === "Design" && (
+              {/* {taskType === "Design" && (
                 <Form.Item
                   name="equipmentFileURL"
                   label="File trang thiết bị"
@@ -263,6 +293,43 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType }) => {
                     </Button>
                   </Upload>
                 </Form.Item>
+              )} */}
+              {taskType === "Design" && (
+                <>
+                  <Form.Item
+                    name="designFee"
+                    label="Giá tiền thiết kế"
+                    rules={[{ pattern: /^\d+$/, message: "Vui lòng nhập số nguyên" }]}
+                  >
+                    <Input type="text" onChange={handleDesignFeeChange} placeholder="Ví dụ 5 triệu đồng: 5000000" />
+                    {formattedDesignFee && (
+                      <Form.Item style={{ marginBottom: 0 }}>
+                        <Text type="secondary">Giá tiền thiết kế: {formattedDesignFee}</Text>
+                      </Form.Item>
+                    )}
+                  </Form.Item>
+                  <Form.Item
+                    name="equipmentFileURL"
+                    label="File trang thiết bị"
+                  >
+                    <Upload
+                      name="equipmentFile"
+                      customRequest={handleUploadEquipmentFile}
+                      accept=".xls,.xlsx"
+                      maxCount={1}
+                      defaultFileList={taskDetail.equipmentFileURL ? [{
+                        uid: '-1',
+                        name: 'Tệp trang thiết bị hiện tại',
+                        status: 'done',
+                        url: taskDetail.equipmentFileURL,
+                      }] : []}
+                    >
+                      <Button icon={<UploadOutlined />}>
+                        {taskDetail.equipmentFileURL ? "Thêm file khác" : "Thêm file"}
+                      </Button>
+                    </Upload>
+                  </Form.Item>
+                </>
               )}
               <ButtonGroup>
                 <Button onClick={() => setIsEditing(false)}>Hủy</Button>
@@ -272,6 +339,11 @@ const ShowReportModal = ({ visible, onClose, taskId, taskType }) => {
           ) : (
             <Space direction="vertical" size="middle" style={{ width: '100%' }}>
               <HTMLContent dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(taskDetail.report) }} />
+              {taskType === "Design" && formattedDesignFee && (
+                <Text type="secondary" style={{ marginTop: '16px' }}>
+                  Giá tiền thiết kế: {formattedDesignFee}
+                </Text>
+              )}
               {taskDetail.reportImageURL && (
                 <Button
                   type="primary"

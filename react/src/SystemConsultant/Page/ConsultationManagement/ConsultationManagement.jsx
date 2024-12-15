@@ -8,7 +8,7 @@ import { Table, Select, Modal, Button, Space, Card, Typography, Dropdown, Toolti
 import { DeleteOutlined, EditOutlined, EllipsisOutlined, PlusOutlined, ReconciliationOutlined, SearchOutlined } from "@ant-design/icons";
 import { GetCityDataActionAsync } from "../../../Redux/ReducerAPI/CityReducer";
 import CreateAgencyModal from "../../Modal/CreateAgencyModal";
-
+import { useLoading } from "../../../Utils/LoadingContext";
 const { Title } = Typography;
 
 const renderStatusBadge = (status, type) => {
@@ -86,6 +86,7 @@ const ConsultationManagement = () => {
     (state) => state.ConsultationReducer
   );
   const dispatch = useDispatch();
+  const { setLoading } = useLoading();
   const [statusFilter, setStatusFilter] = useState(null);
   const [customerStatusFilter, setCustomerStatusFilter] = useState(null);
   const [searchTerm, setSearchTerm] = useState(null);
@@ -107,7 +108,9 @@ const ConsultationManagement = () => {
   };
 
   useEffect(() => {
-    dispatch(GetFranchiseRegistrationConsultActionAsync(searchTerm, statusFilter, customerStatusFilter, pageIndex, pageSize));
+    setLoading(true);
+    dispatch(GetFranchiseRegistrationConsultActionAsync(searchTerm, statusFilter, customerStatusFilter, pageIndex, pageSize))
+      .finally(() => setLoading(false));
   }, [searchTerm, statusFilter, customerStatusFilter, pageIndex, pageSize, dispatch]);
 
   useEffect(() => {
@@ -122,7 +125,9 @@ const ConsultationManagement = () => {
 
     const status = statusMap[key];
     if (status) {
-      dispatch(UpdateFranchiseRegistrationConsultActionAsync(record.id, status, searchTerm, statusFilter, customerStatusFilter, pageIndex, pageSize));
+      setLoading(true);
+      dispatch(UpdateFranchiseRegistrationConsultActionAsync(record.id, status, searchTerm, statusFilter, customerStatusFilter, pageIndex, pageSize))
+        .finally(() => setLoading(false));
     }
   };
 

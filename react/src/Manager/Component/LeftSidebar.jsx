@@ -3,8 +3,8 @@ import { NavLink } from 'react-router-dom';
 
 const sidebarItems = [
   { type: 'section', label: 'Trang chủ', icon: 'ti ti-dots' },
-  { type: 'link', label: 'Bảng điều khiển', path: '/manager', icon: 'solar:home-smile-bold-duotone' },
-  { type: 'section', label: 'Quản lý', icon: 'ti ti-dots' },
+  // { type: 'link', label: 'Bảng điều khiển', path: '/manager', icon: 'solar:home-smile-bold-duotone' },
+  // { type: 'section', label: 'Quản lý', icon: 'ti ti-dots' },
   // { type: 'link', label: 'Người dùng', path: '#', icon: 'solar:layers-minimalistic-bold-duotone' },
   { type: 'link', label: 'Khóa học', path: '/manager', icon: 'solar:bookmark-square-minimalistic-bold-duotone' },
   { type: 'section', label: 'Nhượng quyền' },

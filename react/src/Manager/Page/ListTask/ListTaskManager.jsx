@@ -369,15 +369,6 @@ const ListTaskManager = () => {
                             Xem tài liệu
                         </Button>
                     );
-                    actions.push(
-                        <Button
-                            type="primary"
-                            icon={<UploadOutlined />}
-                            onClick={() => openModalSubmitTaskReport(task)}
-                        >
-                            Báo cáo
-                        </Button>
-                    );
                 } else if (task.report) {
                     actions.push(
                         <Button
@@ -408,7 +399,7 @@ const ListTaskManager = () => {
                             </Button>
                         );
                     }
-                } else {
+                } else if (task.level !== "Compulsory" && task.report === null) {
                     actions.push(
                         <Button
                             type="primary"
