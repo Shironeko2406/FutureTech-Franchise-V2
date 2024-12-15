@@ -132,6 +132,10 @@ const handleDownloadFile = (url) => {
   document.body.removeChild(link);
 };
 
+const formatCurrency = (amount) => {
+  return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + " VNĐ";
+};
+
 const ViewTaskDetailModal = ({ visible, onClose, setVisible, isFromAgencyDetail, selectedType, isFromTaskDetail }) => {
   const { taskDetail } = useSelector((state) => state.WorkReducer);
   const { agencyStatus } = useSelector((state) => state.AgencyReducer);
@@ -322,6 +326,11 @@ const ViewTaskDetailModal = ({ visible, onClose, setVisible, isFromAgencyDetail,
             <HTMLContent dangerouslySetInnerHTML={sanitizeHTML(taskDetail.report)} />
           ) : (
             <Text type="secondary">Không có báo cáo</Text>
+          )}
+          {taskDetail?.type === 'Design' && taskDetail?.designFee && (
+            <Text type="secondary" style={{ marginTop: '16px' }}>
+              Giá tiền thiết kế: {formatCurrency(taskDetail?.designFee)}
+            </Text>
           )}
           {taskDetail?.reportImageURL && (
             <Button
