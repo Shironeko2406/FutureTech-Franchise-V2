@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Dropdown, Menu, Table, Space, Typography, Spin } from "antd";
+import { Button, Dropdown, Menu, Table, Space, Typography, Spin, Modal } from "antd";
 import { UsergroupAddOutlined, CloseCircleOutlined, RightCircleOutlined, DownOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { GetStudentConsultationActionAsync, UpdateStudentStatusAsync, UpdateStudentRegistrationAsync } from "../../../Redux/ReducerAPI/RegisterCourseReducer";
@@ -214,7 +214,6 @@ const StudentConsultationRegistration = () => {
         });
     };
 
-    // Function to handle status registration
     const renderActionButtons = (status, record) => {
         if (status === 'Cancel') {
             return null; // Do not render the button if status is Cancel
@@ -231,11 +230,20 @@ const StudentConsultationRegistration = () => {
                 });
         };
 
-        const handleCancelRegistration = () => {
-            dispatch(UpdateStudentStatusAsync(record.userId, 'Cancel', record.courseId))
-                .then(() => {
-                    dispatch(GetStudentConsultationActionAsync(pageIndex, pageSize, selectedStudentStatus, selectedCourse));
-                });
+        // Function to handle status registration
+        const handleCancelRegistration = (record) => {
+            Modal.confirm({
+                title: 'Xác nhận Hủy',
+                content: 'Bạn có chắc chắn muốn hủy ghi danh này?',
+                okText: 'Xác nhận',
+                cancelText: 'Hủy',
+                onOk: () => {
+                    dispatch(UpdateStudentStatusAsync(record.userId, 'Cancel', record.courseId))
+                        .then(() => {
+                            dispatch(GetStudentConsultationActionAsync(pageIndex, pageSize, selectedStudentStatus, selectedCourse));
+                        });
+                },
+            });
         };
 
         const menu = (
@@ -255,7 +263,7 @@ const StudentConsultationRegistration = () => {
                         Vào lớp
                     </Menu.Item>
                 )}
-                <Menu.Item key="cancel" onClick={handleCancelRegistration}>
+                <Menu.Item key="cancel" onClick={() => handleCancelRegistration(record)}>
                     Hủy
                 </Menu.Item>
             </Menu>
