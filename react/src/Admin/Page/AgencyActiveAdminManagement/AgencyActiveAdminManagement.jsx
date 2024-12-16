@@ -1,9 +1,10 @@
-import { Button, Card, Input, Select, Space, Table, Typography } from "antd";
+import { Button, Card, Input, Select, Space, Table, Typography, DatePicker, message } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { GetAgencyActionAsync } from "../../../Redux/ReducerAPI/AgencyReducer";
-import { EditOutlined, RightCircleOutlined, SearchOutlined, ShopOutlined } from "@ant-design/icons";
+import { RightCircleOutlined, SearchOutlined, ShopOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
+import { ExportAgencyRevenueReportAsync } from "../../../Redux/ReducerAPI/AgencyDashboardReducer";
 
 const { Title, Text } = Typography;
 
@@ -68,21 +69,17 @@ const renderStatusBadge = (status) => {
   );
 };
 
-const AgencyManagement = () => {
+const AgencyActiveAdminManagement = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { agencyData, totalPagesCount } = useSelector((state) => state.AgencyReducer);
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const [status, setStatus] = useState("");
   const [search, setSearch] = useState("");
+  const [selectedMonth, setSelectedMonth] = useState(null);
+  const [selectedYear, setSelectedYear] = useState(null);
 
   //Function state filter and pagination
-  const handleStatusChange = (value) => {
-    setStatus(value);
-    setPageIndex(1);
-  };
-
   const handleSearch = (value) => {
     setSearch(value);
     setPageIndex(1);
@@ -93,9 +90,17 @@ const AgencyManagement = () => {
     setPageSize(pageSize);
   };
 
+  const handleExportReport = () => {
+    if (selectedMonth && selectedYear) {
+      dispatch(ExportAgencyRevenueReportAsync(selectedMonth, selectedYear));
+    } else {
+      message.error("Vui lòng chọn tháng và năm!");
+    }
+  };
+
   useEffect(() => {
-    dispatch(GetAgencyActionAsync(pageIndex, pageSize, status, search))
-  }, [status, pageIndex, pageSize, search]);
+    dispatch(GetAgencyActionAsync(pageIndex, pageSize, 'Active', search))
+  }, [pageIndex, pageSize, search]);
 
   //-----------------------------
 
@@ -108,7 +113,7 @@ const AgencyManagement = () => {
       render: (text, record) => (
         <Button
           type="link"
-          onClick={() => navigate(`/manager/agency/${record.id}/task-detail`)}
+          onClick={() => navigate(`/admin/agency-active/${record.id}`)}
           style={{
             display: "flex",
             alignItems: "center",
@@ -151,53 +156,38 @@ const AgencyManagement = () => {
       key: 'status',
       render: (text) => renderStatusBadge(text),
     },
-    {
-      title: 'Hành động',
-      key: 'action',
-      render: (_, record) => (
-        <Button
-          type="link"
-          icon={<EditOutlined />}
-          onClick={() => navigate(`/manager/agency/edit/${record.id}`)}
-          style={{
-            fontSize: "16px",
-            color: "#1890ff",
-            transition: "all 0.3s ease",
-          }}
-          className="hover:text-blue-500"
-        />
-      ),
-    },
   ];
   //----------------------------------
 
   return (
     <Card>
       <Title level={4}>
-        <ShopOutlined /> Quản lý nhượng quyền
+        <ShopOutlined /> Quản lý chi nhánh hoạt động
       </Title>
-      <Space style={{ marginBottom: 16 }}>
-        <Input
-          placeholder="Tìm kiếm"
-          prefix={<SearchOutlined />}
-          onPressEnter={(e) => handleSearch(e.target.value)}
-          style={{ width: 200 }}
-          aria-label="Search agencies"
-        />
-        <Select
-          placeholder="Filter by Status"
-          style={{ width: 180 }}
-          onChange={handleStatusChange}
-          value={status}
-          options={[
-            { value: "", label: 'Tất cả' },
-            { value: "Processing", label: 'Chờ duyệt' },
-            { value: "Approved", label: 'Đã duyệt' },
-            { value: "Active", label: 'Đang hoạt động' },
-            { value: "Suspended", label: 'Tạm ngưng hoạt động' },
-            { value: "Inactive", label: 'Không hoạt động' },
-          ]}
-        />
+      <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+        <Space style={{ justifyContent: 'space-between', width: '100%', marginBottom: '16px' }}>
+          <Input
+            placeholder="Tìm kiếm"
+            prefix={<SearchOutlined />}
+            onPressEnter={(e) => handleSearch(e.target.value)}
+            style={{ width: 200 }}
+            aria-label="Search agencies"
+          />
+          <Space>
+            <DatePicker
+              picker="month"
+              onChange={(date, dateString) => {
+                const [year, month] = dateString.split('-');
+                setSelectedMonth(month);
+                setSelectedYear(year);
+              }}
+              placeholder="Chọn tháng và năm"
+            />
+            <Button type="primary" onClick={handleExportReport}>
+              Xuất báo cáo doanh thu
+            </Button>
+          </Space>
+        </Space>
       </Space>
       <Table
         bordered
@@ -215,7 +205,7 @@ const AgencyManagement = () => {
         scroll={{ x: 'max-content' }} // Add this line for horizontal scroll
       />
     </Card>
-  );
-};
+  )
+}
 
-export default AgencyManagement;
+export default AgencyActiveAdminManagement;

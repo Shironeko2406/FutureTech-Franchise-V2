@@ -14,6 +14,7 @@ const PaymentManagement = () => {
     const [loading, setLoading] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
+    const [imageLoading, setImageLoading] = useState(false);
 
     useEffect(() => {
         setLoading(true);
@@ -27,8 +28,12 @@ const PaymentManagement = () => {
     };
 
     const handleImageClick = (imageURL) => {
+        setImageLoading(true);
         setSelectedImage(imageURL);
-        setIsModalVisible(true);
+        setTimeout(() => {
+            setIsModalVisible(true);
+            setImageLoading(false);
+        }, 500); // Simulate loading delay
     };
 
     const handleModalClose = () => {
@@ -195,7 +200,9 @@ const PaymentManagement = () => {
                     footer={null}
                     onCancel={handleModalClose}
                 >
-                    <img src={selectedImage} alt="Payment" style={{ width: '100%' }} />
+                    <Spin spinning={imageLoading}>
+                        <img src={selectedImage} alt="Payment" style={{ width: '100%' }} />
+                    </Spin>
                 </Modal>
             </div>
         </div>

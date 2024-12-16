@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Input, Form, Button, Spin, Select, Typography } from "antd";
+import { Modal, Input, Form, Button, Spin, Select, Typography, Upload } from "antd";
+import { UploadOutlined } from "@ant-design/icons";
+import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
+import { imageDB } from "../../Firebasse/Config"; // Import Firebase storage configuration
 
 const { Option } = Select;
 const { Text } = Typography;
@@ -13,6 +16,7 @@ const CreatePaymentCourseModal = ({ visible, onClose, onSubmit, registerCourseId
     const [form] = Form.useForm();
     const [paymentType, setPaymentType] = useState("Completed");
     const [formattedAmount, setFormattedAmount] = useState("");
+    const [file, setFile] = useState(null); // State for uploaded file
 
     useEffect(() => {
         if (visible && courseDetails) {
@@ -32,8 +36,9 @@ const CreatePaymentCourseModal = ({ visible, onClose, onSubmit, registerCourseId
 
     const handleFinish = (values) => {
         const amountNumber = parseInt(values.amount, 10);
-        onSubmit({ description: values.description, title: values.title, amount: amountNumber, registerCourseId: registerCourseId }, paymentType);
+        onSubmit({ description: values.description, title: values.title, amount: amountNumber, registerCourseId: registerCourseId, method: values.paymentMethod, imageURL: file ? file.url : null }, paymentType);
         form.resetFields();
+        setFile(null);
     };
 
     const handlePaymentTypeChange = (value) => {
@@ -56,6 +61,23 @@ const CreatePaymentCourseModal = ({ visible, onClose, onSubmit, registerCourseId
         if (/^\d*$/.test(value)) { // Only allow integers
             setFormattedAmount(formatCurrency(value));
         }
+    };
+
+    const handleUpload = async ({ file, onSuccess, onError }) => {
+        const storageRef = ref(imageDB, `files/${file.name}`);
+        try {
+            await uploadBytes(storageRef, file);
+            const url = await getDownloadURL(storageRef);
+            setFile({ url, name: file.name }); // Store file name and URL
+            onSuccess(null, file);
+        } catch (error) {
+            console.error("Upload error: ", error);
+            onError(error);
+        }
+    };
+
+    const handleRemoveFile = () => {
+        setFile(null);
     };
 
     return (
@@ -83,6 +105,16 @@ const CreatePaymentCourseModal = ({ visible, onClose, onSubmit, registerCourseId
                         <Select onChange={handlePaymentTypeChange} defaultValue="Completed" disabled={courseDetails && courseDetails.studentAmountPaid}>
                             <Option value="Advance_Payment">Đặt cọc</Option>
                             <Option value="Completed">Hoàn thành</Option>
+                        </Select>
+                    </Form.Item>
+                    <Form.Item
+                        label="Phương thức thanh toán"
+                        name="paymentMethod"
+                        rules={[{ required: true, message: "Vui lòng chọn phương thức thanh toán" }]}
+                    >
+                        <Select placeholder="Chọn phương thức thanh toán">
+                            <Option value="BankTransfer">Chuyển khoản</Option>
+                            <Option value="Direct">Trực tiếp</Option>
                         </Select>
                     </Form.Item>
                     <Form.Item
@@ -126,6 +158,20 @@ const CreatePaymentCourseModal = ({ visible, onClose, onSubmit, registerCourseId
                             <Text type="secondary">Số tiền: {formattedAmount}</Text>
                         </Form.Item>
                     )}
+                    <Form.Item
+                        label="Tải lên hình ảnh minh chứng"
+                        name="imageURL"
+                    >
+                        <Upload
+                            name="image"
+                            customRequest={handleUpload}
+                            onRemove={handleRemoveFile}
+                            accept="image/*"
+                            maxCount={1}
+                        >
+                            <Button icon={<UploadOutlined />}>Thêm ảnh</Button>
+                        </Upload>
+                    </Form.Item>
                     <Form.Item>
                         <Button type="primary" htmlType="submit">
                             Tạo Thanh Toán

@@ -90,13 +90,13 @@ export const GetDocumentByAgencyIdActionAsync = (agencyId, typeDocument) => {
             if (res.isSuccess && res.data != null) {
                 return res.data;
             } else if (res.isSuccess && res.data == null) {
-                message.error(`${res.message}`);
+                message.error(`Không tìm thấy tài liệu nào được tải lên`);
             } else {
                 throw new Error(res.message);
             }
         } catch (error) {
             console.error("GetDocumentByAgencyIdActionAsync", error);
-            message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
+            // message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
             return null;
         }
     };

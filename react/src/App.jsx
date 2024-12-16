@@ -112,6 +112,9 @@ import EquipmentListAgencyStaff from "./AgencyStaff/Page/EquipmentList/Equipment
 import ReportList from "./AgencyManager/Page/ReportList/ReportList";
 import ListReport from "./Manager/Page/ListReport/ListReport";
 import PaymentManagement from "./Manager/Page/PaymentManagement/PaymentManagement";
+import AgencyActiveAdminManagement from "./Admin/Page/AgencyActiveAdminManagement/AgencyActiveAdminManagement";
+import AgencyActiveInfoAdmin from "./Admin/Page/AgencyActiveInfoAdmin/AgencyActiveInfoAdmin";
+import AgencyEdit from "./Manager/Page/AgencyEdit/AgencyEdit";
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -151,6 +154,8 @@ function App() {
                 <Route path="work-template" element={<WorkTemplate />} />
                 <Route path="" element={<HomePageManagement />} />
                 <Route path="documents" element={<DocumentManagementAdmin />} />
+                <Route path="agency-active" element={<AgencyActiveAdminManagement />} />
+                <Route path="agency-active/:id" element={<AgencyActiveInfoAdmin />} />
               </Route>
             </Route>
 
@@ -162,8 +167,8 @@ function App() {
                 <Route path="classes" element={<ClassManagement />} />
                 <Route path="classes/:id" element={<ClassDetail />} />
                 <Route path="schedules" element={<ScheduleAgencyManager />} />
-                <Route path="task-list" element={<ListTaskAgencyManager />} />
-                <Route path="" element={statusAgency === "active" ? (<AgencyDashboardPage />) : (<AgencyProgressFranchise />)} />
+                <Route path="list-task" element={<ListTaskAgencyManager />} />
+                <Route path="" element={statusAgency === "active" ? (<AgencyDashboardPage />) : (<ListTaskAgencyManager />)} />
                 <Route path="appointment-schedule" element={<AgencyManagerAppointment />} />
                 <Route path="appointment-schedule/details" element={<AgencyManagerAppointmentDetail />} />
                 <Route path="course" element={<CourseViewAgencyManager />} />
@@ -218,6 +223,7 @@ function App() {
                 <Route path="agency-active/:id" element={<AgencyActiveInfo />} />
                 <Route path="agency-active/:id/task-detail" element={<AgencyActiveDetailTask />} />
                 <Route path="agency" element={<AgencyManagement />} />
+                <Route path="agency/edit/:id" element={<AgencyEdit/>} />
                 <Route path="agency-active" element={<AgencyActiveManagement />} />
                 <Route path="contracts" element={<ManageContractPage />} />
                 <Route path="contract/create" element={<CreateContractPage />} />

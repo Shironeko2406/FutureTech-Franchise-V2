@@ -147,6 +147,15 @@ const DocumentManagement = () => {
         }
     };
 
+    const handleDownload = (url) => {
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = url.split('/').pop();
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
     const columns = [
         {
             title: "STT",
@@ -218,7 +227,7 @@ const DocumentManagement = () => {
                         <Button
                             type="primary"
                             icon={<DownloadOutlined />}
-                            onClick={() => window.open(record.urlFile, "_blank")}
+                            onClick={() => handleDownload(record.urlFile)}
                         />
                     </Tooltip>
                 </Space>

@@ -115,3 +115,18 @@ export const GetAgencyDetailByIdActionAsync = (id) => {
   };
 };
 
+export const UpdateAgencyByIdActionAsync = (data, id) => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.put(`/api/v1/agencies/${id}`, data);
+      if (res.isSuccess && res.data) {
+        message.success(`${res.message}`);
+      } else {
+        message.error(`${res.message}`);
+      }
+    } catch (error) {
+      console.log(error);
+      message.error("Đã có lỗi xảy ra, vui lòng thử lại sau!");
+    }
+  };
+};

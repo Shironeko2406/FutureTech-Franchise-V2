@@ -116,6 +116,34 @@ export const CreateCourseActionAsync = (
   };
 };
 
+export const UpdateCourseByIdActionAsync = (
+  data,
+  courseId,
+  status,
+  pageIndex,
+  pageSize,
+  search
+) => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.put(`/api/v1/courses/${courseId}`, data);
+      if (res.isSuccess && res.data) {
+        message.success(`${res.message}`);
+        await dispatch(
+          GetCourseActionAsync(search, status, pageIndex, pageSize)
+        );
+        return true;
+      } else {
+        message.error(`${res.message}`);
+        return false;
+      }
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  };
+};
+
 export const UpdateStatusCourseActionAsync = (
   courseId,
   statusUpdate,

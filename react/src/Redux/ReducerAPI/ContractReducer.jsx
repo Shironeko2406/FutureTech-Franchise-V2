@@ -111,7 +111,7 @@ export const GetContractDetailByAgencyIdActionAsync = (agencyId) => {
         dispatch(setContractDetail(res.data));
         return res.data;
       } else if (res.isSuccess && res.data == null) {
-        message.error(`${res.message}`);
+        // message.error(`Chưa có hợp đồng nào được tạo ra.`);
       } else {
         throw new Error(res.message);
       }
@@ -198,7 +198,7 @@ export const UpdateDesignFeeActionAsync = (agencyId, designFee) => {
         params: { designFee }
       });
       if (res.isSuccess && res.data) {
-        message.success(`${res.message}`);
+        // message.success(`${res.message}`);
         return true;
       } else if (res.isSuccess && !res.data) {
         message.error(`${res.message}`);

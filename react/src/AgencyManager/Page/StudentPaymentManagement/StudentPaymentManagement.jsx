@@ -1,8 +1,11 @@
-import { Space, Table, Input } from "antd";
+import { Space, Table, Input, Button, Modal, Typography, Spin } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { SearchOutlined } from "@ant-design/icons";
 import { GetStudentPaymentInfoActionAsync } from "../../../Redux/ReducerAPI/PaymentReducer";
+import moment from "moment";
+
+const { Text } = Typography;
 
 const StudentPaymentManagement = () => {
     const { paymentInfo, totalPagesCount } = useSelector((state) => state.PaymentReducer);
@@ -10,6 +13,9 @@ const StudentPaymentManagement = () => {
     const [pageIndex, setPageIndex] = useState(1);
     const [pageSize, setPageSize] = useState(10); // Kích thước trang mặc định là 10
     const [searchName, setSearchName] = useState("");
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [imageLoading, setImageLoading] = useState(false);
 
     useEffect(() => {
         // Fetch data
@@ -23,6 +29,55 @@ const StudentPaymentManagement = () => {
 
     const handleSearch = (value) => {
         setSearchName(value);
+    };
+
+    const handleImageClick = (imageURL) => {
+        setImageLoading(true);
+        setSelectedImage(imageURL);
+        setTimeout(() => {
+            setIsModalVisible(true);
+            setImageLoading(false);
+        }, 500); // Simulate loading delay
+    };
+
+    const handleModalClose = () => {
+        setIsModalVisible(false);
+        setSelectedImage(null);
+    };
+
+    const renderMethodBadge = (method) => {
+        const methodMapping = {
+            BankTransfer: {
+                text: "Chuyển khoản",
+                color: '#3498db',
+                backgroundColor: '#e6f7ff',
+                borderColor: '#91d5ff'
+            },
+            Direct: {
+                text: "Trực tiếp",
+                color: 'orange',
+                backgroundColor: '#fff7e6',
+                borderColor: '#ffd591'
+            }
+        };
+
+        const config = methodMapping[method] || methodMapping.Direct;
+
+        return (
+            <div
+                style={{
+                    display: 'inline-block',
+                    padding: '4px 12px',
+                    borderRadius: '6px',
+                    backgroundColor: config.backgroundColor,
+                    border: `1px solid ${config.borderColor}`,
+                }}
+            >
+                <Text strong style={{ color: config.color }}>
+                    {config.text}
+                </Text>
+            </div>
+        );
     };
 
     const columns = [
@@ -54,11 +109,23 @@ const StudentPaymentManagement = () => {
             render: (amount) => amount.toLocaleString("vi-VN"), // Định dạng số tiền
         },
         {
+            title: "Phương thức",
+            dataIndex: "method",
+            key: "method",
+            render: (text) => renderMethodBadge(text),
+        },
+        {
             title: "Thời gian thanh toán",
             dataIndex: "dateTime",
             key: "dateTime",
-            render: (dateTime) => new Date(dateTime).toLocaleString("vi-VN"), // Định dạng ngày giờ
+            render: (dateTime) => moment(dateTime).format("DD/MM/YYYY HH:mm"), // Định dạng ngày giờ
         },
+        {
+            title: "Hình ảnh",
+            dataIndex: "imageURL",
+            key: "imageURL",
+            render: (text) => text ? <Button type="link" onClick={() => handleImageClick(text)}>Xem ảnh</Button> : null,
+        }
     ];
 
     return (
@@ -90,6 +157,15 @@ const StudentPaymentManagement = () => {
                         }}
                         scroll={{ x: 'max-content' }}
                     />
+                    <Modal
+                        open={isModalVisible}
+                        footer={null}
+                        onCancel={handleModalClose}
+                    >
+                        <Spin spinning={imageLoading}>
+                            <img src={selectedImage} alt="Payment" style={{ width: '100%' }} />
+                        </Spin>
+                    </Modal>
                 </div>
             </div>
         </div>

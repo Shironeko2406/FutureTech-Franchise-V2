@@ -355,6 +355,16 @@ const ListTaskManager = () => {
                                 </Button>
                             );
                         }
+                    } else {
+                        actions.push(
+                            <Button
+                                type="primary"
+                                icon={<UploadOutlined />}
+                                onClick={() => openModalSubmitTaskReport(task)}
+                            >
+                                Báo cáo
+                            </Button>
+                        );
                     }
                 }
                 break;
@@ -367,15 +377,6 @@ const ListTaskManager = () => {
                             onClick={() => openModalShowReport(task)}
                         >
                             Xem tài liệu
-                        </Button>
-                    );
-                    actions.push(
-                        <Button
-                            type="primary"
-                            icon={<UploadOutlined />}
-                            onClick={() => openModalSubmitTaskReport(task)}
-                        >
-                            Báo cáo
                         </Button>
                     );
                 } else if (task.report) {
@@ -408,7 +409,7 @@ const ListTaskManager = () => {
                             </Button>
                         );
                     }
-                } else {
+                } else if (task.level !== "Compulsory" && task.report === null) {
                     actions.push(
                         <Button
                             type="primary"
@@ -492,6 +493,16 @@ const ListTaskManager = () => {
                                 </Button>
                             );
                         }
+                    } else {
+                        actions.push(
+                            <Button
+                                type="primary"
+                                icon={<UploadOutlined />}
+                                onClick={() => openModalSubmitTaskReport(task)}
+                            >
+                                Báo cáo
+                            </Button>
+                        );
                     }
                 }
                 break;
@@ -681,7 +692,7 @@ const ListTaskManager = () => {
             <Title level={4}>
                 <CalendarOutlined /> Danh sách công việc
             </Title>
-            <DynamicFilter onFilterChange={handleFilterChange} />
+            <DynamicFilter onFilterChange={handleFilterChange} defaultFilters={filters} />
             <List
                 dataSource={taskUser}
                 renderItem={renderItem}

@@ -61,7 +61,7 @@ const filters = [
   },
 ];
 
-const DynamicFilter = ({ onFilterChange }) => {
+const DynamicFilter = ({ onFilterChange, defaultFilters  }) => {
   return (
     <FilterContainer>
       {filters.map((filter) => (
@@ -76,17 +76,18 @@ const DynamicFilter = ({ onFilterChange }) => {
             />
           ) : (
             <Select
-              style={{ width: '100%' }}
-              placeholder={filter.placeholder}
-              onChange={(value) => onFilterChange(filter.key, value)}
-            >
-              <Option value="">Tất cả</Option>
-              {filter.options.map((option) => (
-                <Option key={option.value} value={option.value}>
-                  {option.label}
-                </Option>
-              ))}
-            </Select>
+            style={{ width: '100%' }}
+            placeholder={filter.placeholder}
+            defaultValue={defaultFilters[filter.key] || undefined}
+            allowClear
+            onChange={(value) => onFilterChange(filter.key, value)}
+          >
+            {filter.options.map((option) => (
+              <Option key={option.value} value={option.value}>
+                {option.label}
+              </Option>
+            ))}
+          </Select>
           )}
         </FilterItem>
       ))}

@@ -123,6 +123,19 @@ const getAppointmentStatus = (startTime, endTime) => {
   }
 };
 
+const handleDownloadFile = (url) => {
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = url.split('/').pop();
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
+const formatCurrency = (amount) => {
+  return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + " VNĐ";
+};
+
 const ViewTaskDetailModal = ({ visible, onClose, setVisible, isFromAgencyDetail, selectedType, isFromTaskDetail }) => {
   const { taskDetail } = useSelector((state) => state.WorkReducer);
   const { agencyStatus } = useSelector((state) => state.AgencyReducer);
@@ -314,6 +327,11 @@ const ViewTaskDetailModal = ({ visible, onClose, setVisible, isFromAgencyDetail,
           ) : (
             <Text type="secondary">Không có báo cáo</Text>
           )}
+          {taskDetail?.type === 'Design' && taskDetail?.designFee && (
+            <Text type="secondary" style={{ marginTop: '16px' }}>
+              Giá tiền thiết kế: {formatCurrency(taskDetail?.designFee)}
+            </Text>
+          )}
           {taskDetail?.reportImageURL && (
             <Button
               type="primary"
@@ -331,9 +349,7 @@ const ViewTaskDetailModal = ({ visible, onClose, setVisible, isFromAgencyDetail,
             <Button
               type="primary"
               icon={<FileTextOutlined />}
-              href={taskDetail.customerSubmit}
-              target="_blank"
-              rel="noopener noreferrer"
+              onClick={() => handleDownloadFile(taskDetail.customerSubmit)}
               style={{ marginTop: '16px' }}
             >
               Xem tài liệu bên liên quan nộp

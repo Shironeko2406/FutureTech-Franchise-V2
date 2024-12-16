@@ -89,3 +89,26 @@ export const FetchDashboardAgencyByIdCoursesAsync = (id, startDate, endDate) => 
     };
 
 };
+
+export const ExportAgencyRevenueReportAsync = (month, year) => {
+    return async (dispatch) => {
+        try {
+            const res = await httpClient.get(`api/v1/dashboard/agency-payment-report?month=${month}&year=${year}`);
+            if (res.isSuccess && res.data) {
+                const link = document.createElement('a');
+                link.href = res.data; // Link to the Excel file on Firebase
+                link.setAttribute('download', `AgencyRevenueReport_${month}_${year}.xlsx`);
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+            } else if (res.isSuccess && !res.data) {
+                message.error(`${res.message}`);
+            } else {
+                throw new Error(`${res.message}`);
+            }
+        } catch (error) {
+            console.error(error);
+            message.error("Đã có lỗi xảy ra vui lòng thử lại sau!");
+        }
+    };
+};
