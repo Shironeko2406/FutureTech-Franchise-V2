@@ -215,8 +215,8 @@ const StudentConsultationRegistration = () => {
     };
 
     const renderActionButtons = (status, record) => {
-        if (status === 'Cancel') {
-            return null; // Do not render the button if status is Cancel
+        if (status === 'Cancel' || (status === 'Enrolled' && record.paymentStatus === 'Completed')) {
+            return null; // Do not render the button if status is Cancel or Enrolled with Completed payment
         }
 
         const handleUpdateStatus = (newStatus) => {
