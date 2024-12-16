@@ -91,7 +91,7 @@ const AddToClassWithoutCreateModal = ({ visible, onClose, studentId, courseId })
                                 <InfoItem label="Số người đang học" value={`${selectedClassData.currentEnrollment} học viên`} />
                             </Col>
                             <Col span={12}>
-                                <InfoItem label="Ngày bắt đầu" value={moment(selectedClassData.startDate).format('DD/MM/YYYY')} />
+                                <InfoItem label="Ngày bắt đầu" value={selectedClassData.startDate ? moment(selectedClassData.startDate).format('DD/MM/YYYY') : 'Chưa có'} />
                             </Col>
                             <Col span={12}>
                                 <InfoItem label="Số buổi đã học" value={`${selectedClassData.daysElapsed} buổi`} />
