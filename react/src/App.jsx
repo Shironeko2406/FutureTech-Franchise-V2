@@ -60,9 +60,6 @@ import CourseDetailOfClass from "./Instructor/Page/CourseDetailOfClass.jsx/Cours
 import DocumentManagement from "./Manager/Page/DocumentManagement/DocumentManagement";
 import AgencyManagement from "./Manager/Page/AgencyManagement/AgencyManagement";
 import AgencyDetail from "./Manager/Page/AgencyDetail/AgencyDetail";
-import HomeSystemTechnician from "./SystemTechnician/Page/HomeSystemTechnician/HomeSystemTechnician";
-import TemUISystemTechnician from "./SystemTechnician/TempUI/TemUISystemTechnician";
-import ListTaskSystemTechnician from "./SystemTechnician/Page/ListTask/ListTaskSystemTechnician";
 import ListTaskSystemInstructor from "./SystemInstructor/Page/ListTask/ListTaskSystemInstructor";
 import TempUISystemConsultant from "./SystemConsultant/TempUI/TempUISystemConsultant";
 import HomeSystemConsultant from "./SystemConsultant/Page/Home/HomeSystemConsultant";
@@ -71,8 +68,6 @@ import ConsultationManagement from "./SystemConsultant/Page/ConsultationManageme
 import CreateContractPage from "./Manager/Page/ManageContract/CreateContractPage";
 import ManageContractPage from "./Manager/Page/ManageContract/ManageContractPage";
 import ManageContractAdminPage from "./Admin/Page/ManageContract/ManageContractAdminPage";
-import SystemTechnicianAppointment from "./SystemTechnician/Page/ScheduleSystemTechnician/SystemTechnicianAppointment";
-import SystemTechnicianAppointmentDetail from "./SystemTechnician/Page/ScheduleSystemTechnician/SystemTechnicianAppointmentDetail";
 import ManagerAppointment from "./Manager/Page/ScheduleManager/ManagerAppointment";
 import ManagerAppointmentDetail from "./Manager/Page/ScheduleManager/ManagerAppointmentDetail";
 import SystemInstructorAppointment from "./SystemInstructor/Page/ScheduleSystemInstructor/SystemInstructorAppointment";
@@ -223,7 +218,7 @@ function App() {
                 <Route path="agency-active/:id" element={<AgencyActiveInfo />} />
                 <Route path="agency-active/:id/task-detail" element={<AgencyActiveDetailTask />} />
                 <Route path="agency" element={<AgencyManagement />} />
-                <Route path="agency/edit/:id" element={<AgencyEdit/>} />
+                <Route path="agency/edit/:id" element={<AgencyEdit />} />
                 <Route path="agency-active" element={<AgencyActiveManagement />} />
                 <Route path="contracts" element={<ManageContractPage />} />
                 <Route path="contract/create" element={<CreateContractPage />} />
@@ -245,15 +240,6 @@ function App() {
                 <Route path="list-task" element={<ListTaskSystemInstructor />} />
                 <Route path="appointment-schedule" element={<SystemInstructorAppointment />} />
                 <Route path="appointment-schedule/details" element={<SystemInstructorAppointmentDetail />} />
-                <Route path="profile" element={<Profile />} />
-              </Route>
-            </Route>
-
-            <Route element={<ProtectedRoute requiredRole="SystemTechnician" />}>
-              <Route path="system-technician" element={<TemUISystemTechnician />}>
-                <Route path="" element={<ListTaskSystemTechnician />} />
-                <Route path="appointment-schedule" element={<SystemTechnicianAppointment />} />
-                <Route path="appointment-schedule/details" element={<SystemTechnicianAppointmentDetail />} />
                 <Route path="profile" element={<Profile />} />
               </Route>
             </Route>

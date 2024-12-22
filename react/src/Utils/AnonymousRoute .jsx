@@ -25,8 +25,6 @@ const AnonymousRoute = () => {
         return <Navigate to="/system-instructor" replace />;
       case "SystemConsultant":
         return <Navigate to="/system-consultant" replace />;
-      case "SystemTechnician":
-        return <Navigate to="/system-technician" replace />;
       case "AgencyStaff":
         return <Navigate to="/agency-staff" replace />;
       default:
