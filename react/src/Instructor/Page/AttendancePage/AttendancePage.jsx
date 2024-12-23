@@ -1,36 +1,39 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Card, Avatar, Radio, Button, message, Row, Col, Statistic, Typography } from 'antd';
 import { UserOutlined, CalendarOutlined, ClockCircleOutlined, BookOutlined, CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import './AttendancePage.css';
 import { useDispatch } from 'react-redux';
 import { SaveAttendanceActionAsync } from '../../../Redux/ReducerAPI/AttendanceReducer';
 import { GetClassScheduleDetailsActionAsync } from '../../../Redux/ReducerAPI/ClassScheduleReducer';
+import { useLoading } from '../../../Utils/LoadingContext';
 
 const { Title, Text } = Typography;
 
 export default function AttendancePage() {
-  const location = useLocation();
+  const { id } = useParams();
   const navigate = useNavigate();
-  const { scheduleId, status } = location.state;
   const [scheduleDetails, setScheduleDetails] = useState(null);
   const [attendance, setAttendance] = useState({});
   const dispatch = useDispatch();
+  const { setLoading } = useLoading();
 
   useEffect(() => {
     const fetchScheduleDetails = async () => {
-      const details = await dispatch(GetClassScheduleDetailsActionAsync(scheduleId));
+      setLoading(true);
+      const details = await dispatch(GetClassScheduleDetailsActionAsync(id));
       setScheduleDetails(details);
-      if (status) {
+      if (details.status) {
         const initialAttendance = {};
         details.studentInfo.forEach(student => {
           initialAttendance[student.userId] = student.attendanceStatus === "Present";
         });
         setAttendance(initialAttendance);
       }
+      setLoading(false);
     };
     fetchScheduleDetails();
-  }, [dispatch, scheduleId, status]);
+  }, [dispatch, id, setLoading]);
 
   const handleAttendanceChange = (studentId, isPresent) => {
     setAttendance(prev => ({ ...prev, [studentId]: isPresent }));
@@ -38,8 +41,8 @@ export default function AttendancePage() {
 
   const handleSaveAttendance = async () => {
     const presentStudentIds = Object.keys(attendance).filter(id => attendance[id]);
-    await dispatch(SaveAttendanceActionAsync(scheduleId, presentStudentIds));
-    navigate(-1); // Navigate back to the previous page
+    await dispatch(SaveAttendanceActionAsync(id, presentStudentIds));
+    navigate("/instructor/schedule");
   };
 
   const attendanceStats = useMemo(() => {

@@ -110,6 +110,7 @@ import PaymentManagement from "./Manager/Page/PaymentManagement/PaymentManagemen
 import AgencyActiveAdminManagement from "./Admin/Page/AgencyActiveAdminManagement/AgencyActiveAdminManagement";
 import AgencyActiveInfoAdmin from "./Admin/Page/AgencyActiveInfoAdmin/AgencyActiveInfoAdmin";
 import AgencyEdit from "./Manager/Page/AgencyEdit/AgencyEdit";
+import AttendanceReport from "./Student/Page/AttendanceReport/AttendanceReport";
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -189,6 +190,8 @@ function App() {
                 <Route path="" element={<ScheduleStudent />} />
                 <Route path="change-password" element={<ChangePassword />} />
                 <Route path="profile" element={<Profile />} />
+                <Route path="attendance-report" element={<AttendanceReport />} />
+
               </Route>
             </Route>
 
@@ -201,7 +204,7 @@ function App() {
                 {/* <Route path="" element={<HomeInstructor />} /> */}
                 {/* <Route path="schedule" element={<ScheduleTeaching />} /> */}
                 <Route path="" element={<ScheduleInstructor />} />
-                <Route path="schedules/attendances" element={<AttendancePage />} />
+                <Route path="schedules/attendances/:id" element={<AttendancePage />} />
                 <Route path="profile" element={<Profile />} />
               </Route>
             </Route>
