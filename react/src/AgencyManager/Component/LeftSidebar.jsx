@@ -21,6 +21,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
     { type: 'section', label: 'Quản lý', icon: 'ti ti-dots' },
     { type: 'link', label: 'Tài khoản', path: '/agency-manager/accounts', icon: 'mdi:account-group' },
     { type: 'link', label: 'Giao dịch', path: '/agency-manager/student-payment', icon: 'fluent:payment-20-filled' },
+    { type: 'link', label: 'Cài đặt VNPay', path: '/agency-manager/vnpay-setup', icon: 'mdi:key' },
     { type: 'section', label: 'Lớp học', icon: 'ti ti-dots' },
     { type: 'link', label: 'Ghi danh', path: '/agency-manager/student-consultation-registration', icon: 'solar:file-text-bold-duotone' },
     { type: 'link', label: 'Danh sách', path: '/agency-manager/classes', icon: 'ri:file-list-3-fill' },
@@ -36,8 +37,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
   ];
 
   // Lựa chọn menu dựa trên trạng thái người dùng
-  const sidebarItems = statusAgency === "active" ? activeMenu : inactiveMenu;
-
+  const sidebarItems = statusAgency !== "active" ? activeMenu : inactiveMenu;
 
   return (
     <aside className="left-sidebar">

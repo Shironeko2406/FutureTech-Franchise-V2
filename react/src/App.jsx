@@ -111,6 +111,7 @@ import AgencyActiveAdminManagement from "./Admin/Page/AgencyActiveAdminManagemen
 import AgencyActiveInfoAdmin from "./Admin/Page/AgencyActiveInfoAdmin/AgencyActiveInfoAdmin";
 import AgencyEdit from "./Manager/Page/AgencyEdit/AgencyEdit";
 import AttendanceReport from "./Student/Page/AttendanceReport/AttendanceReport";
+import VNPaySetup from "./AgencyManager/Page/VNPaySetup/VNPaySetup";
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -176,6 +177,7 @@ function App() {
                 <Route path="reports" element={<ReportList />} />
                 <Route path="contracts" element={<ViewContractAgencyManager />} />
                 <Route path="documents" element={<ViewDocumentAgencyManager />} />
+                <Route path="vnpay-setup" element={<VNPaySetup />} />
               </Route>
             </Route>
 
