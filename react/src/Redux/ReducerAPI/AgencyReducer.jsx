@@ -8,7 +8,8 @@ const initialState = {
   totalPagesCount: 0,
   tasks: [],
   agencyStatus: null,
-  agencyDetail: {}
+  agencyDetail: {},
+  vnpayConfig: {},
 }
 
 const AgencyReducer = createSlice({
@@ -20,16 +21,19 @@ const AgencyReducer = createSlice({
       state.totalPagesCount = action.payload.totalPagesCount;
     },
     setTaskByAgencyId: (state, action) => {
-      state.tasks = action.payload.work 
-      state.agencyStatus = action.payload.agencyStatus 
+      state.tasks = action.payload.work
+      state.agencyStatus = action.payload.agencyStatus
     },
     setAgencyDetail: (state, action) => {
       state.agencyDetail = action.payload
+    },
+    setVNPayConfig: (state, action) => {
+      state.vnpayConfig = action.payload;
     }
   }
 });
 
-export const { setAgencyData, setTaskByAgencyId, setAgencyDetail } = AgencyReducer.actions
+export const { setAgencyData, setTaskByAgencyId, setAgencyDetail, setVNPayConfig } = AgencyReducer.actions
 
 export default AgencyReducer.reducer
 //------------API CALL----------------
@@ -127,6 +131,49 @@ export const UpdateAgencyByIdActionAsync = (data, id) => {
     } catch (error) {
       console.log(error);
       message.error("Đã có lỗi xảy ra, vui lòng thử lại sau!");
+    }
+  };
+};
+
+export const UpdateVNPayConfigActionAsync = (agencyId, vnpayTmnCode, vnpayHashSecret) => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.post(`/api/v1/agencies/vnpay`, {
+        agencyId,
+        vnpayTmnCode,
+        vnpayHashSecret
+      });
+      if (res.isSuccess && res.data) {
+        message.success(`${res.message}`);
+        return true;
+      } else if (res.isSuccess && !res.data) {
+        message.error(`${res.message}`);
+        return false;
+      } else {
+        throw new Error(`${res.message}`);
+      }
+    } catch (error) {
+      console.error(error);
+      message.error("Đã có lỗi xảy ra, vui lòng thử lại sau!");
+      return false;
+    }
+  };
+};
+
+export const GetVNPayConfigActionAsync = () => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.get(`/api/v1/agencies/vnpay`);
+      if (res.isSuccess && res.data) {
+        dispatch(setVNPayConfig(res.data));
+      } else {
+        message.error(`${res.message}`);
+        return null;
+      }
+    } catch (error) {
+      console.error(error);
+      message.error("Đã có lỗi xảy ra, vui lòng thử lại sau!");
+      return null;
     }
   };
 };

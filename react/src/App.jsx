@@ -156,30 +156,30 @@ function App() {
               </Route>
             </Route>
 
-            <Route element={<ProtectedRoute requiredRole="AgencyManager" />}>
-              <Route path="agency-manager" element={<TempUIAgencyManager />} >
-                <Route path="student-consultation-registration" element={<StudentConsultationRegistration />} />
-                <Route path="student-payment" element={<StudentPaymentManagement />} />
-                <Route path="slots" element={<SlotManager />} />
-                <Route path="classes" element={<ClassManagement />} />
-                <Route path="classes/:id" element={<ClassDetail />} />
-                <Route path="schedules" element={<ScheduleAgencyManager />} />
-                <Route path="list-task" element={<ListTaskAgencyManager />} />
-                <Route path="" element={statusAgency === "active" ? (<AgencyDashboardPage />) : (<ListTaskAgencyManager />)} />
-                <Route path="appointment-schedule" element={<AgencyManagerAppointment />} />
-                <Route path="appointment-schedule/details" element={<AgencyManagerAppointmentDetail />} />
-                <Route path="course" element={<CourseViewAgencyManager />} />
-                <Route path="course-detail/:id" element={<CourseDetailAgencyManager />} />
-                <Route path="accounts" element={<AgencyAccountManagement />} />
-                <Route path="profile" element={<Profile />} />
-                <Route path="payment-success" element={<PaymentSuccess />} />
-                <Route path="equipments" element={<EquipmentList />} />
-                <Route path="reports" element={<ReportList />} />
-                <Route path="contracts" element={<ViewContractAgencyManager />} />
-                <Route path="documents" element={<ViewDocumentAgencyManager />} />
-                <Route path="vnpay-setup" element={<VNPaySetup />} />
-              </Route>
+            {/* <Route element={<ProtectedRoute requiredRole="AgencyManager" />}> */}
+            <Route path="agency-manager" element={<TempUIAgencyManager />} >
+              <Route path="student-consultation-registration" element={<StudentConsultationRegistration />} />
+              <Route path="student-payment" element={<StudentPaymentManagement />} />
+              <Route path="slots" element={<SlotManager />} />
+              <Route path="classes" element={<ClassManagement />} />
+              <Route path="classes/:id" element={<ClassDetail />} />
+              <Route path="schedules" element={<ScheduleAgencyManager />} />
+              <Route path="list-task" element={<ListTaskAgencyManager />} />
+              <Route path="" element={statusAgency === "active" ? (<AgencyDashboardPage />) : (<ListTaskAgencyManager />)} />
+              <Route path="appointment-schedule" element={<AgencyManagerAppointment />} />
+              <Route path="appointment-schedule/details" element={<AgencyManagerAppointmentDetail />} />
+              <Route path="course" element={<CourseViewAgencyManager />} />
+              <Route path="course-detail/:id" element={<CourseDetailAgencyManager />} />
+              <Route path="accounts" element={<AgencyAccountManagement />} />
+              <Route path="profile" element={<Profile />} />
+              <Route path="payment-success" element={<PaymentSuccess />} />
+              <Route path="equipments" element={<EquipmentList />} />
+              <Route path="reports" element={<ReportList />} />
+              <Route path="contracts" element={<ViewContractAgencyManager />} />
+              <Route path="documents" element={<ViewDocumentAgencyManager />} />
+              <Route path="vnpay-setup" element={<VNPaySetup />} />
             </Route>
+            {/* </Route> */}
 
             <Route element={<ProtectedRoute requiredRole="Student" />}>
               <Route path="student" element={<TempUIStudent />}>
