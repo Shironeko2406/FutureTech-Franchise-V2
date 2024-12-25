@@ -5,7 +5,6 @@ import { GetCourseByIdActionAsync } from "../../../Redux/ReducerAPI/CourseReduce
 import ViewSyllabus from "../../Components/ViewSyllabus";
 import { useLoading } from "../../../Utils/LoadingContext";
 import ViewChapter from "../../Components/ViewChapter";
-import ViewSession from "../../Components/ViewSession";
 import ViewAssessment from "../../Components/ViewAssessment";
 import ViewMaterialCourse from "../../Components/ViewMaterialCourse";
 
@@ -26,7 +25,6 @@ const CourseDetailSystemInstructor = () => {
       <ViewSyllabus/>
       {/*Thêm các card component khác*/}
       <ViewChapter/>
-      <ViewSession/>
       <ViewAssessment/>
       {/* <ViewMaterialCourse/> */}
     </div>

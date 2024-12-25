@@ -4,9 +4,9 @@ import { NavLink } from 'react-router-dom';
 const sidebarItems = [
   { type: 'section', label: 'Tư vấn' },
   { type: 'link', label: 'Danh sách', path: '/system-consultant', icon: 'solar:login-3-bold-duotone' },
-  { type: 'section', label: 'Công việc' },
-  { type: 'link', label: 'Danh sách', path: '/system-consultant/list-task', icon: 'solar:login-3-bold-duotone' },
-  { type: 'link', label: 'Lịch hẹn', path: '/system-consultant/appointment-schedule', icon: 'solar:calendar-bold-duotone' }
+  // { type: 'section', label: 'Công việc' },
+  // { type: 'link', label: 'Danh sách', path: '/system-consultant/list-task', icon: 'solar:login-3-bold-duotone' },
+  // { type: 'link', label: 'Lịch hẹn', path: '/system-consultant/appointment-schedule', icon: 'solar:calendar-bold-duotone' }
 ];
 
 

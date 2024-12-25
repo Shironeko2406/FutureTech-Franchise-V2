@@ -31,8 +31,6 @@ const ProtectedRoute = ({ requiredRole }) => {
         return <Navigate to="/system-instructor" />;
       case "SystemConsultant":
         return <Navigate to="/system-consultant" />;
-      case "SystemTechnician":
-        return <Navigate to="/system-technician" />;
       case "AgencyStaff":
         return <Navigate to="/agency-staff" />;
 

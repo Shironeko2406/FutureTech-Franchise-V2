@@ -32,7 +32,7 @@ const QuizDescription = ()  => {
   }
 
   const handleBack = () => {
-    navigate(`/student/class/${quizReview?.classId}`)
+    navigate(`/student/class/${quizReview?.classId}/quiz`)
   }
 
   return (

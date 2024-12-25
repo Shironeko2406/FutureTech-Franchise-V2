@@ -14,7 +14,6 @@ import { useParams } from "react-router-dom";
 import { DeleteChapterActionAsync } from "../../Redux/ReducerAPI/ChapterReducer";
 import EditChapterModal from "../Modal/EditChapterModal";
 import { useLoading } from "../../Utils/LoadingContext";
-import CreateMaterialModal from "../Modal/CreateMaterialModal";
 
 const ViewChapter = () => {
   const { chapters } = useSelector((state) => state.CourseReducer);
@@ -218,11 +217,6 @@ const ViewChapter = () => {
         chapter={selectedChapter}
       />
 
-      <CreateMaterialModal
-        visible={isModalCreateMaterialVisible}
-        onClose={closeModalCreateMaterialChapter}
-        chapter={selectedChapterForCreateMaterial}
-      />
     </div>
   );
 };

@@ -5,9 +5,9 @@ import { NavLink } from "react-router-dom";
 const sidebarItems = [
   { type: 'section', label: 'Quản lý', icon: 'ti ti-dots' },
   { type: 'link', label: 'Khóa học', path: '/system-instructor', icon: 'solar:bookmark-square-minimalistic-bold-duotone' },
-  { type: 'section', label: 'Công việc', icon: 'ti ti-dots' },
-  { type: 'link', label: 'Danh sách', path: '/system-instructor/list-task', icon: 'solar:login-3-bold-duotone' },
-  { type: 'link', label: 'Lịch hẹn', path: '/system-instructor/appointment-schedule', icon: 'solar:calendar-bold-duotone' },
+  // { type: 'section', label: 'Công việc', icon: 'ti ti-dots' },
+  // { type: 'link', label: 'Danh sách', path: '/system-instructor/list-task', icon: 'solar:login-3-bold-duotone' },
+  // { type: 'link', label: 'Lịch hẹn', path: '/system-instructor/appointment-schedule', icon: 'solar:calendar-bold-duotone' },
 ];
 
 const LeftSidebar = ({ onSidebarToggle }) => {

@@ -15,7 +15,6 @@ import TempUIManager from "./Manager/TempUI/TempUIManager";
 import HomeManager from "./Manager/Page/Home/HomeManager";
 import TempUIStudent from "./Student/TempUI/TempUIStudent";
 import HomeStudent from "./Student/Page/HomeStudent/HomeStudent";
-import ClassDetailStudent from "./Student/Page/ClassDetailStudent/ClassDetailStudent";
 import HomeStudentNoti from "./Student/Page/HomeStudentNoti";
 import TempUIAgencyManager from "./AgencyManager/TempUIAgencyManager/TempUIAgencyManager";
 import HomeAgencyManager from "./AgencyManager/Page/HomeAgencyManager/HomeAgencyManager";
@@ -34,8 +33,6 @@ import ScheduleAgencyManager from "./AgencyManager/Page/ScheduleManagement/Sched
 import CourseCategoryAdmin from "./Admin/Page/CourseCategory/CourseAdmin";
 import CourseManageAdmin from "./Admin/Page/CourseManageAdmin/CourseManageAdmin";
 import TempUIInstructor from "./Instructor/TempUIInstructor/TempUIInstructor";
-import ScheduleTeaching from "./Instructor/Page/ScheduleTeaching/ScheduleTeaching";
-import HomeInstructor from "./Instructor/Page/HomeInstructor/HomeInstructor";
 import CourseDetailManager from "./Manager/Page/CourseDetailManager/CourseDetailManager";
 import CourseViewAgencyManager from "./AgencyManager/Page/CourseViewAgencyManager/CourseViewAgencyManager";
 import CourseDetailAgencyManager from "./AgencyManager/Page/CourseViewAgencyManager/CourseDetailAgencyManager";
@@ -44,7 +41,6 @@ import { Spin } from "antd";
 import { ConfigProvider } from 'antd';
 import vi_VN from 'antd/es/locale/vi_VN';
 import TempUISystemInstructor from "./SystemInstructor/TempUISystemInstructor/TempUISystemInstructor";
-import HomeSystemInstructor from "./SystemInstructor/Page/HomeSystemInstructor/HomeSystemInstructor";
 import CourseSystemInstructor from "./SystemInstructor/Page/CourseSystemInstructor/CourseSystemInstructor";
 import CourseDetailSystemInstructor from "./SystemInstructor/Page/CourseDetailSystemInstructor/CourseDetailSystemInstructor";
 import QuizTest from "./Student/Page/QuizTest/QuizTest";
@@ -60,19 +56,13 @@ import CourseDetailOfClass from "./Instructor/Page/CourseDetailOfClass.jsx/Cours
 import DocumentManagement from "./Manager/Page/DocumentManagement/DocumentManagement";
 import AgencyManagement from "./Manager/Page/AgencyManagement/AgencyManagement";
 import AgencyDetail from "./Manager/Page/AgencyDetail/AgencyDetail";
-import HomeSystemTechnician from "./SystemTechnician/Page/HomeSystemTechnician/HomeSystemTechnician";
-import TemUISystemTechnician from "./SystemTechnician/TempUI/TemUISystemTechnician";
-import ListTaskSystemTechnician from "./SystemTechnician/Page/ListTask/ListTaskSystemTechnician";
 import ListTaskSystemInstructor from "./SystemInstructor/Page/ListTask/ListTaskSystemInstructor";
 import TempUISystemConsultant from "./SystemConsultant/TempUI/TempUISystemConsultant";
-import HomeSystemConsultant from "./SystemConsultant/Page/Home/HomeSystemConsultant";
 import ListTaskSystemConsultant from "./SystemConsultant/Page/ListTask/ListTaskSystemConsultant";
 import ConsultationManagement from "./SystemConsultant/Page/ConsultationManagement/ConsultationManagement";
 import CreateContractPage from "./Manager/Page/ManageContract/CreateContractPage";
 import ManageContractPage from "./Manager/Page/ManageContract/ManageContractPage";
 import ManageContractAdminPage from "./Admin/Page/ManageContract/ManageContractAdminPage";
-import SystemTechnicianAppointment from "./SystemTechnician/Page/ScheduleSystemTechnician/SystemTechnicianAppointment";
-import SystemTechnicianAppointmentDetail from "./SystemTechnician/Page/ScheduleSystemTechnician/SystemTechnicianAppointmentDetail";
 import ManagerAppointment from "./Manager/Page/ScheduleManager/ManagerAppointment";
 import ManagerAppointmentDetail from "./Manager/Page/ScheduleManager/ManagerAppointmentDetail";
 import SystemInstructorAppointment from "./SystemInstructor/Page/ScheduleSystemInstructor/SystemInstructorAppointment";
@@ -115,6 +105,8 @@ import PaymentManagement from "./Manager/Page/PaymentManagement/PaymentManagemen
 import AgencyActiveAdminManagement from "./Admin/Page/AgencyActiveAdminManagement/AgencyActiveAdminManagement";
 import AgencyActiveInfoAdmin from "./Admin/Page/AgencyActiveInfoAdmin/AgencyActiveInfoAdmin";
 import AgencyEdit from "./Manager/Page/AgencyEdit/AgencyEdit";
+import ViewQuiz from "./Student/Page/ViewQuiz/ViewQuiz";
+import MaterialClass from "./Student/Page/MaterialClass/MaterialClass";
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -185,9 +177,9 @@ function App() {
 
             <Route element={<ProtectedRoute requiredRole="Student" />}>
               <Route path="student" element={<TempUIStudent />}>
-                <Route path="class/:id" element={<ClassDetailStudent />} />
+                <Route path="class/:id/course/:courseId" element={<MaterialClass/>} />
+                <Route path="class/:id/quiz" element={<ViewQuiz/>} />
                 <Route path="class/:id/assignment" element={<ViewAssignment />} />
-                <Route path="quiz" element={<QuizTest />} />
                 <Route path="assignment/:assignmentId" element={<AssignmentDetail />} />
                 <Route path="quiz/:quizId" element={<QuizDescription />} />
                 <Route path="quiz/:quizId/start" element={<QuizTest />} />
@@ -249,15 +241,6 @@ function App() {
               </Route>
             </Route>
 
-            <Route element={<ProtectedRoute requiredRole="SystemTechnician" />}>
-              <Route path="system-technician" element={<TemUISystemTechnician />}>
-                <Route path="" element={<ListTaskSystemTechnician />} />
-                <Route path="appointment-schedule" element={<SystemTechnicianAppointment />} />
-                <Route path="appointment-schedule/details" element={<SystemTechnicianAppointmentDetail />} />
-                <Route path="profile" element={<Profile />} />
-              </Route>
-            </Route>
-
             <Route element={<ProtectedRoute requiredRole="SystemConsultant" />}>
               <Route path="system-consultant" element={<TempUISystemConsultant />}>
                 <Route path="list-task" element={<ListTaskSystemConsultant />} />
@@ -283,12 +266,6 @@ function App() {
                 <Route path="profile" element={<Profile />} />
                 <Route path="equipments" element={<EquipmentListAgencyStaff />} />
               </Route>
-            </Route>
-
-            {/*Test page */}
-            <Route path="student-page" element={<TempUIStudent />}>
-              <Route path="" element={<HomeStudent />} />
-              <Route path="course-detail" element={<ClassDetailStudent />} />
             </Route>
           </Routes>
         </LoadingProvider >
