@@ -10,9 +10,9 @@ const LeftSidebar = ({ onSidebarToggle }) => {
   const { classOfUserLogin } = useSelector((state) => state.UserReducer);
   const [openSubmenus, setOpenSubmenus] = useState({});
 
-  useEffect(()=>{
+  useEffect(() => {
     dispatch(GetClassOfUserLoginActionAsync())
-  },[])
+  }, [])
 
   const sidebarItems = [
     { type: "section", label: "Lịch học", icon: "ti ti-dots" },
@@ -21,11 +21,12 @@ const LeftSidebar = ({ onSidebarToggle }) => {
 
     ...classOfUserLogin?.map((classItem, index) => ({
       type: "submenu",
-      label: classItem.className, 
+      label: classItem.className,
       icon: "mdi:school",
       subItems: [
         { label: "Bài kiểm tra", path: `/student/class/${classItem.classId}` },
         { label: "Bài tập nộp", path: `/student/class/${classItem.classId}/assignment` },
+        { label: "Điểm danh", path: `/student/class/${classItem.classId}/attendance` },
       ],
     })),
 

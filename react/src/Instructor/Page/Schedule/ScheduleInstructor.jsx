@@ -102,7 +102,7 @@ const ScheduleInstructor = () => {
   const handleSelectEvent = (event) => {
     const currentDate = new Date();
     if (moment(event.date).isSameOrBefore(currentDate, 'day')) {
-      navigate(`attendances/${event.id}`);
+      navigate(`schedules/attendances/${event.id}`);
     }
   };
 

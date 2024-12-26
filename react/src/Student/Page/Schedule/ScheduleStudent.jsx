@@ -5,7 +5,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useDispatch, useSelector } from 'react-redux';
 import { GetClassSchedulesByLoginActionAsync } from '../../../Redux/ReducerAPI/UserReducer';
 import { GetSlotActionAsync } from '../../../Redux/ReducerAPI/SlotReducer';
-import { Spin } from 'antd';
+import { Spin, Tooltip } from 'antd';
 import './ScheduleStudent.css';
 
 const localizer = momentLocalizer(moment);
@@ -68,11 +68,12 @@ const ScheduleStudent = () => {
 
   const events = schedules ? schedules.map(schedule => ({
     id: schedule.scheduleId,
-    title: `${schedule.className} - ${schedule.room}`,
+    title: `${schedule.className}`,
     start: new Date(moment(schedule.date).format('YYYY-MM-DD') + ' ' + schedule.startTime),
     end: new Date(moment(schedule.date).format('YYYY-MM-DD') + ' ' + schedule.endTime),
     attendanceStatus: schedule.attendanceStatus,
-    date: schedule.date
+    date: schedule.date,
+    url: schedule.url // Add URL field
   })) : [];
   console.log(events);
 
@@ -102,15 +103,39 @@ const ScheduleStudent = () => {
     if (moment(event.date).isSameOrBefore(currentDate, 'day')) {
       statusText = event.attendanceStatus === 'Present' ? "(Có mặt)" : event.attendanceStatus === 'Absent' ? "(Vắng mặt)" : "(Chưa điểm danh)";
     }
+    const handleClick = (e) => {
+      e.stopPropagation();
+      if (event.url) {
+        window.open(event.url, '_blank');
+      }
+    };
     return (
-      <div className="event-container">
-        <span className="event-title">{event.title}</span>
-        <br />
-        <span className="event-status">
-          {statusText}
-        </span>
-      </div>
+      <Tooltip title={event.url ? "Nhấn để vào lớp học" : "Chưa có link lớp học"}>
+        <div className="event-container" onClick={handleClick} style={{ cursor: event.url ? 'pointer' : 'default' }}>
+          <span className="event-title">{event.title}</span>
+          <br />
+          <span className="event-status">
+            {statusText}
+          </span>
+        </div>
+      </Tooltip>
     );
+  };
+
+  const messages = {
+    allDay: 'Cả ngày',
+    previous: 'Trước',
+    next: 'Tiếp',
+    today: 'Hôm nay',
+    month: 'Tháng',
+    week: 'Tuần',
+    day: 'Ngày',
+    agenda: 'Lịch trình',
+    date: 'Ngày',
+    time: 'Thời gian',
+    event: 'Sự kiện',
+    noEventsInRange: 'Không có sự kiện nào trong khoảng thời gian này.',
+    showMore: total => `+ Xem thêm (${total})`
   };
 
   return (
@@ -146,6 +171,7 @@ const ScheduleStudent = () => {
         components={{
           event: EventComponent
         }}
+        messages={messages}
       />
     </div>
   );

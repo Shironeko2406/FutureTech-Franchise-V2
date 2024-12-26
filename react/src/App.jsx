@@ -192,7 +192,7 @@ function App() {
                 <Route path="" element={<ScheduleStudent />} />
                 <Route path="change-password" element={<ChangePassword />} />
                 <Route path="profile" element={<Profile />} />
-                <Route path="attendance-report" element={<AttendanceReport />} />
+                <Route path="class/:id/attendance" element={<AttendanceReport />} />
 
               </Route>
             </Route>

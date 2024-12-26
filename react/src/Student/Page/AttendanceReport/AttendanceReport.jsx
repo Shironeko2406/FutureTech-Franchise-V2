@@ -1,54 +1,33 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Row, Col, Progress, Table, Typography } from 'antd';
 import { CheckCircleFilled, ClockCircleFilled, CloseCircleFilled } from '@ant-design/icons';
+import { useParams } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { GetClassScheduleStudentActionAsync } from '../../../Redux/ReducerAPI/ClassScheduleReducer';
+import { useLoading } from '../../../Utils/LoadingContext';
 import "./AttendanceReport.css";
 
 const { Title } = Typography;
 
 const AttendanceReport = () => {
-    // Mock data
-    const courseData = {
-        courseCode: 'MLN131',
-        courseName: 'Scientific socialism',
-        className: 'AI1705_Half 1',
-        stats: {
-            present: 9,
-            absent: 1,
-            future: 1,
-            total: 10
-        }
-    };
+    const { id } = useParams();
+    const dispatch = useDispatch();
+    const { setLoading } = useLoading();
+    const [courseData, setCourseData] = useState(null);
 
-    const sessions = [
-        {
-            key: '1',
-            date: '07/09/2024',
-            slot: 4,
-            lecturer: 'LamTD8',
-            status: 'attended'
-        },
-        {
-            key: '2',
-            date: '11/09/2024',
-            slot: 4,
-            lecturer: 'LamTD8',
-            status: 'absent'
-        },
-        {
-            key: '3',
-            date: '14/09/2024',
-            slot: 4,
-            lecturer: 'LamTD8',
-            status: 'future'
-        },
-        {
-            key: '4',
-            date: '21/09/2024',
-            slot: 4,
-            lecturer: 'LamTD8',
-            status: 'future'
-        }
-    ];
+    useEffect(() => {
+        const fetchAttendanceReport = async () => {
+            setLoading(true);
+            const data = await dispatch(GetClassScheduleStudentActionAsync(id));
+            setCourseData(data);
+            setLoading(false);
+        };
+        fetchAttendanceReport();
+    }, [dispatch, id, setLoading]);
+
+    if (!courseData) {
+        return <div>Loading...</div>;
+    }
 
     const columns = [
         {
@@ -56,31 +35,31 @@ const AttendanceReport = () => {
             dataIndex: 'date',
             key: 'date',
             align: 'center',
+            render: (date) => new Date(date).toLocaleDateString('vi-VN', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            }),
         },
         {
-            title: 'Slot',
+            title: 'Giờ học',
             dataIndex: 'slot',
             key: 'slot',
             align: 'center',
-        },
-        {
-            title: 'Giảng viên',
-            dataIndex: 'lecturer',
-            key: 'lecturer',
-            align: 'center',
+            render: (_, record) => `${record.startTime} đến ${record.endTime}`,
         },
         {
             title: 'Trạng thái',
-            dataIndex: 'status',
-            key: 'status',
+            dataIndex: 'attendanceStatus',
+            key: 'attendanceStatus',
             align: 'center',
             render: (status) => {
                 switch (status) {
-                    case 'attended':
+                    case 'Present':
                         return <CheckCircleFilled style={{ fontSize: '24px', color: '#52c41a' }} />;
-                    case 'absent':
+                    case 'Absent':
                         return <CloseCircleFilled style={{ fontSize: '24px', color: '#ff4d4f' }} />;
-                    case 'future':
+                    case 'NotStarted':
                         return <ClockCircleFilled style={{ fontSize: '24px', color: '#faad14' }} />;
                     default:
                         return null;
@@ -89,8 +68,7 @@ const AttendanceReport = () => {
         },
     ];
 
-    // Calculate attendance percentage
-    const attendancePercentage = Math.round((courseData.stats.present / courseData.stats.total) * 100);
+    const attendancePercentage = Math.round((courseData.present / (courseData.total - courseData.future)) * 100);
 
     return (
         <div className="card">
@@ -108,7 +86,7 @@ const AttendanceReport = () => {
                                 <Progress
                                     type="circle"
                                     percent={attendancePercentage}
-                                    format={() => `${courseData.stats.present}/${courseData.stats.total}`}
+                                    format={() => `${courseData.present}/${courseData.total - courseData.future}`}
                                     strokeColor={{
                                         '0%': '#95de64',
                                         '100%': '#52c41a'
@@ -132,7 +110,7 @@ const AttendanceReport = () => {
                                         <div className="stat-icon-wrapper status-present">
                                             <CheckCircleFilled />
                                         </div>
-                                        <div className="stat-value">{courseData.stats.present}</div>
+                                        <div className="stat-value">{courseData.present}</div>
                                         <div className="stat-label">Có mặt</div>
                                     </div>
                                 </Col>
@@ -141,7 +119,7 @@ const AttendanceReport = () => {
                                         <div className="stat-icon-wrapper status-absent">
                                             <CloseCircleFilled />
                                         </div>
-                                        <div className="stat-value">{courseData.stats.absent}</div>
+                                        <div className="stat-value">{courseData.absent}</div>
                                         <div className="stat-label">Vắng mặt</div>
                                     </div>
                                 </Col>
@@ -150,7 +128,7 @@ const AttendanceReport = () => {
                                         <div className="stat-icon-wrapper status-future">
                                             <ClockCircleFilled />
                                         </div>
-                                        <div className="stat-value">{courseData.stats.future}</div>
+                                        <div className="stat-value">{courseData.future}</div>
                                         <div className="stat-label">Sắp tới</div>
                                     </div>
                                 </Col>
@@ -161,7 +139,7 @@ const AttendanceReport = () => {
 
                 <Table
                     columns={columns}
-                    dataSource={sessions}
+                    dataSource={courseData.classSchedules}
                     pagination={false}
                     bordered
                     className="attendance-table"
