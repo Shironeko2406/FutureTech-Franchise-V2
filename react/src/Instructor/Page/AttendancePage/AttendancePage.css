@@ -1,25 +1,50 @@
 .attendance-page {
-    min-height: 100vh;
+    /* padding: 24px; */
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .course-info-card {
     margin-bottom: 24px;
-    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.stats-row-card {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .course-info-header {
     background: linear-gradient(to right, #4096ff, #9254de);
     padding: 24px;
     color: white;
+    position: relative;
 }
 
-.course-title {
-    color: white;
-    margin-bottom: 0;
+.course-info-header h2 {
+    color: white !important;
+    margin-bottom: 8px !important;
 }
 
 .course-code {
-    color: rgba(255, 255, 255, 0.75);
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 16px;
+}
+
+.join-class-button {
+    position: absolute;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(4px);
+    transition: all 0.3s ease;
+}
+
+.join-class-button:hover {
+    background: rgba(255, 255, 255, 0.3) !important;
+    border-color: rgba(255, 255, 255, 0.4) !important;
+    transform: translateY(-50%) scale(1.05);
 }
 
 .stats-row {
@@ -27,15 +52,14 @@
 }
 
 .student-card {
-    transition: all 0.3s ease-in-out;
-}
-
-.student-card:hover {
-    transform: scale(1.05);
+    margin-bottom: 16px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .attendance-buttons {
     margin-top: 16px;
+    display: flex;
+    justify-content: center;
 }
 
 .radio-group {
@@ -45,75 +69,48 @@
 }
 
 .attendance-button {
-    width: 50%;
+    flex: 1;
     text-align: center;
-    white-space: nowrap;
-    padding: 8px 16px;
-    font-size: 14px;
-    height: 38px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 6px;
-    transition: all 0.3s ease;
-    border-width: 2px;
-    border-style: solid;
 }
 
-/* Icon inside the button */
-.attendance-button .anticon {
-    margin-right: 8px;
-    font-size: 16px;
+.attendance-button-present.ant-radio-button-wrapper-checked {
+    background-color: #52c41a !important;
+    border-color: #52c41a !important;
+    color: white !important;
 }
 
-/* Styles for present button */
-.attendance-button.attendance-button-present {
-    border-color: #b7eb8f;
-    color: #62bb14;
-}
-
-.attendance-button.attendance-button-present:hover {
-    background-color: #d9f7be;
-    border-color: #73d13d;
-    color: #3f8600;
-}
-
-.attendance-button.attendance-button-present.ant-radio-button-wrapper-checked {
-    background-color: #d9f7be;
-    border-color: #52c41a;
-    box-shadow: 0 0 0 2px rgba(82, 196, 26, 0.2);
-    color: #3f8600;
-}
-
-/* Styles for absent button */
-.attendance-button.attendance-button-absent::before {
-    display: none;
-}
-
-.attendance-button.attendance-button-absent {
-    border-color: #ffd4d2;
-    color: #ef5a66;
-}
-
-.attendance-button.attendance-button-absent:hover {
-    background-color: #fff4f3;
-    border-color: #ff7875;
-    color: #cf1322;
-}
-
-.attendance-button.attendance-button-absent.ant-radio-button-wrapper-checked {
-    background-color: #fff1f0;
-    border-color: #ff4d4f;
-    box-shadow: 0 0 0 2px rgba(255, 77, 79, 0.2);
-    color: #cf1322;
+.attendance-button-absent.ant-radio-button-wrapper-checked {
+    background-color: #f5222d !important;
+    border-color: #f5222d !important;
+    color: white !important;
 }
 
 .save-button {
-    margin-top: 24px;
-    width: 100%;
-    height: 48px;
-    font-size: 18px;
-    font-weight: 600;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .course-info-header {
+        padding: 16px;
+        text-align: center;
+    }
+
+    .join-class-button {
+        position: static;
+        transform: none;
+        margin-top: 16px;
+        width: 100%;
+    }
+
+    .course-title {
+        font-size: 20px;
+    }
+
+    .course-code {
+        font-size: 14px;
+    }
 }
 
 .unmarked {

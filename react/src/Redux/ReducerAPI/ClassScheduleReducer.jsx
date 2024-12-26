@@ -95,3 +95,20 @@ export const GetClassScheduleDetailsActionAsync = (id) => {
     }
   };
 };
+
+export const GetClassScheduleStudentActionAsync = (classId) => {
+  return async (dispatch) => {
+    try {
+      const response = await httpClient.get(`/api/v1/class-schedules/student/classes/${classId}`);
+      if (response.isSuccess) {
+        return response.data;
+      } else {
+        throw new Error(response.message);
+      }
+    } catch (error) {
+      console.error(error);
+      message.error("Không thể lấy chi tiết lịch học, vui lòng thử lại sau.");
+      return null;
+    }
+  };
+};

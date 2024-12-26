@@ -19,6 +19,7 @@ const EditScheduleModal = ({ visible, onCancel, scheduleData, slotData, onUpdate
                 slotId: scheduleData.slotId,
                 startDate: scheduleData.startDate,
                 daysOfWeek: scheduleData.daysOfWeek,
+                url: scheduleData.url, // Add this line
             });
         }
     }, [visible, scheduleData, form]);
@@ -32,6 +33,7 @@ const EditScheduleModal = ({ visible, onCancel, scheduleData, slotData, onUpdate
                 slotId: values.slotId,
                 startDate: values.startDate.format("YYYY-MM-DD"), // Định dạng ngày
                 dayOfWeeks: values.daysOfWeek,
+                url: values.url, // Add this line
             };
 
             dispatch(CreateClassScheduleActionAsync(scheduleData))
@@ -61,7 +63,7 @@ const EditScheduleModal = ({ visible, onCancel, scheduleData, slotData, onUpdate
                     </Form.Item>
                     <Form.Item
                         name="slotId"
-                        label="Chọn Slot"
+                        label="Chọn tiết học"
                         rules={[{ required: true, message: "Vui lòng chọn slot" }]}
                     >
                         <Select placeholder="Chọn slot">
@@ -82,6 +84,8 @@ const EditScheduleModal = ({ visible, onCancel, scheduleData, slotData, onUpdate
                     <Form.Item
                         name="daysOfWeek"
                         label="Chọn các ngày trong tuần"
+                        rules={[{ required: true, message: "Vui lòng chọn thứ trong tuần" }]}
+
                     >
                         <Select mode="multiple" placeholder="Chọn các ngày">
                             {[
@@ -96,6 +100,13 @@ const EditScheduleModal = ({ visible, onCancel, scheduleData, slotData, onUpdate
                                 <Option key={day.value} value={day.value}>{day.label}</Option>
                             ))}
                         </Select>
+                    </Form.Item>
+                    <Form.Item
+                        name="url"
+                        label="Đường dẫn lớp học trực tuyến"
+                        rules={[{ required: true, message: "Vui lòng nhập đường dẫn lớp học trực tuyến" }]}
+                    >
+                        <Input placeholder="Nhập đường dẫn lớp học trực tuyến(Google Meet, Zoom,...)" />
                     </Form.Item>
                     <Form.Item>
                         <Button type="primary" htmlType="submit">

@@ -16,9 +16,9 @@ const LeftSidebar = ({ onSidebarToggle }) => {
   const isStudentRoute = location.pathname.startsWith('/student');
   const isClassRoute = location.pathname.includes('/student/') && className;
 
-  useEffect(()=>{
+  useEffect(() => {
     dispatch(GetClassOfUserLoginActionAsync())
-  },[])
+  }, [])
 
   useEffect(() => {
     const currentCourseId = courseId || selectedCourseId;
