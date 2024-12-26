@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { GetClassSchedulesActionAsync } from '../../../Redux/ReducerAPI/ClassScheduleReducer';
 import { GetSlotActionAsync } from '../../../Redux/ReducerAPI/SlotReducer';
 import { Spin } from 'antd';
-
+import CustomerEvent from '../../Component/CustomerEvent';
 const localizer = momentLocalizer(moment);
 
 const messages = {
@@ -95,9 +95,10 @@ const ScheduleAgencyManager = () => {
     // Convert API data to events format
     const events = schedules.map(schedule => ({
         id: schedule.id,
-        title: `${schedule.className} - ${schedule.room}`,
+        title: schedule.className,
         start: new Date(schedule.date + ' ' + schedule.startTime),
         end: new Date(schedule.date + ' ' + schedule.endTime),
+        url: schedule.url,
     }))
 
     // Hàm để tùy chỉnh các thuộc tính CSS cho sự kiện
@@ -142,7 +143,10 @@ const ScheduleAgencyManager = () => {
                 onSelectSlot={handleSelectSlot}
                 onSelectEvent={handleSelectSlot}
                 selectable
-                messages={messages} // Add messages prop for localization
+                messages={messages}
+                components={{
+                    event: CustomerEvent,
+                }}
             />
         </div>
     );

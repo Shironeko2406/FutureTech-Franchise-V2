@@ -1,45 +1,71 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Card, Avatar, Radio, Button, message, Row, Col, Statistic, Typography } from 'antd';
-import { UserOutlined, CalendarOutlined, ClockCircleOutlined, BookOutlined, CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Card, Avatar, Radio, Button, message, Row, Col, Statistic, Typography, Tooltip } from 'antd';
+import {
+  UserOutlined,
+  CalendarOutlined,
+  ClockCircleOutlined,
+  BookOutlined,
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+  VideoCameraOutlined
+} from '@ant-design/icons';
+import { useNavigate, useParams } from 'react-router-dom';
 import './AttendancePage.css';
 import { useDispatch } from 'react-redux';
 import { SaveAttendanceActionAsync } from '../../../Redux/ReducerAPI/AttendanceReducer';
 import { GetClassScheduleDetailsActionAsync } from '../../../Redux/ReducerAPI/ClassScheduleReducer';
+import { useLoading } from '../../../Utils/LoadingContext';
 
 const { Title, Text } = Typography;
 
 export default function AttendancePage() {
-  const location = useLocation();
+  const { id } = useParams();
   const navigate = useNavigate();
-  const { scheduleId, status } = location.state;
   const [scheduleDetails, setScheduleDetails] = useState(null);
   const [attendance, setAttendance] = useState({});
   const dispatch = useDispatch();
+  const { setLoading } = useLoading();
 
   useEffect(() => {
     const fetchScheduleDetails = async () => {
-      const details = await dispatch(GetClassScheduleDetailsActionAsync(scheduleId));
+      setLoading(true);
+      const details = await dispatch(GetClassScheduleDetailsActionAsync(id));
       setScheduleDetails(details);
-      if (status) {
+      if (details.status) {
         const initialAttendance = {};
         details.studentInfo.forEach(student => {
-          initialAttendance[student.userId] = student.attendanceStatus === "Present";
+          if (student.attendanceStatus !== "NotStarted") {
+            initialAttendance[student.userId] = student.attendanceStatus === "Present";
+          }
         });
         setAttendance(initialAttendance);
       }
+      setLoading(false);
     };
     fetchScheduleDetails();
-  }, [dispatch, scheduleId, status]);
+  }, [dispatch, id, setLoading]);
 
   const handleAttendanceChange = (studentId, isPresent) => {
     setAttendance(prev => ({ ...prev, [studentId]: isPresent }));
   };
 
   const handleSaveAttendance = async () => {
+    const unmarkedStudents = scheduleDetails.studentInfo.filter(student => !(student.userId in attendance));
+    if (unmarkedStudents.length > 0) {
+      message.warning('Vui lòng điểm danh cho tất cả học sinh trước khi lưu.');
+      return;
+    }
+    setLoading(true);
     const presentStudentIds = Object.keys(attendance).filter(id => attendance[id]);
-    await dispatch(SaveAttendanceActionAsync(scheduleId, presentStudentIds));
-    navigate(-1); // Navigate back to the previous page
+    await dispatch(SaveAttendanceActionAsync(id, presentStudentIds));
+    setLoading(false);
+    navigate(`/instructor`);
+  };
+
+  const handleJoinClass = () => {
+    if (scheduleDetails?.url) {
+      window.open(scheduleDetails.url, '_blank');
+    }
   };
 
   const attendanceStats = useMemo(() => {
@@ -50,7 +76,7 @@ export default function AttendancePage() {
   }, [attendance, scheduleDetails]);
 
   if (!scheduleDetails) {
-    return <div>Loading...</div>;
+    return <div></div>;
   }
 
   return (
@@ -59,8 +85,19 @@ export default function AttendancePage() {
         className="course-info-card"
         cover={
           <div className="course-info-header">
-            <Title level={2} className="course-title">{scheduleDetails.className}</Title>
+            <Title level={2}>{scheduleDetails.className}</Title>
             <Text className="course-code">{scheduleDetails.courseCode}</Text>
+            {scheduleDetails.url && (
+              <Button
+                type="primary"
+                icon={<VideoCameraOutlined />}
+                onClick={handleJoinClass}
+                className="join-class-button"
+                size="large"
+              >
+                Vào lớp học
+              </Button>
+            )}
           </div>
         }
       >
@@ -91,7 +128,7 @@ export default function AttendancePage() {
 
       <Row gutter={[16, 16]} className="stats-row">
         <Col span={8}>
-          <Card>
+          <Card className="stats-row-card"          >
             <Statistic
               title="Có mặt"
               value={attendanceStats.present}
@@ -102,7 +139,7 @@ export default function AttendancePage() {
           </Card>
         </Col>
         <Col span={8}>
-          <Card>
+          <Card className="stats-row-card">
             <Statistic
               title="Vắng mặt"
               value={attendanceStats.absent}
@@ -113,7 +150,7 @@ export default function AttendancePage() {
           </Card>
         </Col>
         <Col span={8}>
-          <Card>
+          <Card className="stats-row-card" >
             <Statistic
               title="Chưa điểm danh"
               value={attendanceStats.total - attendanceStats.present - attendanceStats.absent}
@@ -130,7 +167,7 @@ export default function AttendancePage() {
           <Col key={student.userId} xs={24} sm={12} md={8} lg={6}>
             <Card
               hoverable
-              className="student-card"
+              className={`student-card ${attendance[student.userId] === undefined ? 'unmarked' : ''}`}
             >
               <Card.Meta
                 avatar={<Avatar size={64} src={student.urlImage} icon={<UserOutlined />} />}
@@ -170,3 +207,4 @@ export default function AttendancePage() {
     </div>
   );
 }
+
