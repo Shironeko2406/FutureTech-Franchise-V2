@@ -11,7 +11,7 @@ const { Title, Paragraph } = Typography
 
 const QuizDescription = ()  => {
   const dispatch = useDispatch()
-  const { quizId } = useParams()
+  const { quizId, className } = useParams()
   const navigate = useNavigate()
   const {setLoading} = useLoading()
   const { quizReview } = useSelector((state) => state.QuizReducer)
@@ -28,11 +28,11 @@ const QuizDescription = ()  => {
   const isTimeExpired = moment().isAfter(endTime)
 
   const handleStartQuiz = () => {
-    navigate(`/student/quiz/${quizId}/start`)
+    navigate(`/student/${className}/${quizReview?.classId}/quiz/${quizId}/start`)
   }
 
   const handleBack = () => {
-    navigate(`/student/class/${quizReview?.classId}/quiz`)
+    navigate(`/student/${className}/${quizReview?.classId}/quiz`)
   }
 
   return (
@@ -75,7 +75,7 @@ const QuizDescription = ()  => {
                 : 'Không xác định'}
             </Descriptions.Item>
             <Descriptions.Item label="Số lần làm">1</Descriptions.Item>
-            {/* <Descriptions.Item label="Mã lớp">{quizReview?.classId || 'N/A'}</Descriptions.Item> */}
+            <Descriptions.Item label="Lớp học">{className}</Descriptions.Item>
           </Descriptions>
         </Card>
 

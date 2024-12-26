@@ -26,14 +26,14 @@ const themeConfig = {
 
 const ViewQuiz = () => {
   const dispatch = useDispatch();
-  const {id} = useParams()
+  const {classId, className} = useParams()
   const {setLoading} = useLoading()
   const { quizOfClassStudent } = useSelector((state) => state.ClassReducer);
 
   useEffect(()=>{
     setLoading(true)
-    dispatch(GetQuizByClassIdStudentActionAsync(id)).finally(() => setLoading(false))
-  },[])
+    dispatch(GetQuizByClassIdStudentActionAsync(classId)).finally(() => setLoading(false))
+  },[classId])
 
   const getQuizStatus = (quiz) => {
       const startTime = moment(quiz.startTime);
@@ -78,20 +78,20 @@ const ViewQuiz = () => {
       } else if (status === "Open") {
         if (quiz.scores === null) {
           return (
-            <NavLink to={`/student/quiz/${quiz.id}`}>
+            <NavLink to={`/student/${className}/${classId}/quiz/${quiz.id}`}>
               <Button type="primary" block>Vào làm bài</Button>
             </NavLink>
           );
         } else {
           return (
-            <NavLink to={`/student/quiz/${quiz.id}`}>
+            <NavLink to={`/student/${className}/${classId}/quiz/${quiz.id}`}>
               <Button type="default" block>Xem kết quả</Button>
             </NavLink>
           );
         }
       } else { // Closed
         return (
-          <NavLink to={`/student/quiz/${quiz.id}`}>
+          <NavLink to={`/student/${className}/${classId}/quiz/${quiz.id}`}>
               <Button type="default" block>Xem kết quả</Button>
           </NavLink>
         );

@@ -177,12 +177,12 @@ function App() {
 
             <Route element={<ProtectedRoute requiredRole="Student" />}>
               <Route path="student" element={<TempUIStudent />}>
-                <Route path="class/:id/course/:courseId" element={<MaterialClass/>} />
-                <Route path="class/:id/quiz" element={<ViewQuiz/>} />
-                <Route path="class/:id/assignment" element={<ViewAssignment />} />
-                <Route path="assignment/:assignmentId" element={<AssignmentDetail />} />
-                <Route path="quiz/:quizId" element={<QuizDescription />} />
-                <Route path="quiz/:quizId/start" element={<QuizTest />} />
+                <Route path=":className/course/:courseId/chapter/:number" element={<MaterialClass/>} />
+                <Route path=":className/:classId/quiz" element={<ViewQuiz/>} />
+                <Route path=":className/:classId/assignment" element={<ViewAssignment />} />
+                <Route path=":className/:classId/assignment/:assignmentId" element={<AssignmentDetail />} />
+                <Route path=":className/:classId/quiz/:quizId" element={<QuizDescription />} />
+                <Route path=":className/:classId/quiz/:quizId/start" element={<QuizTest />} />
                 <Route path="" element={<ScheduleStudent />} />
                 <Route path="change-password" element={<ChangePassword />} />
                 <Route path="profile" element={<Profile />} />

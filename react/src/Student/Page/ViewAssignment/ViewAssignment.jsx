@@ -189,50 +189,6 @@ const themeConfig = {
   },
 };
 
-// const studentAssignmentOfClass = [
-//   {
-//     id: "fdd1a992-23a7-42dd-8298-08dd112dbcc3",
-//     title: "Bài nè",
-//     description: "xong ne",
-//     startTime: "2024-11-30T00:00:00",
-//     endTime: "2024-12-06T00:00:00",
-//     classId: "d8c29bff-b1f7-4603-b4b5-08dd112d7331",
-//     asmSubmits: null,
-//   },
-//   {
-//     id: "d1c7ffaa-91c2-4b20-8299-08dd112dbcc3",
-//     title: "Ass 2",
-//     description: "làm bài tập",
-//     startTime: "2024-11-30T00:00:00",
-//     endTime: "2024-12-06T00:00:00",
-//     classId: "d8c29bff-b1f7-4603-b4b5-08dd112d7331",
-//     asmSubmits: {
-//       userId: "8fa430dd-732e-4600-a2e4-507d33936df0",
-//       userName: "HieuNT2411",
-//       fileSubmitURL:
-//         "https://firebasestorage.googleapis.com/v0/b/imageupdatedb.appspot.com/o/pdfs%2Fimages-1732522731055.pdf?alt=media&token=a663d4e1-3ce5-43c2-a9f6-8091e6b1d20e",
-//       submitDate: "2024-11-30T17:13:00.8148691",
-//       scoreNumber: 8,
-//     },
-//   },
-//   {
-//     id: "85a3ff63-94ed-4cd2-f36e-08dd11613901",
-//     title: "Ass 1.1",
-//     description: "Bài tập về nhà",
-//     startTime: "2024-12-01T02:30:00",
-//     endTime: "2024-12-05T00:00:00",
-//     classId: "d8c29bff-b1f7-4603-b4b5-08dd112d7331",
-//     asmSubmits: {
-//       userId: "8fa430dd-732e-4600-a2e4-507d1f936df0",
-//       userName: "HieuNT2411",
-//       fileSubmitURL:
-//         "https://firebasestorage.googleapis.com/v0/b/imageupdatedb.appspot.com/o/pdfs%2Fimages-1732522731055.pdf?alt=media&token=a663d4e1-3ce5-43c2-a9f6-8091e6b1d20e",
-//       submitDate: "2024-11-30T17:13:00.8148691",
-//       scoreNumber: null,
-//     },
-//   },
-// ];
-
 const getAssignmentStatus = (assignment) => {
   const startTime = moment(assignment.startTime);
   const endTime = moment(assignment.endTime);
@@ -307,17 +263,17 @@ const renderSubmissionStatus = (submissionStatus, asmSubmits) => {
   }
 };
 
-const renderButton = (item, assignmentStatus, submissionStatus, navigate) => {
+const renderButton = (item, assignmentStatus, submissionStatus, navigate, className, classId) => {
   if (assignmentStatus === "Not open") {
     return <Button disabled icon={<LockOutlined />}>Chưa mở</Button>;
   } else if (assignmentStatus === "Open") {
     if (submissionStatus === "Chưa nộp") {
-      return <Button type="primary" icon={<UploadOutlined />} onClick={() => navigate(`/student/assignment/${item.id}`)}>Nộp bài</Button>;
+      return <Button type="primary" icon={<UploadOutlined />} onClick={() => navigate(`/student/${className}/${classId}/assignment/${item.id}`)}>Nộp bài</Button>;
     } else {
-      return <Button icon={<EyeOutlined />} onClick={() => navigate(`/student/assignment/${item.id}`)}>Xem bài nộp</Button>;
+      return <Button icon={<EyeOutlined />} onClick={() => navigate(`/student/${className}/${classId}/assignment/${item.id}`)}>Xem bài nộp</Button>;
     }
   } else { // Closed
-    return <Button icon={<EyeOutlined />} onClick={() => navigate(`/student/assignment/${item.id}`)}>Xem chi tiết</Button>;
+    return <Button icon={<EyeOutlined />} onClick={() => navigate(`/student/${className}/${classId}/assignment/${item.id}`)}>Xem chi tiết</Button>;
   }
 };
 
@@ -325,13 +281,13 @@ const ViewAssignment = () => {
   const { studentAssignmentOfClass } = useSelector((state) => state.AssignmentReducer)
   const {setLoading} = useLoading()
   const dispatch = useDispatch()
-  const {id} = useParams()
+  const {classId, className} = useParams()
   const navigate = useNavigate();
 
   useEffect(() => {
     setLoading(true)
-    dispatch(GetStudentAssignmentsByClassIdActionAsync(id)).finally(() => setLoading(false))
-  }, [dispatch, id, setLoading])
+    dispatch(GetStudentAssignmentsByClassIdActionAsync(classId)).finally(() => setLoading(false))
+  }, [dispatch, classId, setLoading])
 
   return (
     <ConfigProvider theme={themeConfig}>
@@ -369,7 +325,7 @@ const ViewAssignment = () => {
                     <Space>
                       {renderSubmissionStatus(submissionStatus, item.asmSubmits)}
                     </Space>
-                    {renderButton(item, assignmentStatus, submissionStatus, navigate)}
+                    {renderButton(item, assignmentStatus, submissionStatus, navigate, className, classId)}
                   </Space>
                 </Card>
               </List.Item>
