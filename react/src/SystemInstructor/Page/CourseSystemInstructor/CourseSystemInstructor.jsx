@@ -20,9 +20,7 @@ const statusItems = [
 ];
 
 const CourseSystemInstructor = () => {
-  const { course, totalPagesCount } = useSelector(
-    (state) => state.CourseReducer
-  );
+  const { course, totalPagesCount } = useSelector((state) => state.CourseReducer);
   const dispatch = useDispatch();
   const [status, setStatus] = useState("");
   const [pageIndex, setPageIndex] = useState(1);
@@ -388,7 +386,6 @@ const CourseSystemInstructor = () => {
               <Button
                 type="primary"
                 icon={<UploadOutlined />}
-                className="me-2 mb-2 mb-md-0"
                 onClick={showModalUpload}
               >
                 Thêm File

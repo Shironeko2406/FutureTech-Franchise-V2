@@ -15,3 +15,14 @@ export function getVideoDuration(url) {
   })
 }
 
+export const decodeVideoDurationFromUrl = (url) => {
+  try {
+    const decodedUrl = decodeURIComponent(url);
+    const match = decodedUrl.match(/duration=([\d:]+)/);
+    return match ? match[1] : null; // Trích xuất thời lượng (dạng "5:55") hoặc trả về null nếu không tìm thấy
+  } catch (error) {
+    console.error("Error decoding video URL:", error);
+    return null;
+  }
+};
+

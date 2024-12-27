@@ -109,6 +109,7 @@ import ViewQuiz from "./Student/Page/ViewQuiz/ViewQuiz";
 import MaterialClass from "./Student/Page/MaterialClass/MaterialClass";
 import AttendanceReport from "./Student/Page/AttendanceReport/AttendanceReport";
 import VNPaySetup from "./AgencyManager/Page/VNPaySetup/VNPaySetup";
+import VideoSystemInstructor from "./SystemInstructor/Page/VideoSystemInstructor/VideoSystemInstructor";
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -237,6 +238,7 @@ function App() {
             <Route element={<ProtectedRoute requiredRole="SystemInstructor" />}>
               <Route path="system-instructor" element={<TempUISystemInstructor />}>
                 <Route path="" element={<CourseSystemInstructor />} />
+                <Route path="video" element={<VideoSystemInstructor/>} />
                 <Route path="course-detail/:id" element={<CourseDetailSystemInstructor />} />
                 <Route path="course-detail/:id/questions" element={<ViewQuestionChapterSystemInstructor />} />
                 <Route path="list-task" element={<ListTaskSystemInstructor />} />

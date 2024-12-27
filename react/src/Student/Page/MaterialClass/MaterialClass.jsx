@@ -1,222 +1,11 @@
-// import { useEffect, useState } from 'react'
-// import { Typography, Layout, Card, Space, Tag, Button, Breadcrumb, Divider } from 'antd'
-// import { FileTextOutlined, VideoCameraOutlined, DownloadOutlined, BookOutlined, HomeOutlined, ClockCircleOutlined } from '@ant-design/icons'
-// import { useParams } from 'react-router-dom'
-// import { useSelector } from 'react-redux'
-// import { getVideoDuration } from '../../../Utils/VideoDuration'
-
-
-// const { Title, Text, Paragraph } = Typography
-// const { Content } = Layout
-
-// export default function MaterialClass() {
-//   const { number } = useParams()
-//   const [currentChapter, setCurrentChapter] = useState(null)
-//   const { materialClass } = useSelector((state) => state.UserReducer)
-//   const [materials, setMaterials] = useState([])
-
-//   useEffect(() => {
-//     if (materialClass?.chapters && number) {
-//       const chapter = materialClass.chapters.find(
-//         (c) => c.number === parseInt(number)
-//       )
-//       setCurrentChapter(chapter)
-//     }
-//   }, [materialClass, number])
-
-//   useEffect(() => {
-//     const loadDurations = async () => {
-//       if (currentChapter?.chapterMaterials) {
-//         const materialsWithDuration = await Promise.all(
-//           currentChapter.chapterMaterials.map(async (material) => {
-//             if (material.urlVideo) {
-//               const duration = await getVideoDuration(material.urlVideo)
-//               return { ...material, videoDuration: duration }
-//             }
-//             return material
-//           })
-//         )
-//         setMaterials(materialsWithDuration)
-//       }
-//     }
-//     loadDurations()
-//   }, [currentChapter])
-
-//   if (!currentChapter) {
-//     return (
-//       <div style={{ 
-//         minHeight: '100vh', 
-//         display: 'flex', 
-//         justifyContent: 'center', 
-//         alignItems: 'center' 
-//       }}>
-//         <div className="ant-spin ant-spin-lg ant-spin-spinning">
-//           <span className="ant-spin-dot">
-//             <i className="ant-spin-dot-item"></i>
-//             <i className="ant-spin-dot-item"></i>
-//             <i className="ant-spin-dot-item"></i>
-//             <i className="ant-spin-dot-item"></i>
-//           </span>
-//         </div>
-//       </div>
-//     )
-//   }
-
-//   const renderMaterial = (material) => (
-//     <Card 
-//       className="material-card"
-//       style={{ 
-//         marginBottom: 16,
-//         transition: 'all 0.3s ease',
-//       }}
-//       hoverable
-//     >
-//       <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
-//         <div style={{ 
-//           padding: 16,
-//           borderRadius: '50%',
-//           backgroundColor: material.urlVideo ? '#e6f4ff' : '#f6ffed',
-//           display: 'flex',
-//           alignItems: 'center',
-//           justifyContent: 'center',
-//           flexShrink: 0
-//         }}>
-//           {material.urlVideo ? (
-//             <VideoCameraOutlined style={{ fontSize: 24, color: '#1890ff' }} />
-//           ) : (
-//             <FileTextOutlined style={{ fontSize: 24, color: '#52c41a' }} />
-//           )}
-//         </div>
-        
-//         <div style={{ flex: 1 }}>
-//           <Space direction="vertical" size="small" style={{ width: '100%' }}>
-//             <div>
-//               <Tag color={material.urlVideo ? "blue" : "success"}>
-//                 Bài {material.number}
-//               </Tag>
-//               <Text strong style={{ fontSize: 16, marginLeft: 8 }}>
-//                 {material.title}
-//               </Text>
-//             </div>
-            
-//             <Paragraph type="secondary" style={{ margin: '8px 0' }}>
-//               {material.description}
-//             </Paragraph>
-
-//             <Space wrap>
-//               {material.urlFile && (
-//                 <Button 
-//                   type="primary"
-//                   icon={<DownloadOutlined />}
-//                   href={material.urlFile}
-//                   target="_blank"
-//                   size="large"
-//                 >
-//                   Tài liệu PDF
-//                 </Button>
-//               )}
-//               {material.urlVideo && (
-//                 <Space>
-//                   <Button 
-//                     type="default"
-//                     icon={<VideoCameraOutlined />}
-//                     href={material.urlVideo}
-//                     target="_blank"
-//                     size="large"
-//                   >
-//                     Xem video
-//                   </Button>
-//                   <Tag icon={<ClockCircleOutlined />} color="default">
-//                     {material.videoDuration || '--:--'}
-//                   </Tag>
-//                 </Space>
-//               )}
-//             </Space>
-//           </Space>
-//         </div>
-//       </div>
-//     </Card>
-//   )
-
-//   return (
-//     <Layout style={{ minHeight: '100vh', backgroundColor: '#f5f5f5' }}>
-//       <Content style={{ padding: 24 }}>
-//         <Card 
-//           style={{ 
-//             maxWidth: 1200, 
-//             margin: '0 auto',
-//             boxShadow: '0 1px 2px rgba(0,0,0,0.1)'
-//           }}
-//         >
-//           <Breadcrumb style={{ marginBottom: 16 }}>
-//             <Breadcrumb.Item href="/">
-//               <HomeOutlined />
-//               <span style={{ marginLeft: 8 }}>Trang chủ</span>
-//             </Breadcrumb.Item>
-//             <Breadcrumb.Item href={`/courses/${materialClass?.code}`}>
-//               <BookOutlined />
-//               <span style={{ marginLeft: 8 }}>{materialClass?.name}</span>
-//             </Breadcrumb.Item>
-//             <Breadcrumb.Item>
-//               Chương {currentChapter.number}
-//             </Breadcrumb.Item>
-//           </Breadcrumb>
-
-//           <div style={{ marginBottom: 24 }}>
-//             <Title level={2} style={{ marginBottom: 8 }}>
-//               <Space>
-//                 <Tag color="blue" style={{ fontSize: 16 }}>
-//                   Chương {currentChapter.number}
-//                 </Tag>
-//                 {currentChapter.topic}
-//               </Space>
-//             </Title>
-//             <Paragraph type="secondary" style={{ fontSize: 16 }}>
-//               {currentChapter.description}
-//             </Paragraph>
-//           </div>
-
-//           <Divider />
-
-//           <div style={{ 
-//             maxHeight: 'calc(100vh - 300px)', 
-//             overflowY: 'auto',
-//             padding: '0 4px'
-//           }}>
-//             {materials.map((material) => (
-//               <div key={material.id}>
-//                 {renderMaterial(material)}
-//               </div>
-//             ))}
-//           </div>
-//         </Card>
-//       </Content>
-//     </Layout>
-//   )
-// }
-
-
-
-
 import { useEffect, useState } from 'react'
 import { Typography, Card, Collapse, List, Space, Tag, Button, Breadcrumb, Statistic, Row, Col } from 'antd'
-import { 
-  FileTextOutlined, 
-  VideoCameraOutlined, 
-  DownloadOutlined, 
-  BookOutlined, 
-  HomeOutlined, 
-  ClockCircleOutlined,
-  ReadOutlined,
-  PlayCircleOutlined,
-  CheckCircleOutlined
-} from '@ant-design/icons'
+import { FileTextOutlined, VideoCameraOutlined, DownloadOutlined, BookOutlined, HomeOutlined, ClockCircleOutlined, ReadOutlined, PlayCircleOutlined, CheckCircleOutlined} from '@ant-design/icons'
 import { useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
-import { getVideoDuration } from '../../../Utils/VideoDuration'
+import { decodeVideoDurationFromUrl } from '../../../Utils/VideoDuration'
 import { calculateChapterStats } from '../../../Utils/Duration'
-import { useLoading } from '../../../Utils/LoadingContext'
-
+import VideoModal from '../../Modal/VideoModal'
 
 const { Title, Text, Paragraph } = Typography
 const { Panel } = Collapse
@@ -227,53 +16,51 @@ export default function MaterialClass() {
   const { materialClass } = useSelector((state) => state.UserReducer)
   const [materials, setMaterials] = useState([])
   const [chapterStats, setChapterStats] = useState(null)
-  const {setLoading} = useLoading()
+  const [videoModalState, setVideoModalState] = useState({ isVisible: false, url: '' });
+  
   
   useEffect(() => {
-    async function loadChapterStats() {
+    function loadChapterStats() {
       if (materialClass?.chapters && number) {
         const chapter = materialClass.chapters.find(
           (c) => c.number === parseInt(number)
         )
         setCurrentChapter(chapter)
-        
+  
         if (chapter?.chapterMaterials) {
-          setLoading(true)
-          try {
-            const stats = await calculateChapterStats(chapter.chapterMaterials)
-            setChapterStats(stats)
-          } catch (error) {
-            console.error('Error calculating chapter stats:', error)
-          } finally {
-            setLoading(false)
-          }
+          calculateChapterStats(chapter.chapterMaterials)
+            .then((stats) => {
+              setChapterStats(stats)
+            })
+            .catch((error) => {
+              console.error('Error calculating chapter stats:', error)
+            })
         }
       }
     }
-
+  
     loadChapterStats()
   }, [materialClass, number])
-
+  
 
   useEffect(() => {
-    const loadDurations = async () => {
-      if (currentChapter?.chapterMaterials) {
-        const materialsWithDuration = await Promise.all(
-          currentChapter.chapterMaterials.map(async (material) => {
-            if (material.urlVideo) {
-              const duration = await getVideoDuration(material.urlVideo)
-              console.log(duration)
-              return { ...material, videoDuration: duration }
-            }
-            return material
-          })
-        )
-        setMaterials(materialsWithDuration)
-      }
+    if (currentChapter?.chapterMaterials) {
+      const materialsWithDuration = currentChapter.chapterMaterials.map((material) => {
+        if (material.urlVideo) {
+          const videoDuration = decodeVideoDurationFromUrl(material.urlVideo);
+          return { ...material, videoDuration };
+        }
+        return material;
+      });
+      setMaterials(materialsWithDuration);
     }
-    loadDurations()
-  }, [currentChapter])
-  
+  }, [currentChapter]);
+
+  //Đóng mở modal
+  const showVideoModal = (videoUrl) => {
+    setVideoModalState({ isVisible: true, url: videoUrl });
+  };
+  //-----------------
 
   const renderMaterial = (material) => (
     <List.Item>
@@ -338,8 +125,7 @@ export default function MaterialClass() {
             <Button 
               type="primary"
               icon={<PlayCircleOutlined />}
-              href={material.urlVideo}
-              target="_blank"
+              onClick={() => showVideoModal(material.urlVideo)}
             >
               Xem video
             </Button>
@@ -426,6 +212,14 @@ export default function MaterialClass() {
         dataSource={materials}
         renderItem={renderMaterial}
         split={true}
+      />
+
+      {/* Modal */}
+
+      <VideoModal
+        isVisible={videoModalState.isVisible}
+        onClose={() => setVideoModalState({ isVisible: false, url: '' })}
+        videoUrl={videoModalState.url}
       />
     </Card>
   )

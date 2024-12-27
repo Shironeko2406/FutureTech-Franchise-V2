@@ -29,6 +29,7 @@ import AppointmentTemplateReducer from "./ReducerAPI/AppointmentTemplateReducer"
 import HomePageReducer from "./ReducerAPI/HomePageReducer";
 import ReportReducer from "./ReducerAPI/ReportReducer";
 import ChapterMaterialReducer from "./ReducerAPI/ChapterMaterialReducer";
+import VideoReducer from "./ReducerAPI/VideoReducer";
 
 export const store = configureStore({
   reducer: {
@@ -63,5 +64,6 @@ export const store = configureStore({
     HomePageReducer,
     ReportReducer,
     ChapterMaterialReducer,
+    VideoReducer,
   },
 });
