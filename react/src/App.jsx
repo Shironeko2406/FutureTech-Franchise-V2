@@ -110,6 +110,8 @@ import MaterialClass from "./Student/Page/MaterialClass/MaterialClass";
 import AttendanceReport from "./Student/Page/AttendanceReport/AttendanceReport";
 import VNPaySetup from "./AgencyManager/Page/VNPaySetup/VNPaySetup";
 import VideoSystemInstructor from "./SystemInstructor/Page/VideoSystemInstructor/VideoSystemInstructor";
+import VideoPageMaterial from "./Student/Page/VideoPageMaterial/VideoPageMaterial";
+import ReadingPageMaterial from "./Student/Page/ReadingPageMaterial/ReadingPageMaterial";
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -182,11 +184,16 @@ function App() {
             <Route element={<ProtectedRoute requiredRole="Student" />}>
               <Route path="student" element={<TempUIStudent />}>
                 <Route path=":className/course/:courseId/chapter/:number" element={<MaterialClass/>} />
+                <Route path=":className/course/:courseId/chapter/:number/material/:materialNumber/video" element={<VideoPageMaterial/>} />
+                <Route path=":className/course/:courseId/chapter/:number/material/:materialNumber/reading" element={<ReadingPageMaterial/>} />
+                <Route path=":className/course/:courseId/chapter/:number" element={<MaterialClass/>} />
                 <Route path=":className/:classId/quiz" element={<ViewQuiz/>} />
                 <Route path=":className/:classId/assignment" element={<ViewAssignment />} />
                 <Route path=":className/:classId/assignment/:assignmentId" element={<AssignmentDetail />} />
                 <Route path=":className/:classId/quiz/:quizId" element={<QuizDescription />} />
                 <Route path=":className/:classId/quiz/:quizId/start" element={<QuizTest />} />
+                <Route path="video" element={<VideoPageMaterial/>} />
+                <Route path="reading" element={<ReadingPageMaterial/>} />
                 <Route path="" element={<ScheduleStudent />} />
                 <Route path="change-password" element={<ChangePassword />} />
                 <Route path="profile" element={<Profile />} />
