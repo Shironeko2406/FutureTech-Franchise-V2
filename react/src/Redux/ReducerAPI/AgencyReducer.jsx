@@ -144,7 +144,6 @@ export const UpdateVNPayConfigActionAsync = (agencyId, vnpayTmnCode, vnpayHashSe
         vnpayHashSecret
       });
       if (res.isSuccess && res.data) {
-        message.success(`${res.message}`);
         return true;
       } else if (res.isSuccess && !res.data) {
         message.error(`${res.message}`);

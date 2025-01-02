@@ -123,3 +123,38 @@ export const GetPaymentContractsActionAsync = (startDate, endDate, contractCode,
         }
     };
 };
+
+export const GetRefundAmountActionAsync = (registerCourseId) => {
+    return async (dispatch) => {
+        try {
+            const res = await httpClient.get(`api/v1/payments/calculate-refund/${registerCourseId}`);
+            if (res.isSuccess) {
+                return res.data;
+            } else {
+                throw new Error(`${res.message}`);
+            }
+        } catch (error) {
+            console.error(error);
+            // message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
+            return null;
+        }
+    };
+};
+
+export const CreateRefundActionAsync = (refundData) => {
+    return async (dispatch) => {
+        try {
+            const res = await httpClient.post(`api/v1/payments/refund`, refundData);
+            if (res.isSuccess && res.data) {
+                message.success("Tạo thông tin hoàn tiền thành công");
+            } else if (res.isSuccess && !res.data) {
+                message.error(`${res.message}`);
+            } else {
+                throw new Error(`${res.message}`);
+            }
+        } catch (error) {
+            console.error(error);
+            message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
+        }
+    };
+};
