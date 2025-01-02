@@ -14,7 +14,7 @@ const AuthenticationReducer = createSlice({
   reducers: {
     setUserLogin: (state, action) => {
       state.userLogin = action.payload,
-      state.statusAgency = action.payload.status
+        state.statusAgency = action.payload.status
     }
   },
 });
@@ -33,7 +33,7 @@ export const LoginActionAsync = (dataLogin) => {
         setDataTextStorage(TOKEN_AUTHOR, res.data.refreshTokenModel.accessToken);
         setDataTextStorage(REFRESH_TOKEN, res.data.refreshTokenModel.refreshToken);
         message.success(`${res.message}`);
-      }else{
+      } else {
         message.error(`${res.message}`)
       }
     } catch (error) {
@@ -47,7 +47,7 @@ export const RefreshTokenActionAsync = (refreshToken, accessToken) => {
   return async (dispatch) => {
     try {
 
-      const res = await httpClient.put(`/api/v1/auth/new-token`, {refreshToken: refreshToken, accessToken: accessToken});
+      const res = await httpClient.put(`/api/v1/auth/new-token`, { refreshToken: refreshToken, accessToken: accessToken });
       if (res.isSuccess && res.data) {
         setDataTextStorage(TOKEN_AUTHOR, res.data.accessToken);
         setDataTextStorage(REFRESH_TOKEN, res.data.refreshToken);
@@ -104,5 +104,22 @@ export const ResetPasswordActionAsync = (dataResetPassword) => {
       return false;
     }
   }
-}
+};
+
+export const VerifyPasswordActionAsync = (passwordData) => {
+  return async () => {
+    try {
+      const res = await httpClient.post(`/api/v1/users/change-password`, passwordData);
+      if (res.isSuccess && res.data) {
+        return true;
+      } else {
+        throw new Error();
+      }
+    } catch (error) {
+      console.error(error);
+      message.error(`Mật khẩu không đúng!`);
+      return false;
+    }
+  };
+};
 
