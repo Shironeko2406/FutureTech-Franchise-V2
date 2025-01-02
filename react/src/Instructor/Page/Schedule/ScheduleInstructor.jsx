@@ -71,7 +71,7 @@ const ScheduleInstructor = () => {
 
   const events = schedules ? schedules.map(schedule => ({
     id: schedule.scheduleId,
-    title: `${schedule.className} - ${schedule.room}`,
+    title: `${schedule.className}`,
     start: new Date(moment(schedule.date).format('YYYY-MM-DD') + ' ' + schedule.startTime),
     end: new Date(moment(schedule.date).format('YYYY-MM-DD') + ' ' + schedule.endTime),
     status: schedule.status,
@@ -123,6 +123,25 @@ const ScheduleInstructor = () => {
     );
   };
 
+  const MonthEventComponent = ({ event }) => {
+    const currentDate = new Date();
+    let statusText = "(Chưa tới ngày)";
+    if (moment(event.date).isSameOrBefore(currentDate, 'day')) {
+      statusText = event.status ? "(Đã điểm danh)" : "(Chưa điểm danh)";
+    }
+    return (
+      <div className="event-container">
+        <span className="event-time small-text">
+          {moment(event.start).format('HH:mm')} - {moment(event.end).format('HH:mm')}
+        </span>
+        <span className="event-title">{event.title}</span>
+        <span className="event-status">
+          {statusText}
+        </span>
+      </div>
+    );
+  };
+
   return (
     <div style={{ position: 'relative', height: "600px" }}>
       {loading && (
@@ -155,7 +174,10 @@ const ScheduleInstructor = () => {
         onSelectEvent={handleSelectEvent}
         selectable
         components={{
-          event: EventComponent
+          event: EventComponent,
+          month: {
+            event: MonthEventComponent
+          }
         }}
       />
     </div>

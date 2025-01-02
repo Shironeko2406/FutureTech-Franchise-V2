@@ -122,6 +122,33 @@ const ScheduleStudent = () => {
     );
   };
 
+  const MonthEventComponent = ({ event }) => {
+    const currentDate = new Date();
+    let statusText = "(Chưa tới ngày)";
+    if (moment(event.date).isSameOrBefore(currentDate, 'day')) {
+      statusText = event.attendanceStatus === 'Present' ? "(Có mặt)" : event.attendanceStatus === 'Absent' ? "(Vắng mặt)" : "(Chưa điểm danh)";
+    }
+    const handleClick = (e) => {
+      e.stopPropagation();
+      if (event.url) {
+        window.open(event.url, '_blank');
+      }
+    };
+    return (
+      <Tooltip title={event.url ? "Nhấn để vào lớp học" : "Chưa có link lớp học"}>
+        <div className="event-container" onClick={handleClick} style={{ cursor: event.url ? 'pointer' : 'default' }}>
+          <span className="event-time small-text">
+            {moment(event.start).format('HH:mm')} - {moment(event.end).format('HH:mm')}
+          </span>
+          <span className="event-title">{event.title}</span>
+          <span className="event-status">
+            {statusText}
+          </span>
+        </div>
+      </Tooltip>
+    );
+  };
+
   const messages = {
     allDay: 'Cả ngày',
     previous: 'Trước',
@@ -169,7 +196,10 @@ const ScheduleStudent = () => {
         onSelectSlot={handleSelectSlot}
         selectable
         components={{
-          event: EventComponent
+          event: EventComponent,
+          month: {
+            event: MonthEventComponent
+          }
         }}
         messages={messages}
       />

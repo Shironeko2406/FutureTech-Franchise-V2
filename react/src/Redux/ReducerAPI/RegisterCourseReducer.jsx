@@ -51,7 +51,7 @@ export const { setRegisterCourse } = RegisterCourseReducer.actions;
 export default RegisterCourseReducer.reducer;
 
 //---------API CALL-------------
-export const GetStudentConsultationActionAsync = (pageIndex, pageSize, studentStatus, courseId) => {
+export const GetStudentConsultationActionAsync = (pageIndex, pageSize, studentStatus, courseId, sortOrder, searchInput) => {
     return async (dispatch) => {
         try {
             console.log("courseId: ", courseId);
@@ -61,6 +61,8 @@ export const GetStudentConsultationActionAsync = (pageIndex, pageSize, studentSt
                     PageIndex: pageIndex,
                     PageSize: pageSize,
                     CourseId: courseId,
+                    SortOrder: sortOrder,
+                    SearchInput: searchInput,
                 },
             });
             console.log("GetStudentConsultationActionAsync: ", res.data);

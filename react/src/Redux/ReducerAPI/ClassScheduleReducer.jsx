@@ -112,3 +112,19 @@ export const GetClassScheduleStudentActionAsync = (classId) => {
     }
   };
 };
+
+export const GetClassScheduleInstructorActionAsync = (classId) => {
+  return async (dispatch) => {
+    try {
+      const response = await httpClient.get(`/api/v1/instructor/classes/${classId}/classShedules`);
+      if (response.isSuccess) {
+        dispatch(setSchedules(response.data.classSchedules));
+      } else {
+        throw new Error(response.message);
+      }
+    } catch (error) {
+      console.error(error);
+      message.error("Không thể lấy lịch học, vui lòng thử lại sau.");
+    }
+  };
+};
