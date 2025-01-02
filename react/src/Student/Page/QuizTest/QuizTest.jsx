@@ -19,7 +19,7 @@ const QuizTest = () => {
   const [timeLeft, setTimeLeft] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [isTimeUp, setIsTimeUp] = useState(false);
-  const { quizId } = useParams();
+  const { quizId, className, classId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { setLoading } = useLoading();
@@ -34,7 +34,7 @@ const QuizTest = () => {
       setLoading(false);
       if (response) {
         removeDataTextStorage(QUIZ_SELECTED_OPTION);
-        navigate(`/student/quiz/${quizId}`);
+        navigate(`/student/${className}/${classId}/quiz/${quizId}`);
       }
     } catch (error) {
       console.error(error);

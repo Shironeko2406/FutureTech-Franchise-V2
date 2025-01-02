@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Modal, Space, Table, Typography, Button, Upload, message } from 'antd';
-import { DownloadOutlined, UploadOutlined, InboxOutlined } from '@ant-design/icons';
+import { DownloadOutlined, UploadOutlined, InboxOutlined, FileZipOutlined } from '@ant-design/icons';
 import * as XLSX from 'xlsx';
+import JSZip from 'jszip';
 import { useLoading } from '../../Utils/LoadingContext';
 import { useDispatch } from 'react-redux';
 import { InstructorGradeForAssignmentActionAsync } from '../../Redux/ReducerAPI/UserReducer';
@@ -102,6 +103,35 @@ const ShowListSubmitAssignmentAndScores = ({ visible, onClose, assignment }) => 
     XLSX.writeFile(wb, `user_scores_${assignment.title}.xlsx`);
   };
 
+  const handleDownloadAllFiles = async () => {
+    const selectedUsers = sortedScores.filter((user) => selectedRowKeys.includes(user.userId));
+    const zip = new JSZip();
+
+    setLoading(true);
+    try {
+      for (const user of selectedUsers) {
+        if (user.submitUrl && user.submitFileName) {
+          const response = await fetch(user.submitUrl);
+          const blob = await response.blob();
+          zip.file(user.submitFileName, blob);
+        }
+      }
+
+      const content = await zip.generateAsync({ type: "blob" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(content);
+      link.download = `assignment_${assignment.id}_submissions.zip`;
+      link.click();
+      URL.revokeObjectURL(link.href);
+      setLoading(false);
+      message.success('Files downloaded successfully');
+    } catch (error) {
+      console.error('Error downloading files:', error);
+      setLoading(false);
+      message.error('Error downloading files');
+    }
+  };
+
   const handleUpload = () => {
     setIsUploadModalVisible(true);
     onClose()
@@ -168,7 +198,15 @@ const ShowListSubmitAssignmentAndScores = ({ visible, onClose, assignment }) => 
               onClick={handleDownload}
               disabled={selectedRowKeys.length === 0}
             >
-              Tải xuống Excel để chấm điểm
+              Tải xuống Excel
+            </Button>
+            <Button
+              type="primary"
+              icon={<FileZipOutlined />}
+              onClick={handleDownloadAllFiles}
+              disabled={selectedRowKeys.length === 0}
+            >
+              Tải về tất cả file
             </Button>
             <Button
               type="primary"

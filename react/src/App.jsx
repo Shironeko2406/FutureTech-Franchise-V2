@@ -15,7 +15,6 @@ import TempUIManager from "./Manager/TempUI/TempUIManager";
 import HomeManager from "./Manager/Page/Home/HomeManager";
 import TempUIStudent from "./Student/TempUI/TempUIStudent";
 import HomeStudent from "./Student/Page/HomeStudent/HomeStudent";
-import ClassDetailStudent from "./Student/Page/ClassDetailStudent/ClassDetailStudent";
 import HomeStudentNoti from "./Student/Page/HomeStudentNoti";
 import TempUIAgencyManager from "./AgencyManager/TempUIAgencyManager/TempUIAgencyManager";
 import HomeAgencyManager from "./AgencyManager/Page/HomeAgencyManager/HomeAgencyManager";
@@ -34,8 +33,6 @@ import ScheduleAgencyManager from "./AgencyManager/Page/ScheduleManagement/Sched
 import CourseCategoryAdmin from "./Admin/Page/CourseCategory/CourseAdmin";
 import CourseManageAdmin from "./Admin/Page/CourseManageAdmin/CourseManageAdmin";
 import TempUIInstructor from "./Instructor/TempUIInstructor/TempUIInstructor";
-import ScheduleTeaching from "./Instructor/Page/ScheduleTeaching/ScheduleTeaching";
-import HomeInstructor from "./Instructor/Page/HomeInstructor/HomeInstructor";
 import CourseDetailManager from "./Manager/Page/CourseDetailManager/CourseDetailManager";
 import CourseViewAgencyManager from "./AgencyManager/Page/CourseViewAgencyManager/CourseViewAgencyManager";
 import CourseDetailAgencyManager from "./AgencyManager/Page/CourseViewAgencyManager/CourseDetailAgencyManager";
@@ -44,7 +41,6 @@ import { Spin } from "antd";
 import { ConfigProvider } from 'antd';
 import vi_VN from 'antd/es/locale/vi_VN';
 import TempUISystemInstructor from "./SystemInstructor/TempUISystemInstructor/TempUISystemInstructor";
-import HomeSystemInstructor from "./SystemInstructor/Page/HomeSystemInstructor/HomeSystemInstructor";
 import CourseSystemInstructor from "./SystemInstructor/Page/CourseSystemInstructor/CourseSystemInstructor";
 import CourseDetailSystemInstructor from "./SystemInstructor/Page/CourseDetailSystemInstructor/CourseDetailSystemInstructor";
 import QuizTest from "./Student/Page/QuizTest/QuizTest";
@@ -62,7 +58,6 @@ import AgencyManagement from "./Manager/Page/AgencyManagement/AgencyManagement";
 import AgencyDetail from "./Manager/Page/AgencyDetail/AgencyDetail";
 import ListTaskSystemInstructor from "./SystemInstructor/Page/ListTask/ListTaskSystemInstructor";
 import TempUISystemConsultant from "./SystemConsultant/TempUI/TempUISystemConsultant";
-import HomeSystemConsultant from "./SystemConsultant/Page/Home/HomeSystemConsultant";
 import ListTaskSystemConsultant from "./SystemConsultant/Page/ListTask/ListTaskSystemConsultant";
 import ConsultationManagement from "./SystemConsultant/Page/ConsultationManagement/ConsultationManagement";
 import CreateContractPage from "./Manager/Page/ManageContract/CreateContractPage";
@@ -110,8 +105,14 @@ import PaymentManagement from "./Manager/Page/PaymentManagement/PaymentManagemen
 import AgencyActiveAdminManagement from "./Admin/Page/AgencyActiveAdminManagement/AgencyActiveAdminManagement";
 import AgencyActiveInfoAdmin from "./Admin/Page/AgencyActiveInfoAdmin/AgencyActiveInfoAdmin";
 import AgencyEdit from "./Manager/Page/AgencyEdit/AgencyEdit";
+import ViewQuiz from "./Student/Page/ViewQuiz/ViewQuiz";
+import MaterialClass from "./Student/Page/MaterialClass/MaterialClass";
 import AttendanceReport from "./Student/Page/AttendanceReport/AttendanceReport";
 import VNPaySetup from "./AgencyManager/Page/VNPaySetup/VNPaySetup";
+import VideoSystemInstructor from "./SystemInstructor/Page/VideoSystemInstructor/VideoSystemInstructor";
+import VideoPageMaterial from "./Student/Page/VideoPageMaterial/VideoPageMaterial";
+import ReadingPageMaterial from "./Student/Page/ReadingPageMaterial/ReadingPageMaterial";
+import Profile_2 from "./Admin/Page/Profile/Profile_2";
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -145,7 +146,7 @@ function App() {
                 <Route path="franchise" element={<FranchiseManagement />} />
                 <Route path="course-category" element={<CourseCategoryAdmin />} />
                 <Route path="course" element={<CourseManageAdmin />} />
-                <Route path="profile" element={<Profile />} />
+                <Route path="profile" element={<Profile_2/>} />
                 <Route path="contracts" element={<ManageContractAdminPage />} />
                 <Route path="system-accounts" element={<AccountManagement />} />
                 <Route path="work-template" element={<WorkTemplate />} />
@@ -183,12 +184,17 @@ function App() {
 
             <Route element={<ProtectedRoute requiredRole="Student" />}>
               <Route path="student" element={<TempUIStudent />}>
-                <Route path="class/:id" element={<ClassDetailStudent />} />
-                <Route path="class/:id/assignment" element={<ViewAssignment />} />
-                <Route path="quiz" element={<QuizTest />} />
-                <Route path="assignment/:assignmentId" element={<AssignmentDetail />} />
-                <Route path="quiz/:quizId" element={<QuizDescription />} />
-                <Route path="quiz/:quizId/start" element={<QuizTest />} />
+                <Route path=":className/course/:courseId/chapter/:number" element={<MaterialClass/>} />
+                <Route path=":className/course/:courseId/chapter/:number/material/:materialNumber/video" element={<VideoPageMaterial/>} />
+                <Route path=":className/course/:courseId/chapter/:number/material/:materialNumber/reading" element={<ReadingPageMaterial/>} />
+                <Route path=":className/course/:courseId/chapter/:number" element={<MaterialClass/>} />
+                <Route path=":className/:classId/quiz" element={<ViewQuiz/>} />
+                <Route path=":className/:classId/assignment" element={<ViewAssignment />} />
+                <Route path=":className/:classId/assignment/:assignmentId" element={<AssignmentDetail />} />
+                <Route path=":className/:classId/quiz/:quizId" element={<QuizDescription />} />
+                <Route path=":className/:classId/quiz/:quizId/start" element={<QuizTest />} />
+                <Route path="video" element={<VideoPageMaterial/>} />
+                <Route path="reading" element={<ReadingPageMaterial/>} />
                 <Route path="" element={<ScheduleStudent />} />
                 <Route path="change-password" element={<ChangePassword />} />
                 <Route path="profile" element={<Profile />} />
@@ -240,6 +246,7 @@ function App() {
             <Route element={<ProtectedRoute requiredRole="SystemInstructor" />}>
               <Route path="system-instructor" element={<TempUISystemInstructor />}>
                 <Route path="" element={<CourseSystemInstructor />} />
+                <Route path="video" element={<VideoSystemInstructor/>} />
                 <Route path="course-detail/:id" element={<CourseDetailSystemInstructor />} />
                 <Route path="course-detail/:id/questions" element={<ViewQuestionChapterSystemInstructor />} />
                 <Route path="list-task" element={<ListTaskSystemInstructor />} />
@@ -274,12 +281,6 @@ function App() {
                 <Route path="profile" element={<Profile />} />
                 <Route path="equipments" element={<EquipmentListAgencyStaff />} />
               </Route>
-            </Route>
-
-            {/*Test page */}
-            <Route path="student-page" element={<TempUIStudent />}>
-              <Route path="" element={<HomeStudent />} />
-              <Route path="course-detail" element={<ClassDetailStudent />} />
             </Route>
           </Routes>
         </LoadingProvider >

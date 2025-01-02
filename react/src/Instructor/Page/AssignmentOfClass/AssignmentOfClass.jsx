@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Space, Table, Tag, Card, Typography, Tooltip, Popconfirm } from 'antd';
-import { RocketOutlined, EditOutlined, DeleteOutlined, CalendarOutlined, RightCircleOutlined } from '@ant-design/icons';
+import { RocketOutlined, EditOutlined, DeleteOutlined, CalendarOutlined, RightCircleOutlined, EyeOutlined } from '@ant-design/icons';
 import CreateAssignmentModal from '../../Modal/CreateAssignmentModal';
 import ShowListSubmitAssignmentAndScores from '../../Modal/ShowListSubmitAssignmentAndScores';
 import { useLoading } from '../../../Utils/LoadingContext';
 import { useDispatch, useSelector } from 'react-redux';
-import { DeleteAssignmentActionAsync, GetAssignmentsByClassIdActionAsync } from '../../../Redux/ReducerAPI/AssignmentReducer';
+import { DeleteAssignmentActionAsync } from '../../../Redux/ReducerAPI/AssignmentReducer';
 import { useParams } from 'react-router-dom';
 import EditAssignmentModal from '../../Modal/EditAssignmentModal';
 import moment from 'moment';
+import { GetAssignmentsByClassIdActionAsync } from '../../../Redux/ReducerAPI/ClassReducer';
 
 const { Title , Text} = Typography;
 
@@ -114,6 +115,41 @@ const AssignmentOfClass = () => {
     );
   };
 
+  const renderTypeBadge = (type) => {
+    const typeConfig = {
+      Compulsory: {
+        text: "Lấy điểm",
+        color: "blue",
+        backgroundColor: "#e6f7ff",
+        borderColor: "#91d5ff",
+      },
+      Optional: {
+        text: "Không lấy điểm",
+        color: "green",
+        backgroundColor: "#f6ffed",
+        borderColor: "#b7eb8f",
+      },
+    };
+  
+    const config = typeConfig[type];
+  
+    return (
+      <div
+        style={{
+          display: "inline-block",
+          padding: "4px 12px",
+          borderRadius: "6px",
+          backgroundColor: config.backgroundColor,
+          border: `1px solid ${config.borderColor}`,
+        }}
+      >
+        <Text strong style={{ color: config.color }}>
+          {config.text}
+        </Text>
+      </div>
+    );
+  };
+
   const columns = [
     {
       title: 'Tiêu đề',
@@ -186,12 +222,29 @@ const AssignmentOfClass = () => {
     
         return status === value;
       },
-    },    
+    }, 
+    {
+      title: "Phân loại",
+      dataIndex: "type",
+      key: "type",
+      align: "center",
+      render: (type) => renderTypeBadge(type),
+    },   
     {
       title: 'Hành động',
       key: 'action',
       render: (_, record) => (
         <Space size="middle">
+          {record.fileURL && (
+            <Tooltip title="Xem đề bài">
+              <Button
+                type="primary"
+                icon={<EyeOutlined />}
+                size="small"
+                onClick={() => window.open(record.fileURL, '_blank')}
+              />
+            </Tooltip>
+          )}
           <Tooltip title="Chỉnh sửa">
             <Button type="primary" icon={<EditOutlined />} size="small" onClick={() => showModalEditAssignment(record)}/>
           </Tooltip>

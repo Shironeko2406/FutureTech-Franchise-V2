@@ -6,7 +6,7 @@ import ViewSyllabus from "../../Component/ViewSyllabus";
 import ViewSession from "../../Component/ViewSession";
 import ViewChapter from "../../Component/ViewChapter";
 import ViewAssessment from "../../Component/ViewAssessment";
-import ViewMaterialCourse from "../../Component/ViewMaterialCourse";
+// import ViewMaterialCourse from "../../Component/ViewMaterialCourse";
 import { useLoading } from "../../../Utils/LoadingContext";
 
 
@@ -26,7 +26,7 @@ const CourseDetailManager = () => {
       <ViewSyllabus />
       {/*Thêm các card component khác*/}
       <ViewChapter />
-      <ViewSession />
+      {/* <ViewSession /> */}
       <ViewAssessment />
       {/* <ViewMaterialCourse/> */}
     </div>

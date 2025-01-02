@@ -10,6 +10,7 @@ import { DeleteChapterActionAsync } from "../../Redux/ReducerAPI/ChapterReducer"
 import EditChapterModal from "../Modal/EditChapterModal";
 import { useLoading } from "../../Utils/LoadingContext";
 import CreateMaterialModal from "../Modal/CreateMaterialModal";
+import VideoModal from "../Modal/VideoModal";
 
 const ViewChapter = () => {
   const { chapters } = useSelector((state) => state.CourseReducer);
@@ -21,6 +22,7 @@ const ViewChapter = () => {
   const [selectedChapterForCreateMaterial, setSelectedChapterForCreateMaterial] = useState(null);
   const [isModalEditChapterVisible, setIsModalEditChapterVisible] = useState(false);
   const [isModalCreateMaterialVisible, setsModalCreateMaterialVisible] = useState(false);
+  const [videoModalState, setVideoModalState] = useState({ isVisible: false, url: '' });
   const { setLoading } = useLoading();
 
   const getActionItems = () => [
@@ -89,6 +91,42 @@ const ViewChapter = () => {
     setSelectedChapterForCreateMaterial(null);
   };
 
+  const showVideoModal = (videoUrl) => {
+    setVideoModalState({ isVisible: true, url: videoUrl });
+  };
+
+
+  const renderUrlContent = (url, isVideo = false) => {
+    if (!url) {
+      return (
+        <div
+          style={{
+            display: "inline-block",
+            padding: "4px 12px",
+            borderRadius: "6px",
+            backgroundColor: "rgba(200, 200, 200, 0.5)",
+            border: "1px solid rgba(180, 180, 180, 0.3)",
+          }}
+        />
+      );
+    }
+
+    if (isVideo) {
+      return (
+        <Button type="link" onClick={() => showVideoModal(url)}>
+          Xem video
+        </Button>
+      );
+    }
+
+    return (
+      <Link to={url} target="_blank" rel="noopener noreferrer">
+        Xem tài liệu
+      </Link>
+    );
+  };
+
+
   const columns = [
     {
       title: "Số chương",
@@ -153,13 +191,17 @@ const ViewChapter = () => {
     },
     {
       title: "Tài liệu",
-      dataIndex: "url",
-      key: "url",
-      render: (_, record, index) => (
-        <Link to={record.url} target="_blank" rel="noopener noreferrer">
-          Tài liệu {index + 1}
-        </Link>
-      ),
+      dataIndex: "urlFile",
+      key: "urlFile",
+      align: "center",
+      render: (urlFile) => renderUrlContent(urlFile),
+    },
+    {
+      title: "Video",
+      dataIndex: "urlVideo",
+      key: "urlVideo",
+      align: "center",
+      render: (urlVideo) => renderUrlContent(urlVideo, true),
     },
     {
       title: "Mô tả",
@@ -218,6 +260,12 @@ const ViewChapter = () => {
         visible={isModalCreateMaterialVisible}
         onClose={closeModalCreateMaterialChapter}
         chapter={selectedChapterForCreateMaterial}
+      />
+
+      <VideoModal
+        isVisible={videoModalState.isVisible}
+        onClose={() => setVideoModalState({ isVisible: false, url: '' })}
+        videoUrl={videoModalState.url}
       />
     </div>
   );

@@ -1,37 +1,122 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { NavLink } from "react-router-dom";
-import { GetClassOfUserLoginActionAsync } from "../../Redux/ReducerAPI/UserReducer";
-
-
+import { NavLink, useLocation, useParams } from "react-router-dom";
+import { GetClassMaterialOfUserLoginActionAsync, GetClassOfUserLoginActionAsync } from "../../Redux/ReducerAPI/UserReducer";
 
 const LeftSidebar = ({ onSidebarToggle }) => {
   const dispatch = useDispatch();
-  const { classOfUserLogin } = useSelector((state) => state.UserReducer);
+  const { classOfUserLogin, materialClass } = useSelector((state) => state.UserReducer);
   const [openSubmenus, setOpenSubmenus] = useState({});
+  const { className, courseId, materialNumber, number } = useParams(); //number của chapter
+  const location = useLocation();
+  const selectedClassId = classOfUserLogin?.find((c) => c.className === className)?.classId;
+  const selectedCourseId = classOfUserLogin?.find((c) => c.className === className)?.courseId;
+  const isStudentRoute = location.pathname.startsWith('/student');
+  const isClassRoute = location.pathname.includes('/student/') && className;
+  const isChapterRoute = location.pathname.includes('/student/') && className && materialNumber;
 
   useEffect(() => {
     dispatch(GetClassOfUserLoginActionAsync())
   }, [])
 
-  const sidebarItems = [
-    { type: "section", label: "Lịch học", icon: "ti ti-dots" },
-    { type: 'link', label: 'Lịch học', path: '/student', icon: 'mdi:clock' },
-    { type: "section", label: "Khóa học", icon: "ti ti-dots" },
+  useEffect(() => {
+    const currentCourseId = courseId || selectedCourseId;
+  
+    if (currentCourseId) {
+      dispatch(GetClassMaterialOfUserLoginActionAsync(currentCourseId))
+    }
+  }, [courseId, selectedCourseId]);
 
-    ...classOfUserLogin?.map((classItem, index) => ({
-      type: "submenu",
-      label: classItem.className,
-      icon: "mdi:school",
-      subItems: [
-        { label: "Bài kiểm tra", path: `/student/class/${classItem.classId}` },
-        { label: "Bài tập nộp", path: `/student/class/${classItem.classId}/assignment` },
-        { label: "Điểm danh", path: `/student/class/${classItem.classId}/attendance` },
-      ],
-    })),
+  const getSidebarItems = () => {
+    let routeType = '';
+    
+    if (isStudentRoute && !isClassRoute) {
+      routeType = 'STUDENT_ROUTE';
+    } else if (isClassRoute && !isChapterRoute) {
+      routeType = 'CLASS_ROUTE';
+    } else if (isChapterRoute) {
+      routeType = 'CHAPTER_ROUTE';
+    }
+  
+    switch (routeType) {
+      case 'STUDENT_ROUTE':
+        return [
+          { type: "section", label: "Lịch học", icon: "ti ti-dots" },
+          { type: 'link', label: 'Lịch học', path: '/student', icon: 'mdi:clock' },
+          { type: "section", label: "Khóa học", icon: "ti ti-dots" },
+          ...(classOfUserLogin?.map((classItem) => ({
+            type: "link",
+            label: classItem.className,
+            path: `/student/${classItem.className}/course/${classItem.courseId}/chapter/1`,
+            icon: "mdi:school",
+          })) || []),
+        ];
+      
+      case 'CLASS_ROUTE':
+        return [
+          { type: "section", label: className, icon: "ti ti-dots" },
+          {
+            type: "submenu",
+            label: "Tài nguyên lớp học",
+            icon: "mdi:book-open-variant",
+            subItems: materialClass?.chapters?.map((chapter) => ({
+              label: `${chapter.topic}`,
+              path: `/student/${className}/course/${selectedCourseId}/chapter/${chapter.number}`,
+            })) || [],
+          },
+          { type: "link", label: "Bài kiểm tra", path: `/student/${className}/${selectedClassId}/quiz`, icon: "mdi:test-tube" },
+          { type: "link", label: "Bài tập nộp", path: `/student/${className}/${selectedClassId}/assignment`, icon: "mdi:clipboard-text" },
+        ];
+  
+      case 'CHAPTER_ROUTE':
+        return [
+          { type: "section", label: className, icon: "ti ti-dots" },
+          ...(materialClass?.chapters?.map((chapter) => ({
+            type: "submenu",
+            label: chapter.topic,
+            icon: "mdi:book-open-variant",
+            subItems: chapter.chapterMaterials?.map((material) => ({
+              label: material.title,
+              path: material.urlVideo 
+                ? `/student/${className}/course/${selectedCourseId}/chapter/${chapter.number}/material/${material.number}/video`
+                : `/student/${className}/course/${selectedCourseId}/chapter/${chapter.number}/material/${material.number}/reading`,
+            })) || [],
+          })) || []),
+        ];
+  
+      default:
+        return [];
+    }
+  };
+  
+  const sidebarItems = getSidebarItems();
+  
+  // New useEffect to set initial state of openSubmenus
+  useEffect(() => {
+    const initialOpenSubmenus = {};
 
-  ];
-
+    if (isChapterRoute) {
+      const currentChapterNumber = parseInt(number, 10); 
+  
+      materialClass?.chapters?.forEach((chapter) => {
+        if (chapter.number === currentChapterNumber) {
+          initialOpenSubmenus[chapter.number] = true; // Mở submenu của chapter hiện tại
+        } else {
+          initialOpenSubmenus[chapter.number] = false; // Đóng các submenu khác
+        }
+      });
+      
+    } else if (isClassRoute && !isChapterRoute) {
+      sidebarItems.forEach((item, index) => {
+        if (item.type === "submenu") {
+          initialOpenSubmenus[index] = true; // Mở tất cả submenu
+        }
+      });  
+    }
+    
+    setOpenSubmenus(initialOpenSubmenus);
+  }, [materialClass, number, materialNumber]); 
+  
 
   const toggleSubmenu = (index) => {
     setOpenSubmenus((prevOpenSubmenus) => ({
@@ -70,21 +155,44 @@ const LeftSidebar = ({ onSidebarToggle }) => {
                     onClick={() => toggleSubmenu(index)}
                     aria-expanded={openSubmenus[index]}
                   >
-                    <span>
-                      <iconify-icon icon={item.icon} className="fs-6" />
+                    {!isChapterRoute && (
+                      <span>
+                        <iconify-icon icon={item.icon} className="fs-6" />
+                      </span>
+                    )}
+                    <span
+                      className="hide-menu"
+                      style={{
+                        whiteSpace: "normal",
+                        wordWrap: "break-word",
+                        lineHeight: "1.4",
+                        fontSize: isChapterRoute ? '14px' : ''
+                      }}
+                    >
+                      {item.label}
                     </span>
-                    <span className="hide-menu">{item.label}</span>
+
+
                   </div>
                   {openSubmenus[index] && (
-                    <ul className="submenu">
-                      {item.subItems.map((subItem, subIndex) => (
-                        <li key={subIndex}>
-                          <NavLink className="sidebar-link" to={subItem.path}>
-                            {subItem.label}
-                          </NavLink>
-                        </li>
-                      ))}
-                    </ul>
+                    <ul className="submenu" >
+                    {item.subItems?.map((subItem, subIndex) => (
+                      <li key={subIndex}>
+                        <NavLink 
+                          className="sidebar-link fs-2" 
+                          to={subItem.path}
+                          style={{
+                            whiteSpace: "normal",
+                            wordWrap: "break-word",
+                            padding: "8px 15px",
+                            lineHeight: "1.4",
+                          }}
+                        >
+                          {subItem.label}
+                        </NavLink>
+                      </li>
+                    ))}
+                  </ul>
                   )}
                 </li>
               ) : (

@@ -5,7 +5,6 @@ import { message } from "antd";
 const initialState = {
   course: [],
   courseById: {},
-  sessions: [],
   chapters: [],
   assessments: [],
   courseMaterials: [],
@@ -22,7 +21,6 @@ const CourseReducer = createSlice({
     },
     setCourseById: (state, action) => {
       state.courseById = action.payload;
-      state.sessions = action.payload.sessions;
       state.chapters = action.payload.chapters;
       state.assessments = action.payload.assessments;
       state.courseMaterials = action.payload.courseMaterials;
@@ -294,25 +292,6 @@ export const DeleteCourseByIdActionAsync = (
         await dispatch(
           GetCourseActionAsync(search, status, pageIndex, pageSize)
         );
-        return true;
-      } else {
-        message.error(`${res.message}`);
-        return false;
-      }
-    } catch (error) {
-      console.error(error);
-      return false;
-    }
-  };
-};
-
-export const CreateMaterialChapterIdActionAsync = (material, courseId) => {
-  return async (dispatch) => {
-    try {
-      const res = await httpClient.post(`/api/v1/chapter-materials`, material);
-      if (res.isSuccess && res.data) {
-        message.success(`${res.message}`);
-        await dispatch(GetCourseByIdActionAsync(courseId));
         return true;
       } else {
         message.error(`${res.message}`);

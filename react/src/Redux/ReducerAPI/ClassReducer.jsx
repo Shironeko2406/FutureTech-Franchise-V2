@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { httpClient } from "../../Utils/Interceptors";
 import { message } from "antd";
+import { setAssignments } from "./AssignmentReducer";
 
 const initialState = {
     instructors: [],
@@ -46,6 +47,19 @@ export const { setInstructors, setClasses, setClass, setClassDetail, setQuizOfCl
 
 export default ClassReducer.reducer;
 //---------API CALL-------------
+
+export const GetAssignmentsByClassIdActionAsync = (classId) => {
+    return async (dispatch) => {
+      try {
+        const res = await httpClient.get(`/api/v1/classes/${classId}/assignments`);
+        dispatch(setAssignments(res.data))
+      } catch (error) {
+        console.log(error);
+        message.error("Đã có lỗi xảy ra, vui lòng thử lại sau!");
+      }
+    };
+  };
+
 export const GetClassesActionAsync = (pageIndex, pageSize) => {
     return async (dispatch) => {
         try {
