@@ -21,6 +21,99 @@ import EditQuizModal from "../../Modal/EditQuizModal";
 
 const { Text } = Typography;
 
+const renderStatusBadge = (startTime, duration) => {
+  // Calculate the quiz status based on startTime and duration
+  const quizStartTime = moment(startTime);
+  const quizEndTime = quizStartTime.clone().add(duration, "minutes");
+  const isBeforeStartTime = moment().isBefore(quizStartTime);
+  const isTimeExpired = moment().isAfter(quizEndTime);
+
+  // Determine the status
+  let status;
+  if (isBeforeStartTime) {
+    status = "NotOpen"; // Chưa mở
+  } else if (!isTimeExpired) {
+    status = "Open"; // Đang mở
+  } else {
+    status = "Closed"; // Đã đóng
+  }
+
+  // Define configuration for each status
+  const statusConfig = {
+    NotOpen: {
+      text: "Chưa mở",
+      color: "gray",
+      backgroundColor: "#f0f0f0",
+      borderColor: "#d9d9d9",
+    },
+    Open: {
+      text: "Đang mở",
+      color: "green",
+      backgroundColor: "#f6ffed",
+      borderColor: "#b7eb8f",
+    },
+    Closed: {
+      text: "Đã đóng",
+      color: "red",
+      backgroundColor: "#fff2f0",
+      borderColor: "#ffa39e",
+    },
+  };
+
+  const config = statusConfig[status];
+
+  return (
+    <div
+      style={{
+        display: "inline-block",
+        padding: "4px 12px",
+        borderRadius: "6px",
+        backgroundColor: config.backgroundColor,
+        border: `1px solid ${config.borderColor}`,
+      }}
+    >
+      <Text strong style={{ color: config.color }}>
+        {config.text}
+      </Text>
+    </div>
+  );
+};
+
+const renderTypeBadge = (type) => {
+  const typeConfig = {
+    Compulsory: {
+      text: "Lấy điểm",
+      color: "blue",
+      backgroundColor: "#e6f7ff",
+      borderColor: "#91d5ff",
+    },
+    Optional: {
+      text: "Không lấy điểm",
+      color: "green",
+      backgroundColor: "#f6ffed",
+      borderColor: "#b7eb8f",
+    },
+  };
+
+  const config = typeConfig[type];
+
+  return (
+    <div
+      style={{
+        display: "inline-block",
+        padding: "4px 12px",
+        borderRadius: "6px",
+        backgroundColor: config.backgroundColor,
+        border: `1px solid ${config.borderColor}`,
+      }}
+    >
+      <Text strong style={{ color: config.color }}>
+        {config.text}
+      </Text>
+    </div>
+  );
+};
+
 const QuizOfClass = () => {
   const dispatch = useDispatch();
   const { setLoading } = useLoading();
@@ -40,63 +133,6 @@ const QuizOfClass = () => {
     ]).finally(() => setLoading(false));
   }, [id]);
 
-  const renderStatusBadge = (startTime, duration) => {
-    // Calculate the quiz status based on startTime and duration
-    const quizStartTime = moment(startTime);
-    const quizEndTime = quizStartTime.clone().add(duration, "minutes");
-    const isBeforeStartTime = moment().isBefore(quizStartTime);
-    const isTimeExpired = moment().isAfter(quizEndTime);
-
-    // Determine the status
-    let status;
-    if (isBeforeStartTime) {
-      status = "NotOpen"; // Chưa mở
-    } else if (!isTimeExpired) {
-      status = "Open"; // Đang mở
-    } else {
-      status = "Closed"; // Đã đóng
-    }
-
-    // Define configuration for each status
-    const statusConfig = {
-      NotOpen: {
-        text: "Chưa mở",
-        color: "gray",
-        backgroundColor: "#f0f0f0",
-        borderColor: "#d9d9d9",
-      },
-      Open: {
-        text: "Đang mở",
-        color: "green",
-        backgroundColor: "#f6ffed",
-        borderColor: "#b7eb8f",
-      },
-      Closed: {
-        text: "Đã đóng",
-        color: "red",
-        backgroundColor: "#fff2f0",
-        borderColor: "#ffa39e",
-      },
-    };
-
-    const config = statusConfig[status];
-
-    return (
-      <div
-        style={{
-          display: "inline-block",
-          padding: "4px 12px",
-          borderRadius: "6px",
-          backgroundColor: config.backgroundColor,
-          border: `1px solid ${config.borderColor}`,
-        }}
-      >
-        <Text strong style={{ color: config.color }}>
-          {config.text}
-        </Text>
-      </div>
-    );
-  };
 
   const showModalCreateQuiz = () => {
     setIsModalVisible(true);
@@ -140,7 +176,7 @@ const QuizOfClass = () => {
       title: "Tiêu đề",
       dataIndex: "title",
       key: "title",
-      width: "20%",
+      width: "18%",
       render: (text, record) => (
         <Button
           type="link"
@@ -164,38 +200,46 @@ const QuizOfClass = () => {
       ),
     },
     {
-      title: "Số lượng câu hỏi",
+      title: "Lượng câu hỏi",
       dataIndex: "quantity",
       key: "quantity",
-      width: "15%",
+      width: "12%",
       align: "center",
     },
     {
       title: "Thời lượng (phút)",
       dataIndex: "duration",
       key: "duration",
-      width: "15%",
+      width: "14%",
       align: "center",
     },
     {
       title: "Thời gian bắt đầu",
       dataIndex: "startTime",
       key: "startTime",
-      width: "20%",
+      width: "16%",
       render: (startTime) => new Date(startTime).toLocaleString(),
     },
     {
       title: "Trạng thái",
       key: "status",
       align: "center",
-      width: "15%",
+      width: "12%",
       render: (_, record) =>
         renderStatusBadge(record.startTime, record.duration),
     },
     {
+      title: "Phân loại",
+      dataIndex: "type",
+      key: "type",
+      width: "15%",
+      align: "center",
+      render: (type) => renderTypeBadge(type),
+    },
+    {
       title: "Hành động",
       key: "action",
-      width: "15%",
+      width: "13%",
       render: (_, record) => (
         <Space size="middle">
           <Button

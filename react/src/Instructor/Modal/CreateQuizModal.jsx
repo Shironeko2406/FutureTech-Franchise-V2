@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, DatePicker, Input, InputNumber, Modal, Form, Select, Typography, Space } from 'antd';
+import { Button, DatePicker, Input, InputNumber, Modal, Form, Select, Typography, Space, Row, Col } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { CreateQuizActionAsync } from '../../Redux/ReducerAPI/QuizReducer';
@@ -70,30 +70,35 @@ const CreateQuizModal = ({ visible, onClose }) => {
       label: 'Tiêu đề',
       rules: [{ required: true, message: 'Vui lòng nhập tiêu đề bài kiểm tra!' }],
       component: <Input placeholder="Nhập tiêu đề bài kiểm tra" />,
+      colSpan: { xs: 24, sm: 24, md: 24, lg: 24, xl: 24 },
     },
     {
       name: 'description',
       label: 'Mô tả',
       rules: [{ required: true, message: 'Vui lòng nhập mô tả!' }],
       component: <TextArea placeholder="Nhập mô tả bài kiểm tra" autoSize={{ minRows: 3, maxRows: 6 }} />,
+      colSpan: { xs: 24, sm: 24, md: 24, lg: 24, xl: 24 },
     },
     {
       name: 'duration',
       label: 'Thời gian làm bài (phút)',
       rules: [{ required: true, message: 'Vui lòng nhập thời gian!' }],
       component: <InputNumber min={1} placeholder="Nhập thời gian (phút)" style={{ width: '100%' }} />,
+      colSpan: { xs: 24, sm: 24, md: 12, lg: 12, xl: 12 },
     },
     {
       name: 'quantity',
       label: 'Số lượng câu hỏi',
       rules: [{ required: true, message: 'Vui lòng nhập số lượng câu hỏi!' }],
       component: <InputNumber min={1} placeholder="Nhập số lượng câu hỏi" style={{ width: '100%' }} />,
+      colSpan: { xs: 24, sm: 24, md: 12, lg: 12, xl: 12 },
     },
     {
       name: 'startTime',
       label: 'Thời gian bắt đầu',
       rules: [{ required: true, message: 'Vui lòng chọn thời gian bắt đầu!' }],
       component: <DatePicker showTime format="DD/MM/YYYY, HH:mm" style={{ width: '100%' }} />,
+      colSpan: { xs: 24, sm: 24, md: 12, lg: 12, xl: 12 },
     },
     {
       name: 'chapterId',
@@ -110,12 +115,14 @@ const CreateQuizModal = ({ visible, onClose }) => {
           style={{ width: '100%' }}
         />
       ),
+      colSpan: { xs: 24, sm: 24, md: 12, lg: 12, xl: 12 },
     },
   ];
 
   return (
     <StyledModal
       title={<Title level={3}>Tạo Bài Kiểm Tra</Title>}
+      style={{top:20}}
       open={visible}
       onCancel={onClose}
       footer={
@@ -129,14 +136,19 @@ const CreateQuizModal = ({ visible, onClose }) => {
       width={600}
     >
       <StyledForm form={form} layout="vertical" onFinish={handleSubmit} requiredMark={false}>
-        {formItems.map((item) => (
-          <Form.Item key={item.name} name={item.name} label={item.label} rules={item.rules}>
-            {item.component}
-          </Form.Item>
-        ))}
+        <Row gutter={[16, 16]}>
+          {formItems.map((item) => (
+            <Col {...item.colSpan} key={item.name}>
+              <Form.Item name={item.name} label={item.label} rules={item.rules}>
+                {item.component}
+              </Form.Item>
+            </Col>
+          ))}
+        </Row>
       </StyledForm>
     </StyledModal>
   );
 };
 
 export default CreateQuizModal;
+

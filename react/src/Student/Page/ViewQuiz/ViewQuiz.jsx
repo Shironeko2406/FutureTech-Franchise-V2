@@ -4,7 +4,7 @@ import { GetQuizByClassIdStudentActionAsync } from "../../../Redux/ReducerAPI/Cl
 import { useParams } from "react-router-dom";
 import { useLoading } from "../../../Utils/LoadingContext";
 import { List, Card, Tag, Typography, Space, Progress, Tooltip, ConfigProvider, Button } from "antd";
-import { CalendarOutlined, ClockCircleOutlined, FileTextOutlined, TrophyOutlined, CommentOutlined, ExclamationCircleOutlined, LockOutlined, UnlockOutlined } from "@ant-design/icons";
+import { CalendarOutlined, ClockCircleOutlined, FileTextOutlined, TrophyOutlined, CommentOutlined, ExclamationCircleOutlined, LockOutlined, UnlockOutlined, CheckCircleOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import moment from "moment";
 import { NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -47,6 +47,21 @@ const ViewQuiz = () => {
       } else {
         return "Open";
       }
+    };
+
+    const renderQuizType = (quiz) => {
+      const type = quiz.type;
+      const typeConfig = {
+        "Compulsory": { color: "gold", icon: <CheckCircleOutlined />, text: "Lấy điểm" }, 
+        "Optional": { color: "purple", icon: <QuestionCircleOutlined />, text: "Không lấy điểm" } 
+      };
+      const { color, icon, text } = typeConfig[type];
+    
+      return (
+        <Tag color={color} icon={icon}>
+          {text}
+        </Tag>
+      );
     };
   
     const renderQuizStatus = (quiz) => {
@@ -167,14 +182,15 @@ const ViewQuiz = () => {
                 <Card
                   hoverable
                   style={{ height: '300px' }} // Thiết lập chiều cao cố định
-                  cover={
-                    <div style={{ background: '#1890ff', padding: '12px', color: 'white' }}>
+                  title={
+                    <div style={{ color: 'white' }}>
                       <Space>
                         <CalendarOutlined />
                         {renderDateTime(quiz.startTime)}
                       </Space>
                     </div>
                   }
+                  extra={renderQuizType(quiz)}
                 >
                   <Space direction="vertical" style={{ width: '100%' }}>
                     <Space style={{ width: '100%', justifyContent: 'space-between' }}>

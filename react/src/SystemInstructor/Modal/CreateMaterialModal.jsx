@@ -121,6 +121,43 @@ import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import { useLoading } from "../../Utils/LoadingContext";
 import { CreateMaterialChapterIdActionAsync } from "../../Redux/ReducerAPI/ChapterMaterialReducer";
+import styled from "styled-components";
+import ReactQuill from "react-quill";
+import { quillFormats, quillModules } from "../../TextEditorConfig/Config";
+
+const StyledForm = styled(Form)`
+  .ant-input,
+  .ant-input-number,
+  .ant-picker,
+  .ant-select-selector {
+    border-radius: 6px;
+  }
+`;
+
+const StyledQuill = styled(ReactQuill)`
+  .ql-container {
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+  }
+  .ql-toolbar {
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+  }
+  
+  .ql-tooltip {
+    z-index: 1000000 !important; // Ensure it's above the modal
+    position: fixed !important;
+  }
+  
+  .ql-editing {
+    left: 50% !important;
+    transform: translateX(-50%);
+    background-color: white !important;
+    border: 1px solid #ccc !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+    padding: 8px 12px !important;
+  }
+`;
 
 const CreateMaterialModal = ({ visible, onClose, chapter }) => {
   const [form] = Form.useForm();
@@ -261,7 +298,12 @@ const CreateMaterialModal = ({ visible, onClose, chapter }) => {
           name="description"
           rules={[{ required: true, message: "Vui lòng nhập mô tả!" }]}
         >
-          <Input.TextArea rows={4} />
+          <StyledQuill
+            modules={quillModules}
+            formats={quillFormats}
+            placeholder="Nhập mô tả công việc"
+            style={{ minHeight: '200px' }}
+          />
         </Form.Item>
       </Form>
     </Modal>

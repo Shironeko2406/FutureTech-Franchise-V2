@@ -112,6 +112,7 @@ import VNPaySetup from "./AgencyManager/Page/VNPaySetup/VNPaySetup";
 import VideoSystemInstructor from "./SystemInstructor/Page/VideoSystemInstructor/VideoSystemInstructor";
 import VideoPageMaterial from "./Student/Page/VideoPageMaterial/VideoPageMaterial";
 import ReadingPageMaterial from "./Student/Page/ReadingPageMaterial/ReadingPageMaterial";
+import Profile_2 from "./Admin/Page/Profile/Profile_2";
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -145,7 +146,7 @@ function App() {
                 <Route path="franchise" element={<FranchiseManagement />} />
                 <Route path="course-category" element={<CourseCategoryAdmin />} />
                 <Route path="course" element={<CourseManageAdmin />} />
-                <Route path="profile" element={<Profile />} />
+                <Route path="profile" element={<Profile_2/>} />
                 <Route path="contracts" element={<ManageContractAdminPage />} />
                 <Route path="system-accounts" element={<AccountManagement />} />
                 <Route path="work-template" element={<WorkTemplate />} />

@@ -1,26 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import ReactPlayer from 'react-player';
 import { Card, Typography, Breadcrumb, Tabs, Button } from 'antd';
-import { DownloadOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
+import { BookOutlined, DownloadOutlined, HomeOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import DOMPurify from "dompurify";
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 const { Title, Paragraph } = Typography;
-
-const chapterMaterial = {
-  id: "f3911b9a-9acd-49a3-0989-08dd266d344b",
-  number: 1,
-  title: "Chương 4. Các Mô hình Cơ sở Dữ liệu Cấp Cao",
-  urlFile: "https://vardhaman.org/wp-content/uploads/2021/03/CP.pdf",
-  urlVideo:
-    "https://firebasestorage.googleapis.com/v0/b/futuretech-b367a.appspot.com/o/videos%2Fvideotest-4.mp4_fffb1af8-22cc-4b90-9ab9-85cabceae918_duration%3D5%3A55?alt=media&token=0bf172e6-42e4-4155-b027-5ff11ec09fc1",
-  description:
-    "Khám phá các mô hình cơ sở dữ liệu cấp cao như mô hình thực thể - mối quan hệ (E/R), mô hình mạng và mô hình đối tượng.",
-  chapterId: "94cb2004-8cb0-471f-59a1-08dd266d3448",
-  userChapterMaterials: null,
-};
 
 const HTMLContent = styled.div`
   h1, h2, h3, h4, h5, h6 {
@@ -29,6 +16,29 @@ const HTMLContent = styled.div`
   }
   ul, ol {
     padding-left: 20px;
+    margin: 1em 0;
+    
+    li {
+      position: relative;
+      margin-bottom: 0.5em;
+      padding-left: 0.5em;
+      line-height: 1.6;
+      
+      &::before {
+        content: "•";
+        color: #666;
+        font-size: 1.2em;
+        position: absolute;
+        left: -15px;
+        top: -2px;
+      }
+    }
+  }
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 1em auto;
   }
 `;
 
@@ -77,11 +87,7 @@ const VideoPageMaterial = () => {
       children: (
         <div className="min-height-200 p-3">
           <HTMLContent dangerouslySetInnerHTML={sanitizeHTML(chapterMaterial.description)}/>
-          {Array(200).fill(null).map((_, index) => (
-            <Paragraph key={index}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            </Paragraph>
-          ))}
+          
         </div>
       ),
     },
@@ -115,9 +121,10 @@ const VideoPageMaterial = () => {
         <div className="d-flex justify-content-between align-items-center">
           <Breadcrumb
             items={[
-              { title: 'Foundations of Project Management' },
-              { title: 'Module 1' },
-              { title: chapterMaterial.title },
+              { title: <><HomeOutlined /> <span>Trang chủ</span></>, href: "/student" },
+              { title: <><BookOutlined /> <span>{materialClass?.name}</span></> },
+              { title: `Chương ${number}` },
+              { title: `Bài ${materialNumber}` },
             ]}
           />
           <div className="d-flex gap-2">

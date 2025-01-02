@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { message } from 'antd';
 import { httpClient } from '../../Utils/Interceptors';
+import { GetAssignmentsByClassIdActionAsync } from './ClassReducer';
 
 const initialState = {
   assignments: [],
@@ -85,17 +86,17 @@ export const CreateAssignmentActionAsync = (data) => {
     };
   };
 
-  export const GetAssignmentsByClassIdActionAsync = (classId) => {
-    return async (dispatch) => {
-      try {
-        const res = await httpClient.get(`/api/v1/assignments/classes/${classId}`);
-        dispatch(setAssignments(res.data))
-      } catch (error) {
-        console.log(error);
-        message.error("Đã có lỗi xảy ra, vui lòng thử lại sau!");
-      }
-    };
-  };
+  // export const GetAssignmentsByClassIdActionAsync = (classId) => {
+  //   return async (dispatch) => {
+  //     try {
+  //       const res = await httpClient.get(`/api/v1/assignments/classes/${classId}`);
+  //       dispatch(setAssignments(res.data))
+  //     } catch (error) {
+  //       console.log(error);
+  //       message.error("Đã có lỗi xảy ra, vui lòng thử lại sau!");
+  //     }
+  //   };
+  // };
 
   export const GetStudentAssignmentsByClassIdActionAsync = (classId) => {
     return async (dispatch) => {

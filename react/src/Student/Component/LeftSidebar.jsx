@@ -115,7 +115,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
     }
     
     setOpenSubmenus(initialOpenSubmenus);
-  }, [materialClass, number]); 
+  }, [materialClass, number, materialNumber]); 
   
 
   const toggleSubmenu = (index) => {

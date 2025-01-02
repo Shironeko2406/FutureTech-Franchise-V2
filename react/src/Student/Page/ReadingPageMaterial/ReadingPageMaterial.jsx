@@ -1,4 +1,4 @@
-import { LeftOutlined, RightOutlined } from "@ant-design/icons";
+import { BookOutlined, HomeOutlined, LeftOutlined, RightOutlined } from "@ant-design/icons";
 import { Breadcrumb, Button, Card, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
@@ -15,6 +15,29 @@ const HTMLContent = styled.div`
   }
   ul, ol {
     padding-left: 20px;
+    margin: 1em 0;
+    
+    li {
+      position: relative;
+      margin-bottom: 0.5em;
+      padding-left: 0.5em;
+      line-height: 1.6;
+      
+      &::before {
+        content: "•";
+        color: #666;
+        font-size: 1.2em;
+        position: absolute;
+        left: -15px;
+        top: -2px;
+      }
+    }
+  }
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 1em auto;
   }
 `;
 
@@ -53,9 +76,10 @@ const ReadingPageMaterial = () => {
         <div className="d-flex justify-content-between align-items-center">
           <Breadcrumb
             items={[
-              { title: "Foundations of Project Management" },
-              { title: "Module 1" },
-              { title: chapterMaterial.title },
+              { title: <><HomeOutlined /> <span>Trang chủ</span></>, href: "/student" },
+              { title: <><BookOutlined /> <span>{materialClass?.name}</span></> },
+              { title: `Chương ${number}` },
+              { title: `Bài ${materialNumber}` },
             ]}
           />
           <div className="d-flex gap-2">

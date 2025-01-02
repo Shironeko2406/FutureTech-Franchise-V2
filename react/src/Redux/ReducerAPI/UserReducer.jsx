@@ -1,9 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { httpClient, USER_LOGIN } from "../../Utils/Interceptors";
 import { message } from "antd";
-import { GetAssignmentDetailByIdActionAsync, GetAssignmentsByClassIdActionAsync } from "./AssignmentReducer";
+import { GetAssignmentDetailByIdActionAsync } from "./AssignmentReducer";
 import { getDataJSONStorage, setDataJSONStorage } from "../../Utils/UtilsFunction";
 import { setUserLogin } from "./AuthenticationReducer";
+import { GetAssignmentsByClassIdActionAsync } from "./ClassReducer";
 
 const initialState = {
   userData: [],

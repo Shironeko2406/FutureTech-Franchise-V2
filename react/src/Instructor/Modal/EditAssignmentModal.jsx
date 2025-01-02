@@ -1,11 +1,14 @@
-import React, { useEffect } from 'react'
-import { Button, DatePicker, Input, Modal, Form, Select, Typography, Space } from 'antd'
+import React, { useEffect, useState } from 'react'
+import { Button, DatePicker, Input, Modal, Form, Select, Typography, Space, message, Upload } from 'antd'
 import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { useLoading } from '../../Utils/LoadingContext'
 import styled from 'styled-components'
 import dayjs from 'dayjs'
 import { UpdateAssignmentActionAsync } from '../../Redux/ReducerAPI/AssignmentReducer'
+import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
+import { imageDB } from '../../Firebasse/Config'
+import { UploadOutlined } from '@ant-design/icons'
 
 const { TextArea } = Input
 const { Title } = Typography
@@ -42,6 +45,8 @@ const EditAssignmentModal = ({ visible, onClose, assignment }) => {
   const dispatch = useDispatch()
   const { id: classId } = useParams()
   const { setLoading } = useLoading()
+  const [fileList, setFileList] = useState([])
+  const [fileUrl, setFileUrl] = useState("");
 
   useEffect(() => {
     if (assignment) {
@@ -52,19 +57,68 @@ const EditAssignmentModal = ({ visible, onClose, assignment }) => {
           dayjs(assignment.startTime),
           dayjs(assignment.endTime)
         ],
-        status: assignment.status
+        status: assignment.status,
+        fileURL: assignment.fileURL
       })
+      setFileUrl(assignment.fileURL)
+      if (assignment.fileURL) {
+        setFileList([
+          {
+            uid: '-1',
+            name: 'File đề bài',
+            status: 'done',
+            url: assignment.fileURL,
+          },
+        ])
+      }
     }
   }, [assignment, form])
 
+  const handleUpload = ({ file, onSuccess, onError }) => {
+    const storageRef = ref(imageDB, `assignments/${file.name}`)
+    const uploadTask = uploadBytesResumable(storageRef, file)
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {},
+      (error) => {
+        message.error("Upload failed!")
+        console.error(error)
+        onError(error)
+      },
+      async () => {
+        try {
+          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref)
+          setFileUrl(downloadURL)
+          setFileList([
+            {
+              uid: file.uid,
+              name: file.name,
+              status: 'done',
+              url: downloadURL,
+            },
+          ])
+          form.setFieldsValue({ fileURL: downloadURL })
+          message.success("Upload successful!")
+          onSuccess(null, file)
+        } catch (err) {
+          message.error("Failed to retrieve file URL.")
+          console.error(err)
+          onError(err)
+        }
+      }
+    )
+  }
+
+
   const handleSubmit = (values) => {
-    setLoading(true)
+    // setLoading(true)
     const data = {
       ...values,
       startTime: values.dateRange[0].format('YYYY-MM-DDTHH:mm:ss[Z]'),
       endTime: values.dateRange[1].format('YYYY-MM-DDTHH:mm:ss[Z]'),
       classId,
-      id: assignment.id // Include the assignment ID for updating
+      fileURL: fileUrl
     }
 
     delete data.dateRange
@@ -100,18 +154,21 @@ const EditAssignmentModal = ({ visible, onClose, assignment }) => {
       component: <RangePicker showTime format="DD/MM/YYYY, HH:mm" style={{ width: '100%' }} />,
     },
     {
-      name: 'status',
-      label: 'Trạng thái',
-      rules: [{ required: true, message: 'Vui lòng chọn trạng thái!' }],
+      name: 'fileURL',
+      label: 'File đề bài',
+      rules: [{ required: true, message: 'Vui lòng tải lên tệp PDF!' }],
+      valuePropName: "file",
+      getValueFromEvent: (e) => e && e.fileList,
       component: (
-        <Select
-          placeholder="Chọn trạng thái"
-          options={[
-            { label: 'Mở', value: 'Open' },
-            { label: 'Đóng', value: 'Close' },
-          ]}
-          style={{ width: '100%' }}
-        />
+        <Upload
+          customRequest={handleUpload}
+          fileList={fileList}
+          onChange={({ fileList }) => setFileList(fileList)}
+          accept=".pdf"
+          maxCount={1}
+        >
+          <Button icon={<UploadOutlined />}>Tải lên tệp PDF</Button>
+        </Upload>
       ),
     },
   ]

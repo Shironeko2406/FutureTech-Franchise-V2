@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Table, Button } from "antd";
+import { Table, Button, Progress, Tag } from "antd";
 import { useSelector } from "react-redux";
 import CreateAssessmentModal from "../Modal/CreateAssessmentModal";
 
@@ -32,24 +32,31 @@ const ViewAssessment = () => {
       key: "content",
     },
     {
+      title: "Số lượng bài",
+      dataIndex: "quatity",
+      key: "quatity",
+    },
+    {
       title: "Trọng số",
       dataIndex: "weight",
       key: "weight",
+      render: (weight) => (
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <Progress
+            percent={weight}
+            size="small"
+            style={{ width: 60, marginRight: 8 }}
+          />
+        </div>
+      ),
     },
     {
       title: "Tiêu chí hoàn thành",
       dataIndex: "completionCriteria",
       key: "completionCriteria",
-    },
-    {
-      title: "Thời gian",
-      dataIndex: "duration",
-      key: "duration",
-    },
-    {
-      title: "Loại câu hỏi",
-      dataIndex: "questionType",
-      key: "questionType",
+      render: (completionCriteria) => (
+        <Tag color="blue">≥ {completionCriteria}</Tag>
+      ),
     },
   ];
 
