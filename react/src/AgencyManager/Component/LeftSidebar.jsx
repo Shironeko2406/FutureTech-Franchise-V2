@@ -37,7 +37,8 @@ const LeftSidebar = ({ onSidebarToggle }) => {
   ];
 
   // Lựa chọn menu dựa trên trạng thái người dùng
-  const sidebarItems = statusAgency === "active" ? activeMenu : inactiveMenu;
+  // const sidebarItems = statusAgency === "active" ? activeMenu : inactiveMenu;
+  const sidebarItems = activeMenu;
 
   return (
     <aside className="left-sidebar">
