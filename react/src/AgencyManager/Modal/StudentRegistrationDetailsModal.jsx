@@ -1,5 +1,5 @@
 import { Modal, Typography, Descriptions, Tag, Space } from "antd";
-import { UserOutlined, MailOutlined, PhoneOutlined, BookOutlined, CalendarOutlined, ClockCircleOutlined, DollarOutlined, HomeOutlined, ScheduleOutlined, EditOutlined } from "@ant-design/icons";
+import { UserOutlined, MailOutlined, PhoneOutlined, BookOutlined, CalendarOutlined, ClockCircleOutlined, DollarOutlined, HomeOutlined, ScheduleOutlined } from "@ant-design/icons";
 import moment from 'moment';
 
 const { Title, Text } = Typography;
@@ -9,7 +9,7 @@ const formatCurrency = (amount) => {
     return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + " VNĐ";
 };
 
-export default function StudentRegistrationDetailsModal({ visible, onClose, studentDetails, paymentStatusMapping, }) {
+export default function StudentRegistrationDetailsModal({ visible, onClose, studentDetails, paymentStatusMapping }) {
     if (!studentDetails) return null;
 
     const getStatusColor = (status) => {
@@ -18,6 +18,7 @@ export default function StudentRegistrationDetailsModal({ visible, onClose, stud
             Advance_Payment: "processing",
             Completed: "success",
             Late_Payment: "error",
+            Refund: "purple",
         };
         return colors[status] || "default";
     };
@@ -50,18 +51,7 @@ export default function StudentRegistrationDetailsModal({ visible, onClose, stud
             open={visible}
             onCancel={onClose}
             width={700}
-            footer={[
-                // isEditing && (
-                //     <>
-                //         <Button key="cancel" onClick={handleCancel} disabled={spinning}>
-                //             Hủy
-                //         </Button>
-                //         <Button key="save" type="primary" onClick={handleSave} loading={spinning}>
-                //             Lưu
-                //         </Button>
-                //     </>
-                // )
-            ]}
+            footer={null}
         >
             <Space direction="vertical" size="large" style={{ width: "100%" }}>
                 <Title level={3}>Thông Tin Chi Tiết Đăng Ký Khóa Học</Title>
@@ -78,15 +68,19 @@ export default function StudentRegistrationDetailsModal({ visible, onClose, stud
                     <Descriptions.Item label={<Space><BookOutlined /> Khóa học</Space>}>
                         {studentDetails.courseCode}
                     </Descriptions.Item>
-                    <Descriptions.Item label={<Space><HomeOutlined /> Tên lớp học</Space>}>
-                        {studentDetails.className}
-                    </Descriptions.Item>
-                    <Descriptions.Item label={<Space><ScheduleOutlined /> Lịch học</Space>}>
-                        {translateDayOfWeek(studentDetails.classSchedule)}
-                    </Descriptions.Item>
-                    <Descriptions.Item label={<Space><ClockCircleOutlined />Ngày khai giảng và kết thúc</Space>}>
-                        {moment(studentDetails.startDate).format('DD/MM/YYYY')} đến {moment(studentDetails.endDate).format('DD/MM/YYYY')}
-                    </Descriptions.Item>
+                    {studentDetails.paymentStatus !== 'Refund' && (
+                        <>
+                            <Descriptions.Item label={<Space><HomeOutlined /> Tên lớp học</Space>}>
+                                {studentDetails.className}
+                            </Descriptions.Item>
+                            <Descriptions.Item label={<Space><ScheduleOutlined /> Lịch học</Space>}>
+                                {translateDayOfWeek(studentDetails.classSchedule)}
+                            </Descriptions.Item>
+                            <Descriptions.Item label={<Space><ClockCircleOutlined />Ngày khai giảng và kết thúc</Space>}>
+                                {moment(studentDetails.startDate).format('DD/MM/YYYY')} đến {moment(studentDetails.endDate).format('DD/MM/YYYY')}
+                            </Descriptions.Item>
+                        </>
+                    )}
                     <Descriptions.Item label={<Space><CalendarOutlined /> Thời gian đăng ký khóa học</Space>}>
                         {moment(studentDetails.creationDate).format('HH:mm [ngày] DD/MM/YYYY')}
                     </Descriptions.Item>
@@ -94,10 +88,20 @@ export default function StudentRegistrationDetailsModal({ visible, onClose, stud
                         {formatCurrency(studentDetails.coursePrice)}
                     </Descriptions.Item>
                     <Descriptions.Item label={<Space><DollarOutlined /> Trạng thái thanh toán</Space>}>
-                        <Tag color={getStatusColor(studentDetails.paymentStatus, paymentStatusMapping)}>
+                        <Tag color={getStatusColor(studentDetails.paymentStatus)}>
                             {paymentStatusMapping[studentDetails.paymentStatus]}
                         </Tag>
                     </Descriptions.Item>
+                    {studentDetails.paymentStatus === 'Refund' && studentDetails.refundAmount && (
+                        <>
+                            <Descriptions.Item label={<Space><DollarOutlined /> Số tiền đã hoàn</Space>}>
+                                {formatCurrency(studentDetails.refundAmount)}
+                            </Descriptions.Item>
+                            <Descriptions.Item label={<Space><ClockCircleOutlined /> Ngày hoàn tiền</Space>}>
+                                {moment(studentDetails.refundDate).format('DD/MM/YYYY')}
+                            </Descriptions.Item>
+                        </>
+                    )}
                     <Descriptions.Item label={<Space><DollarOutlined /> Số tiền đã thanh toán</Space>} >
                         {formatCurrency(studentDetails.studentAmountPaid)}
                     </Descriptions.Item>

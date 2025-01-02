@@ -1,19 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Form, Input, Upload, Button, message, Typography, Space } from 'antd';
 import { UploadOutlined, LockOutlined, SafetyOutlined } from '@ant-design/icons';
 import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
 import { imageDB } from "../../Firebasse/Config";
 import { useDispatch } from 'react-redux';
 import { VerifyPasswordActionAsync } from '../../Redux/ReducerAPI/AuthenticationReducer';
+import { GetRefundAmountActionAsync, CreateRefundActionAsync } from '../../Redux/ReducerAPI/PaymentReducer';
 
 const { Title, Paragraph } = Typography;
 
-const RefundModal = ({ visible, onClose, onRefund }) => {
+const RefundModal = ({ visible, onClose, onRefund, registerCourseId, onRefundSuccess }) => {
     const [form] = Form.useForm();
     const [imageUrl, setImageUrl] = useState(null);
+    const [refundReason, setRefundReason] = useState('');
     const [loading, setLoading] = useState(false);
     const [step, setStep] = useState(1);
+    const [refundAmount, setRefundAmount] = useState(null);
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        if (visible && registerCourseId) {
+            dispatch(GetRefundAmountActionAsync(registerCourseId)).then((amount) => {
+                setRefundAmount(amount);
+            });
+        }
+    }, [visible, registerCourseId, dispatch]);
+
+    const formatCurrency = (amount) => {
+        return amount ? amount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) : '0 VND';
+    };
 
     const handleUpload = async ({ file, onSuccess, onError }) => {
         const storageRef = ref(imageDB, `images/${file.name}`);
@@ -30,16 +45,21 @@ const RefundModal = ({ visible, onClose, onRefund }) => {
 
     const handleClose = () => {
         setStep(1);
+        setImageUrl(null);
+        setRefundReason('');
+        form.resetFields();
         onClose();
     };
 
     const handleNext = async () => {
         try {
-            const values = await form.validateFields();
             if (step === 1) {
+                await form.validateFields();
+                setRefundReason(form.getFieldValue('refundReason'));
                 setStep(2);
             } else {
                 setLoading(true);
+                const values = form.getFieldsValue();
                 const { password } = values;
                 const passwordData = {
                     oldPassword: password,
@@ -49,10 +69,13 @@ const RefundModal = ({ visible, onClose, onRefund }) => {
                 const isVerified = await dispatch(VerifyPasswordActionAsync(passwordData));
                 if (isVerified) {
                     const refundData = {
-                        ...values,
+                        registerCourseId,
+                        refundReason,
                         imageUrl
                     };
+                    await dispatch(CreateRefundActionAsync(refundData));
                     onRefund(refundData);
+                    onRefundSuccess();
                     handleClose();
                 }
             }
@@ -65,7 +88,7 @@ const RefundModal = ({ visible, onClose, onRefund }) => {
 
     return (
         <Modal
-            title="Hoàn tiền"
+            title={`Hoàn tiền${refundAmount !== null ? ` - Số tiền cần hoàn lại: ${formatCurrency(refundAmount)}` : ''}`}
             open={visible}
             onCancel={handleClose}
             onOk={handleNext}
@@ -77,11 +100,11 @@ const RefundModal = ({ visible, onClose, onRefund }) => {
                 {step === 1 ? (
                     <>
                         <Form.Item
-                            name="amount"
-                            label="Số tiền"
-                            rules={[{ required: true, message: 'Vui lòng nhập số tiền' }]}
+                            name="refundReason"
+                            label="Lý do hoàn tiền"
+                            rules={[{ required: true, message: 'Vui lòng nhập lý do hoàn tiền' }]}
                         >
-                            <Input placeholder="Nhập số tiền" />
+                            <Input.TextArea placeholder="Nhập lý do hoàn tiền" />
                         </Form.Item>
                         <Form.Item
                             name="imageUrl"

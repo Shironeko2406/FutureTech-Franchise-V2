@@ -55,6 +55,7 @@ const StudentConsultationRegistration = () => {
         Advance_Payment: 'Đã đặt cọc',
         Completed: 'Đã hoàn thành',
         Late_Payment: 'Thanh toán trễ',
+        Refund: 'Đã hoàn tiền',
     };
 
     //render color 
@@ -83,10 +84,20 @@ const StudentConsultationRegistration = () => {
                 color: 'red',
                 backgroundColor: '#fff2f0',
                 borderColor: '#ffa39e'
+            },
+            Refund: {
+                text: paymentStatusMapping[status],
+                color: 'purple',
+                backgroundColor: '#f9f0ff',
+                borderColor: '#d3adf7'
             }
         };
 
-        const config = statusConfig[status] || statusConfig.NotConsult;
+        const config = statusConfig[status];
+
+        if (!config) {
+            return null;
+        }
 
         return (
             <div
@@ -167,8 +178,7 @@ const StudentConsultationRegistration = () => {
     };
 
     const handleRefund = (refundData) => {
-        // Implement the refund logic here
-        console.log("Refund data: ", refundData);
+        // dispatch(GetStudentConsultationActionAsync(pageIndex, pageSize, selectedStudentStatus, selectedCourse, sortOrder, searchInput));
     };
 
     const handleRefundClick = (record) => {
@@ -232,7 +242,7 @@ const StudentConsultationRegistration = () => {
             dataIndex: "classSchedule",
             key: "classSchedule",
             align: "center",
-            render: (text) => translateDayOfWeek(text),
+            render: (text) => text ? translateDayOfWeek(text) : null,
         },
         {
             title: "Trạng thái thanh toán",
@@ -254,12 +264,14 @@ const StudentConsultationRegistration = () => {
             dataIndex: "studentStatus",
             key: "action",
             render: (text, record) => (
-                <Button
-                    type="primary"
-                    onClick={() => handleRefundClick(record)}
-                >
-                    Hoàn tiền
-                </Button>
+                record.paymentStatus !== 'Refund' && (
+                    <Button
+                        type="primary"
+                        onClick={() => handleRefundClick(record)}
+                    >
+                        Hoàn tiền
+                    </Button>
+                )
             ),
         }
     ];
@@ -312,6 +324,10 @@ const StudentConsultationRegistration = () => {
                     visible={isRefundModalVisible}
                     onClose={handleRefundModalClose}
                     onRefund={handleRefund}
+                    registerCourseId={selectedStudentDetails?.id}
+                    onRefundSuccess={() => {
+                        dispatch(GetStudentConsultationActionAsync(pageIndex, pageSize, selectedStudentStatus, selectedCourse, sortOrder, searchInput));
+                    }}
                 />
             </div>
         </div>
