@@ -10,7 +10,7 @@ import "./AttendanceReport.css";
 const { Title } = Typography;
 
 const AttendanceReport = () => {
-    const { id } = useParams();
+    const { classId } = useParams();
     const dispatch = useDispatch();
     const { setLoading } = useLoading();
     const [courseData, setCourseData] = useState(null);
@@ -18,12 +18,12 @@ const AttendanceReport = () => {
     useEffect(() => {
         const fetchAttendanceReport = async () => {
             setLoading(true);
-            const data = await dispatch(GetClassScheduleStudentActionAsync(id));
+            const data = await dispatch(GetClassScheduleStudentActionAsync(classId));
             setCourseData(data);
             setLoading(false);
         };
         fetchAttendanceReport();
-    }, [dispatch, id, setLoading]);
+    }, [dispatch, classId, setLoading]);
 
     if (!courseData) {
         return <div>Loading...</div>;
