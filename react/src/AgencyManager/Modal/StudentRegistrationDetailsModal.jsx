@@ -1,5 +1,5 @@
 import { Modal, Typography, Descriptions, Tag, Space } from "antd";
-import { UserOutlined, MailOutlined, PhoneOutlined, BookOutlined, CalendarOutlined, ClockCircleOutlined, DollarOutlined, TeamOutlined, ScheduleOutlined, EditOutlined } from "@ant-design/icons";
+import { UserOutlined, MailOutlined, PhoneOutlined, BookOutlined, CalendarOutlined, ClockCircleOutlined, DollarOutlined, HomeOutlined, ScheduleOutlined, EditOutlined } from "@ant-design/icons";
 import moment from 'moment';
 
 const { Title, Text } = Typography;
@@ -77,6 +77,9 @@ export default function StudentRegistrationDetailsModal({ visible, onClose, stud
                     </Descriptions.Item>
                     <Descriptions.Item label={<Space><BookOutlined /> Khóa học</Space>}>
                         {studentDetails.courseCode}
+                    </Descriptions.Item>
+                    <Descriptions.Item label={<Space><HomeOutlined /> Tên lớp học</Space>}>
+                        {studentDetails.className}
                     </Descriptions.Item>
                     <Descriptions.Item label={<Space><ScheduleOutlined /> Lịch học</Space>}>
                         {translateDayOfWeek(studentDetails.classSchedule)}
