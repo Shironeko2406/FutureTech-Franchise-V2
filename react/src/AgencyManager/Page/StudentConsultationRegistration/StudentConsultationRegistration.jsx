@@ -5,7 +5,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { GetStudentConsultationActionAsync, UpdateStudentStatusAsync, UpdateStudentRegistrationAsync } from "../../../Redux/ReducerAPI/RegisterCourseReducer";
 import { GetAllCoursesAvailableActionAsync } from "../../../Redux/ReducerAPI/CourseReducer";
 import StudentRegistrationDetailsModal from "../../Modal/StudentRegistrationDetailsModal";
+import RefundModal from "../../Modal/RefundModal";
 import moment from 'moment';
+import { useLoading } from "../../../Utils/LoadingContext";
 
 const { Text } = Typography;
 
@@ -15,22 +17,23 @@ const StudentConsultationRegistration = () => {
     );
     const { course } = useSelector((state) => state.CourseReducer);
     const dispatch = useDispatch();
+    const { setLoading } = useLoading();
     const [pageIndex, setPageIndex] = useState(1);
     const [pageSize, setPageSize] = useState(10); // Default page size is 10
     const [selectedCourse, setSelectedCourse] = useState(null);
     const [selectedStudentStatus, setSelectedStudentStatus] = useState(null);
-    const [loading, setLoading] = useState(false);
     const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
     const [selectedStudentDetails, setSelectedStudentDetails] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [sortOrder, setSortOrder] = useState(null);
     const [searchInput, setSearchInput] = useState("");
+    const [isRefundModalVisible, setIsRefundModalVisible] = useState(false);
 
     useEffect(() => {
         setLoading(true);
         dispatch(GetStudentConsultationActionAsync(pageIndex, pageSize, selectedStudentStatus, selectedCourse, sortOrder, searchInput))
             .finally(() => setLoading(false));
-    }, [dispatch, pageIndex, pageSize, selectedStudentStatus, selectedCourse, sortOrder, searchInput]);
+    }, [dispatch, pageIndex, pageSize, selectedStudentStatus, selectedCourse, sortOrder, searchInput, setLoading]);
 
     useEffect(() => {
         dispatch(GetAllCoursesAvailableActionAsync());
@@ -52,6 +55,7 @@ const StudentConsultationRegistration = () => {
         Advance_Payment: 'Đã đặt cọc',
         Completed: 'Đã hoàn thành',
         Late_Payment: 'Thanh toán trễ',
+        Refund: 'Đã hoàn tiền',
     };
 
     //render color 
@@ -80,10 +84,20 @@ const StudentConsultationRegistration = () => {
                 color: 'red',
                 backgroundColor: '#fff2f0',
                 borderColor: '#ffa39e'
+            },
+            Refund: {
+                text: paymentStatusMapping[status],
+                color: 'purple',
+                backgroundColor: '#f9f0ff',
+                borderColor: '#d3adf7'
             }
         };
 
-        const config = statusConfig[status] || statusConfig.NotConsult;
+        const config = statusConfig[status];
+
+        if (!config) {
+            return null;
+        }
 
         return (
             <div
@@ -163,6 +177,20 @@ const StudentConsultationRegistration = () => {
         setSearchInput(value);
     };
 
+    const handleRefund = (refundData) => {
+        // dispatch(GetStudentConsultationActionAsync(pageIndex, pageSize, selectedStudentStatus, selectedCourse, sortOrder, searchInput));
+    };
+
+    const handleRefundClick = (record) => {
+        setSelectedStudentDetails(record);
+        setIsRefundModalVisible(true);
+    };
+
+    const handleRefundModalClose = () => {
+        setIsRefundModalVisible(false);
+        setSelectedStudentDetails(null);
+    };
+
     const columns = [
         {
             title: "Tên học viên",
@@ -214,7 +242,7 @@ const StudentConsultationRegistration = () => {
             dataIndex: "classSchedule",
             key: "classSchedule",
             align: "center",
-            render: (text) => translateDayOfWeek(text),
+            render: (text) => text ? translateDayOfWeek(text) : null,
         },
         {
             title: "Trạng thái thanh toán",
@@ -235,6 +263,16 @@ const StudentConsultationRegistration = () => {
             title: "Thao tác",
             dataIndex: "studentStatus",
             key: "action",
+            render: (text, record) => (
+                record.paymentStatus !== 'Refund' && (
+                    <Button
+                        type="primary"
+                        onClick={() => handleRefundClick(record)}
+                    >
+                        Hoàn tiền
+                    </Button>
+                )
+            ),
         }
     ];
 
@@ -255,24 +293,21 @@ const StudentConsultationRegistration = () => {
                         </Space>
                     </div>
                 </Space>
-                <Spin spinning={loading}>
-                    <Table
-                        bordered
-                        columns={columns}
-                        dataSource={studentConsultations}
-                        rowKey={(record) => record.id}
-                        pagination={{
-                            current: pageIndex,
-                            pageSize,
-                            total: totalPagesCount * pageSize,
-                            showSizeChanger: true,
-                            pageSizeOptions: ["10", "20", "50"],
-                        }}
-                        scroll={{ x: 'max-content' }}
-                        onChange={handleTableChange}
-                        loading={loading}
-                    />
-                </Spin>
+                <Table
+                    bordered
+                    columns={columns}
+                    dataSource={studentConsultations}
+                    rowKey={(record) => record.id}
+                    pagination={{
+                        current: pageIndex,
+                        pageSize,
+                        total: totalPagesCount * pageSize,
+                        showSizeChanger: true,
+                        pageSizeOptions: ["10", "20", "50"],
+                    }}
+                    scroll={{ x: 'max-content' }}
+                    onChange={handleTableChange}
+                />
 
                 <StudentRegistrationDetailsModal
                     visible={isDetailModalVisible}
@@ -283,6 +318,16 @@ const StudentConsultationRegistration = () => {
                     onCancelRegistration={handleCancelRegistration}
                     spinning={isEditing}
                     paymentStatus={selectedStudentDetails?.paymentStatus}
+                />
+
+                <RefundModal
+                    visible={isRefundModalVisible}
+                    onClose={handleRefundModalClose}
+                    onRefund={handleRefund}
+                    registerCourseId={selectedStudentDetails?.id}
+                    onRefundSuccess={() => {
+                        dispatch(GetStudentConsultationActionAsync(pageIndex, pageSize, selectedStudentStatus, selectedCourse, sortOrder, searchInput));
+                    }}
                 />
             </div>
         </div>
