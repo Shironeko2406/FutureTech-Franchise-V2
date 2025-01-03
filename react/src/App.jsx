@@ -113,6 +113,7 @@ import VideoSystemInstructor from "./SystemInstructor/Page/VideoSystemInstructor
 import VideoPageMaterial from "./Student/Page/VideoPageMaterial/VideoPageMaterial";
 import ReadingPageMaterial from "./Student/Page/ReadingPageMaterial/ReadingPageMaterial";
 import Profile_2 from "./Admin/Page/Profile/Profile_2";
+import ScoreClass from "./Student/Page/ScoreClass/ScoreClass";
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -193,6 +194,7 @@ function App() {
                 <Route path=":className/:classId/assignment/:assignmentId" element={<AssignmentDetail />} />
                 <Route path=":className/:classId/quiz/:quizId" element={<QuizDescription />} />
                 <Route path=":className/:classId/quiz/:quizId/start" element={<QuizTest />} />
+                <Route path=":className/:classId/score" element={<ScoreClass/>} />
                 <Route path="video" element={<VideoPageMaterial/>} />
                 <Route path="reading" element={<ReadingPageMaterial/>} />
                 <Route path="" element={<ScheduleStudent />} />
