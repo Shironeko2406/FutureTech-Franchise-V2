@@ -195,7 +195,7 @@ function App() {
                 <Route path=":className/:classId/assignment/:assignmentId" element={<AssignmentDetail />} />
                 <Route path=":className/:classId/quiz/:quizId" element={<QuizDescription />} />
                 <Route path=":className/:classId/quiz/:quizId/start" element={<QuizTest />} />
-                <Route path=":className/:classId/score" element={<ScoreClass/>} />
+                <Route path=":className/:classId/course/:courseId/score" element={<ScoreClass/>} />
                 <Route path="video" element={<VideoPageMaterial/>} />
                 <Route path="reading" element={<ReadingPageMaterial/>} />
                 <Route path="" element={<ScheduleStudent />} />
@@ -208,10 +208,10 @@ function App() {
 
             <Route element={<ProtectedRoute requiredRole="Instructor" />}>
               <Route path="instructor" element={<TempUIInstructor />}>
-                <Route path="class/:id" element={<ClassDetailInstructor />} />
-                <Route path="class/:id/course-detail" element={<CourseDetailOfClass />} />
-                <Route path="class/:id/quiz" element={<QuizOfClass />} />
-                <Route path="class/:id/assignment" element={<AssignmentOfClass />} />
+                <Route path=":className/:id" element={<ClassDetailInstructor />} />
+                <Route path=":className/:id/course-detail" element={<CourseDetailOfClass />} />
+                <Route path=":className/:id/quiz" element={<QuizOfClass />} />
+                <Route path=":className/:id/assignment" element={<AssignmentOfClass />} />
                 {/* <Route path="" element={<HomeInstructor />} /> */}
                 {/* <Route path="schedule" element={<ScheduleTeaching />} /> */}
                 <Route path="" element={<ScheduleInstructor />} />

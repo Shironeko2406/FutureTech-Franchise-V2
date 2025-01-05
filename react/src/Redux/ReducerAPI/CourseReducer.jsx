@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { httpClient } from "../../Utils/Interceptors";
+import { httpClient, USER_LOGIN } from "../../Utils/Interceptors";
 import { message } from "antd";
+import { getDataJSONStorage } from "../../Utils/UtilsFunction";
 
 const initialState = {
   course: [],
@@ -9,6 +10,7 @@ const initialState = {
   assessments: [],
   courseMaterials: [],
   totalPagesCount: 0,
+  percentCourseProgress: 0
 };
 
 const CourseReducer = createSlice({
@@ -25,10 +27,13 @@ const CourseReducer = createSlice({
       state.assessments = action.payload.assessments;
       state.courseMaterials = action.payload.courseMaterials;
     },
+    setPercentCourseProgress: (state, action) => {
+      state.percentCourseProgress = action.payload
+    }
   },
 });
 
-export const { setCourse, setCourseById } = CourseReducer.actions;
+export const { setCourse, setCourseById, setPercentCourseProgress } = CourseReducer.actions;
 
 export default CourseReducer.reducer;
 //---------API CALL-------------
@@ -316,6 +321,23 @@ export const GetAllCoursesAvailableActionAsync = () => {
     } catch (error) {
       console.error("Error fetching courses:", error);
       message.error("Đã xảy ra lỗi khi lấy danh sách khóa học!");
+    }
+  }
+};
+
+export const GetPercentCourseActionAsync = (courseId) => {
+  return async (dispatch) => {
+    try {
+      const userId = getDataJSONStorage(USER_LOGIN).id
+      const response = await httpClient.get(`api/v1/courses/${courseId}/users/${userId}/percents`);
+      if (response.isSuccess) {
+        dispatch(setPercentCourseProgress(response.data))
+      } else {
+        message.error(`${response.message}`);
+      }
+    } catch (error) {
+      console.error(error);
+      message.error("Lỗi hệ thống!");
     }
   }
 };

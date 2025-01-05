@@ -16,7 +16,7 @@ const ShowListSubmitAssignmentAndScores = ({ visible, onClose, assignment }) => 
   const [isUploadModalVisible, setIsUploadModalVisible] = useState(false);
   const [fileList, setFileList] = useState([]);
   const {setLoading} = useLoading()
-  const {id} = useParams()
+  const {className, id} = useParams()
   const dispatch = useDispatch()
 
   const columns = [
@@ -93,8 +93,7 @@ const ShowListSubmitAssignmentAndScores = ({ visible, onClose, assignment }) => 
       "Tên": user.name,
       "Tên đăng nhập": user.username,
       "Tên file nộp": user.submitFileName || '',
-      "Đường dẫn file nộp": user.submitUrl || '',
-      "Điểm": '', // Leave blank for scoring
+      "Điểm": user.score,
     }));
 
     const ws = XLSX.utils.json_to_sheet(data);
@@ -113,14 +112,15 @@ const ShowListSubmitAssignmentAndScores = ({ visible, onClose, assignment }) => 
         if (user.submitUrl && user.submitFileName) {
           const response = await fetch(user.submitUrl);
           const blob = await response.blob();
-          zip.file(user.submitFileName, blob);
+          const customFileName = `${user.name}_${user.submitFileName}`;
+          zip.file(customFileName, blob);
         }
       }
 
       const content = await zip.generateAsync({ type: "blob" });
       const link = document.createElement("a");
       link.href = URL.createObjectURL(content);
-      link.download = `assignment_${assignment.id}_submissions.zip`;
+      link.download = `${className}_${assignment.title}_submit.zip`;
       link.click();
       URL.revokeObjectURL(link.href);
       setLoading(false);

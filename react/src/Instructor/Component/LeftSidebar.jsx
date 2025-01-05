@@ -21,10 +21,10 @@ const LeftSidebar = ({ onSidebarToggle }) => {
       label: classItem.className, 
       icon: "mdi:school",
       subItems: [
-        { label: "Chi tiết lớp học", path: `/instructor/class/${classItem.classId}` },
-        { label: "Bài kiểm tra", path: `/instructor/class/${classItem.classId}/quiz` },
-        { label: "Bài tập", path: `/instructor/class/${classItem.classId}/assignment` },
-        { label: "Tài liệu khóa học", path: `/instructor/class/${classItem.classId}` },
+        { label: "Chi tiết lớp học", path: `/instructor/${classItem.className}/${classItem.classId}` },
+        { label: "Bài kiểm tra", path: `/instructor/${classItem.className}/${classItem.classId}/quiz` },
+        { label: "Bài tập", path: `/instructor/${classItem.className}/${classItem.classId}/assignment` },
+        { label: "Tài liệu khóa học", path: `/instructor/${classItem.className}/${classItem.classId}` },
       ],
     })),
   ];
