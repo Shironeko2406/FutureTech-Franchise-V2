@@ -66,6 +66,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
           },
           { type: "link", label: "Bài kiểm tra", path: `/student/${className}/${selectedClassId}/quiz`, icon: "mdi:test-tube" },
           { type: "link", label: "Bài tập nộp", path: `/student/${className}/${selectedClassId}/assignment`, icon: "mdi:clipboard-text" },
+          { type: "link", label: "Điểm số", path: `/student/${className}/${selectedClassId}/course/${selectedCourseId}/score`, icon: "mdi:clipboard-text" },
           { type: "link", label: "Khiếu nại điểm danh", path: `/student/${className}/${selectedClassId}/attendance`, icon: "mdi:clipboard-text" },
         ];
   
