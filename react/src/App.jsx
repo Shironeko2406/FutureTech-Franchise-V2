@@ -114,6 +114,7 @@ import VideoPageMaterial from "./Student/Page/VideoPageMaterial/VideoPageMateria
 import ReadingPageMaterial from "./Student/Page/ReadingPageMaterial/ReadingPageMaterial";
 import Profile_2 from "./Admin/Page/Profile/Profile_2";
 import ScoreClass from "./Student/Page/ScoreClass/ScoreClass";
+import AgencyProgressPage from "./AgencyManager/Page/AgencyProgressPage/AgencyProgressPage";
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -147,7 +148,7 @@ function App() {
                 <Route path="franchise" element={<FranchiseManagement />} />
                 <Route path="course-category" element={<CourseCategoryAdmin />} />
                 <Route path="course" element={<CourseManageAdmin />} />
-                <Route path="profile" element={<Profile_2/>} />
+                <Route path="profile" element={<Profile_2 />} />
                 <Route path="contracts" element={<ManageContractAdminPage />} />
                 <Route path="system-accounts" element={<AccountManagement />} />
                 <Route path="work-template" element={<WorkTemplate />} />
@@ -167,8 +168,7 @@ function App() {
                 <Route path="classes/:id" element={<ClassDetail />} />
                 <Route path="schedules" element={<ScheduleAgencyManager />} />
                 <Route path="list-task" element={<ListTaskAgencyManager />} />
-                {/* <Route path="" element={statusAgency === "active" ? (<AgencyDashboardPage />) : (<ListTaskAgencyManager />)} /> */}
-                <Route path="" element={<AgencyDashboardPage />} />
+                <Route path="" element={statusAgency === "active" ? (<AgencyDashboardPage />) : (<AgencyProgressPage />)} />
                 <Route path="appointment-schedule" element={<AgencyManagerAppointment />} />
                 <Route path="appointment-schedule/details" element={<AgencyManagerAppointmentDetail />} />
                 <Route path="course" element={<CourseViewAgencyManager />} />
@@ -186,18 +186,18 @@ function App() {
 
             <Route element={<ProtectedRoute requiredRole="Student" />}>
               <Route path="student" element={<TempUIStudent />}>
-                <Route path=":className/course/:courseId/chapter/:number" element={<MaterialClass/>} />
-                <Route path=":className/course/:courseId/chapter/:number/material/:materialNumber/video" element={<VideoPageMaterial/>} />
-                <Route path=":className/course/:courseId/chapter/:number/material/:materialNumber/reading" element={<ReadingPageMaterial/>} />
-                <Route path=":className/course/:courseId/chapter/:number" element={<MaterialClass/>} />
-                <Route path=":className/:classId/quiz" element={<ViewQuiz/>} />
+                <Route path=":className/course/:courseId/chapter/:number" element={<MaterialClass />} />
+                <Route path=":className/course/:courseId/chapter/:number/material/:materialNumber/video" element={<VideoPageMaterial />} />
+                <Route path=":className/course/:courseId/chapter/:number/material/:materialNumber/reading" element={<ReadingPageMaterial />} />
+                <Route path=":className/course/:courseId/chapter/:number" element={<MaterialClass />} />
+                <Route path=":className/:classId/quiz" element={<ViewQuiz />} />
                 <Route path=":className/:classId/assignment" element={<ViewAssignment />} />
                 <Route path=":className/:classId/assignment/:assignmentId" element={<AssignmentDetail />} />
                 <Route path=":className/:classId/quiz/:quizId" element={<QuizDescription />} />
                 <Route path=":className/:classId/quiz/:quizId/start" element={<QuizTest />} />
-                <Route path=":className/:classId/course/:courseId/score" element={<ScoreClass/>} />
-                <Route path="video" element={<VideoPageMaterial/>} />
-                <Route path="reading" element={<ReadingPageMaterial/>} />
+                <Route path=":className/:classId/course/:courseId/score" element={<ScoreClass />} />
+                <Route path="video" element={<VideoPageMaterial />} />
+                <Route path="reading" element={<ReadingPageMaterial />} />
                 <Route path="" element={<ScheduleStudent />} />
                 <Route path="change-password" element={<ChangePassword />} />
                 <Route path="profile" element={<Profile />} />
@@ -249,7 +249,7 @@ function App() {
             <Route element={<ProtectedRoute requiredRole="SystemInstructor" />}>
               <Route path="system-instructor" element={<TempUISystemInstructor />}>
                 <Route path="" element={<CourseSystemInstructor />} />
-                <Route path="video" element={<VideoSystemInstructor/>} />
+                <Route path="video" element={<VideoSystemInstructor />} />
                 <Route path="course-detail/:id" element={<CourseDetailSystemInstructor />} />
                 <Route path="course-detail/:id/questions" element={<ViewQuestionChapterSystemInstructor />} />
                 <Route path="list-task" element={<ListTaskSystemInstructor />} />

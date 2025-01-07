@@ -31,14 +31,13 @@ const LeftSidebar = ({ onSidebarToggle }) => {
 
   // Menu cho trạng thái "inactive"
   const inactiveMenu = [
-    { type: 'section', label: 'Công việc bàn giao', icon: 'ti ti-dots' },
-    { type: 'link', label: 'Quản lý', path: '/agency-manager', icon: 'solar:file-text-bold-duotone' },
-    { type: 'link', label: 'Lịch hẹn', path: '/agency-manager/appointment-schedule', icon: 'solar:calendar-bold-duotone' },
+    { type: 'section', label: 'Nhượng quyền', icon: 'ti ti-dots' },
+    { type: 'link', label: 'Tiến trình', path: '/agency-manager', icon: 'ant-design:profile-outlined' },
   ];
 
   // Lựa chọn menu dựa trên trạng thái người dùng
-  // const sidebarItems = statusAgency === "active" ? activeMenu : inactiveMenu;
-  const sidebarItems = activeMenu;
+  const sidebarItems = statusAgency === "active" ? activeMenu : inactiveMenu;
+
   return (
     <aside className="left-sidebar">
       <div>
