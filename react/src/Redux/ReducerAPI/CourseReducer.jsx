@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { httpClient, USER_LOGIN } from "../../Utils/Interceptors";
 import { message } from "antd";
 import { getDataJSONStorage } from "../../Utils/UtilsFunction";
+import { formatCourseData } from "../../Utils/FormatCourseData";
 
 const initialState = {
   course: [],
@@ -10,7 +11,9 @@ const initialState = {
   assessments: [],
   courseMaterials: [],
   totalPagesCount: 0,
-  percentCourseProgress: 0
+  percentCourseProgress: 0,
+  courseNewVer: '',
+  courseOldVer: '',
 };
 
 const CourseReducer = createSlice({
@@ -29,11 +32,17 @@ const CourseReducer = createSlice({
     },
     setPercentCourseProgress: (state, action) => {
       state.percentCourseProgress = action.payload
+    },
+    setCourseNewVer: (state, action) => {
+      state.courseNewVer = action.payload
+    },
+    setCourseOldVer: (state, action) => {
+      state.courseOldVer = action.payload
     }
   },
 });
 
-export const { setCourse, setCourseById, setPercentCourseProgress } = CourseReducer.actions;
+export const { setCourse, setCourseById, setPercentCourseProgress, setCourseNewVer, setCourseOldVer } = CourseReducer.actions;
 
 export default CourseReducer.reducer;
 //---------API CALL-------------
@@ -341,3 +350,29 @@ export const GetPercentCourseActionAsync = (courseId) => {
     }
   }
 };
+
+export const GetCourseCurrentVerByIdActionAsync = (id) => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.get(`/api/v1/courses/${id}`);
+      dispatch(setCourseNewVer(formatCourseData(res.data)));
+      console.log(res.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+};
+
+export const GetCourseOldVerByIdActionAsync = (id) => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.get(`/api/v1/courses/${id}/old-versions`);
+      dispatch(setCourseOldVer(formatCourseData(res.data)));
+      console.log(res.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+};
+
+;
