@@ -21,6 +21,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
     { type: 'section', label: 'Quản lý', icon: 'ti ti-dots' },
     { type: 'link', label: 'Tài khoản', path: '/agency-manager/accounts', icon: 'mdi:account-group' },
     { type: 'link', label: 'Giao dịch', path: '/agency-manager/student-payment', icon: 'fluent:payment-20-filled' },
+    { type: 'link', label: 'Thanh toán hàng tháng', path: '/agency-manager/payment-monthly', icon: 'fluent:payment-20-filled' },
     { type: 'link', label: 'Cài đặt VNPay', path: '/agency-manager/vnpay-setup', icon: 'mdi:key' },
     { type: 'section', label: 'Lớp học', icon: 'ti ti-dots' },
     { type: 'link', label: 'Thông tin đăng ký', path: '/agency-manager/student-consultation-registration', icon: 'solar:file-text-bold-duotone' },

@@ -115,6 +115,8 @@ import ReadingPageMaterial from "./Student/Page/ReadingPageMaterial/ReadingPageM
 import Profile_2 from "./Admin/Page/Profile/Profile_2";
 import ScoreClass from "./Student/Page/ScoreClass/ScoreClass";
 import AgencyProgressPage from "./AgencyManager/Page/AgencyProgressPage/AgencyProgressPage";
+import PaymentMonthlyManager from "./Manager/Page/PaymentMonthly/PaymentMonthlyManager";
+import PaymentMonthlyAgencyManager from "./AgencyManager/Page/PaymentMonthly/PaymentMonthlyAgencyManager";
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -181,6 +183,7 @@ function App() {
                 <Route path="contracts" element={<ViewContractAgencyManager />} />
                 <Route path="documents" element={<ViewDocumentAgencyManager />} />
                 <Route path="vnpay-setup" element={<VNPaySetup />} />
+                <Route path="payment-monthly" element={<PaymentMonthlyAgencyManager />} />
               </Route>
             </Route>
 
@@ -243,6 +246,7 @@ function App() {
                 <Route path="profile" element={<Profile />} />
                 <Route path="report" element={<ListReport />} />
                 <Route path="payments" element={<PaymentManagement />} />
+                <Route path="payment-monthly" element={<PaymentMonthlyManager />} />
               </Route>
             </Route>
 

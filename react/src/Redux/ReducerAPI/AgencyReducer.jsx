@@ -176,3 +176,19 @@ export const GetVNPayConfigActionAsync = () => {
     }
   };
 };
+
+export const GetActiveAgenciesActionAsync = () => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.get(`/api/v1/agencies/active/agencies`);
+      if (res.isSuccess && res.data) {
+        dispatch(setAgencyData({ items: res.data, totalPagesCount: 1 }));
+      } else {
+        message.error(`${res.message}`);
+      }
+    } catch (error) {
+      console.error(error);
+      message.error("Đã có lỗi xảy ra, vui lòng thử lại sau!");
+    }
+  };
+};
