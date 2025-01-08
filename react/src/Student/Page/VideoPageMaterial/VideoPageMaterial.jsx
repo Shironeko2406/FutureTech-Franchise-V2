@@ -1,11 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import ReactPlayer from 'react-player';
 import { Card, Typography, Breadcrumb, Tabs, Button } from 'antd';
-import { BookOutlined, DownloadOutlined, HomeOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
+import { BookOutlined, CheckCircleOutlined, CheckOutlined, DownloadOutlined, HomeOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import DOMPurify from "dompurify";
 import { useParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useLoading } from '../../../Utils/LoadingContext';
+import { MarkChapterMaterialByIdActionAsync } from '../../../Redux/ReducerAPI/UserReducer';
+import { getDataJSONStorage } from '../../../Utils/UtilsFunction';
+import { USER_LOGIN } from '../../../Utils/Interceptors';
 
 const { Title, Paragraph } = Typography;
 
@@ -46,10 +50,13 @@ const VideoPageMaterial = () => {
   const [playing, setPlaying] = useState(false);
   const { materialClass } = useSelector((state) => state.UserReducer)
   const [chapterMaterial, setChapterMaterial] = useState({})
-  const {number, materialNumber} = useParams()
+  const {number, materialNumber, courseId} = useParams()
   const [showMiniPlayer, setShowMiniPlayer] = useState(false);
   const videoRef = useRef(null);
   const miniPlayerRef = useRef(null);
+  const { setLoading } = useLoading();
+  const dispatch = useDispatch()
+  console.log(chapterMaterial)
 
   useEffect(() => {
     const material =
@@ -80,6 +87,16 @@ const VideoPageMaterial = () => {
     };
   };
 
+  const handleMarkAsCompleted = async (id) => {
+    setLoading(true)
+    const dataSend = {
+      userId: getDataJSONStorage(USER_LOGIN).id,
+      chapterMaterialId: id
+    }
+    await dispatch(MarkChapterMaterialByIdActionAsync(dataSend, courseId))
+    setLoading(false)
+  }
+
   const tabItems = [
     {
       key: 'description',
@@ -88,6 +105,23 @@ const VideoPageMaterial = () => {
         <div className="min-height-200 p-3">
           <HTMLContent dangerouslySetInnerHTML={sanitizeHTML(chapterMaterial.description)}/>
           
+          <div className="mt-4">
+            {chapterMaterial.userChapterMaterials ? (
+              <div className="text-success">
+                <CheckCircleOutlined className="mr-2" />
+                Bạn đã xem bài học này
+              </div>
+            ) : (
+              <Button
+                type="primary"
+                icon={<CheckOutlined />}
+                onClick={() => handleMarkAsCompleted(chapterMaterial.id)}
+              >
+                Đánh dấu đã học
+              </Button>
+            )}
+          </div>
+
         </div>
       ),
     },

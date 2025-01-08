@@ -144,7 +144,7 @@ const EditQuizModal = ({ visible, onClose, quiz}) => {
             onClick={() => setShowQuestionForm(true)}
             style={{ marginBottom: 16 }}
           >
-            Cập nhật câu hỏi
+            Thêm câu hỏi
           </Button>
         )}
 
@@ -152,7 +152,7 @@ const EditQuizModal = ({ visible, onClose, quiz}) => {
         {showQuestionForm && (
           <StyledCard 
             className="question-form"
-            title={<Title level={5} style={{ margin: 0 }}>Cập nhật câu hỏi</Title>}
+            title={<Title level={5} style={{ margin: 0 }}>Thêm câu hỏi</Title>}
           >
             <StyledForm 
               form={formQuestions}
@@ -176,16 +176,16 @@ const EditQuizModal = ({ visible, onClose, quiz}) => {
                 <Col xs={24} sm={12}>
                   <Form.Item
                     name="chapterIds"
-                    label="Chọn chương"
-                    rules={[{ required: true, message: 'Vui lòng chọn ít nhất một chương!' }]}
+                    label="Chọn buổi học"
+                    rules={[{ required: true, message: 'Vui lòng chọn ít nhất một buổi học!' }]}
                   >
                     <Select
                       mode="multiple"
-                      placeholder="Chọn chương"
+                      placeholder="Chọn buổi học"
                       style={{ width: '100%' }}
                       options={chapterFilter.map(chapter => ({
                         value: chapter.id,
-                        label: `Chương ${chapter.number}`
+                        label: `Buổi ${chapter.number}`
                       }))}
                     />
                   </Form.Item>
