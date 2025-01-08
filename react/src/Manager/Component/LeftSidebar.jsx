@@ -14,10 +14,11 @@ const sidebarItems = [
   { type: 'link', label: 'Giao dịch', path: '/manager/payments', icon: 'fluent:payment-20-filled' },
   { type: 'section', label: 'Chi nhánh' },
   { type: 'link', label: 'Quản lý', path: '/manager/agency-active', icon: 'solar:login-3-bold-duotone' },
-  { type: 'link', label: 'Báo cáo sự cố', path: '/manager/report', icon: 'solar:login-3-bold-duotone' },
-  { type: 'section', label: 'Công việc' },
-  { type: 'link', label: 'Danh sách', path: '/manager/list-task', icon: 'solar:login-3-bold-duotone' },
-  { type: 'link', label: 'Lịch hẹn', path: '/manager/appointment-schedule', icon: 'solar:calendar-bold-duotone' },
+  { type: 'link', label: 'Thanh toán hàng tháng', path: '/manager/payment-monthly', icon: 'fluent:payment-20-filled' },
+  // { type: 'link', label: 'Báo cáo sự cố', path: '/manager/report', icon: 'solar:login-3-bold-duotone' },
+  // { type: 'section', label: 'Công việc' },
+  // { type: 'link', label: 'Danh sách', path: '/manager/list-task', icon: 'solar:login-3-bold-duotone' },
+  // { type: 'link', label: 'Lịch hẹn', path: '/manager/appointment-schedule', icon: 'solar:calendar-bold-duotone' },
 ];
 
 

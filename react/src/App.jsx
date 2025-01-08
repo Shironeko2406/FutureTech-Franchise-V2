@@ -114,6 +114,9 @@ import VideoPageMaterial from "./Student/Page/VideoPageMaterial/VideoPageMateria
 import ReadingPageMaterial from "./Student/Page/ReadingPageMaterial/ReadingPageMaterial";
 import Profile_2 from "./Admin/Page/Profile/Profile_2";
 import ScoreClass from "./Student/Page/ScoreClass/ScoreClass";
+import AgencyProgressPage from "./AgencyManager/Page/AgencyProgressPage/AgencyProgressPage";
+import PaymentMonthlyManager from "./Manager/Page/PaymentMonthly/PaymentMonthlyManager";
+import PaymentMonthlyAgencyManager from "./AgencyManager/Page/PaymentMonthly/PaymentMonthlyAgencyManager";
 import CompareVerCourse from "./Manager/Page/CompareVerCourse/CompareVerCourse";
 import CompareCourseAgencyManager from "./AgencyManager/Page/CompareCourseAgencyManager/CompareCourseAgencyManager";
 import CompareCourseSysInstructor from "./SystemInstructor/Page/CompareCourseSysInstructor/CompareCourseSysInstructor";
@@ -172,8 +175,7 @@ function App() {
                 <Route path="classes/:id" element={<ClassDetail />} />
                 <Route path="schedules" element={<ScheduleAgencyManager />} />
                 <Route path="list-task" element={<ListTaskAgencyManager />} />
-                {/* <Route path="" element={statusAgency === "active" ? (<AgencyDashboardPage />) : (<ListTaskAgencyManager />)} /> */}
-                <Route path="" element={<AgencyDashboardPage />} />
+                <Route path="" element={statusAgency === "active" ? (<AgencyDashboardPage />) : (<AgencyProgressPage />)} />
                 <Route path="appointment-schedule" element={<AgencyManagerAppointment />} />
                 <Route path="appointment-schedule/details" element={<AgencyManagerAppointmentDetail />} />
                 <Route path="course" element={<CourseViewAgencyManager />} />
@@ -187,6 +189,7 @@ function App() {
                 <Route path="contracts" element={<ViewContractAgencyManager />} />
                 <Route path="documents" element={<ViewDocumentAgencyManager />} />
                 <Route path="vnpay-setup" element={<VNPaySetup />} />
+                <Route path="payment-monthly" element={<PaymentMonthlyAgencyManager />} />
               </Route>
             </Route>
 
@@ -249,6 +252,7 @@ function App() {
                 <Route path="profile" element={<Profile />} />
                 <Route path="report" element={<ListReport />} />
                 <Route path="payments" element={<PaymentManagement />} />
+                <Route path="payment-monthly" element={<PaymentMonthlyManager />} />
               </Route>
             </Route>
 

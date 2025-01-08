@@ -121,3 +121,37 @@ export const UpdateDocumentActionAsync = (documentId, data) => {
         }
     };
 };
+
+export const GetAllDocumentsByAgencyIdActionAsync = (agencyId) => {
+    return async (dispatch) => {
+        try {
+            const res = await httpClient.get(`/api/v1/documents/agency/${agencyId}/all`);
+            if (res.isSuccess && res.data) {
+                dispatch(setDocuments({ items: res.data, totalPagesCount: 1 }));
+            } else {
+                throw new Error(res.message);
+            }
+        } catch (error) {
+            console.error("GetAllDocumentsByAgencyIdActionAsync", error);
+            message.error("Đã xảy ra lỗi khi lấy danh sách tài liệu!");
+        }
+    };
+};
+
+export const ApproveDocumentActionAsync = (documentId) => {
+    return async (dispatch) => {
+        try {
+            const res = await httpClient.put(`/api/v1/documents/${documentId}/approved`);
+            if (res.isSuccess && res.data) {
+                message.success(`${res.message}`);
+                return res.data;
+            } else {
+                throw new Error(res.message);
+            }
+        } catch (error) {
+            console.error("ApproveDocumentActionAsync", error);
+            message.error("Đã xảy ra lỗi khi duyệt tài liệu!");
+            return null;
+        }
+    };
+};
