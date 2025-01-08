@@ -233,8 +233,8 @@ const CreateMaterialModal = ({ visible, onClose, chapter }) => {
     <Modal
       title={
         chapter
-          ? `Thêm tài nguyên chương ${chapter.number}`
-          : "Thêm tài nguyên chương"
+          ? `Thêm tài nguyên buổi ${chapter.number}`
+          : "Thêm tài nguyên buổi"
       }
       open={visible}
       onCancel={onClose}

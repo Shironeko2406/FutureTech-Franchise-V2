@@ -38,7 +38,7 @@ const EditChapterModal = ({ visible, onClose, chapter }) => {
 
   return (
     <Modal
-      title={chapter ? `Chỉnh sửa chương ${chapter.number}` : "Chỉnh sửa chương"}
+      title={chapter ? `Chỉnh buổi học ${chapter.number}` : "Chỉnh sửa chương"}
       open={visible}
       onCancel={onClose}
       footer={[

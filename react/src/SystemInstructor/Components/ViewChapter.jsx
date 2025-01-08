@@ -129,7 +129,7 @@ const ViewChapter = () => {
 
   const columns = [
     {
-      title: "Số chương",
+      title: "Buổi học",
       dataIndex: "number",
       key: "number",
       width: "10%",
@@ -226,9 +226,9 @@ const ViewChapter = () => {
     <div className="card">
       <div className="card-body">
         <div className="d-flex justify-content-between align-items-center mb-3">
-          <h5 className="card-title">Chi tiết các chương</h5>
+          <h5 className="card-title">Chi tiết các buổi học</h5>
           <button className="btn btn-primary" onClick={showDrawer}>
-            Thêm chương
+            Thêm buổi học
           </button>
         </div>
         {/* Bảng hiển thị chapter */}
