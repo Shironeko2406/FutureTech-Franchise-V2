@@ -29,7 +29,7 @@ const CreateChapterModal = ({ isDrawerVisible, closeDrawer }) => {
 
   return (
     <Modal
-      title="Tạo chương"
+      title="Tạo buổi học"
       width={550}
       onCancel={closeDrawer}
       open={isDrawerVisible}
@@ -46,9 +46,9 @@ const CreateChapterModal = ({ isDrawerVisible, closeDrawer }) => {
     >
       <Form form={form} layout="vertical" onFinish={onSubmit} requiredMark={false}>
         <Form.Item
-          label="Số chương"
+          label="Buổi thứ"
           name="number"
-          rules={[{ required: true, message: "Vui lòng nhập số chapter!" }]}
+          rules={[{ required: true, message: "Vui lòng nhập số buổi học!" }]}
         >
           <InputNumber min={1} style={{ width: "100%" }} />
         </Form.Item>
@@ -58,15 +58,15 @@ const CreateChapterModal = ({ isDrawerVisible, closeDrawer }) => {
           name="topic"
           rules={[{ required: true, message: "Vui lòng nhập chủ đề!" }]}
         >
-          <Input placeholder="Nhập chủ đề của chapter" />
+          <Input placeholder="Nhập chủ đề của buổi học" />
         </Form.Item>
         
         <Form.Item
           label="Mô tả"
           name="description"
-          rules={[{ required: true, message: "Vui lòng nhập mô tả chapter!" }]}
+          rules={[{ required: true, message: "Vui lòng nhập mô tả buổi học!" }]}
         >
-          <Input.TextArea rows={4} placeholder="Nhập mô tả của chapter" />
+          <Input.TextArea rows={4} placeholder="Nhập mô tả của buổi học" />
         </Form.Item>
       </Form>
     </Modal>

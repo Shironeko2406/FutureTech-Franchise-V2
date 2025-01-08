@@ -5,7 +5,6 @@ import { useDispatch } from "react-redux";
 import { GetCourseByIdActionAsync } from "../../../Redux/ReducerAPI/CourseReducer";
 import ViewSyllabus from "../../Component/ViewSyllabus";
 import ViewChapter from "../../Component/ViewChapter";
-import ViewSession from "../../Component/ViewSession";
 import ViewAssessment from "../../Component/ViewAssessment";
 
 const CourseDetailOfClass = () => {
@@ -24,7 +23,6 @@ const CourseDetailOfClass = () => {
       <ViewSyllabus/>
       {/*Thêm các card component khác*/}
       <ViewChapter/>
-      <ViewSession/>
       <ViewAssessment/>
       {/* <ViewMaterialCourse/> */}
     </div>
