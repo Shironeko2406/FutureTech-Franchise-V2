@@ -1,7 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { httpClient } from "../../Utils/Interceptors";
+import { httpClient, USER_LOGIN } from "../../Utils/Interceptors";
 import { message } from "antd";
 import { setAssignments } from "./AssignmentReducer";
+import { getDataJSONStorage } from "../../Utils/UtilsFunction";
 
 const initialState = {
     instructors: [],
@@ -40,10 +41,13 @@ const ClassReducer = createSlice({
         setAvailableClasses: (state, action) => {
             state.availableClasses = action.payload;
         },
+        setClassesStudentRegisCourse: (state, action) => {
+            state.classes = action.payload;
+        },
     },
 });
 
-export const { setInstructors, setClasses, setClass, setClassDetail, setQuizOfClassStudent, setChapterFilter, setQuizData, setAvailableClasses } = ClassReducer.actions;
+export const { setInstructors, setClasses, setClass, setClassDetail, setQuizOfClassStudent, setChapterFilter, setQuizData, setAvailableClasses, setClassesStudentRegisCourse } = ClassReducer.actions;
 
 export default ClassReducer.reducer;
 //---------API CALL-------------
@@ -253,4 +257,23 @@ export const AddStudentsToClassActionAsync = (classId, studentIds) => {
         }
     };
 };
+
+export const GetClassesForStudentByAgencyIdActionAsync = (courseId, agencid) => {
+    return async (dispatch) => {
+      try {
+        const response = await httpClient.get(`api/v1/classes`, {
+          params: { courseId, agencid }
+        });
+        if (response.isSuccess) {
+          dispatch(setClassesStudentRegisCourse(response.data));
+        } else {
+          throw new Error(response.message);
+        }
+      } catch (error) {
+        console.error("Error fetching classes:", error);
+        message.error("Đã xảy ra lỗi khi lấy danh sách lớp học.");
+      }
+    };
+  };
+  
 
