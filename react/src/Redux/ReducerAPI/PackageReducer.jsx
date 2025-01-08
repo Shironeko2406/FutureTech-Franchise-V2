@@ -54,3 +54,41 @@ export const GetPackageActionAsync = () => {
       }
     };
   };
+
+  export const EditPackageActionAsync = (dataEdit, id) => {
+    return async (dispatch) => {
+      try {
+        const res = await httpClient.put(`/api/v1/packages/${id}`, dataEdit);
+        if (res.isSuccess && res.data) {
+          message.success(`${res.message}`);
+          await dispatch(GetPackageActionAsync());
+          return true;
+        } else {
+          message.error(`Đã có lỗi xảy ra, vui lòng thử lại sau!`);
+          return false;
+        }
+      } catch (error) {
+        console.log(error);
+        message.error("Đã có lỗi xảy ra, vui lòng thử lại sau!");
+      }
+    };
+  };
+
+  export const DeletePackageActionAsync = (id) => {
+    return async (dispatch) => {
+      try {
+        const res = await httpClient.delete(`/api/v1/packages/${id}`);
+        if (res.isSuccess && res.data) {
+          message.success(`${res.message}`);
+          await dispatch(GetPackageActionAsync());
+          return true;
+        } else {
+          message.error(`Đã có lỗi xảy ra, vui lòng thử lại sau!`);
+          return false;
+        }
+      } catch (error) {
+        console.log(error);
+        message.error("Đã có lỗi xảy ra, vui lòng thử lại sau!");
+      }
+    };
+  };

@@ -1,10 +1,11 @@
-import { GlobalOutlined } from "@ant-design/icons";
-import { Card, Typography, Table, Button } from "antd";
+import { DeleteOutlined, EditOutlined, GlobalOutlined } from "@ant-design/icons";
+import { Card, Typography, Table, Button, Space } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { GetPackageActionAsync } from "../../../Redux/ReducerAPI/PackageReducer";
+import { DeletePackageActionAsync, GetPackageActionAsync } from "../../../Redux/ReducerAPI/PackageReducer";
 import { useLoading } from "../../../Utils/LoadingContext";
 import CreatePackageModal from "../../Modal/CreatePackageModal";
+import EditPackageModal from "../../Modal/EditPackageModal";
 
 const { Title, Text } = Typography;
 
@@ -53,11 +54,29 @@ const PackageFranchise = () => {
   const dispatch = useDispatch();
   const { setLoading } = useLoading();
   const [modalCreateVisible, setCreateModalVisible] = useState(false)
+  const [modalEditVisible, setEditModalVisible] = useState(false)
+  const [selectedPackage, setSelectedPackage] = useState({})
 
   useEffect(() => {
     setLoading(true);
     dispatch(GetPackageActionAsync()).finally(() => setLoading(false));
   }, []);
+
+  const openModalEdit = (packageFranchise) =>{
+    setSelectedPackage(packageFranchise)
+    setEditModalVisible(true)
+  }
+
+  const closeModalEdit = () =>{
+    setSelectedPackage({})
+    setEditModalVisible(false)
+  }
+  
+  const handleDelete = async (id) =>{
+    setLoading(true)
+    await dispatch(DeletePackageActionAsync(id))
+    setLoading(false)
+  }
 
   const columns = [
     {
@@ -102,6 +121,26 @@ const PackageFranchise = () => {
       onFilter: (value, record) => record.status === value,
       render: (text) => renderStatusBadge(text),
     },
+    {
+      title: "Hành động",
+      key: "action",
+      render: (_, record) => (
+        <Space size="middle">
+          <Button
+            style={{ backgroundColor: "#faad14", color: "#fff" }}
+            type="default"
+            icon={<EditOutlined />}
+            onClick={() => openModalEdit(record)}
+          />
+          <Button
+            type="primary"
+            icon={<DeleteOutlined />}
+            danger
+            onClick={() => handleDelete(record.id)}
+          />
+        </Space>
+      ),
+    },
   ];
 
   return (
@@ -120,6 +159,12 @@ const PackageFranchise = () => {
       <CreatePackageModal
         visible={modalCreateVisible}
         onClose={() => setCreateModalVisible(false)}
+      />
+
+      <EditPackageModal
+        visible={modalEditVisible}
+        onClose={closeModalEdit}
+        packageFranchise={selectedPackage}
       />
     </Card>
   );
