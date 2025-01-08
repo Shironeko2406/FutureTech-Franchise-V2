@@ -248,14 +248,16 @@ const QuizOfClass = () => {
             style={{ backgroundColor: "#faad14", color: "#fff" }}
             onClick={() => showModalEditQuiz(record)}
           />
-          <Popconfirm
-            title="Bạn muốn xóa bài kiểm tra này?"
-            onConfirm={() => handleDelete(record.id)}
-            okText="Đồng ý"
-            cancelText="Hủy"
-          >
-            <Button type="primary" danger icon={<DeleteOutlined />} />
-          </Popconfirm>
+          {record.type === "Optional" && (
+            <Popconfirm
+              title="Bạn muốn xóa bài kiểm tra này?"
+              onConfirm={() => handleDelete(record.id)}
+              okText="Đồng ý"
+              cancelText="Hủy"
+            >
+              <Button type="primary" danger icon={<DeleteOutlined />} />
+            </Popconfirm>
+          )}
         </Space>
       ),
     },

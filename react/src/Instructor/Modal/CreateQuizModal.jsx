@@ -102,14 +102,14 @@ const CreateQuizModal = ({ visible, onClose }) => {
     },
     {
       name: 'chapterId',
-      label: 'Chọn chương',
-      rules: [{ required: true, message: 'Vui lòng chọn ít nhất một chương!' }],
+      label: 'Chọn buổi học',
+      rules: [{ required: true, message: 'Vui lòng chọn ít nhất một buổi học!' }],
       component: (
         <Select
           mode="multiple"
-          placeholder="Chọn chương"
+          placeholder="Chọn buổi học"
           options={chapterFilter.map((ch) => ({
-            label: `Chương ${ch.number}`,
+            label: `Buổi ${ch.number}`,
             value: ch.id,
           }))}
           style={{ width: '100%' }}

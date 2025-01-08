@@ -131,12 +131,6 @@ const ViewQuiz = () => {
                   <Text>{(quiz.scores.scoreNumber).toFixed(0)} / 10</Text>
                 </Space>
               </Tooltip>
-              <Tooltip title="Feedback available">
-                <Space>
-                  <CommentOutlined />
-                  <Text>Feedback</Text>
-                </Space>
-              </Tooltip>
             </Space>
             <Progress
               percent={(quiz.scores.scoreNumber / 10) * 100}
