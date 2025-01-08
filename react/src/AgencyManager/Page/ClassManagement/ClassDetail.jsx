@@ -8,6 +8,7 @@ import { UserOutlined, BookOutlined, TeamOutlined, CalendarOutlined, ClockCircle
 import EditClassModal from "../../Modal/EditClassModal";
 import EditScheduleModal from "../../Modal/EditScheduleModal";
 import { RemoveAllSchedulesOfOneClassActionAsync } from "../../../Redux/ReducerAPI/ClassScheduleReducer";
+import { useLoading } from "../../../Utils/LoadingContext";
 
 const { Title } = Typography;
 
@@ -17,6 +18,7 @@ const ClassDetail = () => {
     const { id } = useParams();
     const { classDetail, instructors } = useSelector((state) => state.ClassReducer);
     const { slotData } = useSelector((state) => state.SlotReducer);
+    const {setLoading} = useLoading()
     const [popoverVisible, setPopoverVisible] = useState(false);
 
     // State cho modal
@@ -40,10 +42,12 @@ const ClassDetail = () => {
     };
 
     const handleDeleteConfirm = () => {
+        setLoading(true)
         dispatch(RemoveAllSchedulesOfOneClassActionAsync(id)).then(() => {
             handleEditSuccess();
         }).finally(() => {
             setPopoverVisible(false);
+            setLoading(false)
         });
     };
 
