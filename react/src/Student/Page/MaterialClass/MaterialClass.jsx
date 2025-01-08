@@ -29,8 +29,7 @@ export default function MaterialClass() {
   const [materials, setMaterials] = useState([])
   const [chapterStats, setChapterStats] = useState(null)
   const [videoModalState, setVideoModalState] = useState({ isVisible: false, url: '' });
-  
-  
+
   useEffect(() => {
     function loadChapterStats() {
       if (materialClass?.chapters && number) {
@@ -125,6 +124,11 @@ export default function MaterialClass() {
                 {material.urlFile && (
                   <Tag icon={<ReadOutlined />} color="green">
                     Tài liệu đọc
+                  </Tag>
+                )}
+                {material.userChapterMaterials && (
+                  <Tag icon={<CheckCircleOutlined />} color="success">
+                    Đã xem
                   </Tag>
                 )}
               </Space>
