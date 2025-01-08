@@ -1,6 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { httpClient } from "../../Utils/Interceptors";
+import { httpClient, USER_LOGIN } from "../../Utils/Interceptors";
 import { message } from "antd";
+import { getDataJSONStorage } from "../../Utils/UtilsFunction";
+import { formatCourseData } from "../../Utils/FormatCourseData";
 
 const initialState = {
   course: [],
@@ -9,6 +11,9 @@ const initialState = {
   assessments: [],
   courseMaterials: [],
   totalPagesCount: 0,
+  percentCourseProgress: 0,
+  courseNewVer: '',
+  courseOldVer: '',
 };
 
 const CourseReducer = createSlice({
@@ -25,10 +30,19 @@ const CourseReducer = createSlice({
       state.assessments = action.payload.assessments;
       state.courseMaterials = action.payload.courseMaterials;
     },
+    setPercentCourseProgress: (state, action) => {
+      state.percentCourseProgress = action.payload
+    },
+    setCourseNewVer: (state, action) => {
+      state.courseNewVer = action.payload
+    },
+    setCourseOldVer: (state, action) => {
+      state.courseOldVer = action.payload
+    }
   },
 });
 
-export const { setCourse, setCourseById } = CourseReducer.actions;
+export const { setCourse, setCourseById, setPercentCourseProgress, setCourseNewVer, setCourseOldVer } = CourseReducer.actions;
 
 export default CourseReducer.reducer;
 //---------API CALL-------------
@@ -319,3 +333,46 @@ export const GetAllCoursesAvailableActionAsync = () => {
     }
   }
 };
+
+export const GetPercentCourseActionAsync = (courseId) => {
+  return async (dispatch) => {
+    try {
+      const userId = getDataJSONStorage(USER_LOGIN).id
+      const response = await httpClient.get(`api/v1/courses/${courseId}/users/${userId}/percents`);
+      if (response.isSuccess) {
+        dispatch(setPercentCourseProgress(response.data))
+      } else {
+        message.error(`${response.message}`);
+      }
+    } catch (error) {
+      console.error(error);
+      message.error("Lỗi hệ thống!");
+    }
+  }
+};
+
+export const GetCourseCurrentVerByIdActionAsync = (id) => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.get(`/api/v1/courses/${id}`);
+      dispatch(setCourseNewVer(formatCourseData(res.data)));
+      console.log(res.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+};
+
+export const GetCourseOldVerByIdActionAsync = (id) => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.get(`/api/v1/courses/${id}/old-versions`);
+      dispatch(setCourseOldVer(formatCourseData(res.data)));
+      console.log(res.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+};
+
+;
