@@ -81,7 +81,7 @@ const ClassDetail = () => {
             "Saturday": "Thứ Bảy",
             "Sunday": "Chủ Nhật"
         };
-        return daysString.split(' ').filter(day => day).map(day => days[day] || day).join(', ');
+        return daysString.split(',').filter(day => day).map(day => days[day] || day).join(', ');
     };
 
     const columns = [

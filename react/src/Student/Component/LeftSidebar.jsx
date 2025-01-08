@@ -21,7 +21,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
 
   useEffect(() => {
     const currentCourseId = courseId || selectedCourseId;
-  
+
     if (currentCourseId) {
       dispatch(GetClassMaterialOfUserLoginActionAsync(currentCourseId))
     }
@@ -29,7 +29,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
 
   const getSidebarItems = () => {
     let routeType = '';
-    
+
     if (isStudentRoute && !isClassRoute) {
       routeType = 'STUDENT_ROUTE';
     } else if (isClassRoute && !isChapterRoute) {
@@ -37,7 +37,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
     } else if (isChapterRoute) {
       routeType = 'CHAPTER_ROUTE';
     }
-  
+
     switch (routeType) {
       case 'STUDENT_ROUTE':
         return [
@@ -52,9 +52,9 @@ const LeftSidebar = ({ onSidebarToggle }) => {
           })) || []),
           { type: "section", label: "Khóa học", icon: "ti ti-dots" },
           { type: 'link', label: 'Khóa học liên quan', path: '/student/relate-course', icon: 'mdi:clock' },
-          
+
         ];
-      
+
       case 'CLASS_ROUTE':
         return [
           { type: "section", label: className, icon: "ti ti-dots" },
@@ -72,7 +72,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
           { type: "link", label: "Điểm số", path: `/student/${className}/${selectedClassId}/course/${selectedCourseId}/score`, icon: "mdi:clipboard-text" },
           { type: "link", label: "Tình trạng điểm danh", path: `/student/${className}/${selectedClassId}/attendance`, icon: "mdi:clipboard-text" },
         ];
-  
+
       case 'CHAPTER_ROUTE':
         return [
           { type: "section", label: className, icon: "ti ti-dots" },
@@ -82,27 +82,27 @@ const LeftSidebar = ({ onSidebarToggle }) => {
             icon: "mdi:book-open-variant",
             subItems: chapter.chapterMaterials?.map((material) => ({
               label: material.title,
-              path: material.urlVideo 
+              path: material.urlVideo
                 ? `/student/${className}/course/${selectedCourseId}/chapter/${chapter.number}/material/${material.number}/video`
                 : `/student/${className}/course/${selectedCourseId}/chapter/${chapter.number}/material/${material.number}/reading`,
             })) || [],
           })) || []),
         ];
-  
+
       default:
         return [];
     }
   };
-  
+
   const sidebarItems = getSidebarItems();
-  
+
   // New useEffect to set initial state of openSubmenus
   useEffect(() => {
     const initialOpenSubmenus = {};
 
     if (isChapterRoute) {
-      const currentChapterNumber = parseInt(number, 10); 
-  
+      const currentChapterNumber = parseInt(number, 10);
+
       materialClass?.chapters?.forEach((chapter) => {
         if (chapter.number === currentChapterNumber) {
           initialOpenSubmenus[chapter.number] = true; // Mở submenu của chapter hiện tại
@@ -110,19 +110,19 @@ const LeftSidebar = ({ onSidebarToggle }) => {
           initialOpenSubmenus[chapter.number] = false; // Đóng các submenu khác
         }
       });
-      
+
     } else if (isClassRoute && !isChapterRoute) {
       sidebarItems.forEach((item, index) => {
         console.log('chào')
         if (item.type === "submenu") {
           initialOpenSubmenus[index] = true; // Mở tất cả submenu
         }
-      });  
+      });
     }
-    
+
     setOpenSubmenus(initialOpenSubmenus);
-  }, [materialClass, number, materialNumber]); 
-  
+  }, [materialClass, number, materialNumber]);
+
 
   const toggleSubmenu = (index) => {
     setOpenSubmenus((prevOpenSubmenus) => ({
@@ -182,23 +182,23 @@ const LeftSidebar = ({ onSidebarToggle }) => {
                   </div>
                   {openSubmenus[index] && (
                     <ul className="submenu" >
-                    {item.subItems?.map((subItem, subIndex) => (
-                      <li key={subIndex}>
-                        <NavLink 
-                          className="sidebar-link fs-2" 
-                          to={subItem.path}
-                          style={{
-                            whiteSpace: "normal",
-                            wordWrap: "break-word",
-                            padding: "8px 15px",
-                            lineHeight: "1.4",
-                          }}
-                        >
-                          {subItem.label}
-                        </NavLink>
-                      </li>
-                    ))}
-                  </ul>
+                      {item.subItems?.map((subItem, subIndex) => (
+                        <li key={subIndex}>
+                          <NavLink
+                            className="sidebar-link fs-2"
+                            to={subItem.path}
+                            style={{
+                              whiteSpace: "normal",
+                              wordWrap: "break-word",
+                              padding: "8px 15px",
+                              lineHeight: "1.4",
+                            }}
+                          >
+                            {subItem.label}
+                          </NavLink>
+                        </li>
+                      ))}
+                    </ul>
                   )}
                 </li>
               ) : (

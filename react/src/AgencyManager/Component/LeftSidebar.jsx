@@ -21,6 +21,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
     { type: 'section', label: 'Quản lý', icon: 'ti ti-dots' },
     { type: 'link', label: 'Tài khoản', path: '/agency-manager/accounts', icon: 'mdi:account-group' },
     { type: 'link', label: 'Giao dịch', path: '/agency-manager/student-payment', icon: 'fluent:payment-20-filled' },
+    { type: 'link', label: 'Thanh toán hàng tháng', path: '/agency-manager/payment-monthly', icon: 'fluent:payment-20-filled' },
     { type: 'link', label: 'Cài đặt VNPay', path: '/agency-manager/vnpay-setup', icon: 'mdi:key' },
     { type: 'section', label: 'Lớp học', icon: 'ti ti-dots' },
     { type: 'link', label: 'Thông tin đăng ký', path: '/agency-manager/student-consultation-registration', icon: 'solar:file-text-bold-duotone' },
@@ -31,14 +32,13 @@ const LeftSidebar = ({ onSidebarToggle }) => {
 
   // Menu cho trạng thái "inactive"
   const inactiveMenu = [
-    { type: 'section', label: 'Công việc bàn giao', icon: 'ti ti-dots' },
-    { type: 'link', label: 'Quản lý', path: '/agency-manager', icon: 'solar:file-text-bold-duotone' },
-    { type: 'link', label: 'Lịch hẹn', path: '/agency-manager/appointment-schedule', icon: 'solar:calendar-bold-duotone' },
+    { type: 'section', label: 'Nhượng quyền', icon: 'ti ti-dots' },
+    { type: 'link', label: 'Tiến trình', path: '/agency-manager', icon: 'ant-design:profile-outlined' },
   ];
 
   // Lựa chọn menu dựa trên trạng thái người dùng
-  // const sidebarItems = statusAgency === "active" ? activeMenu : inactiveMenu;
-  const sidebarItems = activeMenu;
+  const sidebarItems = statusAgency === "active" ? activeMenu : inactiveMenu;
+
   return (
     <aside className="left-sidebar">
       <div>

@@ -73,9 +73,9 @@ const ScheduleStudent = () => {
     end: new Date(moment(schedule.date).format('YYYY-MM-DD') + ' ' + schedule.endTime),
     attendanceStatus: schedule.attendanceStatus,
     date: schedule.date,
-    url: schedule.url // Add URL field
+    url: schedule.url,
+    teacherName: schedule.teacherName // Add teacherName field
   })) : [];
-  console.log(events);
 
   const eventStyleGetter = (event) => {
     const currentDate = new Date();
@@ -113,7 +113,7 @@ const ScheduleStudent = () => {
       <Tooltip title={event.url ? "Nhấn để vào lớp học" : "Chưa có link lớp học"}>
         <div className="event-container" onClick={handleClick} style={{ cursor: event.url ? 'pointer' : 'default' }}>
           <span className="event-title">{event.title}</span>
-          <br />
+          <span className="event-teacher">Giáo viên: {event.teacherName}</span> {/* Display teacher's name */}
           <span className="event-status">
             {statusText}
           </span>

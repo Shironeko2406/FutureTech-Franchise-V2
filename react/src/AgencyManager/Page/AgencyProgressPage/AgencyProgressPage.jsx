@@ -1,18 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Steps, Card, Button, message, Tag, Typography, Space, Row, Col, Tooltip, Progress, Upload } from 'antd';
-import { UploadOutlined, CheckCircleOutlined, FileOutlined, LeftOutlined, RightOutlined, InfoCircleOutlined, EyeOutlined } from '@ant-design/icons';
+import { Steps, Card, Button, message, Tag, Typography, Space, Row, Col, Tooltip, Progress, Modal, Upload, Input, DatePicker, Form } from 'antd';
+import { UploadOutlined, CheckCircleOutlined, DollarCircleOutlined, FileOutlined, LeftOutlined, RightOutlined, InfoCircleOutlined, EyeOutlined } from '@ant-design/icons';
 import { motion } from 'framer-motion';
 import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
 import { GetAllDocumentsByAgencyIdActionAsync } from '../../../Redux/ReducerAPI/DocumentReducer';
+import CreateDocumentModal from '../../Modal/CreateDocumentModal';
 import ShowDocumentModal from '../../Modal/ShowDocumentModal';
 
 const { Title, Text, Paragraph } = Typography;
 const { Step } = Steps;
 
-const AgencyDetail = () => {
-  const { id } = useParams();
+const AgencyProgressPage = () => {
   const [localDocuments, setLocalDocuments] = useState({
     businessLicense: null,
     educationLicense: null
@@ -21,7 +20,7 @@ const AgencyDetail = () => {
     businessLicense: { title: '', expirationDate: null, urlFile: '' },
     educationLicense: { title: '', expirationDate: null, urlFile: '' }
   });
-  const [showDocumentModalVisible, setShowDocumentModalVisible] = useState({
+  const [modalVisible, setModalVisible] = useState({
     businessLicense: false,
     educationLicense: false
   });
@@ -36,19 +35,47 @@ const AgencyDetail = () => {
   });
 
   const dispatch = useDispatch();
+  const userLogin = useSelector(state => state.AuthenticationReducer.userLogin);
   const documents = useSelector(state => state.DocumentReducer.documents);
 
+  const [form] = Form.useForm();
+
+  const [createDocumentModalVisible, setCreateDocumentModalVisible] = useState({
+    businessLicense: false,
+    educationLicense: false
+  });
+
+  const [showDocumentModalVisible, setShowDocumentModalVisible] = useState({
+    businessLicense: false,
+    educationLicense: false
+  });
+
+  const handleCreateDocumentModalOpen = (type) => {
+    setCreateDocumentModalVisible(prev => ({ ...prev, [type]: true }));
+  };
+
+  const handleCreateDocumentModalClose = (type) => {
+    setCreateDocumentModalVisible(prev => ({ ...prev, [type]: false }));
+  };
+
+  const handleShowDocumentModalOpen = (type) => {
+    setShowDocumentModalVisible(prev => ({ ...prev, [type]: true }));
+  };
+
+  const handleShowDocumentModalClose = (type) => {
+    setShowDocumentModalVisible(prev => ({ ...prev, [type]: false }));
+  };
+
   const fetchDocuments = async () => {
-    if (id) {
-      setIsLoading(true);
-      await dispatch(GetAllDocumentsByAgencyIdActionAsync(id));
-      setIsLoading(false);
+    const agencyId = userLogin?.agencyId;
+    if (agencyId) {
+      await dispatch(GetAllDocumentsByAgencyIdActionAsync(agencyId));
     }
   };
 
   useEffect(() => {
     fetchDocuments();
-  }, [dispatch, id]);
+  }, [dispatch, userLogin]);
 
   useEffect(() => {
     const businessLicense = documents.find(doc => doc.type === 'BusinessLicense');
@@ -75,13 +102,46 @@ const AgencyDetail = () => {
     });
   }, [documents]);
 
-  const handleShowDocumentModalOpen = (type) => {
-    setShowDocumentModalVisible(prev => ({ ...prev, [type]: true }));
+  const handleDocumentUpload = (type, info) => {
+    const { status } = info.file;
+    if (status === 'done') {
+      message.success(`${info.file.name} đã được tải lên thành công.`);
+      setLocalDocuments(prev => ({ ...prev, [type]: info.file }));
+    } else if (status === 'error') {
+      message.error(`Tải lên ${info.file.name} thất bại.`);
+    }
   };
 
-  const handleShowDocumentModalClose = async (type) => {
-    setShowDocumentModalVisible(prev => ({ ...prev, [type]: false }));
-    await fetchDocuments();
+  const handleDocumentInfoChange = (type, field, value) => {
+    setDocumentInfo(prev => ({
+      ...prev,
+      [type]: { ...prev[type], [field]: value }
+    }));
+  };
+
+  const handleModalClose = (type) => {
+    setModalVisible(prev => ({ ...prev, [type]: false }));
+  };
+
+  const handleSubmitDocument = (type) => {
+    form.validateFields()
+      .then(() => {
+        if (!localDocuments[type] || !documentInfo[type].title || !documentInfo[type].expirationDate) {
+          message.error('Vui lòng điền đầy đủ thông tin tài liệu.');
+          return;
+        }
+        message.success(`Tài liệu ${type === 'businessLicense' ? 'Giấy phép kinh doanh' : 'Giấy phép giáo dục'} đã được nộp thành công.`);
+        handleModalClose(type);
+
+        // Simulate approval process
+        setTimeout(() => {
+          setDocumentApproval(prev => ({ ...prev, [type]: true }));
+          message.success(`Tài liệu ${type === 'businessLicense' ? 'Giấy phép kinh doanh' : 'Giấy phép giáo dục'} đã được duyệt.`);
+        }, 5000);
+      })
+      .catch((errorInfo) => {
+        console.error('Validate Failed:', errorInfo);
+      });
   };
 
   const handleContractUpload = (info) => {
@@ -94,17 +154,19 @@ const AgencyDetail = () => {
     }
   };
 
-  const handleActivate = () => {
+  const handlePayment = () => {
     setIsLoading(true);
-    // Simulate API call
+    // Simulate payment process
     setTimeout(() => {
       setIsLoading(false);
-      message.success('Trung tâm đã được kích hoạt thành công!');
+      setPaymentStatus('completed');
+      setPaymentAmount(50000000); // 50,000,000 VND
+      message.success('Thanh toán thành công!');
     }, 2000);
   };
 
   const nextStep = () => {
-    if (currentStep < 1) {
+    if (currentStep < 2) {
       setCurrentStep(currentStep + 1);
     }
   };
@@ -114,6 +176,60 @@ const AgencyDetail = () => {
       setCurrentStep(currentStep - 1);
     }
   };
+
+  const renderDocumentModal = (type) => (
+    <Modal
+      title={type === 'businessLicense' ? 'Nộp Giấy phép kinh doanh' : 'Nộp Giấy phép giáo dục'}
+      visible={modalVisible[type]}
+      onCancel={() => handleModalClose(type)}
+      footer={[
+        <Button key="back" onClick={() => handleModalClose(type)}>
+          Hủy
+        </Button>,
+        <Button key="submit" type="primary" onClick={() => handleSubmitDocument(type)}>
+          Nộp
+        </Button>,
+      ]}
+    >
+      <Form form={form} layout="vertical">
+        <Space direction="vertical" style={{ width: '100%' }} size="large">
+          <Form.Item
+            name={`${type}_file`}
+            rules={[{ required: true, message: 'Vui lòng tải lên tài liệu' }]}
+          >
+            <Upload
+              action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+              onChange={(info) => handleDocumentUpload(type, info)}
+              maxCount={1}
+            >
+              <Button icon={<UploadOutlined />}>Tải lên tài liệu</Button>
+            </Upload>
+          </Form.Item>
+          <Form.Item
+            name={`${type}_title`}
+            rules={[{ required: true, message: 'Vui lòng nhập tiêu đề' }]}
+          >
+            <Input
+              placeholder="Tiêu đề"
+              value={documentInfo[type].title}
+              onChange={(e) => handleDocumentInfoChange(type, 'title', e.target.value)}
+            />
+          </Form.Item>
+          <Form.Item
+            name={`${type}_expirationDate`}
+            rules={[{ required: true, message: 'Vui lòng chọn ngày hết hạn' }]}
+          >
+            <DatePicker
+              placeholder="Ngày hết hạn"
+              value={documentInfo[type].expirationDate}
+              onChange={(date) => handleDocumentInfoChange(type, 'expirationDate', date)}
+              style={{ width: '100%' }}
+            />
+          </Form.Item>
+        </Space>
+      </Form>
+    </Modal>
+  );
 
   const renderDocumentCard = (docType) => {
     const isSubmitted = localDocuments[docType] && documentInfo[docType].title && documentInfo[docType].expirationDate;
@@ -129,14 +245,16 @@ const AgencyDetail = () => {
         {isSubmitted ? (
           <Space direction="vertical" style={{ width: '100%' }}>
             <Button type="primary" icon={<EyeOutlined />} onClick={() => handleShowDocumentModalOpen(docType)}>
-              Xem tài liệu
+              Xem tài liệu đã nộp
             </Button>
             <Tag color={isApproved ? 'success' : 'processing'}>
               {isApproved ? 'Đã duyệt' : 'Đang chờ duyệt'}
             </Tag>
           </Space>
         ) : (
-          <Tag color="default">Chưa nộp {title}</Tag>
+          <Button onClick={() => handleCreateDocumentModalOpen(docType)}>
+            Nộp {title}
+          </Button>
         )}
       </Card>
     );
@@ -156,6 +274,8 @@ const AgencyDetail = () => {
                 {renderDocumentCard('businessLicense')}
                 {renderDocumentCard('educationLicense')}
               </Space>
+              {renderDocumentModal('businessLicense')}
+              {renderDocumentModal('educationLicense')}
             </Card>
           </motion.div>
         );
@@ -166,7 +286,7 @@ const AgencyDetail = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <Card title="Bước 2: Tạo hợp đồng và Thanh toán" bordered={false}>
+            <Card title="Bước 2: Tải lên hợp đồng đã ký và Thanh toán" bordered={false}>
               <Space direction="vertical" style={{ width: '100%' }}>
                 <Upload
                   action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
@@ -183,18 +303,50 @@ const AgencyDetail = () => {
                 {paymentStatus === 'completed' ? (
                   <Text strong>Số tiền đã thanh toán: {paymentAmount?.toLocaleString('vi-VN')} VND</Text>
                 ) : (
-                  <Text type="secondary">Khách hàng chưa thanh toán</Text>
+                  <>
+                    <Input.Group compact>
+                      <Input
+                        style={{ width: 'calc(100% - 200px)' }}
+                        addonBefore="Số tiền"
+                        addonAfter="VND"
+                        defaultValue="50,000,000"
+                        disabled
+                      />
+                      <Button
+                        type="primary"
+                        onClick={handlePayment}
+                        loading={isLoading}
+                        disabled={!contract}
+                        style={{ width: '200px' }}
+                      >
+                        Thanh toán
+                      </Button>
+                    </Input.Group>
+                    <Text type="secondary">Vui lòng tải lên hợp đồng đã ký trước khi thanh toán.</Text>
+                  </>
                 )}
-                <Button
-                  type="primary"
-                  icon={<CheckCircleOutlined />}
-                  onClick={handleActivate}
-                  loading={isLoading}
-                  style={{ marginTop: '1rem', width: '100%' }}
-                  disabled={paymentStatus !== 'completed'}
-                >
-                  Kích hoạt trung tâm
-                </Button>
+              </Space>
+            </Card>
+          </motion.div>
+        );
+      case 2:
+        return (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <Card title="Bước 3: Chờ xác nhận và kích hoạt" bordered={false}>
+              <Space direction="vertical" style={{ width: '100%' }}>
+                <Text>
+                  Cảm ơn bạn đã hoàn tất quá trình đăng ký và thanh toán. Trung tâm chính đang xem xét hồ sơ của bạn.
+                </Text>
+                <Text strong>
+                  Trạng thái: Đang chờ xác nhận và kích hoạt từ trung tâm chính
+                </Text>
+                <Text type="secondary">
+                  Chúng tôi sẽ liên hệ với bạn qua email khi quá trình xác nhận hoàn tất.
+                </Text>
               </Space>
             </Card>
           </motion.div>
@@ -205,9 +357,9 @@ const AgencyDetail = () => {
   };
 
   return (
-    <div className="franchise-progress-manager" style={{ maxWidth: 1200, margin: '0 auto', padding: '2rem' }}>
+    <div className="franchise-progress-customer" style={{ maxWidth: 1200, margin: '0 auto', padding: '2rem' }}>
       <Title level={2} style={{ textAlign: 'center', color: '#1890ff', marginBottom: '2rem' }}>
-        Tiến Trình Nhượng Quyền
+        Tiến Trình Đăng Ký Nhượng Quyền
       </Title>
 
       <Card
@@ -221,7 +373,8 @@ const AgencyDetail = () => {
       >
         <Steps current={currentStep} style={{ marginBottom: '2rem' }}>
           <Step title="Cung cấp tài liệu" icon={<UploadOutlined />} />
-          <Step title="Tạo hợp đồng & Thanh toán" icon={<FileOutlined />} />
+          <Step title="Hợp đồng & Thanh toán" icon={<DollarCircleOutlined />} />
+          <Step title="Chờ xác nhận" icon={<CheckCircleOutlined />} />
         </Steps>
 
         {renderStepContent()}
@@ -230,7 +383,7 @@ const AgencyDetail = () => {
           <Button onClick={prevStep} disabled={currentStep === 0} icon={<LeftOutlined />}>
             Quay lại
           </Button>
-          <Button onClick={nextStep} disabled={currentStep === 1} icon={<RightOutlined />}>
+          <Button onClick={nextStep} disabled={currentStep === 2 || (currentStep === 1 && paymentStatus !== 'completed')} icon={<RightOutlined />}>
             Tiếp theo
           </Button>
         </div>
@@ -286,15 +439,23 @@ const AgencyDetail = () => {
                 <li>
                   <Text strong>Bước 1: Cung cấp tài liệu</Text>
                   <ul>
-                    <li>Đợi khách hàng cung cấp tài liệu</li>
-                    <li>Kiểm tra và duyệt tài liệu</li>
+                    <li>Nhấn vào nút "Nộp Giấy phép kinh doanh" và "Nộp Giấy phép giáo dục"</li>
+                    <li>Tải lên tài liệu, điền tiêu đề và chọn ngày hết hạn cho mỗi giấy phép</li>
+                    <li>Nhấn "Nộp" để hoàn tất việc nộp từng tài liệu</li>
                   </ul>
                 </li>
                 <li>
-                  <Text strong>Bước 2: Tạo hợp đồng và Thanh toán</Text>
+                  <Text strong>Bước 2: Tải lên hợp đồng đã ký và Thanh toán</Text>
                   <ul>
-                    <li>Tạo hợp đồng và gửi cho khách hàng</li>
-                    <li>Đợi khách hàng tải lên hợp đồng đã ký và thanh toán</li>
+                    <li>Tải lên hợp đồng đã ký</li>
+                    <li>Tiến hành thanh toán theo hướng dẫn</li>
+                  </ul>
+                </li>
+                <li>
+                  <Text strong>Bước 3: Chờ xác nhận và kích hoạt</Text>
+                  <ul>
+                    <li>Sau khi hoàn tất việc nộp tài liệu, tải hợp đồng và thanh toán</li>
+                    <li>Đợi trung tâm chính kiểm tra và kích hoạt</li>
                   </ul>
                 </li>
               </ul>
@@ -308,13 +469,24 @@ const AgencyDetail = () => {
         </Col>
       </Row>
 
+      <CreateDocumentModal
+        visible={createDocumentModalVisible.businessLicense}
+        onClose={() => handleCreateDocumentModalClose('businessLicense')}
+        documentType="BusinessLicense"
+        onRefreshDocuments={fetchDocuments}
+      />
+      <CreateDocumentModal
+        visible={createDocumentModalVisible.educationLicense}
+        onClose={() => handleCreateDocumentModalClose('educationLicense')}
+        documentType="EducationalOperationLicense"
+        onRefreshDocuments={fetchDocuments}
+      />
       <ShowDocumentModal
         visible={showDocumentModalVisible.businessLicense}
         onClose={() => handleShowDocumentModalClose('businessLicense')}
         document={localDocuments.businessLicense}
         documentInfo={documentInfo.businessLicense}
         documentApproval={documentApproval.businessLicense}
-        agencyId={id}
       />
       <ShowDocumentModal
         visible={showDocumentModalVisible.educationLicense}
@@ -322,10 +494,10 @@ const AgencyDetail = () => {
         document={localDocuments.educationLicense}
         documentInfo={documentInfo.educationLicense}
         documentApproval={documentApproval.educationLicense}
-        agencyId={id}
       />
     </div>
   );
 };
 
-export default AgencyDetail;
+export default AgencyProgressPage;
+

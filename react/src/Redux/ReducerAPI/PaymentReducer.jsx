@@ -5,6 +5,7 @@ import { message } from "antd";
 const initialState = {
     paymentInfo: [],
     totalPagesCount: 0,
+    totalItemsCount: 0,
 };
 
 const PaymentReducer = createSlice({
@@ -14,6 +15,7 @@ const PaymentReducer = createSlice({
         setPaymentInfo: (state, action) => {
             state.paymentInfo = action.payload.items;
             state.totalPagesCount = action.payload.totalPagesCount;
+            state.totalItemsCount = action.payload.totalItemsCount;
         },
     },
 });
@@ -155,6 +157,20 @@ export const CreateRefundActionAsync = (refundData) => {
         } catch (error) {
             console.error(error);
             message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
+        }
+    };
+};
+
+export const GetMonthlyDuePaymentsActionAsync = (startDate, endDate, status, agencyId, pageIndex, pageSize) => {
+    return async (dispatch) => {
+        try {
+            const res = await httpClient.get(`api/v1/payments/monthly-due`, {
+                params: { StartDate: startDate, EndDate: endDate, Status: status, AgencyId: agencyId, PageIndex: pageIndex, PageSize: pageSize },
+            });
+            console.log(res.data);
+            dispatch(setPaymentInfo(res.data));
+        } catch (error) {
+            console.error(error);
         }
     };
 };
