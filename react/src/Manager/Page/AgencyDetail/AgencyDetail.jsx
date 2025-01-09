@@ -8,6 +8,7 @@ import { useParams } from 'react-router-dom';
 import { GetAllDocumentsByAgencyIdActionAsync } from '../../../Redux/ReducerAPI/DocumentReducer';
 import ShowDocumentModal from '../../Modal/ShowDocumentModal';
 import { GetContractDetailByAgencyIdActionAsync } from '../../../Redux/ReducerAPI/ContractReducer';
+import { UpdateStatusAgencyActionAsync } from '../../../Redux/ReducerAPI/AgencyReducer';
 import ContractDetailModal from '../../Modal/ContractDetailModal';
 import CreateContractModal from '../../Modal/CreateContractModal';
 
@@ -28,21 +29,18 @@ const AgencyDetail = () => {
     businessLicense: false,
     educationLicense: false
   });
-  const [contract, setContract] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [paymentStatus, setPaymentStatus] = useState('pending');
-  const [paymentAmount, setPaymentAmount] = useState(null);
   const [currentStep, setCurrentStep] = useState(0);
   const [documentApproval, setDocumentApproval] = useState({
     businessLicense: false,
     educationLicense: false
   });
-  const [contractDetail, setContractDetail] = useState(null);
   const [showContractDetailModal, setShowContractDetailModal] = useState(false);
   const [showCreateContractModal, setShowCreateContractModal] = useState(false);
 
   const dispatch = useDispatch();
   const documents = useSelector(state => state.DocumentReducer.documents);
+  const contractDetail = useSelector(state => state.ContractReducer.contractDetail);
 
   const fetchDocuments = async () => {
     if (id) {
@@ -53,10 +51,7 @@ const AgencyDetail = () => {
   };
 
   const fetchContractDetail = async () => {
-    const contract = await dispatch(GetContractDetailByAgencyIdActionAsync(id));
-    if (contract) {
-      setContractDetail(contract);
-    }
+    await dispatch(GetContractDetailByAgencyIdActionAsync(id));
   };
 
   useEffect(() => {
@@ -107,19 +102,18 @@ const AgencyDetail = () => {
     const { status } = info.file;
     if (status === 'done') {
       message.success(`${info.file.name} hợp đồng đã được tải lên thành công.`);
-      setContract(info.file);
     } else if (status === 'error') {
       message.error(`Tải lên hợp đồng ${info.file.name} thất bại.`);
     }
   };
 
-  const handleActivate = () => {
+  const handleActivate = async () => {
     setIsLoading(true);
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      await dispatch(UpdateStatusAgencyActionAsync(id, 'Active'));
+    } finally {
       setIsLoading(false);
-      message.success('Trung tâm đã được kích hoạt thành công!');
-    }, 2000);
+    }
   };
 
   const nextStep = () => {
@@ -196,24 +190,23 @@ const AgencyDetail = () => {
                     Tạo hợp đồng
                   </Button>
                 )}
-                <Tag color={paymentStatus === 'completed' ? 'success' : 'warning'}>
-                  {paymentStatus === 'completed' ? 'Đã thanh toán' : 'Chưa thanh toán'}
+                <Tag color={contractDetail && contractDetail.paidAmount > 0 ? 'success' : 'warning'}>
+                  {contractDetail && contractDetail.paidAmount > 0 ? 'Đã thanh toán' : 'Chưa thanh toán'}
                 </Tag>
-                {paymentStatus === 'completed' ? (
-                  <Text strong>Số tiền đã thanh toán: {paymentAmount?.toLocaleString('vi-VN')} VND</Text>
-                ) : (
-                  <Text type="secondary">Khách hàng chưa thanh toán</Text>
+                {contractDetail && contractDetail.paidAmount > 0 && (
+                  <Text strong>Số tiền đã thanh toán: {contractDetail.paidAmount.toLocaleString('vi-VN')} VND</Text>
                 )}
-                <Button
-                  type="primary"
-                  icon={<CheckCircleOutlined />}
-                  onClick={handleActivate}
-                  loading={isLoading}
-                  style={{ marginTop: '1rem', width: '100%' }}
-                  disabled={paymentStatus !== 'completed'}
-                >
-                  Kích hoạt trung tâm
-                </Button>
+                {contractDetail && contractDetail.paidAmount > 0 && (
+                  <Button
+                    type="primary"
+                    icon={<CheckCircleOutlined />}
+                    onClick={handleActivate}
+                    loading={isLoading}
+                    style={{ marginTop: '1rem', width: '100%' }}
+                  >
+                    Kích hoạt trung tâm
+                  </Button>
+                )}
               </Space>
             </Card>
           </motion.div>
@@ -280,16 +273,16 @@ const AgencyDetail = () => {
               </Tooltip>
               <Tooltip title="Trạng thái hợp đồng">
                 <Progress
-                  percent={contract ? 100 : 0}
-                  status={contract ? 'success' : 'active'}
-                  format={() => contract ? 'Đã tải lên' : 'Chưa tải lên'}
+                  percent={contractDetail ? 100 : 0}
+                  status={contractDetail ? 'success' : 'active'}
+                  format={() => contractDetail ? 'Đã tải lên' : 'Chưa tải lên'}
                 />
               </Tooltip>
               <Tooltip title="Trạng thái thanh toán">
                 <Progress
-                  percent={paymentStatus === 'completed' ? 100 : 0}
-                  status={paymentStatus === 'completed' ? 'success' : 'active'}
-                  format={() => paymentStatus === 'completed' ? 'Hoàn tất' : 'Chưa thanh toán'}
+                  percent={contractDetail && contractDetail.paidAmount > 0 ? 100 : 0}
+                  status={contractDetail && contractDetail.paidAmount > 0 ? 'success' : 'active'}
+                  format={() => contractDetail && contractDetail.paidAmount > 0 ? 'Hoàn tất' : 'Chưa thanh toán'}
                 />
               </Tooltip>
             </Space>
@@ -319,6 +312,7 @@ const AgencyDetail = () => {
                   <ul>
                     <li>Tạo hợp đồng và gửi cho khách hàng</li>
                     <li>Đợi khách hàng tải lên hợp đồng đã ký và thanh toán</li>
+                    <li>Nếu tất cả đã hoàn thành thì nhấn nút "Kích hoạt trung tâm"</li>
                   </ul>
                 </li>
               </ul>

@@ -76,7 +76,6 @@ export const UpdateStatusAgencyActionAsync = (id, status) => {
       });
       if (res.isSuccess && res.data) {
         message.success(`${res.message}`);
-        await dispatch(GetTaskByAgencyIdActionAsync(id));
         return true;
       } else {
         message.error(`${res.message}`);

@@ -147,13 +147,12 @@ export const UpdateContractActionAsync = (contractId, contractData) => {
   };
 };
 
-export const AgencyUploadContractActionAsync = (data, filters, pageIndex, pageSize) => {
+export const AgencyUploadContractActionAsync = (data) => {
   return async (dispatch) => {
     try {
       const res = await httpClient.put(`/api/v1/contracts/agency?ContractDocumentImageURL=${data.contractDocumentImageURL}&AgencyId=${data.agencyId}`);
       if (res.isSuccess && res.data) {
         message.success(`${res.message}`);
-        await dispatch(GetTaskForAgencyActionAsync(filters.searchText, filters.levelFilter, filters.statusFilter, filters.submitFilter, pageIndex, pageSize))
         return true;
       } else if (res.isSuccess && !res.data) {
         message.error(`${res.message}`);

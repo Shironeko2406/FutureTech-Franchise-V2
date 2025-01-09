@@ -5,8 +5,10 @@ import { motion } from 'framer-motion';
 import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
 import { GetAllDocumentsByAgencyIdActionAsync } from '../../../Redux/ReducerAPI/DocumentReducer';
+import { GetContractDetailByAgencyIdActionAsync } from '../../../Redux/ReducerAPI/ContractReducer';
 import CreateDocumentModal from '../../Modal/CreateDocumentModal';
 import ShowDocumentModal from '../../Modal/ShowDocumentModal';
+import ContractDetailModal from '../../Modal/ContractDetailModal';
 
 const { Title, Text, Paragraph } = Typography;
 const { Step } = Steps;
@@ -33,6 +35,8 @@ const AgencyProgressPage = () => {
     businessLicense: false,
     educationLicense: false
   });
+  const [contractDetail, setContractDetail] = useState(null);
+  const [showContractDetailModal, setShowContractDetailModal] = useState(false);
 
   const dispatch = useDispatch();
   const userLogin = useSelector(state => state.AuthenticationReducer.userLogin);
@@ -73,6 +77,16 @@ const AgencyProgressPage = () => {
     }
   };
 
+  const fetchContractDetail = async () => {
+    const agencyId = userLogin?.agencyId;
+    if (agencyId) {
+      const contract = await dispatch(GetContractDetailByAgencyIdActionAsync(agencyId));
+      if (contract) {
+        setContractDetail(contract);
+      }
+    }
+  };
+
   useEffect(() => {
     fetchDocuments();
   }, [dispatch, userLogin]);
@@ -101,6 +115,12 @@ const AgencyProgressPage = () => {
       }
     });
   }, [documents]);
+
+  useEffect(() => {
+    if (currentStep === 1) {
+      fetchContractDetail();
+    }
+  }, [currentStep]);
 
   const handleDocumentUpload = (type, info) => {
     const { status } = info.file;
@@ -286,17 +306,15 @@ const AgencyProgressPage = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <Card title="Bước 2: Tải lên hợp đồng đã ký và Thanh toán" bordered={false}>
+            <Card title="Bước 2: Hợp đồng & Thanh toán" bordered={false}>
               <Space direction="vertical" style={{ width: '100%' }}>
-                <Upload
-                  action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                  onChange={handleContractUpload}
-                  maxCount={1}
-                >
-                  <Button icon={<UploadOutlined />} type="primary" style={{ marginBottom: '1rem' }}>
-                    Tải lên hợp đồng đã ký
+                {contractDetail ? (
+                  <Button type="primary" onClick={() => setShowContractDetailModal(true)}>
+                    Xem hợp đồng
                   </Button>
-                </Upload>
+                ) : (
+                  <Tag color="default">Chưa có hợp đồng</Tag>
+                )}
                 <Tag color={paymentStatus === 'completed' ? 'success' : 'warning'}>
                   {paymentStatus === 'completed' ? 'Đã thanh toán' : 'Chưa thanh toán'}
                 </Tag>
@@ -494,6 +512,11 @@ const AgencyProgressPage = () => {
         document={localDocuments.educationLicense}
         documentInfo={documentInfo.educationLicense}
         documentApproval={documentApproval.educationLicense}
+      />
+      <ContractDetailModal
+        visible={showContractDetailModal}
+        onClose={() => setShowContractDetailModal(false)}
+        contractDetail={contractDetail}
       />
     </div>
   );
