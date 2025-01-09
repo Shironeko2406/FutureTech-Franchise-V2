@@ -126,7 +126,7 @@ const ContractDetailModal = ({ visible, onClose, contractDetail, agencyId, fromA
                                     <FinancialItem
                                         icon={<CheckCircleOutlined />}
                                         label="Số tiền đã trả:"
-                                        value={`${Number(contractDetail.paidAmount).toLocaleString('vi-VN')} VND`}
+                                        value={`${Number(contractDetail.paidAmount || 0).toLocaleString('vi-VN')} VND`}
                                         color="#13c2c2"
                                     />
                                 </Col>
@@ -140,7 +140,7 @@ const ContractDetailModal = ({ visible, onClose, contractDetail, agencyId, fromA
                             />
                         </div>
 
-                        {/* <Divider orientation="left">Thông tin gói</Divider>
+                        <Divider orientation="left">Thông tin gói</Divider>
                         <div style={{ padding: '0 16px' }}>
                             <Row gutter={[32, 0]}>
                                 <Col span={12}>
@@ -181,7 +181,7 @@ const ContractDetailModal = ({ visible, onClose, contractDetail, agencyId, fromA
                                     />
                                 </Col>
                             </Row>
-                        </div> */}
+                        </div>
 
                         <>
                             <Divider orientation="left">Tài liệu</Divider>

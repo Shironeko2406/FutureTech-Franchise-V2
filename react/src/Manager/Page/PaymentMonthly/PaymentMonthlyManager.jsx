@@ -1,10 +1,11 @@
-import { Button, Table, Space, Typography, DatePicker, Select, Tag } from "antd";
+import { Button, Table, Space, Typography, DatePicker, Select, Tag, Tooltip } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { GetMonthlyDuePaymentsActionAsync } from "../../../Redux/ReducerAPI/PaymentReducer";
 import { GetActiveAgenciesActionAsync } from "../../../Redux/ReducerAPI/AgencyReducer";
 import { useLoading } from "../../../Utils/LoadingContext";
 import moment from "moment";
+import PaymentDetailsModal from "../../Modal/PaymentDetailsModal";
 
 const { Text } = Typography;
 const { RangePicker } = DatePicker;
@@ -21,6 +22,8 @@ const PaymentMonthly = () => {
     const [status, setStatus] = useState(null);
     const [agencyId, setAgencyId] = useState(null);
     const { setLoading } = useLoading();
+    const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
+    const [selectedPaymentDetails, setSelectedPaymentDetails] = useState(null);
 
     useEffect(() => {
         dispatch(GetActiveAgenciesActionAsync());
@@ -42,6 +45,17 @@ const PaymentMonthly = () => {
     const handleDateChange = (dates) => {
         setStartDate(dates ? moment(dates[0]).format('YYYY-MM-DD') : null);
         setEndDate(dates ? moment(dates[1]).format('YYYY-MM-DD') : null);
+    };
+
+    const handleRowClick = (record) => {
+        const agency = agencyData.find(agency => agency.id === record.agencyId);
+        setSelectedPaymentDetails({ ...record, agencyName: agency ? agency.agencyName : 'N/A' });
+        setIsDetailModalVisible(true);
+    };
+
+    const handleDetailModalClose = () => {
+        setIsDetailModalVisible(false);
+        setSelectedPaymentDetails(null);
     };
 
     const renderStatusBadge = (status) => {
@@ -81,13 +95,24 @@ const PaymentMonthly = () => {
             dataIndex: "title",
             key: "title",
             align: "center",
+            render: (text, record) => (
+                <Button type="link" onClick={() => handleRowClick(record)}>
+                    {text}
+                </Button>
+            ),
         },
         {
             title: "Mô tả",
             dataIndex: "description",
             key: "description",
             align: "center",
-            render: (text) => text.length > 20 ? `${text.substring(0, 20)}...` : text,
+            render: (text) => (
+                <Tooltip title={text}>
+                    <span>
+                        {text.length > 20 ? `${text.substring(0, 20)}...` : text}
+                    </span>
+                </Tooltip>
+            ),
         },
         {
             title: "Chi nhánh",
@@ -125,7 +150,14 @@ const PaymentMonthly = () => {
             dataIndex: "paidDate",
             key: "paidDate",
             align: "center",
-            render: (date) => date ? moment(date).format('YYYY-MM-DD') : 'N/A',
+            render: (date) => date ? moment(date).format('DD/MM/YYYY') : 'N/A',
+        },
+        {
+            title: "Ngày tạo",
+            dataIndex: "creattionDate",
+            key: "creattionDate",
+            align: "center",
+            render: (date) => date ? moment(date).format('DD/MM/YYYY') : 'N/A',
         }
     ];
 
@@ -154,6 +186,14 @@ const PaymentMonthly = () => {
                     }}
                     onChange={handleTableChange}
                 />
+                {selectedPaymentDetails && (
+                    <PaymentDetailsModal
+                        visible={isDetailModalVisible}
+                        onClose={handleDetailModalClose}
+                        paymentDetails={selectedPaymentDetails}
+                        renderStatusBadge={renderStatusBadge}
+                    />
+                )}
             </div>
         </div>
     );

@@ -69,12 +69,6 @@ const ManageContractPage = () => {
             dataIndex: "contractCode",
             key: "contractCode",
             align: "center",
-        },
-        {
-            title: "Tiêu đề",
-            dataIndex: "title",
-            key: "title",
-            align: "center",
             render: (text, record) => (
                 <Button
                     type="link"
@@ -94,6 +88,13 @@ const ManageContractPage = () => {
                     <RightCircleOutlined style={{ fontSize: '16px' }} />
                 </Button>
             ),
+        },
+        {
+            title: "Tiêu đề",
+            dataIndex: "title",
+            key: "title",
+            align: "center",
+            render: (text) => <Text strong>{text}</Text>,
         },
         {
             title: "Tên chi nhánh",
