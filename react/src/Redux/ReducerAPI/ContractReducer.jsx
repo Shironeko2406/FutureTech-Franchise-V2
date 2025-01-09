@@ -58,7 +58,7 @@ export const CreateSignedContractActionAsync = (contractData) => {
   return async (dispatch) => {
     console.log("CreateSignedContractActionAsync", contractData);
     try {
-      const res = await httpClient.put(`/api/v1/contracts`, contractData);
+      const res = await httpClient.post(`/api/v1/contracts`, contractData);
       if (res.isSuccess && res.data) {
         message.success(`Tạo hợp đồng thành công!`);
         return true;
@@ -210,6 +210,28 @@ export const UpdateDesignFeeActionAsync = (agencyId, designFee) => {
       console.error("UpdateContractActionAsync", error);
       message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
       return false;
+    }
+  };
+};
+
+export const CreateCustomPackageActionAsync = (contractData) => {
+  return async (dispatch) => {
+    console.log("CreateCustomPackageActionAsync", contractData);
+    try {
+      const res = await httpClient.post(`/api/v1/contracts/packages`, contractData);
+      if (res.isSuccess && res.data) {
+        message.success(`Tạo hợp đồng với gói tùy chỉnh thành công!`);
+        return res.data;
+      } else if (res.isSuccess && !res.data) {
+        message.error(`${res.message}`);
+        return null;
+      } else {
+        throw new Error(`${res.message}`);
+      }
+    } catch (error) {
+      console.error("CreateCustomPackageActionAsync", error);
+      message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
+      return null;
     }
   };
 };

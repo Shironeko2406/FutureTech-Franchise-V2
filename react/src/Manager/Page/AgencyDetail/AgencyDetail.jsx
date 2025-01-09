@@ -223,6 +223,11 @@ const AgencyDetail = () => {
     }
   };
 
+  const handleContractCreated = async () => {
+    await fetchContractDetail();
+    setShowCreateContractModal(false);
+  };
+
   return (
     <div className="franchise-progress-manager" style={{ maxWidth: 1200, margin: '0 auto', padding: '2rem' }}>
       <Title level={2} style={{ textAlign: 'center', color: '#1890ff', marginBottom: '2rem' }}>
@@ -352,6 +357,7 @@ const AgencyDetail = () => {
         visible={showCreateContractModal}
         onClose={() => setShowCreateContractModal(false)}
         agencyId={id}
+        onContractCreated={handleContractCreated}
       />
     </div>
   );
