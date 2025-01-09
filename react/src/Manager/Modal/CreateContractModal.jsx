@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Form, Input, DatePicker, Select, Button, Upload, message, Spin } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchPackages } from '../../Redux/ReducerAPI/PackageReducer';
+import { GetPackageActionAsync } from '../../Redux/ReducerAPI/PackageReducer';
 import { httpClient } from '../../Utils/Interceptors';
 import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
 import { imageDB } from "../../Firebasse/Config";
@@ -12,11 +12,11 @@ const { Option } = Select;
 const CreateContractModal = ({ visible, onClose, agencyId }) => {
     const [form] = Form.useForm();
     const dispatch = useDispatch();
-    const packages = useSelector(state => state.PackageReducer.packages);
+    const packageTicket = useSelector(state => state.PackageReducer);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        dispatch(fetchPackages());
+        dispatch(GetPackageActionAsync());
     }, [dispatch]);
 
     const handleUpload = async (file) => {
@@ -82,9 +82,9 @@ const CreateContractModal = ({ visible, onClose, agencyId }) => {
                     </Form.Item>
                     <Form.Item name="packageId" label="Gói" rules={[{ required: true }]}>
                         <Select>
-                            {packages.map(pkg => (
+                            {packageTicket.map(pkg => (
                                 <Option key={pkg.id} value={pkg.id}>
-                                    {pkg.name} - {pkg.price} VND - {pkg.numberOfUsers} người dùng
+                                    {pkg.name} - {Number(pkg.price).toLocaleString('vi-VN')} VND - {pkg.numberOfUsers} người dùng
                                 </Option>
                             ))}
                         </Select>
