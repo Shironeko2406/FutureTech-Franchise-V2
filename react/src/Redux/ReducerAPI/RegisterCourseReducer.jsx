@@ -132,3 +132,21 @@ export const CreateStudentRegistrationActionAsync = (registrationData) => {
     };
 };
 
+export const StudentRequestRefundActionAsync = (courseId) => {
+    return async (dispatch) => {
+        try {
+            const res = await httpClient.patch(`/api/v1/users/mine/courses/${courseId}/register-courses/status`);
+            if (res.isSuccess && res.data) {
+                message.success(`${res.message}`);
+            } else if (res.isSuccess && !res.data) {
+                message.error(`${res.message}`);
+            } else {
+                throw new Error(`${res.message}`);
+            }
+        } catch (error) {
+            console.error(error);
+            message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
+        }
+    };
+};
+
