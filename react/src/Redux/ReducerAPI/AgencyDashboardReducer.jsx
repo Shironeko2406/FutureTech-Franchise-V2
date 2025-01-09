@@ -2,7 +2,6 @@ import { createSlice } from "@reduxjs/toolkit";
 import { httpClient } from "../../Utils/Interceptors";
 import { message } from "antd";
 
-
 const initialState = {
     DashboardData: [],
     RevenueSummary: [],
@@ -101,6 +100,30 @@ export const ExportAgencyRevenueReportAsync = (month, year) => {
                 document.body.appendChild(link);
                 link.click();
                 link.remove();
+            } else if (res.isSuccess && !res.data) {
+                message.error(`${res.message}`);
+            } else {
+                throw new Error(`${res.message}`);
+            }
+        } catch (error) {
+            console.error(error);
+            message.error("Đã có lỗi xảy ra vui lòng thử lại sau!");
+        }
+    };
+};
+
+export const ExportMonthlyFinancialReportAsync = (agencyId, month, year) => {
+    return async (dispatch) => {
+        try {
+            const res = await httpClient.get(`api/v1/agency-dashboards/monthly-financial-report?agencyId=${agencyId}&month=${month}&year=${year}`);
+            if (res.isSuccess && res.data) {
+                const link = document.createElement('a');
+                link.href = res.data; // Link to the Excel file on Firebase
+                link.setAttribute('download', `MonthlyFinancialReport_${month}_${year}.xlsx`);
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+                message.success("Báo cáo tài chính đã được xuất thành công!");
             } else if (res.isSuccess && !res.data) {
                 message.error(`${res.message}`);
             } else {
