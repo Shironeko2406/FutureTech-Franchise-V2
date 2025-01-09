@@ -6,6 +6,7 @@ import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
 import { GetAllDocumentsByAgencyIdActionAsync } from '../../../Redux/ReducerAPI/DocumentReducer';
 import { GetContractDetailByAgencyIdActionAsync } from '../../../Redux/ReducerAPI/ContractReducer';
+import { CreatePaymentContractActionAsync } from '../../../Redux/ReducerAPI/PaymentReducer';
 import CreateDocumentModal from '../../Modal/CreateDocumentModal';
 import ShowDocumentModal from '../../Modal/ShowDocumentModal';
 import ContractDetailModal from '../../Modal/ContractDetailModal';
@@ -83,6 +84,8 @@ const AgencyProgressPage = () => {
       const contract = await dispatch(GetContractDetailByAgencyIdActionAsync(agencyId));
       if (contract) {
         setContractDetail(contract);
+        setPaymentStatus(contract.paidAmount === 0 || contract.paidAmount === null ? 'pending' : 'completed');
+        setPaymentAmount(contract.paidAmount);
       }
     }
   };
@@ -174,15 +177,15 @@ const AgencyProgressPage = () => {
     }
   };
 
-  const handlePayment = () => {
-    setIsLoading(true);
-    // Simulate payment process
-    setTimeout(() => {
-      setIsLoading(false);
-      setPaymentStatus('completed');
-      setPaymentAmount(50000000); // 50,000,000 VND
-      message.success('Thanh toán thành công!');
-    }, 2000);
+  const handlePayment = async () => {
+    if (contractDetail) {
+      setIsLoading(true);
+      try {
+        await dispatch(CreatePaymentContractActionAsync(contractDetail.id));
+      } finally {
+        setIsLoading(false);
+      }
+    }
   };
 
   const nextStep = () => {
@@ -321,27 +324,16 @@ const AgencyProgressPage = () => {
                 {paymentStatus === 'completed' ? (
                   <Text strong>Số tiền đã thanh toán: {paymentAmount?.toLocaleString('vi-VN')} VND</Text>
                 ) : (
-                  <>
-                    <Input.Group compact>
-                      <Input
-                        style={{ width: 'calc(100% - 200px)' }}
-                        addonBefore="Số tiền"
-                        addonAfter="VND"
-                        defaultValue="50,000,000"
-                        disabled
-                      />
-                      <Button
-                        type="primary"
-                        onClick={handlePayment}
-                        loading={isLoading}
-                        disabled={!contract}
-                        style={{ width: '200px' }}
-                      >
-                        Thanh toán
-                      </Button>
-                    </Input.Group>
-                    <Text type="secondary">Vui lòng tải lên hợp đồng đã ký trước khi thanh toán.</Text>
-                  </>
+                  <Input.Group compact>
+                    <Button
+                      type="primary"
+                      onClick={handlePayment}
+                      loading={isLoading}
+                      style={{ width: '200px' }}
+                    >
+                      Thanh toán
+                    </Button>
+                  </Input.Group>
                 )}
               </Space>
             </Card>
@@ -423,13 +415,6 @@ const AgencyProgressPage = () => {
                 <Progress
                   percent={Math.round((Object.values(localDocuments).filter(Boolean).length / 2) * 100)}
                   format={() => `${Object.values(localDocuments).filter(Boolean).length}/2`}
-                />
-              </Tooltip>
-              <Tooltip title="Trạng thái hợp đồng">
-                <Progress
-                  percent={contract ? 100 : 0}
-                  status={contract ? 'success' : 'active'}
-                  format={() => contract ? 'Đã tải lên' : 'Chưa tải lên'}
                 />
               </Tooltip>
               <Tooltip title="Trạng thái thanh toán">
@@ -517,6 +502,8 @@ const AgencyProgressPage = () => {
         visible={showContractDetailModal}
         onClose={() => setShowContractDetailModal(false)}
         contractDetail={contractDetail}
+        fromAgencyProgressPage={true}
+        agencyId={userLogin?.agencyId}
       />
     </div>
   );

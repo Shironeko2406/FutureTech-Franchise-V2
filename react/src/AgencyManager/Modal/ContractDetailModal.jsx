@@ -9,7 +9,7 @@ import { AgencyUploadContractActionAsync } from '../../Redux/ReducerAPI/Contract
 
 const { Title, Text } = Typography;
 
-const ContractDetailModal = ({ visible, onClose, contractDetail, fromAgencyProgressPage }) => {
+const ContractDetailModal = ({ visible, onClose, contractDetail, agencyId, fromAgencyProgressPage }) => {
     const [uploading, setUploading] = useState(false);
     const [file, setFile] = useState(null);
     const dispatch = useDispatch();
@@ -51,22 +51,14 @@ const ContractDetailModal = ({ visible, onClose, contractDetail, fromAgencyProgr
     };
 
     const handleSubmitFile = async () => {
-        if (!file) {
-            message.error('Vui lòng tải lên file hợp đồng đã ký!');
-            return;
-        }
         setUploading(true);
         try {
             const data = {
-                contractDocumentImageURL: file.url,
-                agencyId: contractDetail.agencyId,
+                contractDocumentImageURL: file ? file.url : '', // Use the file URL if available
+                agencyId: agencyId, // Use the passed agencyId prop
             };
             await dispatch(AgencyUploadContractActionAsync(data));
-            message.success('Nộp file hợp đồng thành công!');
             onClose();
-        } catch (error) {
-            console.error("Error uploading contract file: ", error);
-            message.error('Đã xảy ra lỗi, vui lòng thử lại sau.');
         } finally {
             setUploading(false);
         }
@@ -122,8 +114,6 @@ const ContractDetailModal = ({ visible, onClose, contractDetail, fromAgencyProgr
                                     <FinancialItem
                                         icon={<PercentageOutlined />}
                                         label="Tỷ lệ chia sẻ doanh thu:"
-                                        value={`${contractDetail.revenueSharePercentage}%`}
-                                        color="#faad14"
                                     />
                                 </Col>
                                 <Col span={12}>
@@ -150,7 +140,7 @@ const ContractDetailModal = ({ visible, onClose, contractDetail, fromAgencyProgr
                             />
                         </div>
 
-                        <Divider orientation="left">Thông tin gói</Divider>
+                        {/* <Divider orientation="left">Thông tin gói</Divider>
                         <div style={{ padding: '0 16px' }}>
                             <Row gutter={[32, 0]}>
                                 <Col span={12}>
@@ -191,19 +181,17 @@ const ContractDetailModal = ({ visible, onClose, contractDetail, fromAgencyProgr
                                     />
                                 </Col>
                             </Row>
-                        </div>
+                        </div> */}
 
-                        {contractDetail.contractDocumentImageURL && (
-                            <>
-                                <Divider orientation="left">Tài liệu</Divider>
-                                <Space>
-                                    <FileOutlined style={{ fontSize: '24px', color: '#1890ff' }} />
-                                    <Button type="link" onClick={() => handleDownload(contractDetail.contractDocumentImageURL)}>
-                                        Xem tài liệu hợp đồng
-                                    </Button>
-                                </Space>
-                            </>
-                        )}
+                        <>
+                            <Divider orientation="left">Tài liệu</Divider>
+                            <Space>
+                                <FileOutlined style={{ fontSize: '24px', color: '#1890ff' }} />
+                                <Button type="link" onClick={() => handleDownload(contractDetail.contractDocumentImageURL)}>
+                                    Xem tài liệu hợp đồng
+                                </Button>
+                            </Space>
+                        </>
 
                         {fromAgencyProgressPage && (
                             <>
