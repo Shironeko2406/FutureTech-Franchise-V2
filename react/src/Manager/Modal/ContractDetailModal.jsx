@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal, Typography, Descriptions, Card, Tag, Space, Divider, Row, Col, Button } from 'antd';
-import { CalendarOutlined, DollarOutlined, PercentageOutlined, FileOutlined, BankOutlined, CheckCircleOutlined, ToolOutlined, LaptopOutlined, ShopOutlined } from '@ant-design/icons';
+import { CalendarOutlined, DollarOutlined, PercentageOutlined, FileOutlined, BankOutlined, CheckCircleOutlined, ToolOutlined, LaptopOutlined, ShopOutlined, UserOutlined, TeamOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 
 const { Title, Text } = Typography;
@@ -106,7 +106,7 @@ const ContractDetailModal = ({ visible, onClose, contractDetail }) => {
                                     <FinancialItem
                                         icon={<CheckCircleOutlined />}
                                         label="Số tiền đã trả:"
-                                        value={`${Number(contractDetail.paidAmount).toLocaleString('vi-VN')} VND`}
+                                        value={`${Number(contractDetail.paidAmount || 0).toLocaleString('vi-VN')} VND`}
                                         color="#13c2c2"
                                     />
                                 </Col>
@@ -120,17 +120,49 @@ const ContractDetailModal = ({ visible, onClose, contractDetail }) => {
                             />
                         </div>
 
-                        {contractDetail.contractDocumentImageURL && (
-                            <>
-                                <Divider orientation="left">Tài liệu</Divider>
-                                <Space>
-                                    <FileOutlined style={{ fontSize: '24px', color: '#1890ff' }} />
-                                    <Button type="link" onClick={() => handleDownload(contractDetail.contractDocumentImageURL)}>
-                                        Xem tài liệu hợp đồng
-                                    </Button>
-                                </Space>
-                            </>
-                        )}
+                        <Divider orientation="left">Thông tin gói</Divider>
+                        <div style={{ padding: '0 16px' }}>
+                            <Row gutter={[32, 0]}>
+                                <Col span={12}>
+                                    <FinancialItem
+                                        icon={<UserOutlined />}
+                                        label="Tên gói:"
+                                        value={contractDetail.packageViewModel.name}
+                                        color="#1890ff"
+                                    />
+                                    <FinancialItem
+                                        icon={<DollarOutlined />}
+                                        label="Giá gói:"
+                                        value={`${Number(contractDetail.packageViewModel.price).toLocaleString('vi-VN')} VND`}
+                                        color="#faad14"
+                                    />
+                                </Col>
+                                <Col span={12}>
+                                    <FinancialItem
+                                        icon={<TeamOutlined />}
+                                        label="Số tài khoản đã dùng:"
+                                        value={`${contractDetail.usedAccountCount}/${contractDetail.packageViewModel.numberOfUsers}`}
+                                        color="#eb2f96"
+                                    />
+                                    <FinancialItem
+                                        icon={<CheckCircleOutlined />}
+                                        label="Trạng thái:"
+                                        value={contractDetail.packageViewModel.status === "Standard" ? "Gói mặc định" : "Gói tùy chỉnh"}
+                                        color="#13c2c2"
+                                    />
+                                </Col>
+                            </Row>
+                        </div>
+
+                        <>
+                            <Divider orientation="left">Tài liệu</Divider>
+                            <Space>
+                                <FileOutlined style={{ fontSize: '24px', color: '#1890ff' }} />
+                                <Button type="link" onClick={() => handleDownload(contractDetail.contractDocumentImageURL)}>
+                                    Xem tài liệu hợp đồng
+                                </Button>
+                            </Space>
+                        </>
                     </Space>
                 </Card>
             )}

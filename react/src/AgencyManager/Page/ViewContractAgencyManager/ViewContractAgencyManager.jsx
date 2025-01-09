@@ -57,14 +57,14 @@ const ViewContractAgencyManager = () => {
             render: (text, record, index) => index + 1 + (pageIndex - 1) * pageSize,
         },
         {
-            title: "Tiêu đề",
-            dataIndex: "title",
-            key: "title",
+            title: "Mã hợp đồng",
+            dataIndex: "contractCode",
+            key: "contractCode",
             align: "center",
             render: (text, record) => (
                 <Button
-                    onClick={() => handleBranchClick(record)}
                     type="link"
+                    onClick={() => handleBranchClick(record)}
                     style={{
                         display: 'flex',
                         alignItems: 'center',
@@ -80,6 +80,13 @@ const ViewContractAgencyManager = () => {
                     <RightCircleOutlined style={{ fontSize: '16px' }} />
                 </Button>
             ),
+        },
+        {
+            title: "Tiêu đề",
+            dataIndex: "title",
+            key: "title",
+            align: "center",
+            render: (text) => <Text strong>{text}</Text>,
         },
         {
             title: "Tên chi nhánh",
