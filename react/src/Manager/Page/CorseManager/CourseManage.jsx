@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Button, Select, Table, Input, Dropdown, Tag, Space, Popconfirm } from "antd";
+import { Button, Select, Table, Input, Dropdown, Tag, Space, Popconfirm, Tooltip } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import { NavLink } from "react-router-dom";
-import { CheckCircleOutlined, ClockCircleOutlined, CloseCircleOutlined, CopyOutlined, EllipsisOutlined, PauseOutlined, SearchOutlined } from "@ant-design/icons";
+import { NavLink, useNavigate } from "react-router-dom";
+import { CheckCircleOutlined, ClockCircleOutlined, CloseCircleOutlined, CopyOutlined, EllipsisOutlined, EyeOutlined, PauseOutlined, SearchOutlined } from "@ant-design/icons";
 
 import { GetCourseCategoryActionAsync } from "../../../Redux/ReducerAPI/CourseCategoryReducer";
 import { CreateCourseCloneByIdActionAsync, GetCourseActionAsync, UpdateStatusCourseActionAsync } from "../../../Redux/ReducerAPI/CourseReducer";
@@ -33,15 +33,14 @@ const statusItems = [
 ];
 
 const CourseManage = () => {
-  const { course, totalPagesCount } = useSelector(
-    (state) => state.CourseReducer
-  );
+  const { course, totalPagesCount } = useSelector((state) => state.CourseReducer);
   const dispatch = useDispatch();
   const [status, setStatus] = useState("");
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(7); // Default page size is 10
   const [searchTerm, setSearchTerm] = useState(""); // State for search term
   const { setLoading } = useLoading();
+  const navigate = useNavigate()
 
   useEffect(() => {
     setLoading(true); // Bật loading trước khi gọi API
@@ -308,6 +307,16 @@ const CourseManage = () => {
               >
                 <Button type="default" icon={<CopyOutlined />}></Button>
               </Popconfirm>
+            )}
+
+            {record.version >= 2 && (
+              <Tooltip title="Xem thay đổi phiên bản">
+                <Button
+                  type="primary"
+                  icon={<EyeOutlined />}
+                  onClick={() => navigate(`/manager/course-detail/${record.id}/compare`)}
+                />
+              </Tooltip>
             )}
           </Space>
         </>

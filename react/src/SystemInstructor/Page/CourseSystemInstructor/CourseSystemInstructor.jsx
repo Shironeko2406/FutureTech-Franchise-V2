@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Button, Select, Table, Input, Dropdown, Tag, Popconfirm, Space } from "antd";
+import { Button, Select, Table, Input, Dropdown, Tag, Popconfirm, Space, Tooltip } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { CreateCourseCloneByIdActionAsync, DeleteCourseByIdActionAsync, GetCourseActionAsync, UpdateStatusCourseActionAsync } from "../../../Redux/ReducerAPI/CourseReducer";
-import { BookOutlined, ClockCircleOutlined, CopyOutlined, DeleteOutlined, EditOutlined, EllipsisOutlined, SearchOutlined, UploadOutlined } from "@ant-design/icons";
+import { BookOutlined, ClockCircleOutlined, CopyOutlined, DeleteOutlined, EditOutlined, EllipsisOutlined, EyeOutlined, SearchOutlined, UploadOutlined } from "@ant-design/icons";
 import CreateCourseModal from "../../Modal/CreateCourseModal";
 import { GetCourseCategoryActionAsync } from "../../../Redux/ReducerAPI/CourseCategoryReducer";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useLoading } from "../../../Utils/LoadingContext";
 import SendFileCourseDetailModal from "../../Modal/SendFileCourseDetailModal";
 import EditCourseModal from "../../Modal/EditCourseModal";
@@ -31,6 +31,7 @@ const CourseSystemInstructor = () => {
   const [isModalUploadVisible, setIsModalUploadVisible] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState(null);
   const { setLoading } = useLoading();
+  const navigate = useNavigate()
 
   useEffect(() => {
     setLoading(true); // Bật loading trước khi gọi API
@@ -363,6 +364,15 @@ const CourseSystemInstructor = () => {
               >
                 <Button type="default" icon={<CopyOutlined />}></Button>
               </Popconfirm>
+            )}
+            {record.version >= 2 && (
+              <Tooltip title="Xem thay đổi phiên bản">
+                <Button
+                  type="primary"
+                  icon={<EyeOutlined />}
+                  onClick={() => navigate(`/system-instructor/course-detail/${record.id}/compare`)}
+                />
+              </Tooltip>
             )}
           </Space>
         </>

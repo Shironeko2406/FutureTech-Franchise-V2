@@ -1,9 +1,9 @@
 
 import React, { useEffect, useState } from "react";
-import { Table, Input, Button, Typography } from "antd";
+import { Table, Input, Button, Typography, Tooltip, Space } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { SearchOutlined } from "@ant-design/icons";
+import { EyeOutlined, SearchOutlined } from "@ant-design/icons";
 import { GetCourseActionAsync } from "../../../Redux/ReducerAPI/CourseReducer";
 import { useLoading } from "../../../Utils/LoadingContext";
 import { RightCircleOutlined } from "@ant-design/icons";
@@ -135,7 +135,28 @@ const CourseViewAgencyManager = () => {
             key: "price",
             align: "center",
             render: (price) => `${price.toLocaleString()} VND`,
-        }
+        },
+        {
+            title: "Hành động",
+            key: "action",
+            align: "center",
+            render: (text, record) => (
+                <>
+                    <Space>
+        
+                        {record.version >= 2 && (
+                            <Tooltip title="Xem thay đổi phiên bản">
+                                <Button
+                                    type="primary"
+                                    icon={<EyeOutlined />}
+                                    onClick={() => navigate(`/agency-manager/course-detail/${record.id}/compare`)}
+                                    />
+                            </Tooltip>
+                        )}
+                    </Space>
+              </>
+            ),
+        },
     ];
 
     return (

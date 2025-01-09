@@ -43,13 +43,16 @@ const LeftSidebar = ({ onSidebarToggle }) => {
         return [
           { type: "section", label: "Lịch học", icon: "ti ti-dots" },
           { type: 'link', label: 'Lịch học', path: '/student', icon: 'mdi:clock' },
-          { type: "section", label: "Khóa học", icon: "ti ti-dots" },
+          { type: "section", label: "Lớp học", icon: "ti ti-dots" },
           ...(classOfUserLogin?.map((classItem) => ({
             type: "link",
             label: classItem.className,
             path: `/student/${classItem.className}/course/${classItem.courseId}/chapter/1`,
             icon: "mdi:school",
           })) || []),
+          { type: "section", label: "Khóa học", icon: "ti ti-dots" },
+          { type: 'link', label: 'Khóa học liên quan', path: '/student/relate-course', icon: 'mdi:clock' },
+          
         ];
       
       case 'CLASS_ROUTE':
