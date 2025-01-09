@@ -4,6 +4,7 @@ import { Layout, Card, Row, Col, Statistic, Table, Select, DatePicker, Space } f
 import { DollarOutlined, TeamOutlined } from '@ant-design/icons';
 import { Line, Pie } from '@ant-design/charts';
 import { GetDashboardDataActionAsync } from '../../../Redux/ReducerAPI/DashboardReducer';
+import moment from 'moment';
 
 const { Content } = Layout;
 const { RangePicker } = DatePicker;
@@ -13,7 +14,10 @@ const Dashboard = () => {
     const dashboardData = useSelector(state => state.DashboardReducer.dashboardData);
     const [isYearly, setIsYearly] = useState(false);
     const [topCourses, setTopCourses] = useState(5);
-    const [dateRange, setDateRange] = useState([]);
+    const [dateRange, setDateRange] = useState([
+        moment().startOf('year'),
+        moment().endOf('year')
+    ]);
 
     useEffect(() => {
         if (dateRange.length === 2) {
@@ -94,6 +98,7 @@ const Dashboard = () => {
                         <RangePicker
                             picker="month"
                             placeholder={['Từ tháng', 'Đến tháng']}
+                            value={dateRange}
                             onChange={setDateRange}
                         />
                     </Space>
