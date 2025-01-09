@@ -119,12 +119,12 @@ const AgencyActiveInfo = () => {
     },
   ];
 
-  const totalStudents = DashboardData.reduce((sum, course) => sum + course.studentCount, 0);
-  const totalCourses = DashboardData.length;
-  const RevenueSummary = DashboardData.reduce((sum, course) => sum + course.totalRevenue, 0);
-  const totalMonthlyFees = DashboardData.length > 0 ? DashboardData[0].monthlyFee : 0;
-  const totalRefunds = DashboardData.length > 0 ? DashboardData[0].refunds : 0;
-  const totalActualProfits = DashboardData.length > 0 ? DashboardData[0].actualProfits : 0;
+  const totalStudents = DashboardData.reduce((sum, course) => sum + course.studentCount, 0)
+  const totalCourses = DashboardData.length
+  const RevenueSummary = DashboardData.reduce((sum, course) => sum + course.totalRevenue, 0)
+  const totalMonthlyFees = DashboardData.reduce((sum, course) => sum + course.monthlyFee, 0)
+  const totalRefunds = DashboardData.reduce((sum, course) => sum + course.refunds, 0)
+  const totalActualProfits = DashboardData.reduce((sum, course) => sum + course.actualProfits, 0)
 
   return (
     <Content className="p-6">
