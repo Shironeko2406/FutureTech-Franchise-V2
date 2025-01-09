@@ -74,7 +74,7 @@ const ScheduleStudent = () => {
     attendanceStatus: schedule.attendanceStatus,
     date: schedule.date,
     url: schedule.url,
-    teacherName: schedule.teacherName // Add teacherName field
+    teacherName: schedule.teacherName
   })) : [];
 
   const eventStyleGetter = (event) => {
@@ -113,7 +113,7 @@ const ScheduleStudent = () => {
       <Tooltip title={event.url ? "Nhấn để vào lớp học" : "Chưa có link lớp học"}>
         <div className="event-container" onClick={handleClick} style={{ cursor: event.url ? 'pointer' : 'default' }}>
           <span className="event-title">{event.title}</span>
-          <span className="event-teacher">Giáo viên: {event.teacherName}</span> {/* Display teacher's name */}
+          <span className="event-teacher">Giáo viên: {event.teacherName}</span>
           <span className="event-status">
             {statusText}
           </span>
