@@ -177,8 +177,8 @@ function App() {
                 <Route path="classes/:id" element={<ClassDetail />} />
                 <Route path="schedules" element={<ScheduleAgencyManager />} />
                 <Route path="list-task" element={<ListTaskAgencyManager />} />
-                {/* <Route path="" element={statusAgency === "active" ? (<AgencyDashboardPage />) : (<AgencyProgressPage />)} /> */}
-                <Route path="" element={<AgencyDashboardPage />} />
+                <Route path="" element={statusAgency === "active" ? (<AgencyDashboardPage />) : (<AgencyProgressPage />)} />
+                {/* <Route path="" element={<AgencyDashboardPage />} /> */}
                 <Route path="appointment-schedule" element={<AgencyManagerAppointment />} />
                 <Route path="appointment-schedule/details" element={<AgencyManagerAppointmentDetail />} />
                 <Route path="course" element={<CourseViewAgencyManager />} />
@@ -186,8 +186,8 @@ function App() {
                 <Route path="course-detail/:id/compare" element={<CompareCourseAgencyManager />} />
                 <Route path="accounts" element={<AgencyAccountManagement />} />
                 <Route path="profile" element={<Profile />} />
-                <Route path="payment-success" element={<PaymentSuccess />} />
-                <Route path="payment-monthly-success" element={<PaymentMonthlySuccess />} />
+                <Route path="contract-payment-success" element={<PaymentSuccess />} />
+                <Route path="monthly-due-payment-success" element={<PaymentMonthlySuccess />} />
                 <Route path="equipments" element={<EquipmentList />} />
                 <Route path="reports" element={<ReportList />} />
                 <Route path="contracts" element={<ViewContractAgencyManager />} />

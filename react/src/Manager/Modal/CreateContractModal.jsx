@@ -13,7 +13,7 @@ const { Option } = Select;
 const CreateContractModal = ({ visible, onClose, agencyId, onContractCreated }) => {
     const [form] = Form.useForm();
     const dispatch = useDispatch();
-    const packageTicket = useSelector(state => state.PackageReducer);
+    const packageTicket = useSelector(state => state.PackageReducer.packageTicket);
     const [loading, setLoading] = useState(false);
     const [isCustomPackage, setIsCustomPackage] = useState(false);
     const [customPackagePrice, setCustomPackagePrice] = useState('');
@@ -77,6 +77,7 @@ const CreateContractModal = ({ visible, onClose, agencyId, onContractCreated }) 
         const value = e.target.value;
         if (/^\d*\.?\d*$/.test(value)) { // Allow integers and decimals
             setCustomPackagePrice(value);
+            form.setFieldsValue({ customPackagePrice: value });
         }
     };
 
@@ -179,7 +180,7 @@ const CreateContractModal = ({ visible, onClose, agencyId, onContractCreated }) 
                                 label="Giá gói"
                                 rules={[{ required: true, message: 'Vui lòng nhập giá gói' }]}
                             >
-                                <Input type="text" value={customPackagePrice} onChange={handleCustomPackagePriceChange} placeholder="Nhập giá gói" />
+                                <Input type="text" onChange={handleCustomPackagePriceChange} placeholder="Nhập giá gói" />
                                 {customPackagePrice && (
                                     <Form.Item style={{ marginBottom: 0 }}>
                                         <span>Giá gói: {Number(customPackagePrice).toLocaleString('vi-VN')} VND</span>
