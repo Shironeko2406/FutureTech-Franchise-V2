@@ -56,6 +56,7 @@ const StudentConsultationRegistration = () => {
         Completed: 'Đã hoàn thành',
         Late_Payment: 'Thanh toán trễ',
         Refund: 'Đã hoàn tiền',
+        RequestRefund: 'Yêu cầu hoàn tiền',
     };
 
     //render color 
@@ -90,6 +91,12 @@ const StudentConsultationRegistration = () => {
                 color: 'purple',
                 backgroundColor: '#f9f0ff',
                 borderColor: '#d3adf7'
+            },
+            RequestRefund: {
+                text: paymentStatusMapping[status],
+                color: 'blue',
+                backgroundColor: '#e6f7ff',
+                borderColor: '#91d5ff'
             }
         };
 
@@ -162,10 +169,11 @@ const StudentConsultationRegistration = () => {
             Sunday: "Chủ Nhật",
         };
 
-        const [days, startTime, endTime] = dayOfWeekString.split("-");
+        const [days, time] = dayOfWeekString.split(" - ");
+        const [startTime, endTime] = time.split("-");
 
         const translatedDays = days
-            .split(", ")
+            .split(",")
             .map((day) => day.trim())
             .map((day) => dayTranslation[day] || day)
             .join(", ");
@@ -264,7 +272,7 @@ const StudentConsultationRegistration = () => {
             dataIndex: "studentStatus",
             key: "action",
             render: (text, record) => (
-                record.paymentStatus !== 'Refund' && (
+                record.paymentStatus === 'RequestRefund' && (
                     <Button
                         type="primary"
                         onClick={() => handleRefundClick(record)}
@@ -324,7 +332,7 @@ const StudentConsultationRegistration = () => {
                     visible={isRefundModalVisible}
                     onClose={handleRefundModalClose}
                     onRefund={handleRefund}
-                    registerCourseId={selectedStudentDetails?.id}
+                    registerCourseId={selectedStudentDetails?.id} // Pass the registerCourseId
                     onRefundSuccess={() => {
                         dispatch(GetStudentConsultationActionAsync(pageIndex, pageSize, selectedStudentStatus, selectedCourse, sortOrder, searchInput));
                     }}
