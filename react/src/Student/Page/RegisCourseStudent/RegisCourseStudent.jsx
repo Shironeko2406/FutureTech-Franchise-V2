@@ -23,7 +23,7 @@ const translateDayOfWeek = (dayOfWeekString) => {
         Sunday: "Chủ Nhật",
     };
 
-    return dayOfWeekString.split(", ").map(day => dayTranslation[day.trim()] || day.trim()).join(", ");
+    return dayOfWeekString.split(/, ?/).map(day => dayTranslation[day.trim()] || day.trim()).join(", ");
 };
 
 const timeSlots = [
@@ -42,7 +42,7 @@ const RegisCourseStudent = () => {
     const [selectedClass, setSelectedClass] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const dispatch = useDispatch();
-    const {classes} = useSelector((state) => state.ClassReducer);
+    const { classes } = useSelector((state) => state.ClassReducer);
 
     useEffect(() => {
         if (registrationData) {
@@ -53,7 +53,7 @@ const RegisCourseStudent = () => {
     }, [dispatch, registrationData]);
 
     const filteredClasses = classes.filter(classItem => {
-        const classDays = classItem.dayOfWeek.split(", ").map(day => translateDayOfWeek(day.trim()));
+        const classDays = classItem.dayOfWeek.split(/, ?/).map(day => translateDayOfWeek(day.trim()));
         const selectedDaysMatch = selectedDays.some(day => classDays.includes(day));
 
         const classStartTime = moment(classItem.slotStart, 'HH:mm:ss');

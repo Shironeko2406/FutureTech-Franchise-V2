@@ -74,7 +74,6 @@ const QuizDescription = ()  => {
                 ? endTime.format('DD/MM/YYYY, HH:mm')
                 : 'Không xác định'}
             </Descriptions.Item>
-            <Descriptions.Item label="Số lần làm">1</Descriptions.Item>
             <Descriptions.Item label="Lớp học">{className}</Descriptions.Item>
           </Descriptions>
         </Card>

@@ -95,10 +95,12 @@ const ScheduleAgencyManager = () => {
     // Convert API data to events format
     const events = schedules.map(schedule => ({
         id: schedule.id,
+        classId: schedule.classId, // Add classId here
         title: schedule.className,
         start: new Date(schedule.date + ' ' + schedule.startTime),
         end: new Date(schedule.date + ' ' + schedule.endTime),
         url: schedule.url,
+        teacherName: schedule.teacherName
     }))
 
     // Hàm để tùy chỉnh các thuộc tính CSS cho sự kiện
@@ -141,7 +143,6 @@ const ScheduleAgencyManager = () => {
                 view={currentView}
                 popup
                 onSelectSlot={handleSelectSlot}
-                onSelectEvent={handleSelectSlot}
                 selectable
                 messages={messages}
                 components={{

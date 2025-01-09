@@ -1,14 +1,17 @@
 import React from 'react';
 import { Tooltip } from 'antd';
+import { useNavigate } from 'react-router-dom';
 
 const CustomEvent = ({ event }) => {
+    const navigate = useNavigate();
+
     const handleClick = (e) => {
         e.stopPropagation();
-        window.open(event.url, '_blank');
+        navigate(`/agency-manager/classes/${event.classId}`);
     };
 
     return (
-        <Tooltip title={event.url ? "Nhấn để vào lớp học" : "Chưa có link lớp học"}>
+        <Tooltip title={"Nhấn để xem chi tiết lớp học"}>
             <div
                 style={{
                     height: '100%',
@@ -17,7 +20,7 @@ const CustomEvent = ({ event }) => {
                     justifyContent: 'flex-start',
                     padding: '4px 8px',
                     gap: '2px',
-                    cursor: event.url ? 'pointer' : 'default',
+                    cursor: 'pointer',
                 }}
                 onClick={handleClick}
             >
@@ -29,6 +32,12 @@ const CustomEvent = ({ event }) => {
                 }}>
                     {event.title}
                 </div>
+                {/* <div style={{
+                    fontSize: '12px',
+                    color: 'white',
+                }}>
+                    Giáo viên: {event.teacherName}
+                </div> */}
             </div>
         </Tooltip>
     );

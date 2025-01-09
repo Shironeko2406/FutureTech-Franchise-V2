@@ -122,6 +122,7 @@ import CompareCourseAgencyManager from "./AgencyManager/Page/CompareCourseAgency
 import CompareCourseSysInstructor from "./SystemInstructor/Page/CompareCourseSysInstructor/CompareCourseSysInstructor";
 import RelateCourse from "./Student/Page/RelateCourse/RelateCourse";
 import RegisCourseStudent from "./Student/Page/RegisCourseStudent/RegisCourseStudent";
+import PackageFranchise from "./Manager/Page/PackageFranchise/PackageFranchise";
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -175,7 +176,8 @@ function App() {
                 <Route path="classes/:id" element={<ClassDetail />} />
                 <Route path="schedules" element={<ScheduleAgencyManager />} />
                 <Route path="list-task" element={<ListTaskAgencyManager />} />
-                <Route path="" element={statusAgency === "active" ? (<AgencyDashboardPage />) : (<AgencyProgressPage />)} />
+                {/* <Route path="" element={statusAgency === "active" ? (<AgencyDashboardPage />) : (<AgencyProgressPage />)} /> */}
+                <Route path="" element={<AgencyDashboardPage />} />
                 <Route path="appointment-schedule" element={<AgencyManagerAppointment />} />
                 <Route path="appointment-schedule/details" element={<AgencyManagerAppointmentDetail />} />
                 <Route path="course" element={<CourseViewAgencyManager />} />
@@ -204,7 +206,7 @@ function App() {
                 <Route path=":className/:classId/assignment/:assignmentId" element={<AssignmentDetail />} />
                 <Route path=":className/:classId/quiz/:quizId" element={<QuizDescription />} />
                 <Route path=":className/:classId/quiz/:quizId/start" element={<QuizTest />} />
-                <Route path=":className/:classId/course/:courseId/score" element={<ScoreClass/>} />
+                <Route path=":className/:classId/course/:courseId/score" element={<ScoreClass />} />
                 <Route path="" element={<ScheduleStudent />} />
                 <Route path="change-password" element={<ChangePassword />} />
                 <Route path="profile" element={<Profile />} />
@@ -252,6 +254,7 @@ function App() {
                 <Route path="profile" element={<Profile />} />
                 <Route path="report" element={<ListReport />} />
                 <Route path="payments" element={<PaymentManagement />} />
+                <Route path="package" element={<PackageFranchise />} />
                 <Route path="payment-monthly" element={<PaymentMonthlyManager />} />
               </Route>
             </Route>
@@ -261,7 +264,7 @@ function App() {
                 <Route path="" element={<CourseSystemInstructor />} />
                 <Route path="video" element={<VideoSystemInstructor />} />
                 <Route path="course-detail/:id" element={<CourseDetailSystemInstructor />} />
-                <Route path="course-detail/:id/compare" element={<CompareCourseSysInstructor/>} />
+                <Route path="course-detail/:id/compare" element={<CompareCourseSysInstructor />} />
                 <Route path="course-detail/:id/questions" element={<ViewQuestionChapterSystemInstructor />} />
                 <Route path="list-task" element={<ListTaskSystemInstructor />} />
                 <Route path="appointment-schedule" element={<SystemInstructorAppointment />} />

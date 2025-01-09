@@ -12,6 +12,7 @@ const sidebarItems = [
   { type: 'link', label: 'Tài liệu', path: '/manager/documents', icon: 'solar:document-bold-duotone' },
   { type: 'link', label: 'Hợp đồng', path: '/manager/contracts', icon: 'clarity:contract-solid' },
   { type: 'link', label: 'Giao dịch', path: '/manager/payments', icon: 'fluent:payment-20-filled' },
+  { type: 'link', label: 'Gói nhượng quyền', path: '/manager/package', icon: 'fluent:payment-20-filled' },
   { type: 'section', label: 'Chi nhánh' },
   { type: 'link', label: 'Quản lý', path: '/manager/agency-active', icon: 'solar:login-3-bold-duotone' },
   { type: 'link', label: 'Thanh toán hàng tháng', path: '/manager/payment-monthly', icon: 'fluent:payment-20-filled' },

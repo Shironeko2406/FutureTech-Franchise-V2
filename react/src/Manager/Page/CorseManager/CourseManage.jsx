@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Button, Select, Table, Input, Dropdown, Tag, Space, Popconfirm, Tooltip } from "antd";
+import { Button, Select, Table, Input, Dropdown, Tag, Space, Tooltip } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink, useNavigate } from "react-router-dom";
-import { CheckCircleOutlined, ClockCircleOutlined, CloseCircleOutlined, CopyOutlined, EllipsisOutlined, EyeOutlined, PauseOutlined, SearchOutlined } from "@ant-design/icons";
+import { CheckCircleOutlined, ClockCircleOutlined, CloseCircleOutlined, EllipsisOutlined, EyeOutlined, PauseOutlined, SearchOutlined } from "@ant-design/icons";
 
 import { GetCourseCategoryActionAsync } from "../../../Redux/ReducerAPI/CourseCategoryReducer";
-import { CreateCourseCloneByIdActionAsync, GetCourseActionAsync, UpdateStatusCourseActionAsync } from "../../../Redux/ReducerAPI/CourseReducer";
+import { GetCourseActionAsync, UpdateStatusCourseActionAsync } from "../../../Redux/ReducerAPI/CourseReducer";
 import { useLoading } from "../../../Utils/LoadingContext";
 
 
@@ -116,23 +116,6 @@ const CourseManage = () => {
         console.log(error);
         setLoading(false);
       });
-  };
-
-  const handleClone = async (id) => {
-    setLoading(true);
-    try {
-      await dispatch(
-        CreateCourseCloneByIdActionAsync(
-          id,
-          status,
-          pageIndex,
-          pageSize,
-          searchTerm
-        )
-      );
-    } finally {
-      setLoading(false);
-    }
   };
 
   const getColumnSearchProps = () => ({
@@ -293,22 +276,6 @@ const CourseManage = () => {
                 />
               </Dropdown>
             )}
-
-            {[
-              "AvailableForFranchise",
-              "TemporarilySuspended",
-              "Closed",
-            ].includes(record.status) && (
-              <Popconfirm
-                title="Bạn có muốn tạo bản sao khóa học?"
-                onConfirm={() => handleClone(record.id)}
-                okText="Có"
-                cancelText="Không"
-              >
-                <Button type="default" icon={<CopyOutlined />}></Button>
-              </Popconfirm>
-            )}
-
             {record.version >= 2 && (
               <Tooltip title="Xem thay đổi phiên bản">
                 <Button

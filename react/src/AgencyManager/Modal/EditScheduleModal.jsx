@@ -15,7 +15,6 @@ const EditScheduleModal = ({ visible, onCancel, scheduleData, slotData, onUpdate
     useEffect(() => {
         if (visible && scheduleData) {
             form.setFieldsValue({
-                room: scheduleData.room,
                 slotId: scheduleData.slotId,
                 startDate: scheduleData.startDate,
                 daysOfWeek: scheduleData.daysOfWeek,
@@ -28,7 +27,6 @@ const EditScheduleModal = ({ visible, onCancel, scheduleData, slotData, onUpdate
         form.validateFields().then(values => {
             setLoading(true);
             const scheduleData = {
-                room: values.room,
                 classId: classData.classId,
                 slotId: values.slotId,
                 startDate: values.startDate.format("YYYY-MM-DD"), // Định dạng ngày
@@ -54,13 +52,7 @@ const EditScheduleModal = ({ visible, onCancel, scheduleData, slotData, onUpdate
         >
             <Spin spinning={loading}>
                 <Form layout="vertical" form={form} onFinish={handleFinish}>
-                    <Form.Item
-                        name="room"
-                        label="Phòng học"
-                        rules={[{ required: true, message: "Vui lòng nhập phòng học" }]}
-                    >
-                        <Input placeholder="Nhập phòng học" />
-                    </Form.Item>
+                    
                     <Form.Item
                         name="slotId"
                         label="Chọn tiết học"
