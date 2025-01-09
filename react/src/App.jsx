@@ -176,7 +176,8 @@ function App() {
                 <Route path="classes/:id" element={<ClassDetail />} />
                 <Route path="schedules" element={<ScheduleAgencyManager />} />
                 <Route path="list-task" element={<ListTaskAgencyManager />} />
-                <Route path="" element={statusAgency === "active" ? (<AgencyDashboardPage />) : (<AgencyProgressPage />)} />
+                {/* <Route path="" element={statusAgency === "active" ? (<AgencyDashboardPage />) : (<AgencyProgressPage />)} /> */}
+                <Route path="" element={<AgencyDashboardPage />} />
                 <Route path="appointment-schedule" element={<AgencyManagerAppointment />} />
                 <Route path="appointment-schedule/details" element={<AgencyManagerAppointmentDetail />} />
                 <Route path="course" element={<CourseViewAgencyManager />} />
