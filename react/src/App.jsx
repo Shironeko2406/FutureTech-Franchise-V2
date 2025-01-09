@@ -124,6 +124,7 @@ import RelateCourse from "./Student/Page/RelateCourse/RelateCourse";
 import RegisCourseStudent from "./Student/Page/RegisCourseStudent/RegisCourseStudent";
 import PackageFranchise from "./Manager/Page/PackageFranchise/PackageFranchise";
 import PaymentMonthlySuccess from "./AgencyManager/Page/PaymentSuccess.jsx/PaymentMonthlySuccess";
+import Dashboard from "./Manager/Page/Dashboard/Dashboard";
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -258,6 +259,7 @@ function App() {
                 <Route path="payments" element={<PaymentManagement />} />
                 <Route path="package" element={<PackageFranchise />} />
                 <Route path="payment-monthly" element={<PaymentMonthlyManager />} />
+                <Route path="dashboard" element={<Dashboard />} />
               </Route>
             </Route>
 
