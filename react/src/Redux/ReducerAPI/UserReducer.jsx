@@ -663,3 +663,25 @@ export const RegisterCourseStudentActionAsync = (classId) => {
       }
   };
 };
+
+export const MarkChapterMaterialByIdActionAsync = (data, courseId) => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.post(`/api/v1/users/chapter-materials`, data);
+      if (res.isSuccess && res.data) {
+        message.success(`${res.message}`);
+        await dispatch(GetClassMaterialOfUserLoginActionAsync(courseId))
+        return true;
+      } else if (res.isSuccess && !res.data) {
+        message.error(`${res.message}`);
+        return false;
+      } else {
+        throw new Error(`${res.message}`);
+      }
+    } catch (error) {
+      console.error(error);
+      message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
+      return false;
+    }
+  };
+};

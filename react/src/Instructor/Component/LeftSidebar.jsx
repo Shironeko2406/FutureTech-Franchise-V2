@@ -24,7 +24,6 @@ const LeftSidebar = ({ onSidebarToggle }) => {
         { label: "Chi tiết lớp học", path: `/instructor/${classItem.className}/${classItem.classId}` },
         { label: "Bài kiểm tra", path: `/instructor/${classItem.className}/${classItem.classId}/quiz` },
         { label: "Bài tập", path: `/instructor/${classItem.className}/${classItem.classId}/assignment` },
-        { label: "Tài liệu khóa học", path: `/instructor/${classItem.className}/${classItem.classId}` },
       ],
     })),
   ];

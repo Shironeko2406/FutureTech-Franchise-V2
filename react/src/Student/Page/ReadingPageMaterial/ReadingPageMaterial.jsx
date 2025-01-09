@@ -1,10 +1,14 @@
-import { BookOutlined, HomeOutlined, LeftOutlined, RightOutlined } from "@ant-design/icons";
+import { BookOutlined, CheckCircleOutlined, CheckOutlined, HomeOutlined, LeftOutlined, RightOutlined } from "@ant-design/icons";
 import { Breadcrumb, Button, Card, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import DOMPurify from "dompurify";
 import { useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { getDataJSONStorage } from "../../../Utils/UtilsFunction";
+import { USER_LOGIN } from "../../../Utils/Interceptors";
+import { MarkChapterMaterialByIdActionAsync } from "../../../Redux/ReducerAPI/UserReducer";
+import { useLoading } from "../../../Utils/LoadingContext";
 
 const { Title } = Typography;
 
@@ -50,7 +54,9 @@ const ContentContainer = styled.div`
 const ReadingPageMaterial = () => {
   const { materialClass } = useSelector((state) => state.UserReducer)
   const [chapterMaterial, setChapterMaterial] = useState({})
-  const {number, materialNumber} = useParams()
+  const {number, materialNumber, courseId} = useParams()
+  const { setLoading } = useLoading();
+  const dispatch = useDispatch()
 
   useEffect(() => {
     const material =
@@ -68,6 +74,16 @@ const ReadingPageMaterial = () => {
       __html: DOMPurify.sanitize(html),
     };
   };
+
+  const handleMarkAsCompleted = async (id) => {
+    setLoading(true)
+    const dataSend = {
+      userId: getDataJSONStorage(USER_LOGIN).id,
+      chapterMaterialId: id
+    }
+    await dispatch(MarkChapterMaterialByIdActionAsync(dataSend, courseId))
+    setLoading(false)
+  }
 
   return (
     <Card>
@@ -100,6 +116,23 @@ const ReadingPageMaterial = () => {
 
         {/* Description */}
         <HTMLContent dangerouslySetInnerHTML={sanitizeHTML(chapterMaterial.description)}/>
+
+        <div className="mt-4 text-center">
+          {chapterMaterial.userChapterMaterials ? (
+            <div className="text-success">
+              <CheckCircleOutlined className="mr-2" />
+              Bạn đã xem bài học này
+            </div>
+          ) : (
+            <Button
+              type="primary"
+              icon={<CheckOutlined />}
+              onClick={() => handleMarkAsCompleted(chapterMaterial.id)}
+            >
+              Đánh dấu đã học
+            </Button>
+          )}
+        </div>
       </ContentContainer>
     </Card>
   );

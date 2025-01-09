@@ -70,7 +70,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
           { type: "link", label: "Bài kiểm tra", path: `/student/${className}/${selectedClassId}/quiz`, icon: "mdi:test-tube" },
           { type: "link", label: "Bài tập nộp", path: `/student/${className}/${selectedClassId}/assignment`, icon: "mdi:clipboard-text" },
           { type: "link", label: "Điểm số", path: `/student/${className}/${selectedClassId}/course/${selectedCourseId}/score`, icon: "mdi:clipboard-text" },
-          { type: "link", label: "Điểm danh", path: `/student/${className}/${selectedClassId}/attendance`, icon: "mdi:clipboard-text" },
+          { type: "link", label: "Tình trạng điểm danh", path: `/student/${className}/${selectedClassId}/attendance`, icon: "mdi:clipboard-text" },
         ];
 
       case 'CHAPTER_ROUTE':
@@ -113,6 +113,7 @@ const LeftSidebar = ({ onSidebarToggle }) => {
 
     } else if (isClassRoute && !isChapterRoute) {
       sidebarItems.forEach((item, index) => {
+        console.log('chào')
         if (item.type === "submenu") {
           initialOpenSubmenus[index] = true; // Mở tất cả submenu
         }

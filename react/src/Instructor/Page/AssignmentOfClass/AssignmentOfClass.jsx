@@ -248,14 +248,16 @@ const AssignmentOfClass = () => {
           <Tooltip title="Chỉnh sửa">
             <Button type="primary" icon={<EditOutlined />} size="small" onClick={() => showModalEditAssignment(record)}/>
           </Tooltip>
-          <Tooltip title="Xóa">
-            <Popconfirm
-              title="Bạn muốn xóa bài tập này?"
-              onConfirm={() => handleDelete(record.id)}
-            >
-              <Button type="primary" danger icon={<DeleteOutlined />} size="small" />
-            </Popconfirm>
-          </Tooltip>
+          {record.type === "Optional" && (
+            <Tooltip title="Xóa">
+              <Popconfirm
+                title="Bạn muốn xóa bài tập này?"
+                onConfirm={() => handleDelete(record.id)}
+              >
+                <Button type="primary" danger icon={<DeleteOutlined />} size="small" />
+              </Popconfirm>
+            </Tooltip>
+          )}
         </Space>
       ),
     },
