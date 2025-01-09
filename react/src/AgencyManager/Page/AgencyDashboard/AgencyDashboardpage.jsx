@@ -43,10 +43,7 @@ export default function AgencyDashboardPage() {
     const formattedEndDate = end.format("MM/DD/YYYY")
 
     setLoading(true)
-    Promise.all([
-      dispatch(FetchDashboardAgencyCoursesAsync(formattedStartDate, formattedEndDate)),
-      // dispatch(FetchDashboardAgencyAsync(formattedStartDate, formattedEndDate)),
-    ]).finally(() => {
+    dispatch(FetchDashboardAgencyCoursesAsync(formattedStartDate, formattedEndDate)).finally(() => {
       setLoading(false)
       setFilterApplied(true)
     })
