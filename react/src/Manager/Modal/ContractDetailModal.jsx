@@ -90,25 +90,13 @@ const ContractDetailModal = ({ visible, onClose, contractDetail }) => {
                                         color="#1890ff"
                                     />
                                     <FinancialItem
-                                        icon={<ToolOutlined />}
-                                        label="Phí thiết kế:"
-                                        value={`${Number(contractDetail.designFee).toLocaleString('vi-VN')} VND`}
-                                        color="#722ed1"
-                                    />
-                                    <FinancialItem
-                                        icon={<LaptopOutlined />}
-                                        label="Phí trang thiết bị:"
-                                        value={`${Number(contractDetail.equipmentFee).toLocaleString('vi-VN')} VND`}
-                                        color="#fa8c16"
-                                    />
-                                </Col>
-                                <Col span={12}>
-                                    <FinancialItem
                                         icon={<PercentageOutlined />}
                                         label="Tỷ lệ chia sẻ doanh thu:"
                                         value={`${contractDetail.revenueSharePercentage}%`}
                                         color="#faad14"
                                     />
+                                </Col>
+                                <Col span={12}>
                                     <FinancialItem
                                         icon={<BankOutlined />}
                                         label="Phần trăm trả trước:"
