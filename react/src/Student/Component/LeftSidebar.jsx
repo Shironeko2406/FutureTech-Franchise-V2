@@ -2,6 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink, useLocation, useParams } from "react-router-dom";
 import { GetClassMaterialOfUserLoginActionAsync, GetClassOfUserLoginActionAsync } from "../../Redux/ReducerAPI/UserReducer";
+import { formatDate } from "../../Utils/Validator/FormatDate";
+import { Alert, Modal, Typography } from "antd";
+import { ClockCircleOutlined, FileTextOutlined, InfoCircleOutlined, PhoneOutlined, WalletOutlined } from "@ant-design/icons";
+import { StudentRequestRefundActionAsync } from "../../Redux/ReducerAPI/RegisterCourseReducer";
+
+const { Title, Paragraph, Text } = Typography;
 
 const LeftSidebar = ({ onSidebarToggle }) => {
   const dispatch = useDispatch();
@@ -14,6 +20,11 @@ const LeftSidebar = ({ onSidebarToggle }) => {
   const isStudentRoute = location.pathname.startsWith('/student');
   const isClassRoute = location.pathname.includes('/student/') && className;
   const isChapterRoute = location.pathname.includes('/student/') && className && materialNumber;
+  const currentClass = classOfUserLogin?.find(c => c.className === className);
+  const currentDate = new Date();
+  const startDate = currentClass ? new Date(currentClass.startDate) : null;
+  const endDate = currentClass ? new Date(currentClass.endDate) : null;
+  const showRefundRequest = startDate && currentDate < startDate;
 
   useEffect(() => {
     dispatch(GetClassOfUserLoginActionAsync())
@@ -26,6 +37,71 @@ const LeftSidebar = ({ onSidebarToggle }) => {
       dispatch(GetClassMaterialOfUserLoginActionAsync(currentCourseId))
     }
   }, [courseId, selectedCourseId]);
+
+  const handleRefundRequest = () => {
+    Modal.confirm({
+      title: 'Xác nhận yêu cầu hoàn tiền',
+      width: 800,
+      icon: <InfoCircleOutlined style={{ color: '#1890ff' }} />,
+      content: (
+        <div className="mt-3">
+          <Alert
+            message="Bạn có chắc chắn muốn gửi yêu cầu hoàn tiền cho khóa học này không?"
+            type="warning"
+            showIcon
+            style={{ marginBottom: 20 }}
+          />
+  
+          <div className="border p-3 bg-light rounded">
+            <h5 className="d-flex align-items-center mb-3">
+              <InfoCircleOutlined style={{ color: '#1890ff', marginRight: '8px' }} />
+              Quy trình hoàn tiền:
+            </h5>
+  
+            <div className="d-flex flex-column gap-3">
+              <div className="d-flex align-items-start gap-3">
+                <ClockCircleOutlined className="text-primary mt-1 fs-4" />
+                <div className="flex-grow-1">
+                  <strong>Thời gian xử lý:</strong>
+                  <p className="mb-0">Yêu cầu hoàn tiền sẽ được xử lý sau 24h làm việc</p>
+                </div>
+              </div>
+  
+              <div className="d-flex align-items-start gap-3">
+                <PhoneOutlined className="text-primary mt-1 fs-4" />
+                <div className="flex-grow-1">
+                  <strong>Xác nhận qua điện thoại:</strong>
+                  <p className="mb-0">Sẽ có nhân viên gọi điện xác nhận bên người dùng</p>
+                </div>
+              </div>
+  
+              <div className="d-flex align-items-start gap-3">
+                <FileTextOutlined className="text-primary mt-1 fs-4" />
+                <div className="flex-grow-1">
+                  <strong>Yêu cầu thông tin:</strong>
+                  <p className="mb-0">Người yêu cầu cần cung cấp rõ lý do muốn hoàn tiền để nhân viên ghi nhận vào hệ thống</p>
+                </div>
+              </div>
+  
+              <div className="d-flex align-items-start gap-3">
+                <WalletOutlined className="text-primary mt-1 fs-4" />
+                <div className="flex-grow-1">
+                  <strong>Hoàn tiền:</strong>
+                  <p className="mb-0">
+                    Sau khi hoàn tiền thành công, số tiền sẽ được gửi trả về người dùng, hãy kiểm tra email
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ),
+      onOk() {
+        dispatch(StudentRequestRefundActionAsync(selectedCourseId))
+      },
+    });
+  };
+  
 
   const getSidebarItems = () => {
     let routeType = '';
@@ -56,8 +132,9 @@ const LeftSidebar = ({ onSidebarToggle }) => {
         ];
 
       case 'CLASS_ROUTE':
+        const classInfoLabel = `${className} (${formatDate(startDate)} - ${formatDate(endDate)})`;
         return [
-          { type: "section", label: className, icon: "ti ti-dots" },
+          { type: "section", label: classInfoLabel, icon: "ti ti-dots" },
           {
             type: "submenu",
             label: "Tài nguyên lớp học",
@@ -71,6 +148,12 @@ const LeftSidebar = ({ onSidebarToggle }) => {
           { type: "link", label: "Bài tập nộp", path: `/student/${className}/${selectedClassId}/assignment`, icon: "mdi:clipboard-text" },
           { type: "link", label: "Điểm số", path: `/student/${className}/${selectedClassId}/course/${selectedCourseId}/score`, icon: "mdi:clipboard-text" },
           { type: "link", label: "Tình trạng điểm danh", path: `/student/${className}/${selectedClassId}/attendance`, icon: "mdi:clipboard-text" },
+          ...(showRefundRequest ? [{
+            type: "custom",
+            label: "Yêu cầu hoàn tiền",
+            icon: "mdi:cash-refund",
+            onClick: handleRefundRequest 
+          }] : [])
         ];
 
       case 'CHAPTER_ROUTE':
@@ -177,8 +260,6 @@ const LeftSidebar = ({ onSidebarToggle }) => {
                     >
                       {item.label}
                     </span>
-
-
                   </div>
                   {openSubmenus[index] && (
                     <ul className="submenu" >
@@ -200,6 +281,19 @@ const LeftSidebar = ({ onSidebarToggle }) => {
                       ))}
                     </ul>
                   )}
+                </li>
+              ) : item.type === "custom" ? (
+                <li key={index} className="sidebar-item">
+                  <div
+                    className="sidebar-link"
+                    onClick={item.onClick}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <span>
+                      <iconify-icon icon={item.icon} className="fs-6" />
+                    </span>
+                    <span className="hide-menu">{item.label}</span>
+                  </div>
                 </li>
               ) : (
                 <li key={index} className="sidebar-item">

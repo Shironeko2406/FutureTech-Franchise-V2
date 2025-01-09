@@ -28,8 +28,8 @@ const CourseGrid = styled(Row)`
 
 // const course = [
 //   {
-//       "id": "5213543a-2cf5-4241-edbf-08dd2efcf775",
-//       "name": "Lập trình Cơ bản C++",
+//       "id": "1ed54158-6820-4ecd-ce0f-08dd309fbaf6",
+//       "name": "Lập trình Cơ bản Java",
 //       "description": "Khóa học cung cấp kiến thức từ cơ bản đến nâng cao về các hệ cơ sở dữ liệu, bao gồm các khái niệm cơ bản, thiết kế cơ sở dữ liệu, ngôn ngữ truy vấn và tối ưu hóa cơ sở dữ liệu.",
 //       "urlImage": "https://firebasestorage.googleapis.com/v0/b/cavisproject.appspot.com/o/Course%20Images%2Fimage_c2c5d691850c4b728435b10d05005813.png?alt=media&token=6db260af-a08f-45b5-9234-6e492e0dcb5b",
 //       "numberOfLession": 7,
@@ -41,12 +41,12 @@ const CourseGrid = styled(Row)`
 //       "courseCategoryName": null
 //   },
 //   {
-//     "id": "5213543a-2cf5-4241-edbf-08dd2efcf75",
+//     "id": "5213543a-2cf5-4241-edbf-08dd2efcfdddd",
 //     "name": "Lập trình Cơ bản C++",
 //     "description": "Khóa học cung cấp kiến thức từ cơ bản đến nâng cao về các hệ cơ sở dữ liệu, bao gồm các khái niệm cơ bản, thiết kế cơ sở dữ liệu, ngôn ngữ truy vấn và tối ưu hóa cơ sở dữ liệu.",
 //     "urlImage": "https://firebasestorage.googleapis.com/v0/b/cavisproject.appspot.com/o/Course%20Images%2Fimage_c2c5d691850c4b728435b10d05005813.png?alt=media&token=6db260af-a08f-45b5-9234-6e492e0dcb5b",
 //     "numberOfLession": 7,
-//     "price": 3200000,
+//     "price": 3000000,
 //     "code": "PRF111",
 //     "version": 3,
 //     "status": "AvailableForFranchise",

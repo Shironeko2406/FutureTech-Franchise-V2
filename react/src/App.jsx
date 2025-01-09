@@ -123,6 +123,7 @@ import CompareCourseSysInstructor from "./SystemInstructor/Page/CompareCourseSys
 import RelateCourse from "./Student/Page/RelateCourse/RelateCourse";
 import RegisCourseStudent from "./Student/Page/RegisCourseStudent/RegisCourseStudent";
 import PackageFranchise from "./Manager/Page/PackageFranchise/PackageFranchise";
+import CertificateClass from "./Student/Page/CertificateClass/CertificateClass";
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -210,6 +211,7 @@ function App() {
                 <Route path="" element={<ScheduleStudent />} />
                 <Route path="change-password" element={<ChangePassword />} />
                 <Route path="profile" element={<Profile />} />
+                <Route path="certificate" element={<CertificateClass />} />
                 <Route path=":className/:classId/attendance" element={<AttendanceReport />} />
                 <Route path="relate-course" element={<RelateCourse />} />
                 <Route path="register-course" element={<RegisCourseStudent />} />
