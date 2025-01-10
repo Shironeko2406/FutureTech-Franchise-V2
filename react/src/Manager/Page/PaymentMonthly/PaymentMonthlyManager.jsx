@@ -143,7 +143,7 @@ const PaymentMonthly = () => {
                 { text: 'Thất bại', value: 'Fail' },
             ],
             filterMultiple: false,
-            render: (status) => renderStatusBadge(status),
+            // render: (status) => renderStatusBadge(status),
         },
         {
             title: "Ngày thanh toán",
