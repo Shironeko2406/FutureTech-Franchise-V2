@@ -146,7 +146,6 @@
 
 
 
-"use client"
 
 import React from "react"
 import { Card, Typography, Button, Space, Tag, Tooltip } from "antd"
@@ -255,51 +254,82 @@ const CourseCard = ({ course }) => {
   const navigate = useNavigate()
   const { classOfUserLogin } = useSelector((state) => state.UserReducer)
 
-  // Check if student is currently enrolled in this course
-  const enrolledClass = classOfUserLogin.find((classItem) => classItem.courseId === course.id)
-
   // Check if there's any time conflict with other classes
   const hasTimeConflict = () => {
-    if (!enrolledClass) return false
-
-    const currentDate = new Date()
-    const classStartDate = new Date(enrolledClass.startDate)
-    const classEndDate = new Date(enrolledClass.endDate)
-
-    return currentDate >= classStartDate && currentDate <= classEndDate
-  }
-
-  const isEnrolled = Boolean(enrolledClass)
-  const isInActiveClass = hasTimeConflict()
-
+    const currentDate = new Date();
+  
+    // Lấy tất cả các lớp liên quan đến courseId
+    const relatedClasses = classOfUserLogin.filter((classItem) => classItem.courseId === course.id);
+  
+    // Phân loại lớp theo trạng thái
+    const activeClass = relatedClasses.find(
+      (classItem) =>
+        new Date(classItem.startDate) <= currentDate && new Date(classItem.endDate) >= currentDate
+    );
+    const upcomingClass = relatedClasses.find(
+      (classItem) => new Date(classItem.startDate) > currentDate
+    );
+    const completedClasses = relatedClasses.filter(
+      (classItem) => new Date(classItem.endDate) < currentDate
+    );
+  
+    console.log(completedClasses)
+    // Ưu tiên lớp đang học, sau đó lớp chưa bắt đầu
+    if (activeClass) {
+      return { status: "active", classData: activeClass };
+    } else if (upcomingClass) {
+      return { status: "notStarted", classData: upcomingClass };
+    } else if (completedClasses.length > 0) {
+      return { status: "completed", classData: completedClasses[0] }; // Lấy lớp hoàn thành gần nhất
+    }
+  
+    return { status: "notEnrolled", classData: null }; // Không đăng ký
+  };
+  
   const getEnrollmentStatus = () => {
-    if (isEnrolled) {
-      if (isInActiveClass) {
+    const { status, classData } = hasTimeConflict();
+  
+    switch (status) {
+      case "notStarted":
+        return {
+          tag: "Chưa bắt đầu",
+          status: status,
+          color: "#faad14", // Màu vàng
+          buttonText: "Đã đăng ký",
+          canRegister: false,
+          classInfo: classData, // Lớp được chọn
+        };
+      case "active":
         return {
           tag: "Đang học",
-          color: "#87d068", // Green for active
+          status: status,
+          color: "#87d068", // Màu xanh lá
           buttonText: "Đã đăng ký",
-          canRegister: false
-        }
-      } else {
+          canRegister: false,
+          classInfo: classData, // Lớp được chọn
+        };
+      case "completed":
         return {
           tag: "Đã hoàn thành",
-          color: "#2db7f5", // Blue for completed
+          status: status,
+          color: "#2db7f5", // Màu xanh dương
           buttonText: "Đăng ký lại",
-          canRegister: true
-        }
-      }
+          canRegister: true,
+          classInfo: classData, // Lớp được chọn
+        };
+      default: // Trường hợp chưa đăng ký
+        return {
+          tag: "",
+          color: "",
+          buttonText: "Đăng ký ngay",
+          canRegister: true,
+          classInfo: null,
+        };
     }
-    return {
-      tag: "",
-      color: "",
-      buttonText: "Đăng ký ngay",
-      canRegister: true
-    }
-  }
-
-  const status = getEnrollmentStatus()
-
+  };
+  
+  const status = getEnrollmentStatus();
+  
   const handleRegisCourse = (course) => {
     const dataUser = getDataJSONStorage(USER_LOGIN)
     const registrationData = {
@@ -316,15 +346,21 @@ const CourseCard = ({ course }) => {
 
   return (
     <StyledCard hoverable cover={<CourseImage src={course.urlImage} alt={course.name} />}>
-      {isEnrolled && (
-        <Tooltip title={
-          isInActiveClass 
-            ? `Thời gian học: ${new Date(enrolledClass.startDate).toLocaleDateString('vi-VN')} - ${new Date(enrolledClass.endDate).toLocaleDateString('vi-VN')}`
-            : "Khóa học đã kết thúc"
-        }>
-          <EnrollmentTag color={status.color}>
-            {status.tag}
-          </EnrollmentTag>
+      {status.classInfo && (
+        <Tooltip
+          title={
+            status.status === "active"
+              ? `Thời gian học: ${new Date(status.classInfo.startDate).toLocaleDateString(
+                  "vi-VN"
+                )} - ${new Date(status.classInfo.endDate).toLocaleDateString("vi-VN")}`
+              : status.status === "notStarted"
+              ? `Thời gian bắt đầu: ${new Date(status.classInfo.startDate).toLocaleDateString(
+                  "vi-VN"
+                )}`
+              : "Khóa học đã kết thúc"
+          }
+        >
+          <EnrollmentTag color={status.color}>{status.tag}</EnrollmentTag>
         </Tooltip>
       )}
       <CourseTitle>{course.name}</CourseTitle>

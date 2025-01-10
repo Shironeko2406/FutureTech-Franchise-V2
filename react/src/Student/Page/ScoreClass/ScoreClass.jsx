@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import { GetScoreOfClassForStudentActionAsync } from "../../../Redux/ReducerAPI/UserReducer";
 import { GetPercentCourseActionAsync } from "../../../Redux/ReducerAPI/CourseReducer";
+import { useLoading } from "../../../Utils/LoadingContext";
 
 const { Title } = Typography;
 
@@ -67,10 +68,14 @@ const ScoreClass = () => {
   const { scoreData } = useSelector((state) => state.UserReducer);
   const { percentCourseProgress } = useSelector((state) => state.CourseReducer);
   const dispatch = useDispatch()
+  const {setLoading} = useLoading()
 
   useEffect(()=>{
-    dispatch(GetScoreOfClassForStudentActionAsync(classId))
-    dispatch(GetPercentCourseActionAsync(courseId))
+    setLoading(true)
+    Promise.all([
+      dispatch(GetScoreOfClassForStudentActionAsync(classId)),
+      dispatch(GetPercentCourseActionAsync(courseId)),
+    ]).finally(() => setLoading(false))
   },[classId])
 
   const getRowCount = (type) => {
