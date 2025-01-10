@@ -17,7 +17,8 @@ const initialState = {
   accounts: [],
   totalItemsCount: 0,
   materialClass: {},
-  scoreData: []
+  scoreData: [],
+  certification: null
 };
 
 const UserReducer = createSlice({
@@ -53,6 +54,9 @@ const UserReducer = createSlice({
     },
     setScoreData: (state, action) => {
       state.scoreData = action.payload
+    },
+    setCertificate: (state, action) => {
+      state.certification = action.payload
     }
   },
 });
@@ -65,7 +69,8 @@ export const {
   setUserManager,
   setTaskUser,
   setMaterialClass,
-  setScoreData
+  setScoreData,
+  setCertificate,
 } = UserReducer.actions;
 
 export default UserReducer.reducer;
@@ -630,9 +635,9 @@ export const GetScoreOfClassForStudentActionAsync = (classId) => {
             type: 'average',
           },
         ];
-
         // Dispatch mảng scoreData đã tính toán
-        dispatch(setScoreData(scoreData)); // Dispatch vào Redux state
+        dispatch(setScoreData(scoreData)); 
+        dispatch(setCertificate(score.certification))
       } else {
         message.error(`${res.message}`);
       }

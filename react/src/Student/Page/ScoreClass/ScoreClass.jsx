@@ -1,7 +1,7 @@
-import { Progress, Table, Typography } from "antd";
+import { Button, Progress, Table, Typography } from "antd";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { GetScoreOfClassForStudentActionAsync } from "../../../Redux/ReducerAPI/UserReducer";
 import { GetPercentCourseActionAsync } from "../../../Redux/ReducerAPI/CourseReducer";
@@ -65,10 +65,11 @@ const StyledTable = styled(Table)`
 
 const ScoreClass = () => {
   const {className, classId, courseId} = useParams();
-  const { scoreData } = useSelector((state) => state.UserReducer);
+  const { scoreData, certification } = useSelector((state) => state.UserReducer);
   const { percentCourseProgress } = useSelector((state) => state.CourseReducer);
   const dispatch = useDispatch()
   const {setLoading} = useLoading()
+  const navigate = useNavigate()
 
   useEffect(()=>{
     setLoading(true)
@@ -77,6 +78,10 @@ const ScoreClass = () => {
       dispatch(GetPercentCourseActionAsync(courseId)),
     ]).finally(() => setLoading(false))
   },[classId])
+
+  const handleNavigateToCertificate = () => {
+    navigate(`/student/${className}/${classId}/course/${courseId}/certificate`, { state: { certification, scoreData } });
+  };
 
   const getRowCount = (type) => {
     switch (type) {
@@ -197,6 +202,9 @@ const ScoreClass = () => {
           <div>
             <div style={{ color: '#666' }}>Tên lớp: {className}</div>
             <div className="fs-6 fw-medium">Điểm trung bình: {status.score}</div>
+            {certification && (
+              <Button type="link" className="p-0" onClick={handleNavigateToCertificate}>Xem chứng chỉ</Button>
+            )}
           </div>
         </div>
 

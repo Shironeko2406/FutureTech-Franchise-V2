@@ -1,41 +1,62 @@
-import { Card, Typography, Row, Col, Space, Image } from "antd";
-import styled from "styled-components";
-import React from "react";
-import PDFViewer from 'pdf-viewer-reactjs';
+"use client"
 
-const { Title, Text, Paragraph } = Typography;
+import { Card, Typography, Row, Col, Space, Image } from "antd"
+import styled from "styled-components"
+import PDFViewer from "pdf-viewer-reactjs"
+import { useLocation, useParams } from "react-router-dom"
+import { useSelector } from "react-redux"
+
+const { Title, Text, Paragraph } = Typography
 
 const StyledCard = styled(Card)`
-  border-radius: 15px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-`;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  background: white;
+  
+  .ant-card-body {
+    padding: 32px;
+  }
+`
 
-const LeftSection = styled.div`
-  background: #f0f8ff;
-  padding: 25px;
-  border-radius: 12px;
-  height: 100%;
-`;
+const UserInfoSection = styled.div`
+  background: #f5f7fa;
+  padding: 32px;
+  border-radius: 16px;
+  border: 1px solid #e6e8eb;
+  transition: all 0.3s ease;
+  margin-bottom: 32px;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+`
 
 const PDFContainer = styled.div`
   width: 100%;
-  height: 100%;
-  border-radius: 12px;
+  height: calc(100vh - 200px);
+  min-height: 600px;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
   background: white;
-`;
+  border: 1px solid #e6e8eb;
+`
 
 const StyledAvatar = styled.div`
   position: relative;
-  margin-bottom: 28px;
+  margin-bottom: 32px;
   width: fit-content;
 
   .avatar-image {
     border-radius: 50%;
-    border: 3px solid #1890ff;
+    border: 4px solid #1890ff;
+    transition: transform 0.3s ease;
+
+    &:hover {
+      transform: scale(1.05);
+    }
   }
-`;
+`
 
 const CourseList = styled.ul`
   list-style: none;
@@ -43,11 +64,13 @@ const CourseList = styled.ul`
   margin: 0;
 
   li {
-    padding: 12px 0;
+    padding: 14px 0;
     position: relative;
-    padding-left: 24px;
-    font-size: 15px;
+    padding-left: 28px;
+    font-size: 16px;
     line-height: 1.6;
+    color: #666;
+    transition: all 0.2s ease;
 
     &:before {
       content: "•";
@@ -55,83 +78,111 @@ const CourseList = styled.ul`
       left: 0;
       color: #1890ff;
       font-weight: bold;
+      font-size: 20px;
+    }
+
+    &:hover {
+      color: #333;
+      padding-left: 32px;
     }
   }
-`;
+`
 
 const StyledTitle = styled(Title)`
   &.ant-typography {
     font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
     letter-spacing: -0.5px;
+    margin-bottom: 16px;
   }
-`;
+`
+
+const CompletionBadge = styled.div`
+  background: rgba(82, 196, 26, 0.15);
+  color: #52c41a;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  display: inline-block;
+  margin-bottom: 24px;
+`
 
 const CertificateClass = () => {
-  const pdfUrl = "https://firebasestorage.googleapis.com/v0/b/imageupdatedb.appspot.com/o/contracts%2FHuyH2511_L%E1%BA%ADp%20tr%C3%ACnh%20C%C6%A1%20b%E1%BA%A3n%20Java_24%2F02%2F2025%2012%3A00%3A00%20AM?alt=media&token=4af74fef-3536-40a1-917d-041bd5c7e5d5";
-
-  const courseModules = [
-    "Khởi tạo và Lập kế hoạch Dự án",
-    "Lập ngân sách và Lịch trình Dự án",
-    "Quản lý Rủi ro và Thay đổi Dự án",
-    "Dự án Quản lý Dự án"
-  ];
+  const { userLogin } = useSelector((state) => state.AuthenticationReducer);
+  const location = useLocation();
+  const {className} = useParams()
+  const { certification, scoreData } = location.state;
+  const totals = scoreData.filter(item => item.isTotal );
 
   return (
     <StyledCard>
-      <Row gutter={[32, 32]}>
-        <Col xs={24} lg={8}>
-          <LeftSection>
+      <UserInfoSection>
+        <Row gutter={[32, 32]}>
+          <Col xs={24} md={8}>
             <StyledAvatar>
               <Image
                 className="avatar-image"
-                src="/placeholder.svg?height=80&width=80"
-                alt="Nguyễn Trung Hiếu"
-                width={80}
-                height={80}
+                src={userLogin.urlImage || "/assets/images/profile/user-1.jpg"}
+                alt="Student Avatar"
+                width={96}
+                height={96}
                 preview={false}
               />
             </StyledAvatar>
             
-            <StyledTitle level={3}>Hoàn thành bởi Nguyễn Trung Hiếu</StyledTitle>
-            <Paragraph type="secondary" style={{ fontSize: '16px', marginBottom: '8px' }}>
+            <CompletionBadge>Đã hoàn thành</CompletionBadge>
+            
+            <StyledTitle level={3}>Hoàn thành bởi {userLogin.fullName}</StyledTitle>
+            <Text type="secondary" style={{ fontSize: '16px', display: 'block', marginBottom: '8px' }}>
               12 Tháng 1, 2024
-            </Paragraph>
-            <Paragraph style={{ fontSize: '15px', color: '#666' }}>
+            </Text>
+            <Text style={{ fontSize: '15px', color: "#666" }}>
               Khoảng 1 tháng với 10 giờ mỗi tuần để hoàn thành
-            </Paragraph>
-
-            <Space direction="vertical" size="large" style={{ width: '100%', marginTop: '32px' }}>
+            </Text>
+          </Col>
+          <Col xs={24} md={16}>
+            <Space direction="vertical" size="large" style={{ width: '100%' }}>
               <div>
-                <StyledTitle level={4} style={{ marginBottom: '16px' }}>
+                <StyledTitle level={4}>
                   Chứng chỉ khóa học đã hoàn thành
                 </StyledTitle>
                 <CourseList>
-                  {courseModules.map((module, index) => (
-                    <li key={index}>{module}</li>
+                  {totals.map((item, index) => (
+                    <li key={index}>
+                    {item.category}: {item.score}/10 {item.weight && `(${item.weight}%)`}
+                  </li>
                   ))}
                 </CourseList>
               </div>
             </Space>
 
-            <Paragraph style={{ marginTop: '32px', fontSize: '14px', color: '#666' }}>
-              Tài khoản của Nguyễn Trung Hiếu đã được xác minh. Coursera chứng nhận việc hoàn thành thành công chương trình Chuyên môn Quản lý Dự án của Đại học California, Irvine.
+            <Paragraph style={{ 
+              marginTop: '24px', 
+              fontSize: '14px', 
+              color: '#666',
+              padding: '16px',
+              background: '#fff',
+              borderRadius: '8px',
+              border: '1px solid #e6e8eb'
+            }}>
+              Tài khoản của {userLogin.fullName} đã được xác minh. Trung tâm IT FutureTech chứng nhận việc hoàn thành thành công chương trình Chuyên môn Quản lý Dự án của lớp học {className}.
             </Paragraph>
-          </LeftSection>
-        </Col>
-        <Col xs={24} lg={16}>
-          <PDFContainer>
-            <PDFViewer
-              document={{
-                url: `${pdfUrl}`,
-              }}
-              hideNavbar={true}
-            />
-          </PDFContainer>
-        </Col>
-      </Row>
-    </StyledCard>
-  );
-};
+          </Col>
+        </Row>
+      </UserInfoSection>
+      
+      <PDFContainer>
+        <PDFViewer
+          document={{
+            url: certification,
+          }}
+          hideNavbar={true}
+        />
 
-export default CertificateClass;
+      </PDFContainer>
+    </StyledCard>
+  )
+}
+
+export default CertificateClass
 
