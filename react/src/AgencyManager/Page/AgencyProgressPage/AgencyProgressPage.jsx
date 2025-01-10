@@ -5,8 +5,11 @@ import { motion } from 'framer-motion';
 import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
 import { GetAllDocumentsByAgencyIdActionAsync } from '../../../Redux/ReducerAPI/DocumentReducer';
+import { GetContractDetailByAgencyIdActionAsync } from '../../../Redux/ReducerAPI/ContractReducer';
+import { CreatePaymentContractActionAsync } from '../../../Redux/ReducerAPI/PaymentReducer';
 import CreateDocumentModal from '../../Modal/CreateDocumentModal';
 import ShowDocumentModal from '../../Modal/ShowDocumentModal';
+import ContractDetailModal from '../../Modal/ContractDetailModal';
 
 const { Title, Text, Paragraph } = Typography;
 const { Step } = Steps;
@@ -33,6 +36,8 @@ const AgencyProgressPage = () => {
     businessLicense: false,
     educationLicense: false
   });
+  const [contractDetail, setContractDetail] = useState(null);
+  const [showContractDetailModal, setShowContractDetailModal] = useState(false);
 
   const dispatch = useDispatch();
   const userLogin = useSelector(state => state.AuthenticationReducer.userLogin);
@@ -73,6 +78,18 @@ const AgencyProgressPage = () => {
     }
   };
 
+  const fetchContractDetail = async () => {
+    const agencyId = userLogin?.agencyId;
+    if (agencyId) {
+      const contract = await dispatch(GetContractDetailByAgencyIdActionAsync(agencyId));
+      if (contract) {
+        setContractDetail(contract);
+        setPaymentStatus(contract.paidAmount === 0 || contract.paidAmount === null ? 'pending' : 'completed');
+        setPaymentAmount(contract.paidAmount);
+      }
+    }
+  };
+
   useEffect(() => {
     fetchDocuments();
   }, [dispatch, userLogin]);
@@ -101,6 +118,12 @@ const AgencyProgressPage = () => {
       }
     });
   }, [documents]);
+
+  useEffect(() => {
+    if (currentStep === 1) {
+      fetchContractDetail();
+    }
+  }, [currentStep]);
 
   const handleDocumentUpload = (type, info) => {
     const { status } = info.file;
@@ -154,15 +177,15 @@ const AgencyProgressPage = () => {
     }
   };
 
-  const handlePayment = () => {
-    setIsLoading(true);
-    // Simulate payment process
-    setTimeout(() => {
-      setIsLoading(false);
-      setPaymentStatus('completed');
-      setPaymentAmount(50000000); // 50,000,000 VND
-      message.success('Thanh toán thành công!');
-    }, 2000);
+  const handlePayment = async () => {
+    if (contractDetail) {
+      setIsLoading(true);
+      try {
+        await dispatch(CreatePaymentContractActionAsync(contractDetail.id));
+      } finally {
+        setIsLoading(false);
+      }
+    }
   };
 
   const nextStep = () => {
@@ -286,44 +309,31 @@ const AgencyProgressPage = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <Card title="Bước 2: Tải lên hợp đồng đã ký và Thanh toán" bordered={false}>
+            <Card title="Bước 2: Hợp đồng & Thanh toán" bordered={false}>
               <Space direction="vertical" style={{ width: '100%' }}>
-                <Upload
-                  action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                  onChange={handleContractUpload}
-                  maxCount={1}
-                >
-                  <Button icon={<UploadOutlined />} type="primary" style={{ marginBottom: '1rem' }}>
-                    Tải lên hợp đồng đã ký
+                {contractDetail ? (
+                  <Button type="primary" onClick={() => setShowContractDetailModal(true)}>
+                    Xem hợp đồng
                   </Button>
-                </Upload>
+                ) : (
+                  <Tag color="default">Chưa có hợp đồng</Tag>
+                )}
                 <Tag color={paymentStatus === 'completed' ? 'success' : 'warning'}>
                   {paymentStatus === 'completed' ? 'Đã thanh toán' : 'Chưa thanh toán'}
                 </Tag>
                 {paymentStatus === 'completed' ? (
                   <Text strong>Số tiền đã thanh toán: {paymentAmount?.toLocaleString('vi-VN')} VND</Text>
                 ) : (
-                  <>
-                    <Input.Group compact>
-                      <Input
-                        style={{ width: 'calc(100% - 200px)' }}
-                        addonBefore="Số tiền"
-                        addonAfter="VND"
-                        defaultValue="50,000,000"
-                        disabled
-                      />
-                      <Button
-                        type="primary"
-                        onClick={handlePayment}
-                        loading={isLoading}
-                        disabled={!contract}
-                        style={{ width: '200px' }}
-                      >
-                        Thanh toán
-                      </Button>
-                    </Input.Group>
-                    <Text type="secondary">Vui lòng tải lên hợp đồng đã ký trước khi thanh toán.</Text>
-                  </>
+                  <Input.Group compact>
+                    <Button
+                      type="primary"
+                      onClick={handlePayment}
+                      loading={isLoading}
+                      style={{ width: '200px' }}
+                    >
+                      Thanh toán
+                    </Button>
+                  </Input.Group>
                 )}
               </Space>
             </Card>
@@ -407,13 +417,6 @@ const AgencyProgressPage = () => {
                   format={() => `${Object.values(localDocuments).filter(Boolean).length}/2`}
                 />
               </Tooltip>
-              <Tooltip title="Trạng thái hợp đồng">
-                <Progress
-                  percent={contract ? 100 : 0}
-                  status={contract ? 'success' : 'active'}
-                  format={() => contract ? 'Đã tải lên' : 'Chưa tải lên'}
-                />
-              </Tooltip>
               <Tooltip title="Trạng thái thanh toán">
                 <Progress
                   percent={paymentStatus === 'completed' ? 100 : 0}
@@ -494,6 +497,13 @@ const AgencyProgressPage = () => {
         document={localDocuments.educationLicense}
         documentInfo={documentInfo.educationLicense}
         documentApproval={documentApproval.educationLicense}
+      />
+      <ContractDetailModal
+        visible={showContractDetailModal}
+        onClose={() => setShowContractDetailModal(false)}
+        contractDetail={contractDetail}
+        fromAgencyProgressPage={true}
+        agencyId={userLogin?.agencyId}
       />
     </div>
   );

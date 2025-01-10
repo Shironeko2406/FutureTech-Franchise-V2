@@ -31,6 +31,7 @@ import ReportReducer from "./ReducerAPI/ReportReducer";
 import ChapterMaterialReducer from "./ReducerAPI/ChapterMaterialReducer";
 import VideoReducer from "./ReducerAPI/VideoReducer";
 import PackageReducer from "./ReducerAPI/PackageReducer";
+import DashboardReducer from "./ReducerAPI/DashboardReducer";
 
 export const store = configureStore({
   reducer: {
@@ -67,5 +68,6 @@ export const store = configureStore({
     ChapterMaterialReducer,
     VideoReducer,
     PackageReducer,
+    DashboardReducer
   },
 });

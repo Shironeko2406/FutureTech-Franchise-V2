@@ -74,6 +74,7 @@ export const CreatePaymentContractActionAsync = (contractId) => {
             }
         } catch (error) {
             console.error(error);
+            message.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
         }
     };
 };

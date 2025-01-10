@@ -7,6 +7,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { GetAllDocumentsByAgencyIdActionAsync } from '../../../Redux/ReducerAPI/DocumentReducer';
 import ShowDocumentModal from '../../Modal/ShowDocumentModal';
+import { GetContractDetailByAgencyIdActionAsync } from '../../../Redux/ReducerAPI/ContractReducer';
+import { UpdateStatusAgencyActionAsync } from '../../../Redux/ReducerAPI/AgencyReducer';
+import ContractDetailModal from '../../Modal/ContractDetailModal';
+import CreateContractModal from '../../Modal/CreateContractModal';
 
 const { Title, Text, Paragraph } = Typography;
 const { Step } = Steps;
@@ -25,18 +29,18 @@ const AgencyDetail = () => {
     businessLicense: false,
     educationLicense: false
   });
-  const [contract, setContract] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [paymentStatus, setPaymentStatus] = useState('pending');
-  const [paymentAmount, setPaymentAmount] = useState(null);
   const [currentStep, setCurrentStep] = useState(0);
   const [documentApproval, setDocumentApproval] = useState({
     businessLicense: false,
     educationLicense: false
   });
+  const [showContractDetailModal, setShowContractDetailModal] = useState(false);
+  const [showCreateContractModal, setShowCreateContractModal] = useState(false);
 
   const dispatch = useDispatch();
   const documents = useSelector(state => state.DocumentReducer.documents);
+  const contractDetail = useSelector(state => state.ContractReducer.contractDetail);
 
   const fetchDocuments = async () => {
     if (id) {
@@ -44,6 +48,10 @@ const AgencyDetail = () => {
       await dispatch(GetAllDocumentsByAgencyIdActionAsync(id));
       setIsLoading(false);
     }
+  };
+
+  const fetchContractDetail = async () => {
+    await dispatch(GetContractDetailByAgencyIdActionAsync(id));
   };
 
   useEffect(() => {
@@ -75,6 +83,12 @@ const AgencyDetail = () => {
     });
   }, [documents]);
 
+  useEffect(() => {
+    if (currentStep === 1) {
+      fetchContractDetail();
+    }
+  }, [currentStep]);
+
   const handleShowDocumentModalOpen = (type) => {
     setShowDocumentModalVisible(prev => ({ ...prev, [type]: true }));
   };
@@ -88,19 +102,18 @@ const AgencyDetail = () => {
     const { status } = info.file;
     if (status === 'done') {
       message.success(`${info.file.name} hợp đồng đã được tải lên thành công.`);
-      setContract(info.file);
     } else if (status === 'error') {
       message.error(`Tải lên hợp đồng ${info.file.name} thất bại.`);
     }
   };
 
-  const handleActivate = () => {
+  const handleActivate = async () => {
     setIsLoading(true);
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      await dispatch(UpdateStatusAgencyActionAsync(id, 'Active'));
+    } finally {
       setIsLoading(false);
-      message.success('Trung tâm đã được kích hoạt thành công!');
-    }, 2000);
+    }
   };
 
   const nextStep = () => {
@@ -168,33 +181,32 @@ const AgencyDetail = () => {
           >
             <Card title="Bước 2: Tạo hợp đồng và Thanh toán" bordered={false}>
               <Space direction="vertical" style={{ width: '100%' }}>
-                <Upload
-                  action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                  onChange={handleContractUpload}
-                  maxCount={1}
-                >
-                  <Button icon={<UploadOutlined />} type="primary" style={{ marginBottom: '1rem' }}>
-                    Tải lên hợp đồng đã ký
+                {contractDetail ? (
+                  <Button type="primary" onClick={() => setShowContractDetailModal(true)}>
+                    Xem hợp đồng
                   </Button>
-                </Upload>
-                <Tag color={paymentStatus === 'completed' ? 'success' : 'warning'}>
-                  {paymentStatus === 'completed' ? 'Đã thanh toán' : 'Chưa thanh toán'}
-                </Tag>
-                {paymentStatus === 'completed' ? (
-                  <Text strong>Số tiền đã thanh toán: {paymentAmount?.toLocaleString('vi-VN')} VND</Text>
                 ) : (
-                  <Text type="secondary">Khách hàng chưa thanh toán</Text>
+                  <Button type="primary" onClick={() => setShowCreateContractModal(true)}>
+                    Tạo hợp đồng
+                  </Button>
                 )}
-                <Button
-                  type="primary"
-                  icon={<CheckCircleOutlined />}
-                  onClick={handleActivate}
-                  loading={isLoading}
-                  style={{ marginTop: '1rem', width: '100%' }}
-                  disabled={paymentStatus !== 'completed'}
-                >
-                  Kích hoạt trung tâm
-                </Button>
+                <Tag color={contractDetail && contractDetail.paidAmount > 0 ? 'success' : 'warning'}>
+                  {contractDetail && contractDetail.paidAmount > 0 ? 'Đã thanh toán' : 'Chưa thanh toán'}
+                </Tag>
+                {contractDetail && contractDetail.paidAmount > 0 && (
+                  <Text strong>Số tiền đã thanh toán: {contractDetail.paidAmount.toLocaleString('vi-VN')} VND</Text>
+                )}
+                {contractDetail && contractDetail.paidAmount > 0 && (
+                  <Button
+                    type="primary"
+                    icon={<CheckCircleOutlined />}
+                    onClick={handleActivate}
+                    loading={isLoading}
+                    style={{ marginTop: '1rem', width: '100%' }}
+                  >
+                    Kích hoạt trung tâm
+                  </Button>
+                )}
               </Space>
             </Card>
           </motion.div>
@@ -202,6 +214,11 @@ const AgencyDetail = () => {
       default:
         return null;
     }
+  };
+
+  const handleContractCreated = async () => {
+    await fetchContractDetail();
+    setShowCreateContractModal(false);
   };
 
   return (
@@ -256,16 +273,16 @@ const AgencyDetail = () => {
               </Tooltip>
               <Tooltip title="Trạng thái hợp đồng">
                 <Progress
-                  percent={contract ? 100 : 0}
-                  status={contract ? 'success' : 'active'}
-                  format={() => contract ? 'Đã tải lên' : 'Chưa tải lên'}
+                  percent={contractDetail ? 100 : 0}
+                  status={contractDetail ? 'success' : 'active'}
+                  format={() => contractDetail ? 'Đã tải lên' : 'Chưa tải lên'}
                 />
               </Tooltip>
               <Tooltip title="Trạng thái thanh toán">
                 <Progress
-                  percent={paymentStatus === 'completed' ? 100 : 0}
-                  status={paymentStatus === 'completed' ? 'success' : 'active'}
-                  format={() => paymentStatus === 'completed' ? 'Hoàn tất' : 'Chưa thanh toán'}
+                  percent={contractDetail && contractDetail.paidAmount > 0 ? 100 : 0}
+                  status={contractDetail && contractDetail.paidAmount > 0 ? 'success' : 'active'}
+                  format={() => contractDetail && contractDetail.paidAmount > 0 ? 'Hoàn tất' : 'Chưa thanh toán'}
                 />
               </Tooltip>
             </Space>
@@ -295,6 +312,7 @@ const AgencyDetail = () => {
                   <ul>
                     <li>Tạo hợp đồng và gửi cho khách hàng</li>
                     <li>Đợi khách hàng tải lên hợp đồng đã ký và thanh toán</li>
+                    <li>Nếu tất cả đã hoàn thành thì nhấn nút "Kích hoạt trung tâm"</li>
                   </ul>
                 </li>
               </ul>
@@ -323,6 +341,17 @@ const AgencyDetail = () => {
         documentInfo={documentInfo.educationLicense}
         documentApproval={documentApproval.educationLicense}
         agencyId={id}
+      />
+      <ContractDetailModal
+        visible={showContractDetailModal}
+        onClose={() => setShowContractDetailModal(false)}
+        contractDetail={contractDetail}
+      />
+      <CreateContractModal
+        visible={showCreateContractModal}
+        onClose={() => setShowCreateContractModal(false)}
+        agencyId={id}
+        onContractCreated={handleContractCreated}
       />
     </div>
   );

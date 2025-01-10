@@ -83,7 +83,10 @@ import AgencyActiveInfo from "./Manager/Page/AgencyActiveInfo/AgencyActiveInfo";
 import AgencyProgressFranchise from "./AgencyManager/Page/AgencyProgressFranchise/AgencyProgressFranchise";
 import ListTaskAgencyManager from "./AgencyManager/Page/ListTaskAgencyManager.jsx/ListTaskAgencyManager";
 import WorkTemplate from "./Admin/Page/WorkTemplate/WorkTemplate";
-import PaymentSuccess from "./AgencyManager/Page/PaymentSuccess.jsx/PaymentSuccess";
+import PaymentSuccess from "./AgencyManager/Page/PaymentSuccess/PaymentSuccess";
+import PaymentFailure from "./AgencyManager/Page/PaymentFailure/PaymentFailure";
+import PaymentMonthlySuccess from "./AgencyManager/Page/PaymentSuccess/PaymentMonthlySuccess";
+import PaymentMonthlyFailure from "./AgencyManager/Page/PaymentFailure/PaymentMonthlyFailure";
 import HomePageManagement from "./Admin/Page/HomePageManagement/HomePageManagement";
 import EquipmentList from "./AgencyManager/Page/EquipmentList/EquipmentList";
 import DocumentManagementAdmin from "./Admin/Page/DocumentManagementAdmin/DocumentManagementAdmin";
@@ -123,6 +126,7 @@ import CompareCourseSysInstructor from "./SystemInstructor/Page/CompareCourseSys
 import RelateCourse from "./Student/Page/RelateCourse/RelateCourse";
 import RegisCourseStudent from "./Student/Page/RegisCourseStudent/RegisCourseStudent";
 import PackageFranchise from "./Manager/Page/PackageFranchise/PackageFranchise";
+import Dashboard from "./Manager/Page/Dashboard/Dashboard";
 import CertificateClass from "./Student/Page/CertificateClass/CertificateClass";
 
 const LoadingOverlay = () => {
@@ -177,8 +181,8 @@ function App() {
                 <Route path="classes/:id" element={<ClassDetail />} />
                 <Route path="schedules" element={<ScheduleAgencyManager />} />
                 <Route path="list-task" element={<ListTaskAgencyManager />} />
-                {/* <Route path="" element={statusAgency === "active" ? (<AgencyDashboardPage />) : (<AgencyProgressPage />)} /> */}
-                <Route path="" element={<AgencyDashboardPage />} />
+                <Route path="" element={statusAgency === "active" ? (<AgencyDashboardPage />) : (<AgencyProgressPage />)} />
+                {/* <Route path="" element={<AgencyDashboardPage />} /> */}
                 <Route path="appointment-schedule" element={<AgencyManagerAppointment />} />
                 <Route path="appointment-schedule/details" element={<AgencyManagerAppointmentDetail />} />
                 <Route path="course" element={<CourseViewAgencyManager />} />
@@ -186,7 +190,10 @@ function App() {
                 <Route path="course-detail/:id/compare" element={<CompareCourseAgencyManager />} />
                 <Route path="accounts" element={<AgencyAccountManagement />} />
                 <Route path="profile" element={<Profile />} />
-                <Route path="payment-success" element={<PaymentSuccess />} />
+                <Route path="contract-payment-success" element={<PaymentSuccess />} />
+                <Route path="contract-payment-failure" element={<PaymentFailure />} />
+                <Route path="monthly-due-payment-success" element={<PaymentMonthlySuccess />} />
+                <Route path="monthly-due-payment-failure" element={<PaymentMonthlyFailure />} />
                 <Route path="equipments" element={<EquipmentList />} />
                 <Route path="reports" element={<ReportList />} />
                 <Route path="contracts" element={<ViewContractAgencyManager />} />
@@ -233,34 +240,35 @@ function App() {
               </Route>
             </Route>
 
-            <Route element={<ProtectedRoute requiredRole="Manager" />}>
-              <Route path="manager" element={<TempUIManager />}>
-                <Route path="course-category" element={<CourseCategoryManager />} />
-                <Route path="" element={<CourseManage />} />
-                <Route path="course-detail/:id" element={<CourseDetailManager />} />
-                <Route path="course-detail/:id/questions" element={<ViewQuestionChapterManager />} />
-                <Route path="slot" element={<SlotManager />} />
-                <Route path="course-detail/:id/compare" element={<CompareVerCourse />} />
-                <Route path="documents" element={<DocumentManagement />} />
-                <Route path="agency/:id/task-detail" element={<AgencyDetail />} />
-                <Route path="agency-active/:id" element={<AgencyActiveInfo />} />
-                <Route path="agency-active/:id/task-detail" element={<AgencyActiveDetailTask />} />
-                <Route path="agency" element={<AgencyManagement />} />
-                <Route path="agency/edit/:id" element={<AgencyEdit />} />
-                <Route path="agency-active" element={<AgencyActiveManagement />} />
-                <Route path="contracts" element={<ManageContractPage />} />
-                <Route path="contract/create" element={<CreateContractPage />} />
-                <Route path="appointment-schedule" element={<ManagerAppointment />} />
-                <Route path="appointment-schedule/details" element={<ManagerAppointmentDetail />} />
-                <Route path="list-task" element={<ListTaskManager />} />
-                <Route path="agency-active/:id/equipments" element={<EquipmentManagementPage />} />
-                <Route path="profile" element={<Profile />} />
-                <Route path="report" element={<ListReport />} />
-                <Route path="payments" element={<PaymentManagement />} />
-                <Route path="package" element={<PackageFranchise />} />
-                <Route path="payment-monthly" element={<PaymentMonthlyManager />} />
-              </Route>
+            {/* <Route element={<ProtectedRoute requiredRole="Manager" />}> */}
+            <Route path="manager" element={<TempUIManager />}>
+              <Route path="course-category" element={<CourseCategoryManager />} />
+              <Route path="" element={<CourseManage />} />
+              <Route path="course-detail/:id" element={<CourseDetailManager />} />
+              <Route path="course-detail/:id/questions" element={<ViewQuestionChapterManager />} />
+              <Route path="slot" element={<SlotManager />} />
+              <Route path="course-detail/:id/compare" element={<CompareVerCourse />} />
+              <Route path="documents" element={<DocumentManagement />} />
+              <Route path="agency/:id/task-detail" element={<AgencyDetail />} />
+              <Route path="agency-active/:id" element={<AgencyActiveInfo />} />
+              <Route path="agency-active/:id/task-detail" element={<AgencyActiveDetailTask />} />
+              <Route path="agency" element={<AgencyManagement />} />
+              <Route path="agency/edit/:id" element={<AgencyEdit />} />
+              <Route path="agency-active" element={<AgencyActiveManagement />} />
+              <Route path="contracts" element={<ManageContractPage />} />
+              <Route path="contract/create" element={<CreateContractPage />} />
+              <Route path="appointment-schedule" element={<ManagerAppointment />} />
+              <Route path="appointment-schedule/details" element={<ManagerAppointmentDetail />} />
+              <Route path="list-task" element={<ListTaskManager />} />
+              <Route path="agency-active/:id/equipments" element={<EquipmentManagementPage />} />
+              <Route path="profile" element={<Profile />} />
+              <Route path="report" element={<ListReport />} />
+              <Route path="payments" element={<PaymentManagement />} />
+              <Route path="package" element={<PackageFranchise />} />
+              <Route path="payment-monthly" element={<PaymentMonthlyManager />} />
+              <Route path="dashboard" element={<Dashboard />} />
             </Route>
+            {/* </Route> */}
 
             <Route element={<ProtectedRoute requiredRole="SystemInstructor" />}>
               <Route path="system-instructor" element={<TempUISystemInstructor />}>

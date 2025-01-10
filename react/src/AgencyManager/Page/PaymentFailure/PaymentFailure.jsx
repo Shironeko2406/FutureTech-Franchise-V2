@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Result, Button, Typography, Spin } from 'antd';
-import { CheckCircleOutlined, FileTextOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const { Title, Paragraph } = Typography;
 
-const PaymentSuccess = () => {
+const PaymentFailure = () => {
   const [contractId, setContractId] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -19,7 +19,7 @@ const PaymentSuccess = () => {
   }, [location]);
 
   const handleReturnToDashboard = () => {
-    navigate('/agency-manager/list-task');
+    navigate('/agency-manager/');
   };
 
   if (loading) {
@@ -33,12 +33,12 @@ const PaymentSuccess = () => {
   return (
     <Card>
       <Result
-        icon={<CheckCircleOutlined style={{ color: '#52c41a' }} />}
-        status="success"
-        title={<Title level={2}>Thanh toán hợp đồng thành công!</Title>}
+        icon={<CloseCircleOutlined style={{ color: '#ff4d4f' }} />}
+        status="error"
+        title={<Title level={2}>Thanh toán hợp đồng thất bại!</Title>}
         subTitle={
           <Paragraph>
-            Cảm ơn bạn đã thanh toán. Hợp đồng của bạn đã được xác nhận và có hiệu lực.
+            Đã xảy ra lỗi trong quá trình thanh toán. Vui lòng thử lại sau.
           </Paragraph>
         }
         extra={[
@@ -49,19 +49,9 @@ const PaymentSuccess = () => {
             Trở về
           </Button>
         ]}
-      >
-        {/* <div style={{ background: '#f0f2f5', padding: '24px', borderRadius: '2px' }}>
-          <Paragraph>
-            <strong>Mã hợp đồng:</strong> {contractCode}
-          </Paragraph>
-          <Paragraph>
-            Hợp đồng của bạn đã được kích hoạt. Bạn có thể xem chi tiết hợp đồng bằng cách nhấn vào nút "Xem chi tiết hợp đồng" ở trên.
-          </Paragraph>
-        </div> */}
-      </Result>
+      />
     </Card>
   );
 };
 
-export default PaymentSuccess;
-
+export default PaymentFailure;
