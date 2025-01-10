@@ -208,6 +208,7 @@ function App() {
                 <Route path=":className/:classId/quiz/:quizId" element={<QuizDescription />} />
                 <Route path=":className/:classId/quiz/:quizId/start" element={<QuizTest />} />
                 <Route path=":className/:classId/course/:courseId/score" element={<ScoreClass />} />
+                <Route path=":className/:classId/course/:courseId/certificate" element={<CertificateClass />} />
                 <Route path="" element={<ScheduleStudent />} />
                 <Route path="change-password" element={<ChangePassword />} />
                 <Route path="profile" element={<Profile />} />
