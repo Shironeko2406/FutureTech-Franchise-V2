@@ -11,8 +11,8 @@ const LeftSidebar = ({ onSidebarToggle }) => {
     // { type: 'link', label: 'Hợp đồng', path: '/admin/contracts', icon: 'clarity:contract-solid' },
     // { type: 'link', label: 'Tài liệu', path: '/admin/documents', icon: 'solar:document-bold-duotone' },
     { type: 'link', label: 'Chi nhánh', path: '/admin/agency-active', icon: 'solar:login-3-bold-duotone' },
-    { type: 'section', label: 'Mẫu công việc', icon: 'ti ti-dots' },
-    { type: 'link', label: 'Chi tiết', path: '/admin/work-template', icon: 'solar:file-text-bold-duotone' },
+    // { type: 'section', label: 'Mẫu công việc', icon: 'ti ti-dots' },
+    // { type: 'link', label: 'Chi tiết', path: '/admin/work-template', icon: 'solar:file-text-bold-duotone' },
   ];
 
   return (
