@@ -1,25 +1,39 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import './Profile.css'
 import { Card } from 'antd'
+import { useDispatch, useSelector } from 'react-redux';
+import { GetUserLoginActionAsync } from '../../../Redux/ReducerAPI/UserReducer';
+import { translateRoleToVietnamese } from '../../../Utils/TranslateRole';
+import { formatAddress } from '../../../Utils/FormatAddress';
 
 const Profile_2 = () => {
+  const { userProfile } = useSelector((state) => state.UserReducer);
+  console.log(userProfile)
+  const dispatch = useDispatch();
+  const formattedAddress = formatAddress(userProfile.agency?.address);
+
+
+  useEffect(() => {
+      dispatch(GetUserLoginActionAsync());
+    }, [dispatch]);
+
   return (
     <Card className='emp-profile'>
       <div className="row">
         <div className="col-md-4">
           <div className="profile-img">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS52y5aInsxSm31CvHOFHWujqUx_wWTS9iM6s7BAm21oEN_RiGoog" alt />
+            <img src={userProfile.urlImage || "/assets/images/profile/user-1.jpg"} alt />
           </div>
         </div>
         <div className="col-md-6">
           <div className="profile-head">
             <h5>
-              Kshiti Ghelani
+              {userProfile?.fullName}
             </h5>
             <h6>
-              Web Developer and Designer
+              {translateRoleToVietnamese(userProfile?.role)}
             </h6>
-            <p className="proile-rating">RANKINGS : <span>8/10</span></p>
+            <p className="proile-rating">Chi nhánh : <span>{formattedAddress}</span></p>
             <ul className="nav nav-tabs" id="myTab" role="tablist">
               <li className="nav-item">
                 <button className="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Chi tiết</button>
@@ -31,7 +45,7 @@ const Profile_2 = () => {
           </div>
         </div>
         <div className="col-md-2">
-          <input type="submit" className="btn btn-primary" name="btnAddMore" defaultValue="Edit Profile" />
+          <button type="submit" className="btn btn-primary">Cập nhật</button>
         </div>
       </div>
       <div className="row">
@@ -54,18 +68,10 @@ const Profile_2 = () => {
             <div className="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
               <div className="row">
                 <div className="col-md-6">
-                  <label>User Id</label>
+                  <label>Họ và tên</label>
                 </div>
                 <div className="col-md-6">
-                  <p>Kshiti123</p>
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-md-6">
-                  <label>Name</label>
-                </div>
-                <div className="col-md-6">
-                  <p>Kshiti Ghelani</p>
+                  <p>{userProfile?.fullName}</p>
                 </div>
               </div>
               <div className="row">
@@ -73,23 +79,31 @@ const Profile_2 = () => {
                   <label>Email</label>
                 </div>
                 <div className="col-md-6">
-                  <p>kshitighelani@gmail.com</p>
+                  <p>{userProfile?.email}</p>
                 </div>
               </div>
               <div className="row">
                 <div className="col-md-6">
-                  <label>Phone</label>
+                  <label>Số điện thoại</label>
                 </div>
                 <div className="col-md-6">
-                  <p>123 456 7890</p>
+                  <p>{userProfile?.phoneNumber}</p>
                 </div>
               </div>
               <div className="row">
                 <div className="col-md-6">
-                  <label>Profession</label>
+                  <label>Giới tính</label>
                 </div>
                 <div className="col-md-6">
-                  <p>Web Developer and Designer</p>
+                  <p>{userProfile?.gender === 'Female' ? 'Nữ' : 'Nam'}</p>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-md-6">
+                  <label>Ngày sinh</label>
+                </div>
+                <div className="col-md-6">
+                  <p>{new Date(userProfile?.dateOfBirth).toLocaleDateString('vi-VN')}</p>
                 </div>
               </div>
             </div>

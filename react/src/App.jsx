@@ -236,7 +236,7 @@ function App() {
                 {/* <Route path="schedule" element={<ScheduleTeaching />} /> */}
                 <Route path="" element={<ScheduleInstructor />} />
                 <Route path="schedules/attendances/:id" element={<AttendancePage />} />
-                <Route path="profile" element={<Profile />} />
+                <Route path="profile" element={<Profile_2 />} />
               </Route>
             </Route>
 
