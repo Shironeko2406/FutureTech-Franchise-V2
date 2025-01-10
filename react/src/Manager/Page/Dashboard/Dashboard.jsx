@@ -79,7 +79,7 @@ const Dashboard = () => {
     };
 
     return (
-        <Layout className="min-h-screen bg-gray-50">
+        <Layout className="min-h-screen" style={{ backgroundColor: '#f6f8fa' }}>
             <Content className="p-6">
                 <Card className="mb-6">
                     <div className="flex justify-between items-center mb-4">
