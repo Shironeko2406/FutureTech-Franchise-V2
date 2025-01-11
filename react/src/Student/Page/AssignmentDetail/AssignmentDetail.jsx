@@ -1,7 +1,7 @@
 // import React, { useEffect, useState } from "react";
 // import moment from "moment";
 // import { Card, Typography, Space, Button, Tag, Descriptions, Upload, Row, Col, Divider, Statistic, message } from "antd";
-// import { UploadOutlined, FileOutlined, ClockCircleOutlined, CheckCircleOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
+// import { UploadOutlined, FileOutlined, ClockCircleOutlined, CheckCircleOutlined, ExclamationCircleOutlined, EyeOutlined, StarOutlined, StarFilled } from "@ant-design/icons";
 // import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 // import { imageDB } from "../../../Firebasse/Config";
 // import { useDispatch, useSelector } from "react-redux";
@@ -9,7 +9,6 @@
 // import { useLoading } from "../../../Utils/LoadingContext";
 // import { GetAssignmentDetailByIdActionAsync } from "../../../Redux/ReducerAPI/AssignmentReducer";
 // import { StudentSubmitAssignmentActionAsync } from "../../../Redux/ReducerAPI/UserReducer";
-
 
 // const { Title, Paragraph, Text } = Typography;
 
@@ -44,7 +43,7 @@
 //   useEffect(() => {
 //     setLoading(true)
 //     dispatch(GetAssignmentDetailByIdActionAsync(assignmentId)).finally(() => setLoading(false))
-//   }, [ assignmentId])
+//   }, [assignmentId])
 
 //   const getStatusColor = (status) => {
 //     switch (status) {
@@ -139,6 +138,14 @@
 //     }
 //   };
 
+//   const handleViewAssignment = () => {
+//     if (assignmentDetail?.fileURL) {
+//       window.open(assignmentDetail.fileURL, '_blank');
+//     } else {
+//       message.error('Không có file đề bài');
+//     }
+//   };
+
 //   const renderSubmissionStatus = () => {
 //     if (!assignmentDetail?.asmSubmits) {
 //       return (
@@ -180,6 +187,28 @@
 //     );
 //   };
 
+//   const renderAssignmentType = () => {
+//     const isCompulsory = assignmentDetail?.type === "Compulsory";
+//     return (
+//       <Card>
+//         <Statistic
+//           title="Loại bài tập"
+//           value={isCompulsory ? "Bắt buộc" : "Không bắt buộc"}
+//           valueStyle={{ color: isCompulsory ? '#1890ff' : '#52c41a' }}
+//           prefix={isCompulsory ? <StarFilled /> : <StarOutlined />}
+//         />
+//         <Divider />
+//         <Paragraph>
+//           {isCompulsory ? (
+//             <Text strong type="danger">Bài tập này sẽ được tính điểm.</Text>
+//           ) : (
+//             <Text strong type="secondary">Bài tập này không tính điểm.</Text>
+//           )}
+//         </Paragraph>
+//       </Card>
+//     );
+//   };
+
 //   return (
 //     <Space direction="vertical" size="large" style={{ width: "100%" }}>
 //       <Card>
@@ -194,10 +223,18 @@
 //           </Col>
 //         </Row>
 //         <Paragraph>{assignmentDetail?.description ?? "Không có mô tả"}</Paragraph>
+//         <Button 
+//           type="primary" 
+//           icon={<EyeOutlined />} 
+//           onClick={handleViewAssignment}
+//           style={{ marginTop: '16px' }}
+//         >
+//           Xem đề bài
+//         </Button>
 //       </Card>
 
 //       <Row gutter={16}>
-//         <Col span={12}>
+//         <Col span={8}>
 //           <Card title="Thông tin thời gian">
 //             <Descriptions bordered column={1}>
 //               <Descriptions.Item label="Thời gian bắt đầu">
@@ -209,8 +246,11 @@
 //             </Descriptions>
 //           </Card>
 //         </Col>
-//         <Col span={12}>
+//         <Col span={8}>
 //           {renderSubmissionStatus()}
+//         </Col>
+//         <Col span={8}>
+//           {renderAssignmentType()}
 //         </Col>
 //       </Row>
 
@@ -256,8 +296,8 @@
 
 import React, { useEffect, useState } from "react";
 import moment from "moment";
-import { Card, Typography, Space, Button, Tag, Descriptions, Upload, Row, Col, Divider, Statistic, message } from "antd";
-import { UploadOutlined, FileOutlined, ClockCircleOutlined, CheckCircleOutlined, ExclamationCircleOutlined, EyeOutlined, StarOutlined, StarFilled } from "@ant-design/icons";
+import { Card, Typography, Space, Button, Tag, Descriptions, Upload, Row, Col, Divider, Statistic, message, Alert } from "antd";
+import { UploadOutlined, ClockCircleOutlined, CheckCircleOutlined, ExclamationCircleOutlined, EyeOutlined, StarOutlined, StarFilled, CheckSquareOutlined } from "@ant-design/icons";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { imageDB } from "../../../Firebasse/Config";
 import { useDispatch, useSelector } from "react-redux";
@@ -299,7 +339,7 @@ const AssignmentDetail = () => {
   useEffect(() => {
     setLoading(true)
     dispatch(GetAssignmentDetailByIdActionAsync(assignmentId)).finally(() => setLoading(false))
-  }, [assignmentId])
+  }, [assignmentId, dispatch, setLoading])
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -417,13 +457,15 @@ const AssignmentDetail = () => {
     }
 
     const { fileName, submitDate, scoreNumber, fileSubmitURL } = assignmentDetail.asmSubmits;
+    const isGraded = scoreNumber !== null;
+
     return (
       <Card>
         <Statistic
           title="Trạng thái nộp bài"
-          value="Đã nộp"
-          valueStyle={{ color: '#3f8600' }}
-          prefix={<CheckCircleOutlined />}
+          value={isGraded ? "Đã chấm điểm" : "Đã nộp"}
+          valueStyle={{ color: isGraded ? '#722ed1' : '#3f8600' }}
+          prefix={isGraded ? <CheckSquareOutlined /> : <CheckCircleOutlined />}
         />
         <Divider />
         <Descriptions column={1}>
@@ -436,9 +478,18 @@ const AssignmentDetail = () => {
             {submitDate ? moment(submitDate).format("DD/MM/YYYY HH:mm") : "N/A"}
           </Descriptions.Item>
           <Descriptions.Item label="Điểm số">
-            {scoreNumber !== null ? scoreNumber : "Chưa chấm điểm"}
+            {isGraded ? scoreNumber : "Chưa chấm điểm"}
           </Descriptions.Item>
         </Descriptions>
+        {isGraded && (
+          <Alert
+            message="Bài làm đã được chấm điểm"
+            description="Bạn không thể nộp lại bài tập này."
+            type="info"
+            showIcon
+            style={{ marginTop: '16px' }}
+          />
+        )}
       </Card>
     );
   };
@@ -511,7 +562,7 @@ const AssignmentDetail = () => {
       </Row>
 
       <Card>
-        {canSubmit && (
+        {canSubmit && !assignmentDetail?.asmSubmits?.scoreNumber && (
           <Space direction="vertical" size="large" style={{ width: "100%" }}>
             <Upload customRequest={handleUpload} onRemove={handleDeleteFile} fileList={fileList} accept=".zip" beforeUpload={(file) => {
               const isZip = file.type === 'application/zip' || file.type === 'application/x-zip-compressed';
@@ -543,12 +594,19 @@ const AssignmentDetail = () => {
             <ClockCircleOutlined /> Đã hết hạn
           </Paragraph>
         )}
+
+        {canSubmit && assignmentDetail?.asmSubmits?.scoreNumber && (
+          <Alert
+            message="Bài làm đã được chấm điểm"
+            description="Bạn không thể nộp lại bài tập này."
+            type="info"
+            showIcon
+          />
+        )}
       </Card>
     </Space>
   );
 };
 
 export default AssignmentDetail;
-
-
 
