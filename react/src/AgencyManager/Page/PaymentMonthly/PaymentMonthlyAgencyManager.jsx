@@ -71,17 +71,31 @@ const PaymentMonthlyAgencyManager = () => {
             }
         };
 
-        const config = statusConfig[status];
+        const config = statusConfig[status] || statusConfig.Completed;
 
         return (
-            <Tag color={config.color} style={{ backgroundColor: config.backgroundColor, borderColor: config.borderColor }}>
-                {config.text}
-            </Tag>
+            <div
+                style={{
+                    display: 'inline-block',
+                    padding: '3px 10px',
+                    borderRadius: '6px',
+                    backgroundColor: config.backgroundColor,
+                    border: `1px solid ${config.borderColor}`,
+                }}
+            >
+                <Text strong style={{ color: config.color }}>
+                    {config.text}
+                </Text>
+            </div>
         );
     };
 
     const handlePayment = (paymentUrl) => {
         window.open(paymentUrl, '_blank');
+    };
+
+    const formatCurrency = (amount) => {
+        return amount ? amount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) : '';
     };
 
     const columns = [
@@ -114,6 +128,7 @@ const PaymentMonthlyAgencyManager = () => {
             dataIndex: "amount",
             key: "amount",
             align: "center",
+            render: (amount) => formatCurrency(amount),
         },
         {
             title: "Trạng thái",
@@ -186,7 +201,6 @@ const PaymentMonthlyAgencyManager = () => {
                         visible={isDetailModalVisible}
                         onClose={handleDetailModalClose}
                         paymentDetails={selectedPaymentDetails}
-                        renderStatusBadge={renderStatusBadge}
                     />
                 )}
             </div>
