@@ -5,6 +5,7 @@ import { GetAssignmentDetailByIdActionAsync } from "./AssignmentReducer";
 import { getDataJSONStorage, setDataJSONStorage } from "../../Utils/UtilsFunction";
 import { setUserLogin } from "./AuthenticationReducer";
 import { GetAssignmentsByClassIdActionAsync } from "./ClassReducer";
+import { determineAccessStatus } from "../../Utils/DetermineAccessStatus ";
 
 const initialState = {
   userData: [],
@@ -18,7 +19,7 @@ const initialState = {
   totalItemsCount: 0,
   materialClass: {},
   scoreData: [],
-  certification: null
+  certification: null,
 };
 
 const UserReducer = createSlice({
@@ -57,7 +58,7 @@ const UserReducer = createSlice({
     },
     setCertificate: (state, action) => {
       state.certification = action.payload
-    }
+    },
   },
 });
 
@@ -212,12 +213,33 @@ export const GetClassSchedulesByLoginActionAsync = (startDate, endDate) => {
   };
 };
 
+// export const GetClassOfUserLoginActionAsync = () => {
+//   return async (dispatch) => {
+//     try {
+//       const res = await httpClient.get(`/api/v1/users/mine/classes`);
+//       if (res.isSuccess && res.data) {
+//         dispatch(setCLassOfUserLogin(res.data));
+//       } else {
+//         message.error(`${res.message}`);
+//       }
+//     } catch (error) {
+//       console.error(error);
+//     }
+//   };
+// };
+
 export const GetClassOfUserLoginActionAsync = () => {
   return async (dispatch) => {
     try {
       const res = await httpClient.get(`/api/v1/users/mine/classes`);
       if (res.isSuccess && res.data) {
-        dispatch(setCLassOfUserLogin(res.data));
+        // Xử lý thêm trường canAccessMaterial vào từng lớp học
+        const classesFormatData = res.data.map((classItem) => ({
+          ...classItem,
+          canAccessMaterial: determineAccessStatus(classItem.startDate), // Thêm trạng thái quyền truy cập
+        }));
+        // Cập nhật Redux state với danh sách lớp học đã được thêm trường canAccessMaterial
+        dispatch(setCLassOfUserLogin(classesFormatData));
       } else {
         message.error(`${res.message}`);
       }
@@ -226,6 +248,7 @@ export const GetClassOfUserLoginActionAsync = () => {
     }
   };
 };
+
 
 export const GetManagerUserAddAppointmentActionAsync = (filter) => {
   return async (dispatch) => {

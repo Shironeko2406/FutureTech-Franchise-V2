@@ -128,6 +128,7 @@ import RegisCourseStudent from "./Student/Page/RegisCourseStudent/RegisCourseStu
 import PackageFranchise from "./Manager/Page/PackageFranchise/PackageFranchise";
 import Dashboard from "./Manager/Page/Dashboard/Dashboard";
 import CertificateClass from "./Student/Page/CertificateClass/CertificateClass";
+import MaterialClassNotStart from "./Student/Page/MaterialClassNotStart/MaterialClassNotStart";
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -206,6 +207,7 @@ function App() {
             <Route element={<ProtectedRoute requiredRole="Student" />}>
               <Route path="student" element={<TempUIStudent />}>
                 <Route path=":className/course/:courseId/chapter/:number" element={<MaterialClass />} />
+                <Route path=":className/course/:courseId/not-start" element={<MaterialClassNotStart />} />
                 <Route path=":className/course/:courseId/chapter/:number/material/:materialNumber/video" element={<VideoPageMaterial />} />
                 <Route path=":className/course/:courseId/chapter/:number/material/:materialNumber/reading" element={<ReadingPageMaterial />} />
                 <Route path=":className/course/:courseId/chapter/:number" element={<MaterialClass />} />

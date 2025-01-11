@@ -197,7 +197,7 @@ const EditQuizModal = ({ visible, onClose, quiz}) => {
                     Hủy
                   </Button>
                   <Button type="primary" htmlType="submit">
-                    Cập nhật
+                    Thêm câu hỏi
                   </Button>
                 </Space>
               </Form.Item>
