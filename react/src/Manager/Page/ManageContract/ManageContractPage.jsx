@@ -6,6 +6,7 @@ import { GetContractsActionAsync } from "../../../Redux/ReducerAPI/ContractReduc
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import ContractDetailModal from "../../Modal/ContractDetailModal"; // Import the modal
+import CreateContractModal from "../../Modal/CreateContractModal"; // Import the modal
 
 const { Text } = Typography;
 
@@ -19,12 +20,18 @@ const ManageContractPage = () => {
     const [dateRange, setDateRange] = useState([null, null]); // Add date range state
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedContract, setSelectedContract] = useState(null);
+    const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
+    const [contractToRenew, setContractToRenew] = useState(null);
     const navigate = useNavigate();
 
-    useEffect(() => {
+    const refreshContracts = () => {
         setLoading(true);
         const [startDate, endDate] = dateRange || [null, null];
         dispatch(GetContractsActionAsync(pageIndex, pageSize, startDate, endDate, searchInput)).finally(() => setLoading(false));
+    };
+
+    useEffect(() => {
+        refreshContracts();
     }, [dispatch, pageIndex, pageSize, searchInput, dateRange]); // Add dateRange dependency
 
     const handleTableChange = (pagination) => {
@@ -54,6 +61,16 @@ const ManageContractPage = () => {
     const handleModalClose = () => {
         setIsModalVisible(false);
         setSelectedContract(null);
+    };
+
+    const handleRenewClick = (contract) => {
+        setContractToRenew(contract);
+        setIsCreateModalVisible(true);
+    };
+
+    const handleCreateModalClose = () => {
+        setIsCreateModalVisible(false);
+        setContractToRenew(null);
     };
 
     const columns = [
@@ -123,6 +140,22 @@ const ManageContractPage = () => {
             align: "center",
             render: (text) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(text),
         },
+        {
+            title: "Hành động",
+            key: "action",
+            align: "center",
+            render: (text, record) => {
+                const endDate = moment(record.endTime);
+                const currentDate = moment();
+                const isWithinTwoMonths = endDate.diff(currentDate, 'months') <= 2;
+
+                return isWithinTwoMonths ? (
+                    <Button type="primary" onClick={() => handleRenewClick(record)}>
+                        Gia hạn hợp đồng
+                    </Button>
+                ) : null;
+            },
+        },
     ];
 
     return (
@@ -173,6 +206,15 @@ const ManageContractPage = () => {
                     visible={isModalVisible}
                     onClose={handleModalClose}
                     contractDetail={selectedContract}
+                />
+                <CreateContractModal
+                    visible={isCreateModalVisible}
+                    onClose={handleCreateModalClose}
+                    agencyId={contractToRenew?.agencyId}
+                    onContractCreated={() => {
+                        handleCreateModalClose();
+                        refreshContracts(); // Refresh contracts list
+                    }}
                 />
             </div>
         </div>
