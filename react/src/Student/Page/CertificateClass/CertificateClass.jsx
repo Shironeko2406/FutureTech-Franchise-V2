@@ -119,7 +119,6 @@ const CertificateClass = () => {
   const { certification, scoreData, courseName, currentClass } = location.state;
   const totals = scoreData.filter(item => item.isTotal );
 
-  console.log(currentClass)
   const handleDownload = async () => {
     try {
       const response = await fetch(certification);
