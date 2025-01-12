@@ -7,8 +7,6 @@ import { GetScoreOfClassForStudentActionAsync } from "../../../Redux/ReducerAPI/
 import { GetPercentCourseActionAsync } from "../../../Redux/ReducerAPI/CourseReducer";
 import { useLoading } from "../../../Utils/LoadingContext";
 
-const { Title } = Typography;
-
 const StyledTable = styled(Table)`
   --border-color: #e5e7eb;
 
@@ -65,11 +63,13 @@ const StyledTable = styled(Table)`
 
 const ScoreClass = () => {
   const {className, classId, courseId} = useParams();
-  const { scoreData, certification } = useSelector((state) => state.UserReducer);
+  const { scoreData, certification, materialClass, classOfUserLogin } = useSelector((state) => state.UserReducer);
   const { percentCourseProgress } = useSelector((state) => state.CourseReducer);
   const dispatch = useDispatch()
   const {setLoading} = useLoading()
   const navigate = useNavigate()
+  const currentClass = classOfUserLogin?.find(c => c.className === className);
+  console.log(scoreData)
 
   useEffect(()=>{
     setLoading(true)
@@ -80,7 +80,13 @@ const ScoreClass = () => {
   },[classId])
 
   const handleNavigateToCertificate = () => {
-    navigate(`/student/${className}/${classId}/course/${courseId}/certificate`, { state: { certification, scoreData } });
+    const dataCertificate = {
+      certification,
+      scoreData,
+      courseName: materialClass?.name, 
+      currentClass
+    };
+    navigate(`/student/${className}/${classId}/course/${courseId}/certificate`, { state: dataCertificate });
   };
 
   const getRowCount = (type) => {
@@ -171,17 +177,34 @@ const ScoreClass = () => {
     },
   ];
 
+  // const getOverallStatus = () => {
+  //   const averageScore = scoreData.find(item => item.key === 'average')?.score.toFixed(2);
+  //   const passed = averageScore >= 5.0
+  //   return {
+  //     status: passed ? "success" : "exception",
+  //     label: passed ? "Đạt" : "Không đạt",
+  //     percent: percentCourseProgress,
+  //     score: averageScore
+  //   }
+  // }
+
   const getOverallStatus = () => {
-    const averageScore = scoreData.find(item => item.key === 'average')?.score.toFixed(2);
-    const passed = averageScore >= 5.0
+    const averageScore = scoreData.find(item => item.key === 'average')?.score;
+  
+    const passed = scoreData.every(item => {
+      if (item.isTotal) return true;
+      
+      return item.score >= item.completionCriteria;
+    }) && averageScore >= 5.0;
+  
     return {
       status: passed ? "success" : "exception",
       label: passed ? "Đạt" : "Không đạt",
       percent: percentCourseProgress,
-      score: averageScore
-    }
-  }
-
+      score: averageScore?.toFixed(2) || '0.00'
+    };
+  };
+  
   const status = getOverallStatus()
 
   return (
