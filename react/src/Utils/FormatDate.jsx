@@ -13,8 +13,5 @@ export const calculateDuration = (startDate, endDate) => {
   const months = differenceInMonths(end, start);
   const weeks = differenceInWeeks(end, start) % 4;
 
-  if (months === 0 && weeks > 0) {
-    return `${weeks} tuần`;
-  }
-  return `${months} tháng ${weeks} tuần`;
+  return `${months ? `${months} tháng ` : ''}${weeks} tuần`;
 };
