@@ -1,10 +1,10 @@
-"use client"
-
-import { Card, Typography, Row, Col, Space, Image } from "antd"
+import { Card, Typography, Row, Col, Space, Image, Button } from "antd"
 import styled from "styled-components"
 import PDFViewer from "pdf-viewer-reactjs"
 import { useLocation, useParams } from "react-router-dom"
 import { useSelector } from "react-redux"
+import { DownloadOutlined } from "@ant-design/icons"
+import { calculateDuration, formatDate } from "../../../Utils/FormatDate"
 
 const { Title, Text, Paragraph } = Typography
 
@@ -40,6 +40,7 @@ const PDFContainer = styled.div`
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
   background: white;
   border: 1px solid #e6e8eb;
+  cursor: pointer
 `
 
 const StyledAvatar = styled.div`
@@ -107,13 +108,39 @@ const CompletionBadge = styled.div`
   margin-bottom: 24px;
 `
 
+const DownloadButton = styled(Button)`
+  margin-top: 16px;
+`
+
 const CertificateClass = () => {
   const { userLogin } = useSelector((state) => state.AuthenticationReducer);
   const location = useLocation();
   const {className} = useParams()
-  const { certification, scoreData } = location.state;
+  const { certification, scoreData, courseName, currentClass } = location.state;
   const totals = scoreData.filter(item => item.isTotal );
 
+  console.log(currentClass)
+  const handleDownload = async () => {
+    try {
+      const response = await fetch(certification);
+      const blob = await response.blob();
+      
+      const blobUrl = window.URL.createObjectURL(blob);
+      
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = `${userLogin.fullName}_Certificate.pdf`;
+      
+      document.body.appendChild(link);
+      link.click();
+      
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error('Download failed:', error);
+    }
+  };
+  
   return (
     <StyledCard>
       <UserInfoSection>
@@ -134,11 +161,12 @@ const CertificateClass = () => {
             
             <StyledTitle level={3}>Hoàn thành bởi {userLogin.fullName}</StyledTitle>
             <Text type="secondary" style={{ fontSize: '16px', display: 'block', marginBottom: '8px' }}>
-              12 Tháng 1, 2024
+              {formatDate(currentClass.startDate)}
             </Text>
-            <Text style={{ fontSize: '15px', color: "#666" }}>
-              Khoảng 1 tháng với 10 giờ mỗi tuần để hoàn thành
+            <Text style={{ fontSize: '15px', color: "#666", display: 'block' }}>
+              Khoảng {calculateDuration(currentClass.startDate, currentClass.endDate)} để hoàn thành
             </Text>
+            <DownloadButton type="primary" icon={<DownloadOutlined />} onClick={handleDownload}>Tải chứng chỉ</DownloadButton>
           </Col>
           <Col xs={24} md={16}>
             <Space direction="vertical" size="large" style={{ width: '100%' }}>
@@ -165,13 +193,13 @@ const CertificateClass = () => {
               borderRadius: '8px',
               border: '1px solid #e6e8eb'
             }}>
-              Tài khoản của {userLogin.fullName} đã được xác minh. Trung tâm IT FutureTech chứng nhận việc hoàn thành thành công chương trình Chuyên môn Quản lý Dự án của lớp học {className}.
+              Tài khoản của {userLogin.fullName} đã được xác minh. Trung tâm IT FutureTech chứng nhận việc hoàn thành thành công chương trình {courseName} của lớp học {className}.
             </Paragraph>
           </Col>
         </Row>
       </UserInfoSection>
       
-      <PDFContainer>
+      <PDFContainer onClick={() => window.open(certification, '_blank')}>
         <PDFViewer
           document={{
             url: certification,
