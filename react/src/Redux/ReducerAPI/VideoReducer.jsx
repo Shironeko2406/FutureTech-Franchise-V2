@@ -63,3 +63,24 @@ export const CreateVideoActionAsync = (name, file) => {
     }
   };
 };
+
+export const DeleteVideoActionAsync = (id) => {
+  return async (dispatch) => {
+    try {
+      const res = await httpClient.delete(`/api/v1/videos`, {
+        params: { id: id },
+      });
+      if (res.isSuccess && res.data) {
+        message.success(`${res.message}`);
+        await dispatch(GetVideoActionAsync())
+        return true;
+      } else {
+        message.error(`${res.message}`);
+        return false;
+      }
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  };
+};

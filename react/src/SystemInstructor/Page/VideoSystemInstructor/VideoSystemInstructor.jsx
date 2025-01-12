@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLoading } from "../../../Utils/LoadingContext";
-import { GetVideoActionAsync } from "../../../Redux/ReducerAPI/VideoReducer";
-import { Button, message, Space, Table } from "antd";
-import { CopyOutlined, UploadOutlined } from "@ant-design/icons";
+import { DeleteVideoActionAsync, GetVideoActionAsync } from "../../../Redux/ReducerAPI/VideoReducer";
+import { Button, message, Popconfirm, Space, Table } from "antd";
+import { CopyOutlined, DeleteOutlined, UploadOutlined } from "@ant-design/icons";
 import VideoModal from "../../Modal/VideoModal";
 import CreateVideoModal from "../../Modal/CreateVideoModal";
 
@@ -42,6 +42,12 @@ const VideoSystemInstructor = () => {
       }
     );
   };
+
+  const handleDelete = async (videoId) =>{
+    setLoading(true)
+    await dispatch(DeleteVideoActionAsync(videoId))
+    setLoading(false)
+  }
 
   const columns = [
     {
@@ -87,7 +93,17 @@ const VideoSystemInstructor = () => {
       key: "action",
       align: "center",
       render: (_, record) => (
-        <Button type="primary" icon={<CopyOutlined />} onClick={() => copyToClipboard(record.url)}></Button>
+        <Space size="middle">
+          <Button type="primary" icon={<CopyOutlined />} onClick={() => copyToClipboard(record.url)}></Button>
+          <Popconfirm
+              title="Bạn muốn xóa video này?"
+              onConfirm={() => handleDelete(record.id)}
+              okText="Đồng ý"
+              cancelText="Hủy"
+            >
+              <Button type="primary" danger icon={<DeleteOutlined />} />
+            </Popconfirm>
+        </Space>
       ),
     },
   ];
