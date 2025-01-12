@@ -115,19 +115,19 @@ const PaymentMonthly = () => {
                 </Button>
             ),
         },
-        {
-            title: "Mô tả",
-            dataIndex: "description",
-            key: "description",
-            align: "center",
-            render: (text) => (
-                <Tooltip title={text}>
-                    <span>
-                        {text.length > 20 ? `${text.substring(0, 20)}...` : text}
-                    </span>
-                </Tooltip>
-            ),
-        },
+        // {
+        //     title: "Mô tả",
+        //     dataIndex: "description",
+        //     key: "description",
+        //     align: "center",
+        //     render: (text) => (
+        //         <Tooltip title={text}>
+        //             <span>
+        //                 {text.length > 20 ? `${text.substring(0, 20)}...` : text}
+        //             </span>
+        //         </Tooltip>
+        //     ),
+        // },
         {
             title: "Chi nhánh",
             dataIndex: "agencyId",
@@ -158,7 +158,7 @@ const PaymentMonthly = () => {
                 { text: 'Thất bại', value: 'Fail' },
             ],
             filterMultiple: false,
-            // render: (status) => renderStatusBadge(status),
+            render: (status) => renderStatusBadge(status),
         },
         {
             title: "Ngày thanh toán",

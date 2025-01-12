@@ -115,7 +115,7 @@ const AgencyActiveInfo = () => {
       title: "Doanh Thu",
       dataIndex: "totalRevenue",
       key: "totalRevenue",
-      render: (revenue) => `${revenue.toLocaleString()} VND`,
+      render: (revenue) => `${Math.floor(revenue).toLocaleString()} VND`, // Remove decimal part
     },
   ];
 
@@ -196,7 +196,7 @@ const AgencyActiveInfo = () => {
               <Card>
                 <Statistic
                   title="Tổng Doanh Thu"
-                  value={RevenueSummary}
+                  value={Math.floor(RevenueSummary)} // Remove decimal part
                   prefix={<DollarOutlined />}
                   suffix="VND"
                   groupSeparator=","
@@ -225,7 +225,7 @@ const AgencyActiveInfo = () => {
               <Card>
                 <Statistic
                   title="Tổng Phí Hàng Tháng"
-                  value={totalMonthlyFees}
+                  value={Math.floor(totalMonthlyFees)} // Remove decimal part
                   prefix={<MoneyCollectOutlined />}
                   suffix="VND"
                   groupSeparator=","
@@ -236,7 +236,7 @@ const AgencyActiveInfo = () => {
               <Card>
                 <Statistic
                   title="Tổng Hoàn Tiền"
-                  value={totalRefunds}
+                  value={Math.floor(totalRefunds)} // Remove decimal part
                   prefix={<RollbackOutlined />}
                   suffix="VND"
                   groupSeparator=","
@@ -247,7 +247,7 @@ const AgencyActiveInfo = () => {
               <Card>
                 <Statistic
                   title="Tổng Lợi Nhuận Thực Tế Thu Được"
-                  value={totalActualProfits}
+                  value={Math.floor(totalActualProfits)} // Remove decimal part
                   prefix={<PieChartOutlined />}
                   suffix="VND"
                   groupSeparator=","

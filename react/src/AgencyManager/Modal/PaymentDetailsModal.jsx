@@ -16,6 +16,15 @@ const PaymentDetailsModal = ({ visible, onClose, paymentDetails }) => {
         return colors[status] || "default";
     };
 
+    const getStatusText = (status) => {
+        const statusText = {
+            NotCompleted: 'Chưa hoàn thành',
+            Completed: 'Hoàn thành',
+            Fail: 'Thất bại'
+        };
+        return statusText[status] || 'Hoàn thành';
+    };
+
     const formatCurrency = (amount) => {
         return amount ? amount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) : '';
     };
@@ -33,7 +42,7 @@ const PaymentDetailsModal = ({ visible, onClose, paymentDetails }) => {
                 <Descriptions.Item label="Số tiền">{formatCurrency(paymentDetails.amount)}</Descriptions.Item>
                 <Descriptions.Item label="Trạng thái">
                     <Tag color={getStatusColor(paymentDetails.status)}>
-                        {paymentDetails.status}
+                        {getStatusText(paymentDetails.status)}
                     </Tag>
                 </Descriptions.Item>
                 <Descriptions.Item label="Doanh thu">{formatCurrency(paymentDetails.revenue)}</Descriptions.Item>
