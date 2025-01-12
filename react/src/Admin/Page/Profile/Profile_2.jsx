@@ -1,16 +1,21 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import './Profile.css'
 import { Card } from 'antd'
 import { useDispatch, useSelector } from 'react-redux';
 import { GetUserLoginActionAsync } from '../../../Redux/ReducerAPI/UserReducer';
 import { translateRoleToVietnamese } from '../../../Utils/TranslateRole';
 import { formatAddress } from '../../../Utils/FormatAddress';
+import EditProfileModal from '../../Modal/EditProfileModal';
 
 const Profile_2 = () => {
   const { userProfile } = useSelector((state) => state.UserReducer);
   console.log(userProfile)
   const dispatch = useDispatch();
   const formattedAddress = formatAddress(userProfile.agency?.address);
+  const [editProfileOpen, setEditProfileOpen] = useState(false)
+
+  const showModalEdit = () => setEditProfileOpen(true);
+  const closeModalEdit = () => setEditProfileOpen(false);
 
 
   useEffect(() => {
@@ -45,7 +50,7 @@ const Profile_2 = () => {
           </div>
         </div>
         <div className="col-md-2">
-          <button type="submit" className="btn btn-primary">Cập nhật</button>
+          <button type="submit" className="btn btn-primary" onClick={showModalEdit}>Cập nhật</button>
         </div>
       </div>
       <div className="row">
@@ -158,6 +163,11 @@ const Profile_2 = () => {
           </div>
         </div>
       </div>
+
+      <EditProfileModal
+        visible={editProfileOpen}
+        onClose={closeModalEdit}
+      />
     </Card>
   )
 }

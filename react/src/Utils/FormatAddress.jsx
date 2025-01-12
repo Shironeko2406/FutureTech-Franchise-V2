@@ -11,6 +11,6 @@ export const formatAddress = (address) => {
     // Lấy tên đường (phần đầu tiên)
     const street = addressParts[0]?.trim();
     
-    return `${city} - ${street}, ${districtWard}`;
+    return `Chi nhánh ${city} - ${street}, ${districtWard}`;
   };
   

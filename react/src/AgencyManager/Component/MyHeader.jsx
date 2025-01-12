@@ -12,6 +12,7 @@ import styled from "styled-components";
 import { useNotifications } from "../../Utils/NotificationContext";
 import { useDispatch, useSelector } from "react-redux";
 import { MarkNotificationReadActionAsync } from "../../Redux/ReducerAPI/NotificationReducer";
+import { formatAddress } from "../../Utils/FormatAddress";
 
 const NotificationWrapper = styled.div`
   background: #ffffff;
@@ -162,6 +163,8 @@ const MyHeader = ({ onSidebarToggle }) => {
           id="navbarNav"
         >
           <ul className="navbar-nav flex-row ms-auto align-items-center justify-content-end">
+            <a className="me-2" style={{ fontSize: '15px', color: '#818182' }}><span>{formatAddress(userLogin.agency?.address)}</span></a>
+            
             <li className="nav-item">
               <Dropdown 
                 dropdownRender={() => dropdownContent} 

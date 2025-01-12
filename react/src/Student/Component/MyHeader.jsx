@@ -8,6 +8,7 @@ import {
 import { message } from "antd";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { formatAddress } from "../../Utils/FormatAddress";
 
 const MyHeader = ({ onSidebarToggle }) => {
   const navigate = useNavigate();
@@ -32,6 +33,8 @@ const MyHeader = ({ onSidebarToggle }) => {
           id="navbarNav"
         >
           <ul className="navbar-nav flex-row ms-auto align-items-center justify-content-end">
+            <a className="me-2" style={{ fontSize: '15px', color: '#818182' }}><span>{formatAddress(userLogin.agency?.address)}</span></a>
+
             <li className="nav-item">
               <a className="nav-link nav-icon-hover">
                 <i className="ti ti-bell-ringing" />

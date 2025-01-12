@@ -5,7 +5,6 @@ import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import { GetClassesForStudentByAgencyIdActionAsync } from '../../../Redux/ReducerAPI/ClassReducer';
-// import { RegisterCourseActionAsync } from "../../../Redux/ReducerAPI/RegisterCourseReducer";
 import * as S from './RegisCourseStudentStyles';
 import { RegisterCourseStudentActionAsync } from '../../../Redux/ReducerAPI/UserReducer';
 
@@ -38,7 +37,6 @@ const RegisCourseStudent = () => {
     console.log('registrationData:', registrationData);
     const [selectedDays, setSelectedDays] = useState([]);
     const [selectedTime, setSelectedTime] = useState("");
-    const [selectedSlot, setSelectedSlot] = useState("");
     const [selectedClass, setSelectedClass] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const dispatch = useDispatch();
