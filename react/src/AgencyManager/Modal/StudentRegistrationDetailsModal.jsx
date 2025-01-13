@@ -76,11 +76,11 @@ export default function StudentRegistrationDetailsModal({ visible, onClose, stud
                 onCancel={onClose}
                 width={700}
                 footer={[
-                    studentDetails.paymentStatus === 'RequestRefund' && (
-                        <Button key="refund" type="primary" onClick={handleRefundClick}>
-                            Hoàn tiền
-                        </Button>
-                    ),
+                    // studentDetails.paymentStatus === 'RequestRefund' && (
+                    //     <Button key="refund" type="primary" onClick={handleRefundClick}>
+                    //         Hoàn tiền
+                    //     </Button>
+                    // ),
                     <Button key="close" onClick={onClose}>
                         Đóng
                     </Button>
