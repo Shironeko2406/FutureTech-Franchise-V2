@@ -24,7 +24,7 @@ const CourseDetailAgencyManager = () => {
         <div>
             <ViewSyllabus />
             <ViewChapter />
-            <ViewSession />
+            {/* <ViewSession /> */}
             <ViewAssessment />
         </div>
     );
