@@ -95,11 +95,24 @@ const ShowListSubmitAssignmentAndScores = ({ visible, onClose, assignment }) => 
       "Tên file nộp": user.submitFileName || '',
       "Điểm": user.score,
     }));
-
+  
     const ws = XLSX.utils.json_to_sheet(data);
+  
+    // Cấu hình độ rộng cho các cột
+    ws['!cols'] = [
+      { wch: 35 }, // Độ rộng cột "Mã người dùng"
+      { wch: 20 }, // Độ rộng cột "Tên"
+      { wch: 25 }, // Độ rộng cột "Tên đăng nhập"
+      { wch: 40 }, // Độ rộng cột "Tên file nộp"
+      { wch: 10 }, // Độ rộng cột "Điểm"
+    ];
+  
+    // Tạo workbook và append worksheet
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Users');
-    XLSX.writeFile(wb, `user_scores_${assignment.title}.xlsx`);
+  
+    // Xuất file
+    XLSX.writeFile(wb, `${className}_${assignment.title}_scores.xlsx`);
   };
 
   const handleDownloadAllFiles = async () => {
