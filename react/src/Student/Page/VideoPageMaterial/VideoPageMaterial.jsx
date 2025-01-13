@@ -4,7 +4,7 @@ import { Card, Typography, Breadcrumb, Tabs, Button } from 'antd';
 import { BookOutlined, CheckCircleOutlined, CheckOutlined, DownloadOutlined, HomeOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import DOMPurify from "dompurify";
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLoading } from '../../../Utils/LoadingContext';
 import { MarkChapterMaterialByIdActionAsync } from '../../../Redux/ReducerAPI/UserReducer';
@@ -50,14 +50,14 @@ const VideoPageMaterial = () => {
   const [playing, setPlaying] = useState(false);
   const { materialClass } = useSelector((state) => state.UserReducer)
   const [chapterMaterial, setChapterMaterial] = useState({})
-  const {number, materialNumber, courseId} = useParams()
+  const {className, number, materialNumber, courseId} = useParams()
   const [showMiniPlayer, setShowMiniPlayer] = useState(false);
   const videoRef = useRef(null);
   const miniPlayerRef = useRef(null);
   const { setLoading } = useLoading();
   const dispatch = useDispatch()
-  console.log(chapterMaterial)
-
+  const navigate = useNavigate();
+  
   useEffect(() => {
     const material =
       materialClass?.chapters
@@ -96,6 +96,71 @@ const VideoPageMaterial = () => {
     await dispatch(MarkChapterMaterialByIdActionAsync(dataSend, courseId))
     setLoading(false)
   }
+
+  const findAdjacentMaterial = (direction) => {
+    if (!materialClass || !materialClass.chapters || materialClass.chapters.length === 0) {
+      return null;
+    }
+
+    const currentChapter = materialClass.chapters.find(
+      (chapter) => chapter.number === parseInt(number, 10)
+    );
+
+    if (!currentChapter || !currentChapter.chapterMaterials || currentChapter.chapterMaterials.length === 0) {
+      return null;
+    }
+
+    const currentMaterialIndex = currentChapter.chapterMaterials.findIndex(
+      (material) => material.number === parseInt(materialNumber, 10)
+    );
+
+    if (direction === 'next') {
+      if (currentMaterialIndex < currentChapter.chapterMaterials.length - 1) {
+        return {
+          chapter: currentChapter,
+          material: currentChapter.chapterMaterials[currentMaterialIndex + 1],
+        };
+      } else {
+        const nextChapterIndex = materialClass.chapters.findIndex(
+          (chapter) => chapter.number === parseInt(number, 10)
+        ) + 1;
+        if (nextChapterIndex < materialClass.chapters.length) {
+          const nextChapter = materialClass.chapters[nextChapterIndex];
+          return {
+            chapter: nextChapter,
+            material: nextChapter.chapterMaterials[0],
+          };
+        }
+      }
+    } else if (direction === 'previous') {
+      if (currentMaterialIndex > 0) {
+        return {
+          chapter: currentChapter,
+          material: currentChapter.chapterMaterials[currentMaterialIndex - 1],
+        };
+      } else {
+        const previousChapterIndex = materialClass.chapters.findIndex(
+          (chapter) => chapter.number === parseInt(number, 10)
+        ) - 1;
+        if (previousChapterIndex >= 0) {
+          const previousChapter = materialClass.chapters[previousChapterIndex];
+          return {
+            chapter: previousChapter,
+            material: previousChapter.chapterMaterials[previousChapter.chapterMaterials.length - 1],
+          };
+        }
+      }
+    }
+    return null;
+  };
+
+  const handleNavigation = (direction) => {
+    const adjacentMaterial = findAdjacentMaterial(direction);
+    if (adjacentMaterial) {
+      navigate(`/student/${className}/course/${courseId}/chapter/${adjacentMaterial.chapter.number}/material/${adjacentMaterial.material.number}/${adjacentMaterial.material.urlVideo ? 'video' : 'reading'}`);
+      console.log(adjacentMaterial)
+    }
+  };
 
   const tabItems = [
     {
@@ -150,7 +215,6 @@ const VideoPageMaterial = () => {
 
   return (
     <Card>
-      {/* Navigation */}
       <div className="mb-4">
         <div className="d-flex justify-content-between align-items-center">
           <Breadcrumb
@@ -162,8 +226,8 @@ const VideoPageMaterial = () => {
             ]}
           />
           <div className="d-flex gap-2">
-            <Button icon={<LeftOutlined />}>Previous</Button>
-            <Button type="primary" icon={<RightOutlined />}>Next</Button>
+            <Button icon={<LeftOutlined />} onClick={() => handleNavigation('previous')} disabled={!findAdjacentMaterial('previous')}>Quay lại</Button>
+            <Button type="primary" icon={<RightOutlined />} onClick={() => handleNavigation('next')} disabled={!findAdjacentMaterial('next')}>Xem tiếp</Button>
           </div>
         </div>
       </div>
