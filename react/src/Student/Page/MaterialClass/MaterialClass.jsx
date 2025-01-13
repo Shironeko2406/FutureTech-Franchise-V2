@@ -227,9 +227,9 @@ export default function MaterialClass() {
 
           <Paragraph>{currentChapter?.description}</Paragraph>
           
-          <Button type="link" style={{ paddingLeft: 0 }}>
+          {/* <Button type="link" style={{ paddingLeft: 0 }}>
             Xem mục tiêu học tập
-          </Button>
+          </Button> */}
         </Panel>
       </Collapse>
 
