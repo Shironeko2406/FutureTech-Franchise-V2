@@ -110,19 +110,19 @@ const PaymentMonthlyAgencyManager = () => {
                 </Button>
             ),
         },
-        {
-            title: "Mô tả",
-            dataIndex: "description",
-            key: "description",
-            align: "center",
-            render: (text) => (
-                <Tooltip title={text}>
-                    <span>
-                        {text.length > 20 ? `${text.substring(0, 20)}...` : text}
-                    </span>
-                </Tooltip>
-            ),
-        },
+        // {
+        //     title: "Mô tả",
+        //     dataIndex: "description",
+        //     key: "description",
+        //     align: "center",
+        //     render: (text) => (
+        //         <Tooltip title={text}>
+        //             <span>
+        //                 {text.length > 20 ? `${text.substring(0, 20)}...` : text}
+        //             </span>
+        //         </Tooltip>
+        //     ),
+        // },
         {
             title: "Số tiền",
             dataIndex: "amount",

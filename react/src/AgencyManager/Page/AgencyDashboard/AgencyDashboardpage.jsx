@@ -15,7 +15,7 @@ const StatisticCard = ({ title, value, prefix, suffix }) => (
   <Card hoverable className="h-full">
     <Statistic
       title={title}
-      value={value}
+      value={Math.floor(value)} // Remove decimal part
       prefix={prefix}
       suffix={suffix}
       groupSeparator=","
@@ -115,7 +115,7 @@ export default function AgencyDashboardPage() {
       title: "Doanh Thu",
       dataIndex: "totalRevenue",
       key: "totalRevenue",
-      render: (revenue) => `${revenue.toLocaleString()} VND`,
+      render: (revenue) => `${Math.floor(revenue).toLocaleString()} VND`, // Remove decimal part
     }
   ]
 

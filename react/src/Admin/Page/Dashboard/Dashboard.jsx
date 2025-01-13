@@ -4,23 +4,26 @@ import { Layout, Card, Row, Col, Statistic, Table, Select, DatePicker, Space } f
 import { DollarOutlined, TeamOutlined } from '@ant-design/icons';
 import { Line, Pie } from '@ant-design/charts';
 import { GetDashboardDataActionAsync } from '../../../Redux/ReducerAPI/DashboardReducer';
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 const { Content } = Layout;
 const { RangePicker } = DatePicker;
+
+const getDefaultDateRange = () => {
+    const startOfMonth = dayjs().startOf('month');
+    const endOfMonth = dayjs().endOf('month').endOf('year');
+    return [startOfMonth, endOfMonth];
+};
 
 const Dashboard = () => {
     const dispatch = useDispatch();
     const dashboardData = useSelector(state => state.DashboardReducer.dashboardData);
     const [isYearly, setIsYearly] = useState(false);
     const [topCourses, setTopCourses] = useState(5);
-    const [dateRange, setDateRange] = useState([
-        moment().startOf('year'),
-        moment().endOf('year')
-    ]);
+    const [dateRange, setDateRange] = useState(getDefaultDateRange());
 
     useEffect(() => {
-        if (dateRange.length === 2) {
+        if (dateRange && dateRange.length === 2) {
             const [from, to] = dateRange;
             dispatch(GetDashboardDataActionAsync({
                 from: from.format('YYYY-MM-DD'),
@@ -30,6 +33,17 @@ const Dashboard = () => {
             }));
         }
     }, [dateRange, isYearly, topCourses, dispatch]);
+
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            const [newStart, newEnd] = getDefaultDateRange();
+            if (dateRange && !dayjs(dateRange[0]).isSame(newStart, 'month')) {
+                setDateRange([newStart, newEnd]);
+            }
+        }, 3600000); // 1 hour
+
+        return () => clearInterval(intervalId);
+    }, [dateRange]);
 
     const revenueData = dashboardData.adminCourseRevenueDashboards || [];
     const totalCourseRevenue = dashboardData.totalCourseRevenue || 0;
@@ -46,14 +60,15 @@ const Dashboard = () => {
         data: revenueData?.map(item => ({
             date: isYearly ? item.year : item.month,
             value: item.revenue,
-            category: 'Doanh thu'
+            category: 'Doanh thu khóa học'
         })) || [],
         xField: 'date',
         yField: 'value',
         seriesField: 'category',
+        color: ['#1890ff'],
         yAxis: {
             label: {
-                formatter: (v) => `${v.toLocaleString()} đ`,
+                formatter: (v) => `${v.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}`,
             },
         },
         legend: { position: 'top' },
@@ -99,7 +114,14 @@ const Dashboard = () => {
                             picker="month"
                             placeholder={['Từ tháng', 'Đến tháng']}
                             value={dateRange}
-                            onChange={setDateRange}
+                            onChange={(dates) => {
+                                if (dates && dates.length === 2) {
+                                    const [start, end] = dates;
+                                    setDateRange([start.startOf('month'), end.endOf('month')]);
+                                } else {
+                                    setDateRange(dates);
+                                }
+                            }}
                         />
                     </Space>
                 </Card>
@@ -183,3 +205,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
